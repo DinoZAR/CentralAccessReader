@@ -1,0 +1,65 @@
+body
+{
+background: #333333;
+color: #F3F3F3;
+font-size: 14pt;
+}
+
+h1
+{
+color: #EEEEEE;
+text-align: center;
+text-shadow: 2px 2px 5px #111111;
+font-size: 42pt;
+}
+
+h2
+{
+color: #EEEEEE;
+text-shadow: 2px 2px 5px #111111;
+border-style: dashed;
+border-width: 0px 0px 1px 0px;
+border-color: #EEEEEE;
+padding: 15px;
+font-size: 30pt;
+}
+
+h3
+{
+color: #EEEEEE;
+text-shadow: 2px 2px 5px #111111;
+font-size: 25pt;
+padding: 10px;
+}
+
+h4
+{
+color: #EEEEEE;
+text-shadow: 2px 2px 5px #111111;
+font-size: 20pt;
+}
+
+p
+{
+color: white;
+}
+
+img
+{
+max-width: 300px;
+max-height: 300px
+}
+
+.mathmlEquation
+{
+color: #B7FF00;
+font-size: 230%;
+text-shadow: 1px 1px 3px #111111;
+}
+
+#npaHighlight
+{
+background-color: #FFFF00;
+color: #000000;
+font-size: 120%;
+}

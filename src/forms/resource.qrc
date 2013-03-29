@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>icons/cwuLogo.png</file>
+        <file>icons/forward.png</file>
+        <file>icons/loop.png</file>
+        <file>icons/next.png</file>
+        <file>icons/pause.png</file>
+        <file>icons/play.png</file>
+        <file>icons/prev.png</file>
+        <file>icons/rewind.png</file>
+        <file>icons/stop.png</file>
+        <file>icons/system_config_services.png</file>
+    </qresource>
+</RCC>

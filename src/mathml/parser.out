@@ -1,0 +1,540 @@
+Created by PLY version 3.4 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    COMMENT
+    NEWLINE
+    WS
+
+Grammar
+
+Rule 0     S' -> database
+Rule 1     database -> pattern patterns
+Rule 2     database -> pattern
+Rule 3     patterns -> pattern patterns
+Rule 4     patterns -> pattern
+Rule 5     pattern -> variable category ASSIGNS expressions OUTPUTS output
+Rule 6     pattern -> variable ASSIGNS expressions OUTPUTS output
+Rule 7     expressions -> expression expressions
+Rule 8     expressions -> expression
+Rule 9     expression -> mathml
+Rule 10    expression -> variable
+Rule 11    expression -> category
+Rule 12    expression -> LITERAL
+Rule 13    expression -> ANYEXPR
+Rule 14    expression -> MULTIEXPR
+Rule 15    variable -> ID
+Rule 16    category -> LEFTBRACKET categValues RIGHTBRACKET
+Rule 17    categValues -> categValue COMMA categValues
+Rule 18    categValues -> categValue
+Rule 19    categValue -> ID
+Rule 20    mathml -> ID LEFTPAREN expressions RIGHTPAREN
+Rule 21    mathml -> ID LEFTPAREN RIGHTPAREN
+Rule 22    output -> STRING
+
+Terminals, with rules where they appear
+
+ANYEXPR              : 13
+ASSIGNS              : 5 6
+COMMA                : 17
+COMMENT              : 
+ID                   : 15 19 20 21
+LEFTBRACKET          : 16
+LEFTPAREN            : 20 21
+LITERAL              : 12
+MULTIEXPR            : 14
+NEWLINE              : 
+OUTPUTS              : 5 6
+RIGHTBRACKET         : 16
+RIGHTPAREN           : 20 21
+STRING               : 22
+WS                   : 
+error                : 
+
+Nonterminals, with rules where they appear
+
+categValue           : 17 18
+categValues          : 16 17
+category             : 5 11
+database             : 0
+expression           : 7 8
+expressions          : 5 6 7 20
+mathml               : 9
+output               : 5 6
+pattern              : 1 2 3 4
+patterns             : 1 3
+variable             : 5 6 10
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . database
+    (1) database -> . pattern patterns
+    (2) database -> . pattern
+    (5) pattern -> . variable category ASSIGNS expressions OUTPUTS output
+    (6) pattern -> . variable ASSIGNS expressions OUTPUTS output
+    (15) variable -> . ID
+
+    ID              shift and go to state 4
+
+    database                       shift and go to state 1
+    pattern                        shift and go to state 2
+    variable                       shift and go to state 3
+
+state 1
+
+    (0) S' -> database .
+
+
+
+state 2
+
+    (1) database -> pattern . patterns
+    (2) database -> pattern .
+    (3) patterns -> . pattern patterns
+    (4) patterns -> . pattern
+    (5) pattern -> . variable category ASSIGNS expressions OUTPUTS output
+    (6) pattern -> . variable ASSIGNS expressions OUTPUTS output
+    (15) variable -> . ID
+
+    $end            reduce using rule 2 (database -> pattern .)
+    ID              shift and go to state 4
+
+    pattern                        shift and go to state 5
+    patterns                       shift and go to state 6
+    variable                       shift and go to state 3
+
+state 3
+
+    (5) pattern -> variable . category ASSIGNS expressions OUTPUTS output
+    (6) pattern -> variable . ASSIGNS expressions OUTPUTS output
+    (16) category -> . LEFTBRACKET categValues RIGHTBRACKET
+
+    ASSIGNS         shift and go to state 8
+    LEFTBRACKET     shift and go to state 9
+
+    category                       shift and go to state 7
+
+state 4
+
+    (15) variable -> ID .
+
+    ASSIGNS         reduce using rule 15 (variable -> ID .)
+    LEFTBRACKET     reduce using rule 15 (variable -> ID .)
+
+
+state 5
+
+    (3) patterns -> pattern . patterns
+    (4) patterns -> pattern .
+    (3) patterns -> . pattern patterns
+    (4) patterns -> . pattern
+    (5) pattern -> . variable category ASSIGNS expressions OUTPUTS output
+    (6) pattern -> . variable ASSIGNS expressions OUTPUTS output
+    (15) variable -> . ID
+
+    $end            reduce using rule 4 (patterns -> pattern .)
+    ID              shift and go to state 4
+
+    pattern                        shift and go to state 5
+    patterns                       shift and go to state 10
+    variable                       shift and go to state 3
+
+state 6
+
+    (1) database -> pattern patterns .
+
+    $end            reduce using rule 1 (database -> pattern patterns .)
+
+
+state 7
+
+    (5) pattern -> variable category . ASSIGNS expressions OUTPUTS output
+
+    ASSIGNS         shift and go to state 11
+
+
+state 8
+
+    (6) pattern -> variable ASSIGNS . expressions OUTPUTS output
+    (7) expressions -> . expression expressions
+    (8) expressions -> . expression
+    (9) expression -> . mathml
+    (10) expression -> . variable
+    (11) expression -> . category
+    (12) expression -> . LITERAL
+    (13) expression -> . ANYEXPR
+    (14) expression -> . MULTIEXPR
+    (20) mathml -> . ID LEFTPAREN expressions RIGHTPAREN
+    (21) mathml -> . ID LEFTPAREN RIGHTPAREN
+    (15) variable -> . ID
+    (16) category -> . LEFTBRACKET categValues RIGHTBRACKET
+
+    LITERAL         shift and go to state 15
+    ANYEXPR         shift and go to state 14
+    MULTIEXPR       shift and go to state 16
+    ID              shift and go to state 20
+    LEFTBRACKET     shift and go to state 9
+
+    category                       shift and go to state 12
+    mathml                         shift and go to state 13
+    variable                       shift and go to state 17
+    expressions                    shift and go to state 18
+    expression                     shift and go to state 19
+
+state 9
+
+    (16) category -> LEFTBRACKET . categValues RIGHTBRACKET
+    (17) categValues -> . categValue COMMA categValues
+    (18) categValues -> . categValue
+    (19) categValue -> . ID
+
+    ID              shift and go to state 23
+
+    categValues                    shift and go to state 21
+    categValue                     shift and go to state 22
+
+state 10
+
+    (3) patterns -> pattern patterns .
+
+    $end            reduce using rule 3 (patterns -> pattern patterns .)
+
+
+state 11
+
+    (5) pattern -> variable category ASSIGNS . expressions OUTPUTS output
+    (7) expressions -> . expression expressions
+    (8) expressions -> . expression
+    (9) expression -> . mathml
+    (10) expression -> . variable
+    (11) expression -> . category
+    (12) expression -> . LITERAL
+    (13) expression -> . ANYEXPR
+    (14) expression -> . MULTIEXPR
+    (20) mathml -> . ID LEFTPAREN expressions RIGHTPAREN
+    (21) mathml -> . ID LEFTPAREN RIGHTPAREN
+    (15) variable -> . ID
+    (16) category -> . LEFTBRACKET categValues RIGHTBRACKET
+
+    LITERAL         shift and go to state 15
+    ANYEXPR         shift and go to state 14
+    MULTIEXPR       shift and go to state 16
+    ID              shift and go to state 20
+    LEFTBRACKET     shift and go to state 9
+
+    category                       shift and go to state 12
+    mathml                         shift and go to state 13
+    variable                       shift and go to state 17
+    expressions                    shift and go to state 24
+    expression                     shift and go to state 19
+
+state 12
+
+    (11) expression -> category .
+
+    LITERAL         reduce using rule 11 (expression -> category .)
+    ANYEXPR         reduce using rule 11 (expression -> category .)
+    MULTIEXPR       reduce using rule 11 (expression -> category .)
+    ID              reduce using rule 11 (expression -> category .)
+    LEFTBRACKET     reduce using rule 11 (expression -> category .)
+    OUTPUTS         reduce using rule 11 (expression -> category .)
+    RIGHTPAREN      reduce using rule 11 (expression -> category .)
+
+
+state 13
+
+    (9) expression -> mathml .
+
+    LITERAL         reduce using rule 9 (expression -> mathml .)
+    ANYEXPR         reduce using rule 9 (expression -> mathml .)
+    MULTIEXPR       reduce using rule 9 (expression -> mathml .)
+    ID              reduce using rule 9 (expression -> mathml .)
+    LEFTBRACKET     reduce using rule 9 (expression -> mathml .)
+    OUTPUTS         reduce using rule 9 (expression -> mathml .)
+    RIGHTPAREN      reduce using rule 9 (expression -> mathml .)
+
+
+state 14
+
+    (13) expression -> ANYEXPR .
+
+    LITERAL         reduce using rule 13 (expression -> ANYEXPR .)
+    ANYEXPR         reduce using rule 13 (expression -> ANYEXPR .)
+    MULTIEXPR       reduce using rule 13 (expression -> ANYEXPR .)
+    ID              reduce using rule 13 (expression -> ANYEXPR .)
+    LEFTBRACKET     reduce using rule 13 (expression -> ANYEXPR .)
+    OUTPUTS         reduce using rule 13 (expression -> ANYEXPR .)
+    RIGHTPAREN      reduce using rule 13 (expression -> ANYEXPR .)
+
+
+state 15
+
+    (12) expression -> LITERAL .
+
+    LITERAL         reduce using rule 12 (expression -> LITERAL .)
+    ANYEXPR         reduce using rule 12 (expression -> LITERAL .)
+    MULTIEXPR       reduce using rule 12 (expression -> LITERAL .)
+    ID              reduce using rule 12 (expression -> LITERAL .)
+    LEFTBRACKET     reduce using rule 12 (expression -> LITERAL .)
+    OUTPUTS         reduce using rule 12 (expression -> LITERAL .)
+    RIGHTPAREN      reduce using rule 12 (expression -> LITERAL .)
+
+
+state 16
+
+    (14) expression -> MULTIEXPR .
+
+    LITERAL         reduce using rule 14 (expression -> MULTIEXPR .)
+    ANYEXPR         reduce using rule 14 (expression -> MULTIEXPR .)
+    MULTIEXPR       reduce using rule 14 (expression -> MULTIEXPR .)
+    ID              reduce using rule 14 (expression -> MULTIEXPR .)
+    LEFTBRACKET     reduce using rule 14 (expression -> MULTIEXPR .)
+    OUTPUTS         reduce using rule 14 (expression -> MULTIEXPR .)
+    RIGHTPAREN      reduce using rule 14 (expression -> MULTIEXPR .)
+
+
+state 17
+
+    (10) expression -> variable .
+
+    LITERAL         reduce using rule 10 (expression -> variable .)
+    ANYEXPR         reduce using rule 10 (expression -> variable .)
+    MULTIEXPR       reduce using rule 10 (expression -> variable .)
+    ID              reduce using rule 10 (expression -> variable .)
+    LEFTBRACKET     reduce using rule 10 (expression -> variable .)
+    OUTPUTS         reduce using rule 10 (expression -> variable .)
+    RIGHTPAREN      reduce using rule 10 (expression -> variable .)
+
+
+state 18
+
+    (6) pattern -> variable ASSIGNS expressions . OUTPUTS output
+
+    OUTPUTS         shift and go to state 25
+
+
+state 19
+
+    (7) expressions -> expression . expressions
+    (8) expressions -> expression .
+    (7) expressions -> . expression expressions
+    (8) expressions -> . expression
+    (9) expression -> . mathml
+    (10) expression -> . variable
+    (11) expression -> . category
+    (12) expression -> . LITERAL
+    (13) expression -> . ANYEXPR
+    (14) expression -> . MULTIEXPR
+    (20) mathml -> . ID LEFTPAREN expressions RIGHTPAREN
+    (21) mathml -> . ID LEFTPAREN RIGHTPAREN
+    (15) variable -> . ID
+    (16) category -> . LEFTBRACKET categValues RIGHTBRACKET
+
+    RIGHTPAREN      reduce using rule 8 (expressions -> expression .)
+    OUTPUTS         reduce using rule 8 (expressions -> expression .)
+    LITERAL         shift and go to state 15
+    ANYEXPR         shift and go to state 14
+    MULTIEXPR       shift and go to state 16
+    ID              shift and go to state 20
+    LEFTBRACKET     shift and go to state 9
+
+    category                       shift and go to state 12
+    mathml                         shift and go to state 13
+    variable                       shift and go to state 17
+    expressions                    shift and go to state 26
+    expression                     shift and go to state 19
+
+state 20
+
+    (20) mathml -> ID . LEFTPAREN expressions RIGHTPAREN
+    (21) mathml -> ID . LEFTPAREN RIGHTPAREN
+    (15) variable -> ID .
+
+    LEFTPAREN       shift and go to state 27
+    LITERAL         reduce using rule 15 (variable -> ID .)
+    ANYEXPR         reduce using rule 15 (variable -> ID .)
+    MULTIEXPR       reduce using rule 15 (variable -> ID .)
+    ID              reduce using rule 15 (variable -> ID .)
+    LEFTBRACKET     reduce using rule 15 (variable -> ID .)
+    RIGHTPAREN      reduce using rule 15 (variable -> ID .)
+    OUTPUTS         reduce using rule 15 (variable -> ID .)
+
+
+state 21
+
+    (16) category -> LEFTBRACKET categValues . RIGHTBRACKET
+
+    RIGHTBRACKET    shift and go to state 28
+
+
+state 22
+
+    (17) categValues -> categValue . COMMA categValues
+    (18) categValues -> categValue .
+
+    COMMA           shift and go to state 29
+    RIGHTBRACKET    reduce using rule 18 (categValues -> categValue .)
+
+
+state 23
+
+    (19) categValue -> ID .
+
+    COMMA           reduce using rule 19 (categValue -> ID .)
+    RIGHTBRACKET    reduce using rule 19 (categValue -> ID .)
+
+
+state 24
+
+    (5) pattern -> variable category ASSIGNS expressions . OUTPUTS output
+
+    OUTPUTS         shift and go to state 30
+
+
+state 25
+
+    (6) pattern -> variable ASSIGNS expressions OUTPUTS . output
+    (22) output -> . STRING
+
+    STRING          shift and go to state 31
+
+    output                         shift and go to state 32
+
+state 26
+
+    (7) expressions -> expression expressions .
+
+    RIGHTPAREN      reduce using rule 7 (expressions -> expression expressions .)
+    OUTPUTS         reduce using rule 7 (expressions -> expression expressions .)
+
+
+state 27
+
+    (20) mathml -> ID LEFTPAREN . expressions RIGHTPAREN
+    (21) mathml -> ID LEFTPAREN . RIGHTPAREN
+    (7) expressions -> . expression expressions
+    (8) expressions -> . expression
+    (9) expression -> . mathml
+    (10) expression -> . variable
+    (11) expression -> . category
+    (12) expression -> . LITERAL
+    (13) expression -> . ANYEXPR
+    (14) expression -> . MULTIEXPR
+    (20) mathml -> . ID LEFTPAREN expressions RIGHTPAREN
+    (21) mathml -> . ID LEFTPAREN RIGHTPAREN
+    (15) variable -> . ID
+    (16) category -> . LEFTBRACKET categValues RIGHTBRACKET
+
+    RIGHTPAREN      shift and go to state 33
+    LITERAL         shift and go to state 15
+    ANYEXPR         shift and go to state 14
+    MULTIEXPR       shift and go to state 16
+    ID              shift and go to state 20
+    LEFTBRACKET     shift and go to state 9
+
+    category                       shift and go to state 12
+    mathml                         shift and go to state 13
+    variable                       shift and go to state 17
+    expressions                    shift and go to state 34
+    expression                     shift and go to state 19
+
+state 28
+
+    (16) category -> LEFTBRACKET categValues RIGHTBRACKET .
+
+    LITERAL         reduce using rule 16 (category -> LEFTBRACKET categValues RIGHTBRACKET .)
+    ANYEXPR         reduce using rule 16 (category -> LEFTBRACKET categValues RIGHTBRACKET .)
+    MULTIEXPR       reduce using rule 16 (category -> LEFTBRACKET categValues RIGHTBRACKET .)
+    ID              reduce using rule 16 (category -> LEFTBRACKET categValues RIGHTBRACKET .)
+    LEFTBRACKET     reduce using rule 16 (category -> LEFTBRACKET categValues RIGHTBRACKET .)
+    OUTPUTS         reduce using rule 16 (category -> LEFTBRACKET categValues RIGHTBRACKET .)
+    RIGHTPAREN      reduce using rule 16 (category -> LEFTBRACKET categValues RIGHTBRACKET .)
+    ASSIGNS         reduce using rule 16 (category -> LEFTBRACKET categValues RIGHTBRACKET .)
+
+
+state 29
+
+    (17) categValues -> categValue COMMA . categValues
+    (17) categValues -> . categValue COMMA categValues
+    (18) categValues -> . categValue
+    (19) categValue -> . ID
+
+    ID              shift and go to state 23
+
+    categValue                     shift and go to state 22
+    categValues                    shift and go to state 35
+
+state 30
+
+    (5) pattern -> variable category ASSIGNS expressions OUTPUTS . output
+    (22) output -> . STRING
+
+    STRING          shift and go to state 31
+
+    output                         shift and go to state 36
+
+state 31
+
+    (22) output -> STRING .
+
+    ID              reduce using rule 22 (output -> STRING .)
+    $end            reduce using rule 22 (output -> STRING .)
+
+
+state 32
+
+    (6) pattern -> variable ASSIGNS expressions OUTPUTS output .
+
+    ID              reduce using rule 6 (pattern -> variable ASSIGNS expressions OUTPUTS output .)
+    $end            reduce using rule 6 (pattern -> variable ASSIGNS expressions OUTPUTS output .)
+
+
+state 33
+
+    (21) mathml -> ID LEFTPAREN RIGHTPAREN .
+
+    LITERAL         reduce using rule 21 (mathml -> ID LEFTPAREN RIGHTPAREN .)
+    ANYEXPR         reduce using rule 21 (mathml -> ID LEFTPAREN RIGHTPAREN .)
+    MULTIEXPR       reduce using rule 21 (mathml -> ID LEFTPAREN RIGHTPAREN .)
+    ID              reduce using rule 21 (mathml -> ID LEFTPAREN RIGHTPAREN .)
+    LEFTBRACKET     reduce using rule 21 (mathml -> ID LEFTPAREN RIGHTPAREN .)
+    OUTPUTS         reduce using rule 21 (mathml -> ID LEFTPAREN RIGHTPAREN .)
+    RIGHTPAREN      reduce using rule 21 (mathml -> ID LEFTPAREN RIGHTPAREN .)
+
+
+state 34
+
+    (20) mathml -> ID LEFTPAREN expressions . RIGHTPAREN
+
+    RIGHTPAREN      shift and go to state 37
+
+
+state 35
+
+    (17) categValues -> categValue COMMA categValues .
+
+    RIGHTBRACKET    reduce using rule 17 (categValues -> categValue COMMA categValues .)
+
+
+state 36
+
+    (5) pattern -> variable category ASSIGNS expressions OUTPUTS output .
+
+    ID              reduce using rule 5 (pattern -> variable category ASSIGNS expressions OUTPUTS output .)
+    $end            reduce using rule 5 (pattern -> variable category ASSIGNS expressions OUTPUTS output .)
+
+
+state 37
+
+    (20) mathml -> ID LEFTPAREN expressions RIGHTPAREN .
+
+    LITERAL         reduce using rule 20 (mathml -> ID LEFTPAREN expressions RIGHTPAREN .)
+    ANYEXPR         reduce using rule 20 (mathml -> ID LEFTPAREN expressions RIGHTPAREN .)
+    MULTIEXPR       reduce using rule 20 (mathml -> ID LEFTPAREN expressions RIGHTPAREN .)
+    ID              reduce using rule 20 (mathml -> ID LEFTPAREN expressions RIGHTPAREN .)
+    LEFTBRACKET     reduce using rule 20 (mathml -> ID LEFTPAREN expressions RIGHTPAREN .)
+    OUTPUTS         reduce using rule 20 (mathml -> ID LEFTPAREN expressions RIGHTPAREN .)
+    RIGHTPAREN      reduce using rule 20 (mathml -> ID LEFTPAREN expressions RIGHTPAREN .)
+
