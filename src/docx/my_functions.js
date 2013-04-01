@@ -1,12 +1,12 @@
 // Used in page navigation to move to an anchor point with specific id
 function GotoPageAnchor(anchorName) {
-	element_to_scroll_to = document.getElementById(anchorName);
+	element_to_scroll_tasdo = document.getElementById(anchorName);
 	element_to_scroll_to.scrollIntoView();
 }
 
 // Variables for storing exactly where the highlighter is
-var highlight;
-var highlightRange
+var highlight; // The highlighter element that has the highlighted content.
+var hasHighlight = false;
 
 function PrintSelection() {
 	if (window.getSelection()) {
@@ -18,6 +18,22 @@ function PrintSelection() {
 		buildString += range.focusOffset.toString() + "\n";
 		alert(buildString);
 	}
+}
+
+// Sets the beginning to start the speech. It will start at beginning if no selection was made.
+function SetBeginning() {
+	if (window.getSelection()) {
+		var range = window.getSelection();
+		var startNode = range.anchorNode.parentNode.nodeName;
+		
+		// Set the highlight right there
+		var mySpan = document.createElement("span");
+		mySpan.setAttribute("id", "npaHighlight");
+		mySpan.appendChild(myContents);
+
+		range.deleteContents();
+		range.insertNodes(mySpan);
+	}
 }
 
 // Sets the highlight right on the selection. It will make sure to select the

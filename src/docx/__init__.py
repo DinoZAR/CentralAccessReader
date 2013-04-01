@@ -5,9 +5,12 @@ from lxml.builder import E
 import copy
 import os
 import platform
+import inspect
 from src.gui.bookmarks import BookmarkNode
 
-ommlXSLTPath = os.path.normpath('docx/OMMLToMathML.xsl')
+rootPath = os.path.dirname(inspect.getfile(inspect.currentframe()))
+
+ommlXSLTPath = os.path.normpath(rootPath + '/OMMLToMathML.xsl')
 f = open(ommlXSLTPath, 'r')
 xslRoot = etree.parse(f)
 ommlTransform = etree.XSLT(xslRoot)
@@ -131,7 +134,7 @@ def _prepareHead(head):
     
     mathjaxConfig = HTML.Element('script')
     mathjaxConfig.set('type', 'text/x-mathjax-config')
-    scriptFile = open(os.path.normpath('docx/mathjax_config.js'))
+    scriptFile = open(os.path.normpath(rootPath + '/mathjax_config.js'))
     contents = scriptFile.read()
     scriptFile.close()
     mathjaxConfig.text = contents
@@ -145,7 +148,7 @@ def _prepareHead(head):
     myScripts.set('language', 'javascript')
     myScripts.set('type', 'text/javascript')
     
-    scriptFile = open(os.path.normpath('docx/my_functions.js'), 'r')
+    scriptFile = open(os.path.normpath(rootPath + '/my_functions.js'), 'r')
     contents = scriptFile.read()
     scriptFile.close()
     myScripts.text = contents

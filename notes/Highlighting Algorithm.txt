@@ -1,0 +1,24 @@
+Highlight Algorithm
+----------------------------------------------------------------------------------------
+
+Here is where I will describe my algorithm for using the interactive word-by-word
+feature using Javascript commands, as well as just general notes.
+
+
+
+Overview:
+---------
+
+Although the starting position for highlighting can be set using absolute positions,
+highlighting after that word will be done relatively. Therefore, some rules need to be
+set as to how the highlighter goes from word to word (or section to section).
+
+Starting from no selection:
+
+1) Grab the first element in the body
+2) If it is a paragraph
+  a) If there is text first, get first word
+  b) If it is a recognized element (image, equation, table, etc.), consider that element as start point
+3) If element is a recognized element:
+  a) Consider that element as the first element
+  b) 
