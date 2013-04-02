@@ -23,18 +23,89 @@ function PrintSelection() {
 // Sets the beginning to start the speech. It will start at beginning if no selection was made.
 function SetBeginning() {
 	if (window.getSelection()) {
-		var range = window.getSelection();
-		var startNode = range.anchorNode.parentNode.nodeName;
+		var range = window.getSelection()
+		var startNode = range.anchorNode;
+		var offset = range.anchorOffset;
 		
-		// Set the highlight right there
-		var mySpan = document.createElement("span");
-		mySpan.setAttribute("id", "npaHighlight");
-		mySpan.appendChild(myContents);
+		// Check to see if the start is inside a math equation. If so, adjust selection to
+		// only select that node. Otherwise, have it select the first whole word there.
+		var equation = GetEquation(startNode);
+		alert("Got something!");
+		if (equation === null) {
+			alert("No equation...");
+			var nextIndex = startNode.textContent.substring(offset).search(/\w/) + offset;
+			var endIndex = startNode.textContent.substring(nextIndex).search(/\s/) + nextIndex;
 
-		range.deleteContents();
-		range.insertNodes(mySpan);
+			// Create range from all this
+			var range = document.createRange();
+			range.setStart(startNode, nextIndex);
+			range.setEnd(startNode, endIndex);
+
+			alert("Made range!");
+
+			// Replace with highlighting
+			highlight = document.createElement("span");
+			highlight.setAttribute("id", "npaHighlight");
+
+			var contents = range.extractContents();
+			highlight.appendChild(contents);
+			
+			range.insertNode(highlight);
+
+			// Clear the selection
+			window.getSelection().collapseToStart();
+		}
+		else {
+			alert("Got an equation!" + equation.nodeName + equation.textContent);
+			startNode = equation;
+			offset = 0;
+
+			// Set the highlight right there
+			highlight = document.createElement("span");
+			highlight.setAttribute("id", "npaHighlight");
+			highlight.innerHTML = startNode.outerHTML
+		
+			// Replace the beginning with my highlight
+			startNode.parentNode.replaceChild(highlight, startNode);
+		}
+
+		alert("Done!");
 	}
 }
+
+// Returns the range of equation if node is inside an equation.
+function GetEquation(node) {
+	
+	var myNode = node
+
+	while (myNode.parentNode != null) {
+		myNode = myNode.parentNode
+		// Check to see if it is an equation by checking its class
+		if (myNode.className == "mathmlEquation") {
+			return myNode;
+		}
+	}
+	return null;
+}
+
+// Clears the highlight of where it was before.
+function ClearHighlight() {
+	// Get the contents that I am going to replace the node with
+	var contents = document.createDocumentFragment();
+	contents.innerHTML = highlight.innerHTML;
+
+	alert("Contents: " + contents.toString());
+
+	// Replace the highlight node with mjy contents
+	var p = highlight.parentNode;
+	alert("Got parent!");
+	p.insertBefore(contents, highlight);
+	alert("Inserted contents!");
+	p.removeChild(highlight);
+	alert("Removed highlight!");
+
+	alert("Done!");
+}
 
 // Sets the highlight right on the selection. It will make sure to select the
 // entire word on the beginning and end of the selection.

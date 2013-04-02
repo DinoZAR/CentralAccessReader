@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>888</width>
-    <height>706</height>
+    <width>692</width>
+    <height>404</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,7 +29,7 @@
       <property name="handleWidth">
        <number>15</number>
       </property>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1">
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -73,26 +73,53 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,1">
+         <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1,0,0,1,0,0,1">
           <item>
-           <widget class="QPushButton" name="runButton">
+           <widget class="QPushButton" name="run1Button">
             <property name="text">
-             <string>Run</string>
+             <string>Run 1</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>Command:</string>
+           <widget class="QLineEdit" name="commandLine1"/>
+          </item>
+          <item>
+           <widget class="Line" name="line">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="commandLine"/>
+           <widget class="QPushButton" name="run2Button">
+            <property name="text">
+             <string>Run 2</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="commandLine2"/>
+          </item>
+          <item>
+           <widget class="Line" name="line_2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="run3Button">
+            <property name="text">
+             <string>Run 3</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="commandLine3"/>
           </item>
          </layout>
         </item>
@@ -127,7 +154,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>888</width>
+     <width>692</width>
      <height>21</height>
     </rect>
    </property>

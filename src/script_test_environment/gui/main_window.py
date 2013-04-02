@@ -50,7 +50,9 @@ class MainWindow(QtGui.QMainWindow):
         
         self.ui.resetButton.clicked.connect(self.resetDocx)
         
-        self.ui.runButton.clicked.connect(self.runScript)
+        self.ui.run1Button.clicked.connect(self.runScript1)
+        self.ui.run2Button.clicked.connect(self.runScript2)
+        self.ui.run3Button.clicked.connect(self.runScript3)
     
     def newScript(self):
         print 'Adding new script...'
@@ -60,7 +62,9 @@ class MainWindow(QtGui.QMainWindow):
     def openDocx(self):
         print 'Opening document...'
         
-        newFile = QtGui.QFileDialog.getOpenFileName()
+        dir = os.path.normpath(os.path.join(os.getcwd(), '../tests'))
+        
+        newFile = QtGui.QFileDialog.getOpenFileName(caption='Open Docx...', directory=dir)
         if len(newFile) > 0:
             self.docxFile = str(newFile)
             url = os.path.join(os.getcwd(), '../import')
@@ -73,7 +77,9 @@ class MainWindow(QtGui.QMainWindow):
     def openScript(self):
         print 'Opening script...'
         
-        newFile = QtGui.QFileDialog.getOpenFileName()
+        dir = os.path.normpath(os.path.join(os.getcwd(), '../docx'))
+        
+        newFile = QtGui.QFileDialog.getOpenFileName(caption='Open JavaScript...', directory=dir)
         
         if len(newFile) > 0:
             newTab = ScriptEditor(filename=str(newFile))
@@ -112,11 +118,13 @@ class MainWindow(QtGui.QMainWindow):
         print 'Saving current script...'
         index = self.ui.javascriptTabs.currentIndex()
         self.saveScript(index)
+        self.resetDocx(None)
         
     def saveAllScripts(self):
         print 'Saving all scripts...'
         for i in range(self.ui.javascriptTabs.count()):
             self.saveScript(i)
+        self.resetDocx(None)
         
     def onTabClose(self, index):
         print 'Tab closing:', index
@@ -141,9 +149,17 @@ class MainWindow(QtGui.QMainWindow):
             baseUrl = QUrl.fromLocalFile(os.path.join(os.getcwd(), '../import'))
             self.ui.documentView.setHtml(content, baseUrl)
             
-    def runScript(self):
-        print 'Running:', str(self.ui.commandLine.text())
-        self.ui.documentView.page().mainFrame().evaluateJavaScript(self.ui.commandLine.text())
+    def runScript1(self):
+        print 'Running 1:', str(self.ui.commandLine1.text())
+        self.ui.documentView.page().mainFrame().evaluateJavaScript(self.ui.commandLine1.text())
+        
+    def runScript2(self):
+        print 'Running 2:', str(self.ui.commandLine2.text())
+        self.ui.documentView.page().mainFrame().evaluateJavaScript(self.ui.commandLine2.text())
+        
+    def runScript3(self):
+        print 'Running 3:', str(self.ui.commandLine3.text())
+        self.ui.documentView.page().mainFrame().evaluateJavaScript(self.ui.commandLine3.text())
             
     def quit(self):
         self.close()
