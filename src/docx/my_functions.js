@@ -3,10 +3,12 @@ function GotoPageAnchor(anchorName) {
 	element_to_scroll_tasdo = document.getElementById(anchorName);
 	element_to_scroll_to.scrollIntoView();
 }
+
+// ---------------------------------------------------------------------------
+// HIGHLIGHTING FUNCTIONS
+// ---------------------------------------------------------------------------
 
-// Variables for storing exactly where the highlighter is
-var highlight; // The highlighter element that has the highlighted content.
-var hasHighlight = false;
+var highlight; // The highlighter element that has the highlighted content.
 
 function PrintSelection() {
 	if (window.getSelection()) {
@@ -30,53 +32,61 @@ function SetBeginning() {
 		// Check to see if the start is inside a math equation. If so, adjust selection to
 		// only select that node. Otherwise, have it select the first whole word there.
 		var equation = GetEquation(startNode);
-		alert("Got something!");
 		if (equation === null) {
-			alert("No equation...");
-			var nextIndex = startNode.textContent.substring(offset).search(/\w/) + offset;
-			var endIndex = startNode.textContent.substring(nextIndex).search(/\s/) + nextIndex;
-
-			// Create range from all this
-			var range = document.createRange();
-			range.setStart(startNode, nextIndex);
-			range.setEnd(startNode, endIndex);
-
-			alert("Made range!");
-
-			// Replace with highlighting
-			highlight = document.createElement("span");
-			highlight.setAttribute("id", "npaHighlight");
-
-			var contents = range.extractContents();
-			highlight.appendChild(contents);
+			range = GetNextWord(startNode, offset);
 			
-			range.insertNode(highlight);
+			// If I can't get another word, get another element.
+			if (range == null) {
+				var nElem = NextElement(startNode);
+				range = document.createRange();
+			}
+			SetHighlight(range);
 
-			// Clear the selection
+			// Clear the user selection
 			window.getSelection().collapseToStart();
 		}
 		else {
-			alert("Got an equation!" + equation.nodeName + equation.textContent);
-			startNode = equation;
-			offset = 0;
-
-			// Set the highlight right there
-			highlight = document.createElement("span");
-			highlight.setAttribute("id", "npaHighlight");
-			highlight.innerHTML = startNode.outerHTML
-		
-			// Replace the beginning with my highlight
-			startNode.parentNode.replaceChild(highlight, startNode);
+			range = document.createRange();
+			range.selectNode(equation);
+			SetHighlight(range);
 		}
-
-		alert("Done!");
 	}
 }
+
+// Move the highlight to the next element that should be highlighted 
+function HighlightNextElement() {
+	
+	var s = highlight.nextSibling;
+	
+	if (s != null) {
+		
+		var range = GetNextWord(s, 0);
+		if (range == null) {
+			alert("I got no more words!");
+			
+			// I had to do this twice because the first is an empty #text element
+			s = highlight.nextSibling;
+			s = s.nextSibling;
+			alert("New sibling: " + s.nodeName + " " + s.textContent);
+		} 
+		else {
+			SetHighlight(range);
+		}
+	}
+	else {
+		alert("No sibling...");
+	}
+}
 
 // Returns the range of equation if node is inside an equation.
 function GetEquation(node) {
 	
 	var myNode = node
+
+	// Check to see if this node is an equation
+	if (myNode.className == "mathmlEquation") {
+		return myNode;
+	}
 
 	while (myNode.parentNode != null) {
 		myNode = myNode.parentNode
@@ -88,49 +98,94 @@ function GetEquation(node) {
 	return null;
 }
 
+// Returns a range that has the next word
+function GetNextWord(node, offset) {
+	
+	// Check to see if I can find the start of the next word. Otherwise, return null.
+	var nextIndex = node.textContent.substring(offset).search(/\w/);
+	if (nextIndex == -1) {
+		return null;
+	}
+	nextIndex = nextIndex + offset;
+
+	
+	var endIndex = node.textContent.substring(nextIndex).search(/\s/);
+	if (endIndex == -1) {
+		endIndex = node.length; // Most likely reached the end of whatever element I was in.
+	}
+	else {
+		endIndex = endIndex + nextIndex;
+	}
+
+	range = document.createRange();
+	range.setStart(node, nextIndex);
+	range.setEnd(node, endIndex);
+
+	return range;
+}
+
 // Clears the highlight of where it was before.
 function ClearHighlight() {
 	// Get the contents that I am going to replace the node with
-	var contents = document.createDocumentFragment();
-	contents.innerHTML = highlight.innerHTML;
+	var contents = highlight.cloneNode(true);
 
-	alert("Contents: " + contents.toString());
-
-	// Replace the highlight node with mjy contents
+	// Replace the highlight node with my contents
 	var p = highlight.parentNode;
-	alert("Got parent!");
-	p.insertBefore(contents, highlight);
-	alert("Inserted contents!");
+	
+	// Insert everything in the contents before the highlight position
+	for  (i = 0; i < contents.childNodes.length; i++) {
+		p.insertBefore(contents.childNodes[i], highlight);
+	}
+	
+	// Cleanup the highlight and its reference
 	p.removeChild(highlight);
-	alert("Removed highlight!");
-
-	alert("Done!");
+	highlight = null;
 }
-
-// Sets the highlight right on the selection. It will make sure to select the
-// entire word on the beginning and end of the selection.
-function SetHighlight() {
-	if (window.getSelection()) {
-		var range = window.getSelection().getRangeAt(0);
-		
-		var debugString = "The Range!\n";
-		debugString += "Starting char: " + range.startContainer.nodeValue.toString()[range.startOffset] + "\n";
-		debugString += "Ending char: " + range.endContainer.nodeValue.toString()[range.endOffset] + "\n";
-		//alert(debugString);
-		
-		// Get a clone of my contents to insert into my highlight span
-		var myContents = range.cloneContents();
-		
-		// Insert my custom span object at the beginning with my cloned content
-		// inserted.
-		var mySpan = document.createElement("span");
-		mySpan.setAttribute("id", "npaHighlight");
-		mySpan.appendChild(myContents);
-		
-		// Delete what is inside of my range
-		range.deleteContents();
-		
-		// Insert my new highlighted region
-		range.insertNode(mySpan);
-	}
+
+// Given a Range object, this will clean up any previous highlight and create a highlight
+// over the new range
+function SetHighlight(range) {
+	
+	if (highlight != null) {
+		ClearHighlight();
+	}
+	
+	highlight = document.createElement("span");
+	highlight.setAttribute("id", "npaHighlight");
+
+	var contents = range.extractContents();
+	highlight.appendChild(contents);
+	
+	range.insertNode(highlight);
+}
+
+// --------------------------------------------------------------------------------------------------
+// GENERAL UTILITY FUNCTIONS
+// --------------------------------------------------------------------------------------------------
+
+function NextElement(elem) {
+	var next = elem.nextSibling;
+	while (next && next.nodeType != 1) {
+		next = next.nextSibling;
+	}
+	if (next == null) {
+		if (elem.parentNode == null) {
+			return null;
+		}
+		else {
+			elem = NextElement(elem.parentNode);
+			return elem;
+		}
+	}
+	else {
+		return next;
+	}
+}
+
+function GetChildIndex(elem) {
+	var i = 0;
+	while ((elem = elem.previousSibling) != null) {
+		i++;
+	}
+	return i;
 }
