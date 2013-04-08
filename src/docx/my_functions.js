@@ -31,54 +31,52 @@ function SetBeginning() {
 		
 		// Check to see if the start is inside a math equation. If so, adjust selection to
 		// only select that node. Otherwise, have it select the first whole word there.
-		var equation = GetEquation(startNode);
-		if (equation === null) {
-			range = GetNextWord(startNode, offset);
+		range = GetNextWord(startNode, offset);
 			
-			// If I can't get another word, get another element.
-			if (range == null) {
-				var nElem = NextElement(startNode);
-				range = document.createRange();
-			}
-			SetHighlight(range);
-
-			// Clear the user selection
-			window.getSelection().collapseToStart();
-		}
-		else {
+		// If I can't get another word, get another element.
+		if (range == null) {
+			var nElem = NextElement(startNode);
 			range = document.createRange();
-			range.selectNode(equation);
-			SetHighlight(range);
 		}
+		SetHighlight(range);
+
+		window.getSelection().empty();
 	}
 }
 
 // Move the highlight to the next element that should be highlighted 
 function HighlightNextElement() {
 	
-	var s = highlight.nextSibling;
+	// Get the sibling of the highlight node. It will either be more text or an actual element.
+	var next = highlight.nextSibling;
 	
-	if (s != null) {
-		
-		var range = GetNextWord(s, 0);
-		if (range == null) {
-			alert("I got no more words!");
-			
-			// I had to do this twice because the first is an empty #text element
-			s = highlight.nextSibling;
-			s = s.nextSibling;
-			alert("New sibling: " + s.nodeName + " " + s.textContent);
-		} 
+	if (next != null) {
+		if (next.nodeName == "#text") {
+
+			// Get the next word, if any.
+			var range = GetNextWord(next, 0);
+			if (range == null) {
+				next = NextElement(next);
+				range = GetNextWord(next, 0);
+				SetHighlight(range);
+			}
+			else {
+				SetHighlight(range);
+			}
+		}
 		else {
-			SetHighlight(range);
+			alert("In something else. Weird...");
+			alert(next.nodeName);
 		}
 	}
 	else {
-		alert("No sibling...");
+		next = NextElement(highlight);
+		var range = GetNextWord(next, 0);
+		SetHighlight(range);
 	}
 }
 
-// Returns the range of equation if node is inside an equation.
+// Returns the equation node if node is inside an equation.
 function GetEquation(node) {
 	
 	var myNode = node
@@ -100,28 +98,47 @@ function GetEquation(node) {
 
 // Returns a range that has the next word
 function GetNextWord(node, offset) {
-	
-	// Check to see if I can find the start of the next word. Otherwise, return null.
-	var nextIndex = node.textContent.substring(offset).search(/\w/);
-	if (nextIndex == -1) {
-		return null;
-	}
-	nextIndex = nextIndex + offset;
+	console.debug("Next node: " + node.nodeName + " " + node.data);
 
-	
-	var endIndex = node.textContent.substring(nextIndex).search(/\s/);
-	if (endIndex == -1) {
-		endIndex = node.length; // Most likely reached the end of whatever element I was in.
+	// See if it is an equation
+	var equation = GetEquation(node);
+	if (equation != null) {
+		var range = document.createRange();
+		range.selectNode(equation);
+		return range;
 	}
+
+	// See if it is an image
+	if (node.nodeName == "IMG") {
+		console.debug("Got an image!");
+		var range = document.createRange();
+		range.selectNode(node);
+		return range;
+	}
+
+	// See if it is anything else, like text
 	else {
-		endIndex = endIndex + nextIndex;
+		// Check to see if I can find the start of the next word. Otherwise, return null.
+		var nextIndex = node.textContent.substring(offset).search(/\w/);
+		if (nextIndex == -1) {
+			return null;
+		}
+		nextIndex = nextIndex + offset;
+	
+		var endIndex = node.textContent.substring(nextIndex).search(/\s/);
+		if (endIndex == -1) {
+			endIndex = node.length; // Most likely reached the end of whatever element I was in.
+		}
+		else {
+			endIndex = endIndex + nextIndex;
+		}
+
+		range = document.createRange();
+		range.setStart(node, nextIndex);
+		range.setEnd(node, endIndex);
+
+		return range;
 	}
-
-	range = document.createRange();
-	range.setStart(node, nextIndex);
-	range.setEnd(node, endIndex);
-
-	return range;
 }
 
 // Clears the highlight of where it was before.
@@ -165,9 +182,6 @@ function SetHighlight(range) {
 
 function NextElement(elem) {
 	var next = elem.nextSibling;
-	while (next && next.nodeType != 1) {
-		next = next.nextSibling;
-	}
 	if (next == null) {
 		if (elem.parentNode == null) {
 			return null;
@@ -178,7 +192,17 @@ function NextElement(elem) {
 		}
 	}
 	else {
-		return next;
+		return DeepestChild(next);
+	}
+}
+
+function DeepestChild(parent) {
+	if (parent.childNodes.length == 0) {
+		return parent;
+	}
+	else {
+		var child = parent.firstChild;
+		return DeepestChild(child);
 	}
 }
 

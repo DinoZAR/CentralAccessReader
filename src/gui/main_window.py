@@ -7,7 +7,7 @@ import sys
 import os.path
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt, QUrl, QDir
-from PyQt4.QtWebKit import QWebPage
+from PyQt4.QtWebKit import QWebPage, QWebInspector, QWebSettings
 from src.forms.mainwindow_ui import Ui_MainWindow
 from src.gui.settings import Settings
 from src.gui.mathmlcodes_dialog import MathMLCodesDialog
@@ -50,8 +50,11 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.volLabel.setText(str(int(self.sVol*100)))
         self.ui.rateSlider.setValue(self.sRate)
         self.ui.volumeSlider.setValue(self.sVol* 100)
-        self.stop = True
         
+        # TTS states
+        self.stop = True
+        self.start = False
+        self.lastElement = ["text", -1, -1]
         self.repeat = False
         self.repeatText = ' '
         
@@ -62,6 +65,9 @@ class MainWindow(QtGui.QMainWindow):
         # This is the tree model used to store our bookmarks
         self.bookmarksModel = BookmarksTreeModel(BookmarkNode(None, 'Something'))
         self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
+        
+        # This is my web inspector for debugging my JavaScript code
+        self.webInspector = QWebInspector()
         
         self.connect_signals()
         
@@ -81,71 +87,60 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.actionQuit.triggered.connect(self.quit)
         self.ui.actionOpen_Pattern_Editor.triggered.connect(self.openPatternEditor)
         self.ui.actionShow_All_MathML.triggered.connect(self.showAllMathML)
+        
         #self.ui.muteButton.clicked.connect(self.muteButton_clicked)
         self.ui.volumeSlider.valueChanged.connect(self.volumeSlider_valueChanged)
         
         # For the bookmarks
         self.ui.bookmarksTreeView.clicked.connect(self.bookmarksTree_clicked)
         
-        # Test buttons for moving selection around
-        self.ui.nextWordButton.clicked.connect(self.nextWord_clicked)
-        self.ui.lastWordButton.clicked.connect(self.lastWord_clicked)
+        self.ui.webInspectorButton.clicked.connect(self.showWebInspector)
         
     def onWord(self, name, location, length):
         print name, location, length
-        move = location - self.loc
-        jump = location - self.loc - self.len
-        self.loc = location
-        self.len = length
-        if(move > 0):
-            moved = True
-        if(jump>5):
-            self.jumped = not self.jumped
-            if(self.jumped):
-                self.ui.webView.page().setContentEditable(True)
-                self.ui.webView.triggerPageAction(QWebPage.MoveToNextChar)
-                self.ui.webView.triggerPageAction(QWebPage.MoveToNextChar)
-                self.ui.webView.triggerPageAction(QWebPage.MoveToNextChar)
-                self.ui.webView.triggerPageAction(QWebPage.SelectEndOfLine)
-                self.ui.webView.page().setContentEditable(False)
-        if(self.jumped):
-            self.ui.webView.page().setContentEditable(True)
-            self.ui.webView.page().setContentEditable(False)
-        elif(moved):
-            self.ui.webView.page().setContentEditable(True)
-            self.ui.webView.triggerPageAction(QWebPage.MoveToNextChar)
-            self.ui.webView.triggerPageAction(QWebPage.MoveToNextChar)
-            self.ui.webView.triggerPageAction(QWebPage.SelectNextWord)
-            self.ui.webView.page().setContentEditable(False)
+        if self.start:
+            self.ui.webView.page().mainFrame().evaluateJavaScript('SetBeginning();')
+            self.start = False
+            self.movedToElement = True
+        else:
+            
+            if name == "text":
+                if name != self.lastElement[0] or (location != self.lastElement[1]):
+                    self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement();')
+            elif name == "math":
+                if name != self.lastElement[0]:
+                    self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement();')
+            elif name == "image":
+                if name != self.lastElement[0]:
+                    self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement();')
+            else:
+                self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement();')
+            
+        # Store what the last element was that was being spoken
+        self.lastElement = [name, location, length]
+        
         if self.stop:
             #print 'Stopping...'
             self.repeat = False
             self.ttsEngine.stop()
             self.ttsEngine = pyttsx.init()
             self.stop = False
-
+            self.ui.webView.page().mainFrame().evaluateJavaScript('ClearHighlight();')
             
     def playButton_clicked(self):
         self.loc = 0
-        
-        if len(unicode(self.ui.webView.selectedText())) == 0:
-            self.ui.webView.triggerPageAction(QWebPage.SelectAll)
-        elif len(unicode(self.ui.webView.selectedText()).split()) == 1:
-            self.ui.webView.triggerPageAction(QWebPage.SelectEndOfDocument)
             
         print unicode(self.ui.webView.selectedHtml(), 'utf-8')
+        outputList = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml()))
         
-        output = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml()))
-        
-        self.ui.webView.page().setContentEditable(True)
-        self.ui.webView.triggerPageAction(QWebPage.MoveToPreviousChar)
-        self.ui.webView.triggerPageAction(QWebPage.SelectNextWord)
-        self.ui.webView.page().setContentEditable(False)
-        
+        self.start = True
         self.stop = False
-        self.ttsEngine.say(output)
-        self.ttsEngine.runAndWait()
+        self.lastElement = ["text", -1, -1]
         
+        for o in outputList:
+            self.ttsEngine.say(text=o[0], name=o[1])
+            
+        self.ttsEngine.runAndWait()
         
     def pauseButton_clicked(self):
         self.stop = True
@@ -278,10 +273,7 @@ class MainWindow(QtGui.QMainWindow):
         # Do the anchor navigation
         self.ui.webView.page().mainFrame().evaluateJavaScript('GotoPageAnchor(' + node.anchorId + ');')
         
-    def nextWord_clicked(self):
-        self.ui.webView.page().mainFrame().evaluateJavaScript('SetHighlight();')
-        self.ui.webView.triggerPageAction(QWebPage.SelectNextChar)
-        
-    def lastWord_clicked(self):
-        self.ui.webView.triggerPageAction(QWebPage.SelectPreviousWord)
-        
+    def showWebInspector(self, e):
+        self.ui.webView.settings().setAttribute(QWebSettings.DeveloperExtrasEnabled, True)
+        self.webInspector.setPage(self.ui.webView.page())
+        self.webInspector.show()

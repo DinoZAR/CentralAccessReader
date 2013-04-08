@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Documents\Special Projects\Graffe, Spencer\workspace2\nifty-prose-articulator\src\script_test_environment\forms/mainwindow.ui'
 #
-# Created: Tue Apr 02 08:16:00 2013
+# Created: Mon Apr 08 09:11:54 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(692, 404)
+        MainWindow.resize(776, 710)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.centralwidget)
@@ -50,6 +50,9 @@ class Ui_MainWindow(object):
         self.resetButton = QtGui.QPushButton(self.layoutWidget)
         self.resetButton.setObjectName(_fromUtf8("resetButton"))
         self.horizontalLayout_2.addWidget(self.resetButton)
+        self.inspectorButton = QtGui.QPushButton(self.layoutWidget)
+        self.inspectorButton.setObjectName(_fromUtf8("inspectorButton"))
+        self.horizontalLayout_2.addWidget(self.inspectorButton)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
@@ -112,7 +115,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.addWidget(self.splitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 692, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 776, 21))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))
@@ -146,6 +149,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "Javascript Test Environment", None))
         self.label.setText(_translate("MainWindow", "Document:", None))
         self.resetButton.setText(_translate("MainWindow", "Reset", None))
+        self.inspectorButton.setText(_translate("MainWindow", "Web Inspector", None))
         self.run1Button.setText(_translate("MainWindow", "Run 1", None))
         self.run2Button.setText(_translate("MainWindow", "Run 2", None))
         self.run3Button.setText(_translate("MainWindow", "Run 3", None))

@@ -43,7 +43,9 @@ class Assigner(object):
     
     def getSpeech(self, htmlContent):
         '''
-        Returns a list of utterances to say the HTML content 
+        Returns a list of utterances to say the HTML content in the following format:
+        
+        [[text, label], [text, label], ...]
         '''
         htmlDom = html.fromstring(htmlContent)
         return self._recursiveGetSpeech(htmlDom)
@@ -51,10 +53,10 @@ class Assigner(object):
     def _recursiveGetSpeech(self, element):
         
         # Use recursion to handle it.
-        myString = ''
+        myList = []
         
         if element.text != None:
-            myString += element.text
+            myList.append([element.text, "text"])
         
         for child in element:
             testTag = child.tag.split('}')[-1]
@@ -63,51 +65,19 @@ class Assigner(object):
                 if child.get('class') == 'MathJax':
                     # Parse MathML and get output!
                     mathOutput = self.mathTTS.parse(self._maths[child.get('id')])
-                    myString +=  mathOutput + ' '
+                    myList.append([mathOutput, "math"])
                 else:
-                    myString += self._recursiveGetSpeech(child)
-                
-            elif testTag == 'h1':
-                myString += self._recursiveGetSpeech(child)
-                myString += '. '
-                if len(myString) > 3:
-                    if myString[-3] == '.':
-                        myString = myString [:-2] + ' '
-            
-            elif testTag == 'h2':
-                myString += self._recursiveGetSpeech(child)
-                myString += '. '
-                if len(myString) > 3:
-                    if myString[-3] == '.':
-                        myString = myString [:-2] + ' '
-                    
-            elif testTag == 'h3':
-                myString += self._recursiveGetSpeech(child)
-                myString += '. '
-                if len(myString) > 3:
-                    if myString[-3] == '.':
-                        myString = myString [:-2] + ' '
-                    
-            elif testTag == 'h4':
-                myString += self._recursiveGetSpeech(child)
-                myString += '. '
-                if len(myString) > 3:
-                    if myString[-3] == '.':
-                        myString = myString [:-2] + ' '
+                    myList.extend(self._recursiveGetSpeech(child))
                         
             elif testTag == 'img':
-                myString += '<someimage>' + child.get('alt')
-                myString += '</someimage>. '
-                if len(myString) > 3:
-                    if myString[-3] == '.':
-                        myString = myString [:-2] + ' '
+                myList.append([child.get('alt'), "image"])
             
             else:
-                myString += self._recursiveGetSpeech(child) + ' '
+                myList.extend(self._recursiveGetSpeech(child))
         
         if element.tail != None:
-            myString += element.tail + ' '
+            myList.append([element.tail, "text"])
             
-        return myString
+        return myList
             
             

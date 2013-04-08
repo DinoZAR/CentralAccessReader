@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\Spen-ZAR\workspace\NiftyProseArticulator\src\forms/mainwindow.ui'
+# Form implementation generated from reading ui file 'W:\Documents\Special Projects\Graffe, Spencer\workspace2\nifty-prose-articulator\src\forms/mainwindow.ui'
 #
-# Created: Thu Mar 07 06:43:51 2013
-#      by: PyQt4 UI code generator 4.9.6
+# Created: Mon Apr 08 09:59:23 2013
+#      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -110,12 +110,9 @@ class Ui_MainWindow(object):
         self.settingsButton.setFlat(True)
         self.settingsButton.setObjectName(_fromUtf8("settingsButton"))
         self.horizontalLayout.addWidget(self.settingsButton)
-        self.lastWordButton = QtGui.QPushButton(self.layoutWidget1)
-        self.lastWordButton.setObjectName(_fromUtf8("lastWordButton"))
-        self.horizontalLayout.addWidget(self.lastWordButton)
-        self.nextWordButton = QtGui.QPushButton(self.layoutWidget1)
-        self.nextWordButton.setObjectName(_fromUtf8("nextWordButton"))
-        self.horizontalLayout.addWidget(self.nextWordButton)
+        self.webInspectorButton = QtGui.QPushButton(self.layoutWidget1)
+        self.webInspectorButton.setObjectName(_fromUtf8("webInspectorButton"))
+        self.horizontalLayout.addWidget(self.webInspectorButton)
         self.gridLayout = QtGui.QGridLayout()
         self.gridLayout.setContentsMargins(6, -1, 6, -1)
         self.gridLayout.setHorizontalSpacing(12)
@@ -148,7 +145,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addLayout(self.gridLayout)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
-        self.horizontalLayout.setStretch(7, 1)
+        self.horizontalLayout.setStretch(6, 1)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.webView = QtWebKit.QWebView(self.layoutWidget1)
         self.webView.setSizeIncrement(QtCore.QSize(1, 1))
@@ -204,8 +201,7 @@ class Ui_MainWindow(object):
         self.pauseButton.setToolTip(_translate("MainWindow", "Stop button", None))
         self.repeatButton.setToolTip(_translate("MainWindow", "Repeat button", None))
         self.settingsButton.setToolTip(_translate("MainWindow", "Settings button", None))
-        self.lastWordButton.setText(_translate("MainWindow", "Last Word", None))
-        self.nextWordButton.setText(_translate("MainWindow", "Next Word", None))
+        self.webInspectorButton.setText(_translate("MainWindow", "Web Inspector", None))
         self.label_2.setText(_translate("MainWindow", "Volume:", None))
         self.rateSlider.setToolTip(_translate("MainWindow", "Words per minute slider", None))
         self.label.setText(_translate("MainWindow", "Rate:", None))

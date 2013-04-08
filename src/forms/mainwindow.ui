@@ -80,7 +80,7 @@
          <number>0</number>
         </property>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,0,0,1">
+         <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,0,1">
           <item>
            <widget class="QPushButton" name="playButton">
             <property name="toolTip">
@@ -180,16 +180,9 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="lastWordButton">
+           <widget class="QPushButton" name="webInspectorButton">
             <property name="text">
-             <string>Last Word</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="nextWordButton">
-            <property name="text">
-             <string>Next Word</string>
+             <string>Web Inspector</string>
             </property>
            </widget>
           </item>

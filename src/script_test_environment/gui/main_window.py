@@ -7,6 +7,7 @@ import os
 
 from PyQt4 import QtGui
 from PyQt4.QtCore import QUrl
+from PyQt4.QtWebKit import QWebInspector, QWebSettings
 
 from src.script_test_environment.forms.mainwindow_ui import Ui_MainWindow
 from src.script_test_environment.script_editor import ScriptEditor
@@ -49,10 +50,16 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.javascriptTabs.tabCloseRequested.connect(self.onTabClose)
         
         self.ui.resetButton.clicked.connect(self.resetDocx)
+        self.ui.inspectorButton.clicked.connect(self.openInspector)
         
         self.ui.run1Button.clicked.connect(self.runScript1)
         self.ui.run2Button.clicked.connect(self.runScript2)
         self.ui.run3Button.clicked.connect(self.runScript3)
+        
+        
+        # For my web inspector
+        self.ui.documentView.settings().setAttribute(QWebSettings.DeveloperExtrasEnabled, True)
+        self.webInspector = QWebInspector()
     
     def newScript(self):
         print 'Adding new script...'
@@ -148,6 +155,10 @@ class MainWindow(QtGui.QMainWindow):
             content = docx.getHtmlAndNavigation(str(self.docxFile))[0]
             baseUrl = QUrl.fromLocalFile(os.path.join(os.getcwd(), '../import'))
             self.ui.documentView.setHtml(content, baseUrl)
+            
+    def openInspector(self, e):
+        self.webInspector.setPage(self.ui.documentView.page())
+        self.webInspector.setVisible(True)
             
     def runScript1(self):
         print 'Running 1:', str(self.ui.commandLine1.text())
