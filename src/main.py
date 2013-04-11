@@ -13,18 +13,12 @@ sys.path.append(os.path.abspath('..'))
 
 from src.gui.main_window import MainWindow
 
-from src import pyttsx
-
 def main():
     
     print 'Starting Nifty Prose Articulator...'
     
-    # Create the TTS engine from pyttsx
-    engine = pyttsx.init()
-    
-    print 'Creating main window...'
     app = QApplication(sys.argv)
-    window = MainWindow(engine)
+    window = MainWindow()
     window.show()
     sys.exit(app.exec_())
 

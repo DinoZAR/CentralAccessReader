@@ -7,7 +7,9 @@ import sys
 import os.path
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt, QUrl, QDir
+from PyQt4 import QtCore
 from PyQt4.QtWebKit import QWebPage, QWebInspector, QWebSettings
+from lxml import etree
 from src.forms.mainwindow_ui import Ui_MainWindow
 from src.gui.settings import Settings
 from src.gui.mathmlcodes_dialog import MathMLCodesDialog
@@ -15,6 +17,7 @@ from src import pyttsx, docx
 from src.mathml.tts import MathTTS
 from src.mathml import pattern_editor
 from src.speech.assigner import Assigner
+from src.speech.worker import SpeechWorker
 from src.gui.bookmarks import BookmarksTreeModel, BookmarkNode
 
 class MainWindow(QtGui.QMainWindow):
@@ -22,45 +25,68 @@ class MainWindow(QtGui.QMainWindow):
     len = 0
     jumped = False
     
-    def __init__(self, ttsEngine, parent=None):
+    # TTS control signals
+    startPlayback = QtCore.pyqtSignal()
+    stopPlayback = QtCore.pyqtSignal()
+    addToQueue = QtCore.pyqtSignal(str, str)
+    
+    changeVolume = QtCore.pyqtSignal(float)
+    changeRate = QtCore.pyqtSignal(int)
+    changeVoice = QtCore.pyqtSignal(str)
+    
+    def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         
         self.ui = Ui_MainWindow()
-        
         self.ui.setupUi(self)
         
-        #self.ui.webView.setUrl(QUrl('tests/test_file.html'))
-        
-        # Set the TTS engine and connect all of its callbacks
-        self.ttsEngine = ttsEngine
-        self.ttsEngine.connect('started-word', self.onWord)
-        
+        # Set the math TTS using the internal pattern database
         self.mathTTS = MathTTS('mathml/parser_pattern_database.txt')
         
-        #sets pyttsx to the currently saved settings in ttsSettings.txt
-        d = open('ttsSettings.txt', 'r+')
-        self.sVol = float(d.readline())
-        self.sRate = float(d.readline())
-        self.sVoice = d.readline()
-        d.close()
-        self.ttsEngine.setProperty('rate', self.sRate)
-        self.ttsEngine.setProperty('volume', self.sVol)
-        self.ttsEngine.setProperty('voice', self.sVoice)
-        self.ui.rateLabel.setText(str(int(self.sRate)))
-        self.ui.volLabel.setText(str(int(self.sVol*100)))
-        self.ui.rateSlider.setValue(self.sRate)
-        self.ui.volumeSlider.setValue(self.sVol* 100)
+        # Reads in the configuration of last session and loads it here
+        configFile = open('configuration.xml', 'r+')
+        configDOM = etree.parse(configFile)
+        configFile.close()
+        
+        self.volume = float(configDOM.xpath('/Configuration/Volume')[0].text)
+        self.rate = int(configDOM.xpath('/Configuration/Rate')[0].text)
+        self.voice = configDOM.xpath('/Configuration/Voice')[0].text
+        if self.voice == None:
+            self.voice = ''
+        
+        print 'Volume:', self.volume
+        print 'Rate:', self.rate
+        print 'Voice:', self.voice
         
         # TTS states
-        self.stop = True
-        self.start = False
-        self.lastElement = ["text", -1, -1]
+        self.stopSpeech = True
+        self.isFirst = False
+        self.lastElement = ['', -1, '', -1]
         self.repeat = False
         self.repeatText = ' '
         
         # This class is used for assigning the different parts of the content
         # to a specific method of how to speak it
         self.assigner = Assigner()
+        
+        # Set up my speech driver and start it
+        self.speechThread = SpeechWorker()
+        
+        self.speechThread.onWord.connect(self.onWord)
+        self.speechThread.onFinish.connect(self.onSpeechFinished)   
+        
+        self.startPlayback.connect(self.speechThread.startPlayback)
+        self.stopPlayback.connect(self.speechThread.stopPlayback)
+        self.addToQueue.connect(self.speechThread.addToQueue)
+        self.changeVolume.connect(self.speechThread.setVolume)
+        self.changeRate.connect(self.speechThread.setRate)
+        self.changeVoice.connect(self.speechThread.setVoice)
+        
+        self.speechThread.start()
+        
+        # Update settings loaded from before so that they affect my newly created
+        # speech thread
+        self.updateSettings()
         
         # This is the tree model used to store our bookmarks
         self.bookmarksModel = BookmarksTreeModel(BookmarkNode(None, 'Something'))
@@ -88,7 +114,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.actionOpen_Pattern_Editor.triggered.connect(self.openPatternEditor)
         self.ui.actionShow_All_MathML.triggered.connect(self.showAllMathML)
         
-        #self.ui.muteButton.clicked.connect(self.muteButton_clicked)
+        # self.ui.muteButton.clicked.connect(self.muteButton_clicked)
         self.ui.volumeSlider.valueChanged.connect(self.volumeSlider_valueChanged)
         
         # For the bookmarks
@@ -96,94 +122,90 @@ class MainWindow(QtGui.QMainWindow):
         
         self.ui.webInspectorButton.clicked.connect(self.showWebInspector)
         
-    def onWord(self, name, location, length):
-        print name, location, length
-        if self.start:
-            self.ui.webView.page().mainFrame().evaluateJavaScript('SetBeginning();')
-            self.start = False
-            self.movedToElement = True
-        else:
-            
-            if name == "text":
-                if name != self.lastElement[0] or (location != self.lastElement[1]):
-                    self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement();')
-            elif name == "math":
-                if name != self.lastElement[0]:
-                    self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement();')
-            elif name == "image":
-                if name != self.lastElement[0]:
-                    self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement();')
-            else:
-                self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement();')
-            
-        # Store what the last element was that was being spoken
-        self.lastElement = [name, location, length]
+    def updateSettings(self):
         
-        if self.stop:
-            #print 'Stopping...'
-            self.repeat = False
-            self.ttsEngine.stop()
-            self.ttsEngine = pyttsx.init()
-            self.stop = False
-            self.ui.webView.page().mainFrame().evaluateJavaScript('ClearHighlight();')
+        # Update speech thread with my stuff
+        self.changeVolume.emit(self.volume)
+        self.changeRate.emit(self.rate)
+        self.changeVoice.emit(self.voice)
+        
+        # Update main window sliders to match
+        self.ui.rateSlider.setValue(self.rate)
+        self.ui.volumeSlider.setValue(int(self.volume * 100))
+        
+        self.ui.rateLabel.setText(str(self.rate))
+        self.ui.volumeLabel.setText(str(int(self.volume * 100)))
+        
+        # Finally, save it all to the configuration file
+        root = etree.Element("Configuration")
+        volumeElem = etree.SubElement(root, 'Volume')
+        volumeElem.text = str(self.volume)
+        rateElem = etree.SubElement(root, 'Rate')
+        rateElem.text = str(self.rate)
+        voiceElem = etree.SubElement(root, 'Voice')
+        voiceElem.text = self.voice
+        
+        configFile = open('configuration.xml', 'w')
+        configFile.write(etree.tostring(root, pretty_print=True))
+        configFile.close()
             
     def playButton_clicked(self):
-        self.loc = 0
-            
-        print unicode(self.ui.webView.selectedHtml(), 'utf-8')
+        
+        # Get list of string output for feeding into my speech
         outputList = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml()))
         
-        self.start = True
-        self.stop = False
-        self.lastElement = ["text", -1, -1]
-        
         for o in outputList:
-            self.ttsEngine.say(text=o[0], name=o[1])
+            self.addToQueue.emit(o[0], o[1])
+        
+        self.ui.webView.page().mainFrame().evaluateJavaScript('SetBeginning()')
+        self.isFirst = True
+        
+        self.startPlayback.emit()
+        
+    def onWord(self, text, location, label, stream):
+        
+        if not self.isFirst:
+            if label == "text":
+                if label != self.lastElement[2] or (location != self.lastElement[1]) or (stream != self.lastElement[3]):
+                    self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement()')
+            elif label == "math":
+                if label != self.lastElement[2]:
+                    self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement()')
+            elif label == "image":
+                if label != self.lastElement[2]:
+                    self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement()')
+            else:
+                self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement()')
+        else:
+            # Do this because the SetBeginning() function highlighted it
+            self.isFirst = False
             
-        self.ttsEngine.runAndWait()
+        # Store what the last element was that was being spoken
+        self.lastElement = [text, location, label, stream]
+        
+    def onSpeechFinished(self):
+        print 'Speech finished.'
+        self.ui.webView.page().mainFrame().evaluateJavaScript('ClearHighlight()');
+        self.isFirst = False
         
     def pauseButton_clicked(self):
-        self.stop = True
+        self.isFirst = False
+        self.stopPlayback.emit()
 
     def muteButton_clicked(self):
-        if self.ttsEngine.getProperty('volume') > 0:
-            self.mVol = self.ttsEngine.getProperty('volume')
-            self.ttsEngine.setProperty('volume', 0.0)
-        else:
-            self.ttsEngine.setProperty('volume',self.mVol)
+        pass
             
     def rateSlider_valueChanged(self, value):
-        self.ttsEngine.setProperty('rate', value)
-        self.ui.rateLabel.setText(str(value))
-        
+        self.rate = value
+        self.updateSettings()
 
     def volumeSlider_valueChanged(self, value):
-        self.ttsEngine.setProperty('volume', value/100)
-        self.ui.volLabel.setText(str(value))
+        self.volume = float(value) / 100.0
+        self.updateSettings()
         
     def settingsButton_clicked(self):
-        f = open('ttsSettings.txt', 'w')
-        self.vol = self.ui.volumeSlider.value()/100.0
-        f.write(str(self.vol))
-        f.write('\n')
-        f.write(str(self.ui.rateSlider.value()))
-        f.write('\n')
-        f.write(str(self.sVoice))
-        f.close()
         dialog = Settings(self.ttsEngine)
         dialog.exec_()
-        d = open('ttsSettings.txt', 'r')
-        self.sVol = float(d.readline())
-        self.sRate = float(d.readline())
-        self.sVoice = d.readline()
-        self.ttsEngine.setProperty('rate', self.sRate)
-        self.ttsEngine.setProperty('volume', self.sVol)
-        self.ttsEngine.setProperty('voice', self.sVoice)
-        self.ui.rateLabel.setText(str(self.sRate))
-        self.ui.volLabel.setText(str(self.sVol*100))
-        self.ui.rateSlider.setValue(self.sRate)
-        self.ui.volumeSlider.setValue(self.sVol* 100)
-        
         
     def repeatButton_clicked(self):
         self.repeat = not self.repeat
@@ -271,6 +293,7 @@ class MainWindow(QtGui.QMainWindow):
         node = index.internalPointer()
         
         # Do the anchor navigation
+        print 'Node anchor id:', node.anchorId
         self.ui.webView.page().mainFrame().evaluateJavaScript('GotoPageAnchor(' + node.anchorId + ');')
         
     def showWebInspector(self, e):

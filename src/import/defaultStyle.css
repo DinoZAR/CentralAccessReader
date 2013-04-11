@@ -52,13 +52,13 @@ max-height: 300px
 
 .mathmlEquation
 {
-color: #B7FF00;
 font-size: 230%;
-text-shadow: 1px 1px 3px #111111;
 }
 
 #npaHighlight
 {
 background-color: #FFFF00;
 color: #000000;
+-webkit-border-radius: 5px;
+padding: 5px;
 }

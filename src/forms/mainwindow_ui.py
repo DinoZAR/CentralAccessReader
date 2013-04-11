@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Documents\Special Projects\Graffe, Spencer\workspace2\nifty-prose-articulator\src\forms/mainwindow.ui'
 #
-# Created: Mon Apr 08 09:59:23 2013
+# Created: Thu Apr 11 16:34:04 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -43,7 +43,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
         self.splitter = QtGui.QSplitter(self.centralwidget)
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
-        self.splitter.setHandleWidth(12)
+        self.splitter.setHandleWidth(15)
         self.splitter.setChildrenCollapsible(False)
         self.splitter.setObjectName(_fromUtf8("splitter"))
         self.layoutWidget = QtGui.QWidget(self.splitter)
@@ -139,9 +139,9 @@ class Ui_MainWindow(object):
         self.rateLabel = QtGui.QLabel(self.layoutWidget1)
         self.rateLabel.setObjectName(_fromUtf8("rateLabel"))
         self.gridLayout.addWidget(self.rateLabel, 0, 1, 1, 1)
-        self.volLabel = QtGui.QLabel(self.layoutWidget1)
-        self.volLabel.setObjectName(_fromUtf8("volLabel"))
-        self.gridLayout.addWidget(self.volLabel, 1, 1, 1, 1)
+        self.volumeLabel = QtGui.QLabel(self.layoutWidget1)
+        self.volumeLabel.setObjectName(_fromUtf8("volumeLabel"))
+        self.gridLayout.addWidget(self.volumeLabel, 1, 1, 1, 1)
         self.horizontalLayout.addLayout(self.gridLayout)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
@@ -207,7 +207,7 @@ class Ui_MainWindow(object):
         self.label.setText(_translate("MainWindow", "Rate:", None))
         self.volumeSlider.setToolTip(_translate("MainWindow", "Volume slider", None))
         self.rateLabel.setText(_translate("MainWindow", "200", None))
-        self.volLabel.setText(_translate("MainWindow", "100", None))
+        self.volumeLabel.setText(_translate("MainWindow", "0", None))
         self.menuMenu.setTitle(_translate("MainWindow", "File", None))
         self.menuMathML.setTitle(_translate("MainWindow", "MathML", None))
         self.menuHelp.setTitle(_translate("MainWindow", "Help", None))

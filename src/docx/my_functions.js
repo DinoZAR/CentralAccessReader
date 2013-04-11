@@ -1,6 +1,6 @@
 // Used in page navigation to move to an anchor point with specific id
 function GotoPageAnchor(anchorName) {
-	element_to_scroll_tasdo = document.getElementById(anchorName);
+	element_to_scroll_to = document.getElementById(anchorName);
 	element_to_scroll_to.scrollIntoView();
 }
 
@@ -24,6 +24,9 @@ function PrintSelection() {
 
 // Sets the beginning to start the speech. It will start at beginning if no selection was made.
 function SetBeginning() {
+
+	console.debug("SetBeginning");
+
 	if (window.getSelection()) {
 		var range = window.getSelection()
 		var startNode = range.anchorNode;
@@ -47,6 +50,8 @@ function SetBeginning() {
 // Move the highlight to the next element that should be highlighted 
 function HighlightNextElement() {
 	
+	console.debug("HighlightNextElement");
+
 	// Get the sibling of the highlight node. It will either be more text or an actual element.
 	var next = highlight.nextSibling;
 	
@@ -77,8 +82,8 @@ function HighlightNextElement() {
 }
 
 // Returns the equation node if node is inside an equation.
-function GetEquation(node) {
-	
+function GetEquation(node) {	
+
 	var myNode = node
 
 	// Check to see if this node is an equation
@@ -98,7 +103,7 @@ function GetEquation(node) {
 
 // Returns a range that has the next word
 function GetNextWord(node, offset) {
-	console.debug("Next node: " + node.nodeName + " " + node.data);
+	console.debug("GetNextWord");
 
 	// See if it is an equation
 	var equation = GetEquation(node);
@@ -110,7 +115,7 @@ function GetNextWord(node, offset) {
 
 	// See if it is an image
 	if (node.nodeName == "IMG") {
-		console.debug("Got an image!");
+		console.debug("Got next image!");
 		var range = document.createRange();
 		range.selectNode(node);
 		return range;
@@ -121,7 +126,14 @@ function GetNextWord(node, offset) {
 		// Check to see if I can find the start of the next word. Otherwise, return null.
 		var nextIndex = node.textContent.substring(offset).search(/\w/);
 		if (nextIndex == -1) {
-			return null;
+			// If I can't find another word, try to find another element
+			var elem = NextElement(node);
+			if (elem == null) {
+				return null;
+			}
+			else {
+				return GetNextWord(elem, 0);
+			}
 		}
 		nextIndex = nextIndex + offset;
 	
@@ -143,6 +155,9 @@ function GetNextWord(node, offset) {
 
 // Clears the highlight of where it was before.
 function ClearHighlight() {
+
+	console.debug("ClearHighlight");
+
 	// Get the contents that I am going to replace the node with
 	var contents = highlight.cloneNode(true);
 
@@ -156,6 +171,7 @@ function ClearHighlight() {
 	
 	// Cleanup the highlight and its reference
 	p.removeChild(highlight);
+	p.normalize();
 	highlight = null;
 }
 

@@ -123,6 +123,7 @@ class SAPI5Driver(object):
                 first = False
             pythoncom.PumpWaitingMessages()
             time.sleep(0.05)
+            
 
     def endLoop(self):
         self._looping = False
