@@ -51,6 +51,28 @@ class SAPIDriver(object):
         '''
         if len(voice) > 0:
             self.voiceId = voice
+            
+    def getVoiceList(self):
+        '''
+        Returns a list of voices using the following format:
+        [description, keyOrId]
+        
+        The keyOrId is what you would use to set the voice later on.
+        '''
+        
+        # Initialize the speech object so I can do stuff with it
+        self.voice = win32com.client.Dispatch('SAPI.SPVoice')
+        
+        sapiVoices = self.voice.GetVoices()
+        
+        myList = []
+        for i in range(sapiVoices.Count):
+            myItem = sapiVoices.Item(i)
+            
+            # For this driver, the key is an SpObjectToken
+            myList.append([myItem.GetDescription(), myItem.Id])
+        
+        return myList
         
     def add(self, text, label):
         self.queue.append([text, label, 0])

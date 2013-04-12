@@ -89,6 +89,9 @@ class SpeechWorker(QThread):
     def setVoice(self, voice):
         self.voice = voice
         self.isChange = True
+        
+    def getVoiceList(self):
+        return self.ttsEngine.getVoiceList()
     
     def addToQueue(self, text, label):
         print 'Adding to queue:', text, ',', label

@@ -13,6 +13,7 @@ from lxml import etree
 from src.forms.mainwindow_ui import Ui_MainWindow
 from src.gui.settings import Settings
 from src.gui.mathmlcodes_dialog import MathMLCodesDialog
+from src.gui.configuration import Configuration
 from src import pyttsx, docx
 from src.mathml.tts import MathTTS
 from src.mathml import pattern_editor
@@ -40,23 +41,17 @@ class MainWindow(QtGui.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         
+        self.connect_signals()
+        
+        # This is the tree model used to store our bookmarks
+        self.bookmarksModel = BookmarksTreeModel(BookmarkNode(None, 'Something'))
+        self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
+        
+        # This is my web inspector for debugging my JavaScript code
+        self.webInspector = QWebInspector()
+        
         # Set the math TTS using the internal pattern database
         self.mathTTS = MathTTS('mathml/parser_pattern_database.txt')
-        
-        # Reads in the configuration of last session and loads it here
-        configFile = open('configuration.xml', 'r+')
-        configDOM = etree.parse(configFile)
-        configFile.close()
-        
-        self.volume = float(configDOM.xpath('/Configuration/Volume')[0].text)
-        self.rate = int(configDOM.xpath('/Configuration/Rate')[0].text)
-        self.voice = configDOM.xpath('/Configuration/Voice')[0].text
-        if self.voice == None:
-            self.voice = ''
-        
-        print 'Volume:', self.volume
-        print 'Rate:', self.rate
-        print 'Voice:', self.voice
         
         # TTS states
         self.stopSpeech = True
@@ -84,18 +79,9 @@ class MainWindow(QtGui.QMainWindow):
         
         self.speechThread.start()
         
-        # Update settings loaded from before so that they affect my newly created
-        # speech thread
-        self.updateSettings()
-        
-        # This is the tree model used to store our bookmarks
-        self.bookmarksModel = BookmarksTreeModel(BookmarkNode(None, 'Something'))
-        self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
-        
-        # This is my web inspector for debugging my JavaScript code
-        self.webInspector = QWebInspector()
-        
-        self.connect_signals()
+        # Load the configuration file
+        self.configuration = Configuration()
+        self.configuration.loadFromFile('configuration.xml')
         
         
     def connect_signals(self):
@@ -125,29 +111,19 @@ class MainWindow(QtGui.QMainWindow):
     def updateSettings(self):
         
         # Update speech thread with my stuff
-        self.changeVolume.emit(self.volume)
-        self.changeRate.emit(self.rate)
-        self.changeVoice.emit(self.voice)
+        self.changeVolume.emit(self.configuration.volume)
+        self.changeRate.emit(self.configuration.rate)
+        self.changeVoice.emit(self.configuration.voice)
         
         # Update main window sliders to match
-        self.ui.rateSlider.setValue(self.rate)
-        self.ui.volumeSlider.setValue(int(self.volume * 100))
+        self.ui.rateSlider.setValue(self.configuration.rate)
+        self.ui.volumeSlider.setValue(int(self.configuration.volume * 100))
         
-        self.ui.rateLabel.setText(str(self.rate))
-        self.ui.volumeLabel.setText(str(int(self.volume * 100)))
+        self.ui.rateLabel.setText(str(self.configuration.rate))
+        self.ui.volumeLabel.setText(str(int(self.configuration.volume * 100)))
         
-        # Finally, save it all to the configuration file
-        root = etree.Element("Configuration")
-        volumeElem = etree.SubElement(root, 'Volume')
-        volumeElem.text = str(self.volume)
-        rateElem = etree.SubElement(root, 'Rate')
-        rateElem.text = str(self.rate)
-        voiceElem = etree.SubElement(root, 'Voice')
-        voiceElem.text = self.voice
-        
-        configFile = open('configuration.xml', 'w')
-        configFile.write(etree.tostring(root, pretty_print=True))
-        configFile.close()
+        # Finally, save it all to file
+        self.configuration.saveToFile('configuration.xml')
             
     def playButton_clicked(self):
         
@@ -196,16 +172,17 @@ class MainWindow(QtGui.QMainWindow):
         pass
             
     def rateSlider_valueChanged(self, value):
-        self.rate = value
+        self.configuration.rate = value
         self.updateSettings()
 
     def volumeSlider_valueChanged(self, value):
-        self.volume = float(value) / 100.0
+        self.configuration.volume = float(value) / 100.0
         self.updateSettings()
         
     def settingsButton_clicked(self):
-        dialog = Settings(self.ttsEngine)
+        dialog = Settings(self)
         dialog.exec_()
+        self.configuration.loadFromFile('configuration.xml')
         
     def repeatButton_clicked(self):
         self.repeat = not self.repeat

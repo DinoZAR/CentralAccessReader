@@ -208,7 +208,7 @@
              <widget class="QSlider" name="rateSlider">
               <property name="minimumSize">
                <size>
-                <width>160</width>
+                <width>201</width>
                 <height>0</height>
                </size>
               </property>
@@ -237,7 +237,7 @@
              <widget class="QSlider" name="volumeSlider">
               <property name="minimumSize">
                <size>
-                <width>160</width>
+                <width>201</width>
                 <height>0</height>
                </size>
               </property>

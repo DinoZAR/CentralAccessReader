@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'W:\Documents\Special Projects\Graffe, Spencer\workspace2\nifty-prose-articulator\src\forms/mainwindow.ui'
+# Form implementation generated from reading ui file 'W:\Documents\Special Projects\Graffe, Spencer\workspace2\another\src\forms/mainwindow.ui'
 #
-# Created: Thu Apr 11 16:34:04 2013
+# Created: Fri Apr 12 09:07:13 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -121,7 +121,7 @@ class Ui_MainWindow(object):
         self.label_2.setObjectName(_fromUtf8("label_2"))
         self.gridLayout.addWidget(self.label_2, 1, 0, 1, 1)
         self.rateSlider = QtGui.QSlider(self.layoutWidget1)
-        self.rateSlider.setMinimumSize(QtCore.QSize(160, 0))
+        self.rateSlider.setMinimumSize(QtCore.QSize(201, 0))
         self.rateSlider.setMinimum(100)
         self.rateSlider.setMaximum(300)
         self.rateSlider.setOrientation(QtCore.Qt.Horizontal)
@@ -131,7 +131,7 @@ class Ui_MainWindow(object):
         self.label.setObjectName(_fromUtf8("label"))
         self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
         self.volumeSlider = QtGui.QSlider(self.layoutWidget1)
-        self.volumeSlider.setMinimumSize(QtCore.QSize(160, 0))
+        self.volumeSlider.setMinimumSize(QtCore.QSize(201, 0))
         self.volumeSlider.setMaximum(100)
         self.volumeSlider.setOrientation(QtCore.Qt.Horizontal)
         self.volumeSlider.setObjectName(_fromUtf8("volumeSlider"))
