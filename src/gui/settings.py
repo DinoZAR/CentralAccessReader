@@ -43,6 +43,8 @@ class Settings(QtGui.QDialog):
         self.ui.restoreButton.clicked.connect(self.restoreButton_clicked)
         self.ui.comboBox.currentIndexChanged.connect(self.comboBox_currentIndexChanged)
         
+        self.ui.contentTextButton.clicked.connect(self.contentTextButton_clicked)
+        self.ui.contentBackgroundButton.clicked.connect(self.contentBackgroundButton_clicked)
         self.ui.highlighterTextButton.clicked.connect(self.highlighterTextButton_clicked)
         self.ui.highlighterBackgroundButton.clicked.connect(self.highlighterBackgroundButton_clicked)
         
@@ -60,6 +62,8 @@ class Settings(QtGui.QDialog):
         self.ui.volumeLabel.setText(str(int(self.configuration.volume * 100)))
         
         # Update the color boxes
+        self.setButtonColor(self.ui.contentTextButton, self.configuration.color_contentText)
+        self.setButtonColor(self.ui.contentBackgroundButton, self.configuration.color_contentBackground)
         self.setButtonColor(self.ui.highlighterTextButton, self.configuration.color_highlightText)
         self.setButtonColor(self.ui.highlighterBackgroundButton, self.configuration.color_highlightBackground)
         
@@ -67,6 +71,7 @@ class Settings(QtGui.QDialog):
     def applyButton_clicked(self):
         self.beforeConfiguration = copy.deepcopy(self.configuration)
         self.configuration.saveToFile('configuration.xml')
+        self.mainWindow.refreshDocument()
         
     def restoreButton_clicked(self):
         self.configuration = copy.deepcopy(self.beforeConfiguration)
@@ -88,7 +93,15 @@ class Settings(QtGui.QDialog):
         myText = self.ui.testSpeechText.toPlainText()
         self.mainWindow.addToQueue.emit(myText, 'text')
         self.mainWindow.startPlayback.emit()
-        
+    
+    def contentTextButton_clicked(self):
+        self.configuration.color_contentText = QtGui.QColorDialog.getColor()
+        self.updateSettings()
+    
+    def contentBackgroundButton_clicked(self):
+        self.configuration.color_contentBackground = QtGui.QColorDialog.getColor()
+        self.updateSettings()
+    
     def highlighterTextButton_clicked(self):
         self.configuration.color_highlightText = QtGui.QColorDialog.getColor()
         self.updateSettings()

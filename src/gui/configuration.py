@@ -22,6 +22,9 @@ class Configuration(object):
         self.voice = ''
         
         # Color settings
+        self.color_contentText = QColor(255,255,255)
+        self.color_contentBackground = QColor(10,10,10)
+        
         self.color_highlightText = QColor(0,0,0)
         self.color_highlightBackground = QColor(255,255,0)
     
@@ -39,6 +42,9 @@ class Configuration(object):
             self.voice = ''
         
         # Color Settings
+        self.color_contentText = self._createQColorFromCommaSeparated(configDOM.xpath('/Configuration/Colors/ContentText')[0].text)
+        self.color_contentBackground = self._createQColorFromCommaSeparated(configDOM.xpath('/Configuration/Colors/ContentBackground')[0].text)
+        
         self.color_highlightText = self._createQColorFromCommaSeparated(configDOM.xpath('/Configuration/Colors/HighlightText')[0].text)
         self.color_highlightBackground = self._createQColorFromCommaSeparated(configDOM.xpath('/Configuration/Colors/HighlightBackground')[0].text)
         
@@ -55,6 +61,10 @@ class Configuration(object):
         
         # Color Settings
         colorRoot = etree.SubElement(root, 'Colors')
+        elem = etree.SubElement(colorRoot, 'ContentText')
+        elem.text = self._createCommaSeparatedFromQColor(self.color_contentText)
+        elem = etree.SubElement(colorRoot, 'ContentBackground')
+        elem.text = self._createCommaSeparatedFromQColor(self.color_contentBackground)
         elem = etree.SubElement(colorRoot, 'HighlightText')
         elem.text = self._createCommaSeparatedFromQColor(self.color_highlightText)
         elem = etree.SubElement(colorRoot, 'HighlightBackground')
@@ -86,14 +96,14 @@ class Configuration(object):
         
         outtext = '''body
 {
-background: #333333;
-color: #F3F3F3;
+background: ''' + self._createRGBStringFromQColor(self.color_contentBackground) + ''';
+color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
 font-size: 14pt;
 }
 
 h1
 {
-color: #EEEEEE;
+color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
 text-align: center;
 text-shadow: 2px 2px 5px #111111;
 font-size: 42pt;
@@ -101,7 +111,7 @@ font-size: 42pt;
 
 h2
 {
-color: #EEEEEE;
+color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
 text-shadow: 2px 2px 5px #111111;
 border-style: dashed;
 border-width: 0px 0px 1px 0px;
@@ -112,7 +122,7 @@ font-size: 30pt;
 
 h3
 {
-color: #EEEEEE;
+color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
 text-shadow: 2px 2px 5px #111111;
 font-size: 25pt;
 padding: 10px;
@@ -120,14 +130,14 @@ padding: 10px;
 
 h4
 {
-color: #EEEEEE;
+color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
 text-shadow: 2px 2px 5px #111111;
 font-size: 20pt;
 }
 
 p
 {
-color: white;
+color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
 }
 
 img

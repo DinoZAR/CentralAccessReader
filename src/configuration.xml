@@ -1,9 +1,12 @@
 <Configuration>
   <Volume>1.0</Volume>
-  <Rate>201</Rate>
+  <Rate>200</Rate>
   <Voice>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\MS-Anna-1033-20-DSK</Voice>
+  <EnableHighlighter>1</EnableHighlighter>
   <Colors>
-    <HighlightText>0,0,0</HighlightText>
-    <HighlightBackground>255,255,0</HighlightBackground>
+    <ContentText>229,229,229</ContentText>
+    <ContentBackground>35,35,35</ContentBackground>
+    <HighlightText>255,255,255</HighlightText>
+    <HighlightBackground>0,170,255</HighlightBackground>
   </Colors>
 </Configuration>

@@ -82,6 +82,10 @@ class MainWindow(QtGui.QMainWindow):
         # Load the configuration file
         self.configuration = Configuration()
         self.configuration.loadFromFile('configuration.xml')
+        self.updateSettings()
+        
+        # Used for refreshing the document later to make changes
+        self.lastDocumentFilePath = ''
         
         
     def connect_signals(self):
@@ -105,8 +109,6 @@ class MainWindow(QtGui.QMainWindow):
         
         # For the bookmarks
         self.ui.bookmarksTreeView.clicked.connect(self.bookmarksTree_clicked)
-        
-        self.ui.webInspectorButton.clicked.connect(self.showWebInspector)
         
     def updateSettings(self):
         
@@ -245,6 +247,8 @@ class MainWindow(QtGui.QMainWindow):
             self.bookmarksModel = BookmarksTreeModel(docxHtml[1])
             self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
             
+            self.lastDocumentFilePath = filePath
+            
     def quit(self):
         self.close()
         
@@ -273,7 +277,20 @@ class MainWindow(QtGui.QMainWindow):
         print 'Node anchor id:', node.anchorId
         self.ui.webView.page().mainFrame().evaluateJavaScript('GotoPageAnchor(' + node.anchorId + ');')
         
-    def showWebInspector(self, e):
-        self.ui.webView.settings().setAttribute(QWebSettings.DeveloperExtrasEnabled, True)
-        self.webInspector.setPage(self.ui.webView.page())
-        self.webInspector.show()
+    def refreshDocument(self):
+        if len(self.lastDocumentFilePath) > 0:
+            url = os.path.join(os.getcwd(), 'import')
+            baseUrl = QUrl.fromLocalFile(url)
+            
+            docxHtml = docx.getHtmlAndNavigation(str(self.lastDocumentFilePath))
+            
+            self.assigner.prepare(docxHtml[0])
+            
+            # Clear all of the caches
+            QWebSettings.clearMemoryCaches()
+            
+            self.ui.webView.setHtml(docxHtml[0], baseUrl)
+            
+            # Set the root bookmark for the tree model
+            self.bookmarksModel = BookmarksTreeModel(docxHtml[1])
+            self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
