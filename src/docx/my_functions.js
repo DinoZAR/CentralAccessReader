@@ -8,7 +8,8 @@ function GotoPageAnchor(anchorName) {
 // HIGHLIGHTING FUNCTIONS
 // ---------------------------------------------------------------------------
 
-var highlight; // The highlighter element that has the highlighted content.
+var highlight; // The highlighter element that has the highlighted content.
+var highlightLine; // The highlighter element that has the whole line that will be highlighted
 
 function PrintSelection() {
 	if (window.getSelection()) {
@@ -53,6 +54,7 @@ function HighlightNextElement() {
 	console.debug("HighlightNextElement");
 
 	// Get the sibling of the highlight node. It will either be more text or an actual element.
+	ClearLineHighlight();
 	var next = highlight.nextSibling;
 	
 	if (next != null) {
@@ -158,21 +160,29 @@ function ClearHighlight() {
 
 	console.debug("ClearHighlight");
 
-	// Get the contents that I am going to replace the node with
-	var contents = highlight.cloneNode(true);
-
 	// Replace the highlight node with my contents
 	var p = highlight.parentNode;
 	
-	// Insert everything in the contents before the highlight position
-	for  (i = 0; i < contents.childNodes.length; i++) {
-		p.insertBefore(contents.childNodes[i], highlight);
-	}
+	InsertAllChildNodes(p, highlight);
 	
 	// Cleanup the highlight and its reference
 	p.removeChild(highlight);
 	p.normalize();
 	highlight = null;
+}
+
+// Clears the line highlight
+function ClearLineHighlight() {
+
+	console.debug("ClearLineHighlight");
+	
+	var p = highlightLine.parentNode;
+	
+	InsertAllChildNodes(p, highlightLine);
+
+	p.removeChild(highlightLine);
+	p.normalize();
+	highlightLine = null;
 }
 
 // Given a Range object, this will clean up any previous highlight and create a highlight
@@ -182,6 +192,10 @@ function SetHighlight(range) {
 	if (highlight != null) {
 		ClearHighlight();
 	}
+
+	if (highlightLine != null) {
+		ClearLineHighlight();
+	}
 	
 	highlight = document.createElement("span");
 	highlight.setAttribute("id", "npaHighlight");
@@ -190,11 +204,143 @@ function SetHighlight(range) {
 	highlight.appendChild(contents);
 	
 	range.insertNode(highlight);
+
+	SetLineHighlight();
+}
+
+// This function will set the line highlight to surround that particular range.
+// It will highlight all the way to the previous sentence end to the next
+// sentence end, or just the node if there are no sentences.
+function SetLineHighlight() {
+
+	highlightLine = document.createElement("span");
+	highlightLine.setAttribute("id", "npaHighlightLine");
+	
+	// Adjust beginning of range so that it arrives at the end of previous sentence, or just 
+	// the beginning of the first child node.
+	var startNode = highlight;
+	var startOffset = 0;
+	
+	var done = false;
+
+	while (!done) {
+		if (startNode.nodeName == "#text") {
+			console.debug("Searching inside text node...");
+			
+			var lastEnd = -1;
+			var patt = /[.!\?]\s/g;
+			while (patt.test(startNode.textContent) == true) {
+				lastEnd = patt.lastIndex;
+			}
+			if (lastEnd == -1) {
+				console.debug("Couldn't find end of last sentence!");
+				// Check if there are more nodes before this
+				var prev = startNode.previousSibling;
+				if (prev != null) {
+					startNode = prev;
+					startOffset = 0;
+				}
+				else {
+					done = true;
+				}
+			}
+			else {
+				console.debug("Got an end of last sentence! " + lastEnd.toString());
+				startOffset = lastEnd - 1;  // Subtracting 1 to ignore the space
+				done = true;
+			}
+		}
+		else {
+			var prev = startNode.previousSibling;
+			if (prev != null) {
+				startNode = prev;
+				startOffset = 0;
+			}
+			else {
+				done = true;
+			}
+		}
+	}
+	
+	console.debug("Start Node: " + startNode.nodeName + " Start Offset: " + startOffset.toString());
+
+	// Set the end index
+	// Adjust beginning of range so that it arrives at the end of previous sentence, or just 
+	// the beginning of the first child node.
+	var endNode = highlight;
+	var endOffset = 0;
+	
+	done = false;
+
+	while (!done) {
+		if (endNode.nodeName == "#text") {
+			console.debug("Searching inside text node...");
+			
+			var lastEnd = -1;
+			var patt = /[.!\?]\s/g;
+			if (patt.test(endNode.textContent) == true) {
+				lastEnd = patt.lastIndex;
+			}
+			if (lastEnd == -1) {
+				console.debug("Couldn't find end of next sentence!");
+				// Check if there are more nodes before this
+				var next = endNode.nextSibling;
+				if (next != null) {
+					endNode = next;
+					endOffset = 0;
+				}
+				else {
+					endOffset = endNode.textContent.length;
+					done = true;
+				}
+			}
+			else {
+				console.debug("Got an end of next sentence! " + lastEnd.toString());
+				endOffset = lastEnd;
+				done = true;
+			}
+		}
+		else {
+			var next = endNode.nextSibling;
+			if (next != null) {
+				endNode = next;
+				endOffset = 0;
+			}
+			else {
+				endOffset = endNode.textContent.length;
+				done = true;
+			}
+		}
+	}
+	
+	console.debug("End Node: " + endNode.nodeName + " End Offset: " + endOffset.toString());
+
+
+	// Create the range for my highlighter line thing
+	var range = document.createRange();
+	range.setStart(startNode, startOffset);
+	range.setEnd(endNode, endOffset);
+	
+	var contents = range.extractContents();
+	highlightLine.appendChild(contents);
+
+	range.insertNode(highlightLine);
+
 }
 
 // --------------------------------------------------------------------------------------------------
 // GENERAL UTILITY FUNCTIONS
 // --------------------------------------------------------------------------------------------------
+
+function InsertAllChildNodes(parent, node) {
+	var contents = node.cloneNode(true);
+
+	for (i = 0; i < contents.childNodes.length; i++) {
+		console.debug("Inserting node: " + contents.childNodes[i].nodeName);
+		console.debug(contents.childNodes[i].textContent);
+		parent.insertBefore(contents.childNodes[i], node);
+	}
+}
 
 function NextElement(elem) {
 	var next = elem.nextSibling;

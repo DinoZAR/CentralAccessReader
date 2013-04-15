@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'W:\Documents\Special Projects\Graffe, Spencer\workspace2\nifty-prose-articulator\src\script_test_environment\forms/mainwindow.ui'
+# Form implementation generated from reading ui file 'W:\Documents\Special Projects\Graffe, Spencer\workspace2\another\src\script_test_environment\forms/mainwindow.ui'
 #
-# Created: Mon Apr 08 09:11:54 2013
+# Created: Mon Apr 15 10:36:01 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,15 +26,13 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(776, 710)
+        MainWindow.resize(904, 824)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.centralwidget)
-        self.verticalLayout_3.setSpacing(0)
-        self.verticalLayout_3.setMargin(0)
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
         self.splitter = QtGui.QSplitter(self.centralwidget)
-        self.splitter.setOrientation(QtCore.Qt.Vertical)
+        self.splitter.setOrientation(QtCore.Qt.Horizontal)
         self.splitter.setHandleWidth(15)
         self.splitter.setObjectName(_fromUtf8("splitter"))
         self.layoutWidget = QtGui.QWidget(self.splitter)
@@ -115,7 +113,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.addWidget(self.splitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 776, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 904, 21))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))

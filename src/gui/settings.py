@@ -47,6 +47,9 @@ class Settings(QtGui.QDialog):
         self.ui.contentBackgroundButton.clicked.connect(self.contentBackgroundButton_clicked)
         self.ui.highlighterTextButton.clicked.connect(self.highlighterTextButton_clicked)
         self.ui.highlighterBackgroundButton.clicked.connect(self.highlighterBackgroundButton_clicked)
+        self.ui.enableHighlightCheckbox.clicked.connect(self.enableHighlightCheckBox_clicked)
+        self.ui.highlighterLineTextButton.clicked.connect(self.highlighterLineTextButton_clicked)
+        self.ui.highlighterLineBackgroundButton.clicked.connect(self.highlighterLineBackgroundButton_clicked)
         
     def updateSettings(self):
         # Update speech thread with my stuff
@@ -66,6 +69,14 @@ class Settings(QtGui.QDialog):
         self.setButtonColor(self.ui.contentBackgroundButton, self.configuration.color_contentBackground)
         self.setButtonColor(self.ui.highlighterTextButton, self.configuration.color_highlightText)
         self.setButtonColor(self.ui.highlighterBackgroundButton, self.configuration.color_highlightBackground)
+        self.setButtonColor(self.ui.highlighterLineTextButton, self.configuration.color_highlightLineText)
+        self.setButtonColor(self.ui.highlighterLineBackgroundButton, self.configuration.color_highlightLineBackground)
+        
+        # Update the checkboxes
+        if self.configuration.highlight_enable:
+            self.ui.enableHighlightCheckbox.setCheckState(Qt.Checked)
+        else:
+            self.ui.enableHighlightCheckbox.setCheckState(Qt.Unchecked)
         
 
     def applyButton_clicked(self):
@@ -95,19 +106,39 @@ class Settings(QtGui.QDialog):
         self.mainWindow.startPlayback.emit()
     
     def contentTextButton_clicked(self):
-        self.configuration.color_contentText = QtGui.QColorDialog.getColor()
+        self.configuration.color_contentText = QtGui.QColorDialog.getColor(initial=self.configuration.color_contentText)
         self.updateSettings()
     
     def contentBackgroundButton_clicked(self):
-        self.configuration.color_contentBackground = QtGui.QColorDialog.getColor()
+        self.configuration.color_contentBackground = QtGui.QColorDialog.getColor(initial=self.configuration.color_contentBackground)
         self.updateSettings()
     
     def highlighterTextButton_clicked(self):
-        self.configuration.color_highlightText = QtGui.QColorDialog.getColor()
+        self.configuration.color_highlightText = QtGui.QColorDialog.getColor(initial=self.configuration.color_highlightText)
         self.updateSettings()
         
     def highlighterBackgroundButton_clicked(self):
-        self.configuration.color_highlightBackground = QtGui.QColorDialog.getColor()
+        self.configuration.color_highlightBackground = QtGui.QColorDialog.getColor(initial=self.configuration.color_highlightBackground)
+        self.updateSettings()
+        
+    def enableHighlightCheckBox_clicked(self):
+        state = self.ui.enableHighlightCheckbox.checkState()
+        
+        if state == Qt.Checked:
+            print 'Checkbox is checked!'
+            self.configuration.highlight_enable = True
+        else:
+            print 'Not checked...'
+            self.configuration.highlight_enable = False
+            
+        self.updateSettings()
+        
+    def highlighterLineTextButton_clicked(self):
+        self.configuration.color_highlightLineText = QtGui.QColorDialog.getColor(initial=self.configuration.color_highlightLineText)
+        self.updateSettings()
+        
+    def highlighterLineBackgroundButton_clicked(self):
+        self.configuration.color_highlightLineBackground = QtGui.QColorDialog.getColor(initial=self.configuration.color_highlightLineBackground)
         self.updateSettings()
         
     def setButtonColor(self, button, color):

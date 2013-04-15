@@ -96,7 +96,6 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.playButton.clicked.connect(self.playButton_clicked)
         self.ui.pauseButton.clicked.connect(self.pauseButton_clicked)
         self.ui.settingsButton.clicked.connect(self.settingsButton_clicked)
-        self.ui.rateSlider.valueChanged.connect(self.rateSlider_valueChanged)
         self.ui.repeatButton.clicked.connect(self.repeatButton_clicked)
         self.ui.actionOpen_HTML.triggered.connect(self.openHTML)
         self.ui.actionOpen_Docx.triggered.connect(self.openDocx)
@@ -104,8 +103,8 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.actionOpen_Pattern_Editor.triggered.connect(self.openPatternEditor)
         self.ui.actionShow_All_MathML.triggered.connect(self.showAllMathML)
         
-        # self.ui.muteButton.clicked.connect(self.muteButton_clicked)
         self.ui.volumeSlider.valueChanged.connect(self.volumeSlider_valueChanged)
+        self.ui.rateSlider.valueChanged.connect(self.rateSlider_valueChanged)
         
         # For the bookmarks
         self.ui.bookmarksTreeView.clicked.connect(self.bookmarksTree_clicked)
@@ -135,28 +134,30 @@ class MainWindow(QtGui.QMainWindow):
         for o in outputList:
             self.addToQueue.emit(o[0], o[1])
         
-        self.ui.webView.page().mainFrame().evaluateJavaScript('SetBeginning()')
-        self.isFirst = True
+        if self.configuration.highlight_enable:
+            self.ui.webView.page().mainFrame().evaluateJavaScript('SetBeginning()')
+            self.isFirst = True
         
         self.startPlayback.emit()
         
     def onWord(self, text, location, label, stream):
         
-        if not self.isFirst:
-            if label == "text":
-                if label != self.lastElement[2] or (location != self.lastElement[1]) or (stream != self.lastElement[3]):
-                    self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement()')
-            elif label == "math":
-                if label != self.lastElement[2]:
-                    self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement()')
-            elif label == "image":
-                if label != self.lastElement[2]:
+        if self.configuration.highlight_enable:
+            if not self.isFirst:
+                if label == "text":
+                    if label != self.lastElement[2] or (location != self.lastElement[1]) or (stream != self.lastElement[3]):
+                        self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement()')
+                elif label == "math":
+                    if label != self.lastElement[2]:
+                        self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement()')
+                elif label == "image":
+                    if label != self.lastElement[2]:
+                        self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement()')
+                else:
                     self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement()')
             else:
-                self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement()')
-        else:
-            # Do this because the SetBeginning() function highlighted it
-            self.isFirst = False
+                # Do this because the SetBeginning() function highlighted it
+                self.isFirst = False
             
         # Store what the last element was that was being spoken
         self.lastElement = [text, location, label, stream]
@@ -216,8 +217,6 @@ class MainWindow(QtGui.QMainWindow):
             
         else:
             self.stop = True
-        
-            
             
     def openHTML(self):
         fileName = QtGui.QFileDialog.getOpenFileName(self, 'Open HTML','./tests','(*.html)')

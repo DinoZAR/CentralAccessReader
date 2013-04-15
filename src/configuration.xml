@@ -4,9 +4,11 @@
   <Voice>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\MS-Anna-1033-20-DSK</Voice>
   <EnableHighlighter>1</EnableHighlighter>
   <Colors>
-    <ContentText>229,229,229</ContentText>
-    <ContentBackground>35,35,35</ContentBackground>
+    <ContentText>0,0,0</ContentText>
+    <ContentBackground>244,244,244</ContentBackground>
     <HighlightText>255,255,255</HighlightText>
-    <HighlightBackground>0,170,255</HighlightBackground>
+    <HighlightBackground>11,104,255</HighlightBackground>
+    <HighlightLineText>255,255,255</HighlightLineText>
+    <HighlightLineBackground>0,170,0</HighlightLineBackground>
   </Colors>
 </Configuration>

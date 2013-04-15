@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Documents\Special Projects\Graffe, Spencer\workspace2\another\src\forms/mainwindow.ui'
 #
-# Created: Fri Apr 12 09:07:13 2013
+# Created: Fri Apr 12 15:43:31 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -28,7 +28,7 @@ class Ui_MainWindow(object):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.resize(1075, 773)
         font = QtGui.QFont()
-        font.setPointSize(14)
+        font.setPointSize(12)
         MainWindow.setFont(font)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8("../icons/cwuLogo.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -56,9 +56,6 @@ class Ui_MainWindow(object):
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.verticalLayout_2.addWidget(self.label_3)
         self.bookmarksTreeView = QtGui.QTreeView(self.layoutWidget)
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.bookmarksTreeView.setFont(font)
         self.bookmarksTreeView.setHeaderHidden(True)
         self.bookmarksTreeView.setObjectName(_fromUtf8("bookmarksTreeView"))
         self.verticalLayout_2.addWidget(self.bookmarksTreeView)
@@ -110,9 +107,6 @@ class Ui_MainWindow(object):
         self.settingsButton.setFlat(True)
         self.settingsButton.setObjectName(_fromUtf8("settingsButton"))
         self.horizontalLayout.addWidget(self.settingsButton)
-        self.webInspectorButton = QtGui.QPushButton(self.layoutWidget1)
-        self.webInspectorButton.setObjectName(_fromUtf8("webInspectorButton"))
-        self.horizontalLayout.addWidget(self.webInspectorButton)
         self.gridLayout = QtGui.QGridLayout()
         self.gridLayout.setContentsMargins(6, -1, 6, -1)
         self.gridLayout.setHorizontalSpacing(12)
@@ -145,7 +139,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addLayout(self.gridLayout)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
-        self.horizontalLayout.setStretch(6, 1)
+        self.horizontalLayout.setStretch(5, 1)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.webView = QtWebKit.QWebView(self.layoutWidget1)
         self.webView.setSizeIncrement(QtCore.QSize(1, 1))
@@ -156,14 +150,12 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.addWidget(self.splitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1075, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1075, 27))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuMenu = QtGui.QMenu(self.menubar)
         self.menuMenu.setObjectName(_fromUtf8("menuMenu"))
         self.menuMathML = QtGui.QMenu(self.menubar)
         self.menuMathML.setObjectName(_fromUtf8("menuMathML"))
-        self.menuHelp = QtGui.QMenu(self.menubar)
-        self.menuHelp.setObjectName(_fromUtf8("menuHelp"))
         MainWindow.setMenuBar(self.menubar)
         self.actionOpen_Docx = QtGui.QAction(MainWindow)
         self.actionOpen_Docx.setObjectName(_fromUtf8("actionOpen_Docx"))
@@ -185,11 +177,8 @@ class Ui_MainWindow(object):
         self.menuMenu.addAction(self.actionQuit)
         self.menuMathML.addAction(self.actionOpen_Pattern_Editor)
         self.menuMathML.addAction(self.actionShow_All_MathML)
-        self.menuHelp.addAction(self.actionManual)
-        self.menuHelp.addAction(self.actionAbout)
         self.menubar.addAction(self.menuMenu.menuAction())
         self.menubar.addAction(self.menuMathML.menuAction())
-        self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -201,7 +190,6 @@ class Ui_MainWindow(object):
         self.pauseButton.setToolTip(_translate("MainWindow", "Stop button", None))
         self.repeatButton.setToolTip(_translate("MainWindow", "Repeat button", None))
         self.settingsButton.setToolTip(_translate("MainWindow", "Settings button", None))
-        self.webInspectorButton.setText(_translate("MainWindow", "Web Inspector", None))
         self.label_2.setText(_translate("MainWindow", "Volume:", None))
         self.rateSlider.setToolTip(_translate("MainWindow", "Words per minute slider", None))
         self.label.setText(_translate("MainWindow", "Rate:", None))
@@ -210,7 +198,6 @@ class Ui_MainWindow(object):
         self.volumeLabel.setText(_translate("MainWindow", "0", None))
         self.menuMenu.setTitle(_translate("MainWindow", "File", None))
         self.menuMathML.setTitle(_translate("MainWindow", "MathML", None))
-        self.menuHelp.setTitle(_translate("MainWindow", "Help", None))
         self.actionOpen_Docx.setText(_translate("MainWindow", "Open Docx", None))
         self.actionOpen_Docx.setShortcut(_translate("MainWindow", "Ctrl+O", None))
         self.actionOpen_HTML.setText(_translate("MainWindow", "Open HTML", None))
