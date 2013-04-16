@@ -164,7 +164,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def onSpeechFinished(self):
         print 'Speech finished.'
-        self.ui.webView.page().mainFrame().evaluateJavaScript('ClearHighlight()');
+        self.ui.webView.page().mainFrame().evaluateJavaScript('ClearAllHighlights()');
         self.isFirst = False
         
     def pauseButton_clicked(self):
@@ -186,6 +186,7 @@ class MainWindow(QtGui.QMainWindow):
         dialog = Settings(self)
         dialog.exec_()
         self.configuration.loadFromFile('configuration.xml')
+        self.updateSettings()
         
     def repeatButton_clicked(self):
         self.repeat = not self.repeat
@@ -219,7 +220,7 @@ class MainWindow(QtGui.QMainWindow):
             self.stop = True
             
     def openHTML(self):
-        fileName = QtGui.QFileDialog.getOpenFileName(self, 'Open HTML','./tests','(*.html)')
+        fileName = QtGui.QFileDialog.getOpenFileName(self, 'Open HTML...','./tests','(*.html)')
         f = open(fileName, 'r')
         content = f.read()
         f.close()
@@ -231,7 +232,7 @@ class MainWindow(QtGui.QMainWindow):
         savePath = os.path.dirname(os.path.realpath(__file__))
         savePath = savePath.replace('\\','/')
         savePath = str(savePath).rsplit('/',1).pop(0) + '/tests/'
-        filePath = QtGui.QFileDialog.getOpenFileName(self, 'Open HTML','./tests','(*.docx)')
+        filePath = QtGui.QFileDialog.getOpenFileName(self, 'Open Docx...','./tests','(*.docx)')
         
         if len(filePath) > 0:
             url = os.path.join(os.getcwd(), 'import')

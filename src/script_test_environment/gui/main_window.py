@@ -71,7 +71,7 @@ class MainWindow(QtGui.QMainWindow):
         
         dir = os.path.normpath(os.path.join(os.getcwd(), '../tests'))
         
-        newFile = QtGui.QFileDialog.getOpenFileName(caption='Open Docx...', directory=dir)
+        newFile = QtGui.QFileDialog.getOpenFileName(caption='Open Docx...', directory=dir, filter='(*.docx)')
         if len(newFile) > 0:
             self.docxFile = str(newFile)
             url = os.path.join(os.getcwd(), '../import')

@@ -33,6 +33,9 @@ class Configuration(object):
         
         self.color_highlightLineText = QColor(0,0,0)
         self.color_highlightLineBackground = QColor(0,0,0)
+        
+        # Font settings
+        
     
     def loadFromFile(self, filePath):
         
@@ -182,8 +185,6 @@ font-size: 230%;
 background-color: ''' + self._createRGBStringFromQColor(self.color_highlightLineBackground) + ''';
 color: ''' + self._createRGBStringFromQColor(self.color_highlightLineText) + ''';
 -webkit-border-radius: 5px;
-padding: 5px;
-
 }
 
 #npaHighlight
@@ -191,7 +192,7 @@ padding: 5px;
 background-color: ''' + self._createRGBStringFromQColor(self.color_highlightBackground) + ''';
 color: ''' + self._createRGBStringFromQColor(self.color_highlightText) + ''';
 -webkit-border-radius: 5px;
-padding: 5px;
+display: inline-block;
 }'''
         # -------------------------------------------
         # END CSS FILE

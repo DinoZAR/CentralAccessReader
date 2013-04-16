@@ -4,7 +4,7 @@ Created on Jan 21, 2013
 @author: Spencer
 '''
 from PyQt4 import QtGui
-from PyQt4.QtCore import Qt, QUrl
+from PyQt4.QtCore import Qt, QUrl, QVariant
 from src.forms.settings_ui import Ui_Settings
 from lxml import etree
 import copy
@@ -29,6 +29,16 @@ class Settings(QtGui.QDialog):
             self.ui.comboBox.addItem(v[0], userData=v[1])
         self.ui.comboBox.setCurrentIndex(0)
         
+        
+        # Fill up all of the font size combo boxes with default font sizes
+        defaultFontSizes = [8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72]
+        
+        for f in defaultFontSizes:
+            self.ui.paragraphSizeBox.addItem(str(f), QVariant(f))
+            self.ui.header1SizeBox.addItem(str(f), QVariant(f))
+            self.ui.header2SizeBox.addItem(str(f), QVariant(f))
+            self.ui.header3SizeBox.addItem(str(f), QVariant(f))
+        
         # Update the GUI to match the settings currently employed
         self.updateSettings()
             
@@ -43,6 +53,7 @@ class Settings(QtGui.QDialog):
         self.ui.restoreButton.clicked.connect(self.restoreButton_clicked)
         self.ui.comboBox.currentIndexChanged.connect(self.comboBox_currentIndexChanged)
         
+        # Colors
         self.ui.contentTextButton.clicked.connect(self.contentTextButton_clicked)
         self.ui.contentBackgroundButton.clicked.connect(self.contentBackgroundButton_clicked)
         self.ui.highlighterTextButton.clicked.connect(self.highlighterTextButton_clicked)

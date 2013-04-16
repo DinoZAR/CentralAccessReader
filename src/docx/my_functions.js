@@ -55,30 +55,16 @@ function HighlightNextElement() {
 
 	// Get the sibling of the highlight node. It will either be more text or an actual element.
 	ClearLineHighlight();
-	var next = highlight.nextSibling;
 	
-	if (next != null) {
-		if (next.nodeName == "#text") {
-
-			// Get the next word, if any.
-			var range = GetNextWord(next, 0);
-			if (range == null) {
-				next = NextElement(next);
-				range = GetNextWord(next, 0);
-				SetHighlight(range);
-			}
-			else {
-				SetHighlight(range);
-			}
-		}
-		else {
-			alert("In something else. Weird...");
-			alert(next.nodeName);
-		}
+	var next = NextElement(highlight);
+	var range = GetNextWord(next, 0);
+	
+	// Check to see if I actually have something coming up. Otherwise, just
+	// clear all the highlights
+	if (range == null) {
+		ClearAllHighlights();
 	}
 	else {
-		next = NextElement(highlight);
-		var range = GetNextWord(next, 0);
 		SetHighlight(range);
 	}
 }
@@ -110,6 +96,7 @@ function GetNextWord(node, offset) {
 	// See if it is an equation
 	var equation = GetEquation(node);
 	if (equation != null) {
+		console.debug("It is an equation!");
 		var range = document.createRange();
 		range.selectNode(equation);
 		return range;
@@ -180,9 +167,27 @@ function ClearLineHighlight() {
 	
 	InsertAllChildNodes(p, highlightLine);
 
+	// Recapture my highlight element reference
+	highlight = document.getElementById("npaHighlight");
+	
+	p.normalize();
 	p.removeChild(highlightLine);
 	p.normalize();
 	highlightLine = null;
+}
+
+// Clears both the line highlight and the individual element highlight
+function ClearAllHighlights() {
+	
+	console.debug("ClearAllHighlights");
+
+	if (highlightLine != null) {
+		ClearLineHighlight();
+	}
+
+	if (highlight != null) {
+		ClearHighlight(); 
+	}
 }
 
 // Given a Range object, this will clean up any previous highlight and create a highlight
@@ -300,6 +305,42 @@ function SetLineHighlight() {
 				done = true;
 			}
 		}
+		else if ((endNode.nodeName == "SPAN") && (endNode.getAttribute("id") == "npaHighlight")) {
+			// Check if there is some punctuation mark at the end inside of the node
+			// and there is another sibling after this node. If so, make the highlight
+			// stop at the beginning of the next sibling.
+			var punctPatt = /[.!\?]/g;
+			if ((endNode.lastChild.nodeName == "#text") && (endNode.nextSibling != null)){
+				
+				var lastPunct = -1;
+				while (punctPatt.test(endNode.lastChild.nodeValue) == true) {
+					lastPunct = punctPatt.lastIndex;
+				}
+
+				if (lastPunct == endNode.lastChild.nodeValue.length) {	
+					endNode = endNode.nextSibling;
+					endOffset = 0;
+					done = true;
+				}
+				else {
+					console.debug("Test failed...." + lastPunct.toString() + ' != ' + (endNode.lastChild.nodeValue.length - 1).toString());
+					console.debug(endNode.lastChild.nodeValue);
+					endNode = endNode.nextSibling;
+					endOffset = 0;
+				}
+			}
+			else {
+				var next = endNode.nextSibling;
+				if (next != null) {
+					endNode = next;
+					endOffset = 0;
+				}
+				else {
+					endOffset = 0;
+					done = true;
+				}
+			}
+		}
 		else {
 			var next = endNode.nextSibling;
 			if (next != null) {
@@ -307,7 +348,7 @@ function SetLineHighlight() {
 				endOffset = 0;
 			}
 			else {
-				endOffset = endNode.textContent.length;
+				endOffset = 0;
 				done = true;
 			}
 		}
@@ -334,11 +375,13 @@ function SetLineHighlight() {
 
 function InsertAllChildNodes(parent, node) {
 	var contents = node.cloneNode(true);
-
-	for (i = 0; i < contents.childNodes.length; i++) {
-		console.debug("Inserting node: " + contents.childNodes[i].nodeName);
-		console.debug(contents.childNodes[i].textContent);
-		parent.insertBefore(contents.childNodes[i], node);
+	
+	var currentNode = contents.firstChild;
+	
+	while(currentNode != null) {
+		var nodeCopy = currentNode.cloneNode(true);
+		parent.insertBefore(nodeCopy, node);
+		currentNode = currentNode.nextSibling;
 	}
 }
 
