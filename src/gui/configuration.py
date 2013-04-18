@@ -32,15 +32,33 @@ class Configuration(object):
         self.color_highlightBackground = QColor(255,255,0)
         
         self.color_highlightLineText = QColor(0,0,0)
-        self.color_highlightLineBackground = QColor(0,0,0)
+        self.color_highlightLineBackground = QColor(0,255,0)
         
         # Font settings
-        
+        self.font_paragraph = 'Times New Roman'
+        self.font_paragraphSize = 12
+        self.font_header1 = 'Times New Roman'
+        self.font_header1Size = 42
+        self.font_header2 = 'Times New Roman'
+        self.font_header2Size = 30
+        self.font_header3 = 'Times New Roman'
+        self.font_header3Size = 25
+        self.font_header4 = 'Times New Roman'
+        self.font_header4Size = 20
     
     def loadFromFile(self, filePath):
         
-        configFile = open(filePath, 'r+')
-        configDOM = etree.parse(configFile)
+        # Check if the file exists first. Otherwise, create the file
+        configFile = None
+        configDOM = None
+        try:
+            configFile = open(filePath, 'r')
+            configDOM = etree.parse(configFile)
+        except IOError:
+            self.saveToFile(filePath)
+            configFile = open(filePath, 'r')
+            configDOM = etree.parse(configFile)
+            
         configFile.close()
         
         # Speech Settings
@@ -66,6 +84,18 @@ class Configuration(object):
         
         self.color_highlightLineText = self._createQColorFromCommaSeparated(configDOM.xpath('/Configuration/Colors/HighlightLineText')[0].text)
         self.color_highlightLineBackground = self._createQColorFromCommaSeparated(configDOM.xpath('/Configuration/Colors/HighlightLineBackground')[0].text)
+        
+        # Font Settings
+        self.font_paragraph = configDOM.xpath('/Configuration/Fonts/ParagraphFont')[0].text
+        self.font_paragraphSize = int(configDOM.xpath('/Configuration/Fonts/ParagraphSize')[0].text)
+        self.font_header1 = configDOM.xpath('/Configuration/Fonts/Header1Font')[0].text
+        self.font_header1Size = int(configDOM.xpath('/Configuration/Fonts/Header1Size')[0].text)
+        self.font_header2 = configDOM.xpath('/Configuration/Fonts/Header2Font')[0].text
+        self.font_header2Size = int(configDOM.xpath('/Configuration/Fonts/Header2Size')[0].text)
+        self.font_header3 = configDOM.xpath('/Configuration/Fonts/Header3Font')[0].text
+        self.font_header3Size = int(configDOM.xpath('/Configuration/Fonts/Header3Size')[0].text)
+        self.font_header4 = configDOM.xpath('/Configuration/Fonts/Header4Font')[0].text
+        self.font_header4Size = int(configDOM.xpath('/Configuration/Fonts/Header4Size')[0].text)
         
     def saveToFile(self, filePath):
         root = etree.Element("Configuration")
@@ -100,6 +130,29 @@ class Configuration(object):
         elem = etree.SubElement(colorRoot, 'HighlightLineBackground')
         elem.text = self._createCommaSeparatedFromQColor(self.color_highlightLineBackground)
         
+        # Font settings
+        fontRoot = etree.SubElement(root, 'Fonts')
+        elem = etree.SubElement(fontRoot, 'ParagraphFont')
+        elem.text = self.font_paragraph
+        elem = etree.SubElement(fontRoot, 'ParagraphSize')
+        elem.text = str(self.font_paragraphSize)
+        elem = etree.SubElement(fontRoot, 'Header1Font')
+        elem.text = self.font_header1
+        elem = etree.SubElement(fontRoot, 'Header1Size')
+        elem.text = str(self.font_header1Size)
+        elem = etree.SubElement(fontRoot, 'Header2Font')
+        elem.text = self.font_header2
+        elem = etree.SubElement(fontRoot, 'Header2Size')
+        elem.text = str(self.font_header2Size)
+        elem = etree.SubElement(fontRoot, 'Header3Font')
+        elem.text = self.font_header3
+        elem = etree.SubElement(fontRoot, 'Header3Size')
+        elem.text = str(self.font_header3Size)
+        elem = etree.SubElement(fontRoot, 'Header4Font')
+        elem.text = self.font_header4
+        elem = etree.SubElement(fontRoot, 'Header4Size')
+        elem.text = str(self.font_header4Size)
+        
         configFile = open(filePath, 'w')
         configFile.write(etree.tostring(root, pretty_print=True))
         configFile.close()
@@ -127,18 +180,21 @@ class Configuration(object):
         # BEGIN CSS FILE
         # -------------------------------------------
         
-        outtext = '''body
+        outtext = '''
+body
 {
 background: ''' + self._createRGBStringFromQColor(self.color_contentBackground) + ''';
 color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
-font-size: 14pt;
+font-size: ''' + str(self.font_paragraphSize) + '''pt;
+font-family: "''' + self.font_paragraph + '''";
 }
 
 h1
 {
 color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
 text-align: center;
-font-size: 42pt;
+font-size: ''' + str(self.font_header1Size) + '''pt;
+font-family: "''' + self.font_header1 + '''";
 }
 
 h2
@@ -148,20 +204,24 @@ border-style: dashed;
 border-width: 0px 0px 1px 0px;
 border-color: #EEEEEE;
 padding: 15px;
-font-size: 30pt;
+font-size: ''' + str(self.font_header2Size) + '''pt;
+font-family: "''' + self.font_header2 + '''";
 }
 
 h3
 {
 color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
-font-size: 25pt;
 padding: 10px;
+font-size: ''' + str(self.font_header3Size) + '''pt;
+font-family: "''' + self.font_header3 + '''";
+
 }
 
 h4
 {
 color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
-font-size: 20pt;
+font-size: ''' + str(self.font_header4Size) + '''pt;
+font-family: "''' + self.font_header4 + '''";
 }
 
 p
@@ -196,9 +256,7 @@ display: inline-block;
 }'''
         # -------------------------------------------
         # END CSS FILE
-        
         print 'Writing CSS file...'
-        print outtext
             
         cssFile = open(filePath, 'w')
         cssFile.write(outtext)

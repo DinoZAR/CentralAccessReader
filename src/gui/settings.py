@@ -29,16 +29,6 @@ class Settings(QtGui.QDialog):
             self.ui.comboBox.addItem(v[0], userData=v[1])
         self.ui.comboBox.setCurrentIndex(0)
         
-        
-        # Fill up all of the font size combo boxes with default font sizes
-        defaultFontSizes = [8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72]
-        
-        for f in defaultFontSizes:
-            self.ui.paragraphSizeBox.addItem(str(f), QVariant(f))
-            self.ui.header1SizeBox.addItem(str(f), QVariant(f))
-            self.ui.header2SizeBox.addItem(str(f), QVariant(f))
-            self.ui.header3SizeBox.addItem(str(f), QVariant(f))
-        
         # Update the GUI to match the settings currently employed
         self.updateSettings()
             
@@ -61,6 +51,13 @@ class Settings(QtGui.QDialog):
         self.ui.enableHighlightCheckbox.clicked.connect(self.enableHighlightCheckBox_clicked)
         self.ui.highlighterLineTextButton.clicked.connect(self.highlighterLineTextButton_clicked)
         self.ui.highlighterLineBackgroundButton.clicked.connect(self.highlighterLineBackgroundButton_clicked)
+        
+        # Fonts
+        self.ui.paragraphFontButton.clicked.connect(self.paragraphFontButton_clicked)
+        self.ui.header1FontButton.clicked.connect(self.header1FontButton_clicked)
+        self.ui.header2FontButton.clicked.connect(self.header2FontButton_clicked)
+        self.ui.header3FontButton.clicked.connect(self.header3FontButton_clicked)
+        self.ui.header4FontButton.clicked.connect(self.header4FontButton_clicked)
         
     def updateSettings(self):
         # Update speech thread with my stuff
@@ -88,7 +85,13 @@ class Settings(QtGui.QDialog):
             self.ui.enableHighlightCheckbox.setCheckState(Qt.Checked)
         else:
             self.ui.enableHighlightCheckbox.setCheckState(Qt.Unchecked)
-        
+            
+        # Update the font buttons
+        self.setButtonFont(self.ui.paragraphFontButton, self.configuration.font_paragraph, self.configuration.font_paragraphSize)
+        self.setButtonFont(self.ui.header1FontButton, self.configuration.font_header1, self.configuration.font_header1Size)
+        self.setButtonFont(self.ui.header2FontButton, self.configuration.font_header2, self.configuration.font_header2Size)
+        self.setButtonFont(self.ui.header3FontButton, self.configuration.font_header3, self.configuration.font_header3Size)
+        self.setButtonFont(self.ui.header4FontButton, self.configuration.font_header4, self.configuration.font_header4Size)
 
     def applyButton_clicked(self):
         self.beforeConfiguration = copy.deepcopy(self.configuration)
@@ -152,6 +155,36 @@ class Settings(QtGui.QDialog):
         self.configuration.color_highlightLineBackground = QtGui.QColorDialog.getColor(initial=self.configuration.color_highlightLineBackground)
         self.updateSettings()
         
+    def paragraphFontButton_clicked(self):
+        myFont = QtGui.QFontDialog.getFont(QtGui.QFont(self.configuration.font_paragraph, self.configuration.font_paragraphSize))[0]
+        self.configuration.font_paragraph = str(myFont.family())
+        self.configuration.font_paragraphSize = myFont.pointSize()
+        self.updateSettings()
+        
+    def header1FontButton_clicked(self):
+        myFont = QtGui.QFontDialog.getFont(QtGui.QFont(self.configuration.font_header1, self.configuration.font_header1Size))[0]
+        self.configuration.font_header1 = str(myFont.family())
+        self.configuration.font_header1Size = myFont.pointSize()
+        self.updateSettings() 
+        
+    def header2FontButton_clicked(self):
+        myFont = QtGui.QFontDialog.getFont(QtGui.QFont(self.configuration.font_header2, self.configuration.font_header2Size))[0]
+        self.configuration.font_header2 = str(myFont.family())
+        self.configuration.font_header2Size = myFont.pointSize()
+        self.updateSettings() 
+        
+    def header3FontButton_clicked(self):
+        myFont = QtGui.QFontDialog.getFont(QtGui.QFont(self.configuration.font_header3, self.configuration.font_header3Size))[0]
+        self.configuration.font_header3 = str(myFont.family())
+        self.configuration.font_header3Size = myFont.pointSize()
+        self.updateSettings() 
+    
+    def header4FontButton_clicked(self):
+        myFont = QtGui.QFontDialog.getFont(QtGui.QFont(self.configuration.font_header4, self.configuration.font_header4Size))[0]
+        self.configuration.font_header4 = str(myFont.family())
+        self.configuration.font_header4Size = myFont.pointSize()
+        self.updateSettings() 
+        
     def setButtonColor(self, button, color):
         '''
         Takes a QColor and sets the color on the button, making sure that the text is readable and still having the
@@ -171,3 +204,10 @@ class Settings(QtGui.QDialog):
             fontColor = 'rgb(255,255,255)'
 
         button.setStyleSheet('background-color: ' + rgbString + '; font-size: 16pt; color: ' + fontColor + ';')
+        
+    def setButtonFont(self, button, family, size):
+        '''
+        Changes the font of the text in the button.
+        '''
+        button.setFont(QtGui.QFont(family, size))
+        

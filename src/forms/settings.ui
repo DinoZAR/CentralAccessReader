@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>941</width>
-    <height>704</height>
+    <width>614</width>
+    <height>473</height>
    </rect>
   </property>
   <property name="font">
@@ -405,127 +405,47 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="0,1">
-             <item>
-              <widget class="QComboBox" name="header3SizeBox">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>80</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="baseSize">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="editable">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QFontComboBox" name="header3FontBox"/>
-             </item>
-            </layout>
-           </item>
-           <item row="2" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="0,1">
-             <item>
-              <widget class="QComboBox" name="header2SizeBox">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>80</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="baseSize">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="editable">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QFontComboBox" name="header2FontBox"/>
-             </item>
-            </layout>
-           </item>
-           <item row="1" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="0,1">
-             <item>
-              <widget class="QComboBox" name="header1SizeBox">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>80</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="baseSize">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="editable">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QFontComboBox" name="header1FontBox"/>
-             </item>
-            </layout>
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_14">
+             <property name="text">
+              <string>Header 4:</string>
+             </property>
+            </widget>
            </item>
            <item row="0" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="0,1">
-             <item>
-              <widget class="QComboBox" name="paragraphSizeBox">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>80</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="editable">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QFontComboBox" name="paragraphFontBox"/>
-             </item>
-            </layout>
+            <widget class="QPushButton" name="paragraphFontButton">
+             <property name="text">
+              <string>Paragraph Font</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QPushButton" name="header1FontButton">
+             <property name="text">
+              <string>Header 1 Font</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QPushButton" name="header2FontButton">
+             <property name="text">
+              <string>Header 2 Font</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QPushButton" name="header3FontButton">
+             <property name="text">
+              <string>Header 3 Font</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QPushButton" name="header4FontButton">
+             <property name="text">
+              <string>Header 4 Font</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -546,11 +466,6 @@
        </item>
       </layout>
       <zorder></zorder>
-      <zorder>paragraphSizeBox</zorder>
-      <zorder>header1SizeBox</zorder>
-      <zorder>header2SizeBox</zorder>
-      <zorder>header3SizeBox</zorder>
-      <zorder>formLayoutWidget</zorder>
       <zorder>verticalSpacer_2</zorder>
      </widget>
     </widget>
