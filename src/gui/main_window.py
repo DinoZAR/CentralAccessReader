@@ -6,7 +6,7 @@ Created on Jan 21, 2013
 import sys
 import os.path
 from PyQt4 import QtGui
-from PyQt4.QtCore import Qt, QUrl, QDir
+from PyQt4.QtCore import Qt, QUrl, QMutex
 from PyQt4 import QtCore
 from PyQt4.QtWebKit import QWebPage, QWebInspector, QWebSettings
 from lxml import etree
@@ -14,12 +14,13 @@ from src.forms.mainwindow_ui import Ui_MainWindow
 from src.gui.settings import Settings
 from src.gui.mathmlcodes_dialog import MathMLCodesDialog
 from src.gui.configuration import Configuration
+from src.gui.npa_webview import NPAWebView
+from src.gui.bookmarks import BookmarksTreeModel, BookmarkNode
 from src import pyttsx, docx
 from src.mathml.tts import MathTTS
 from src.mathml import pattern_editor
 from src.speech.assigner import Assigner
 from src.speech.worker import SpeechWorker
-from src.gui.bookmarks import BookmarksTreeModel, BookmarkNode
 
 class MainWindow(QtGui.QMainWindow):
     loc = 0
@@ -35,12 +36,23 @@ class MainWindow(QtGui.QMainWindow):
     changeRate = QtCore.pyqtSignal(int)
     changeVoice = QtCore.pyqtSignal(str)
     
+    # JavaScript mutex
+    javascriptMutex = QMutex()
+    
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         
+        # Replace the web view in my designer with my custom web view
+        self.ui.webViewLayout.removeWidget(self.ui.webView)
+        self.ui.webView.close()
+        self.ui.webView = NPAWebView(self.ui.centralwidget)
+        self.ui.webViewLayout.addWidget(self.ui.webView, 1)
+        self.ui.webViewLayout.update()
+        
+        # Connect all of my signals
         self.connect_signals()
         
         # This is the tree model used to store our bookmarks
@@ -106,6 +118,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.volumeSlider.valueChanged.connect(self.volumeSlider_valueChanged)
         self.ui.rateSlider.valueChanged.connect(self.rateSlider_valueChanged)
         
+        
         # For the bookmarks
         self.ui.bookmarksTreeView.clicked.connect(self.bookmarksTree_clicked)
         
@@ -135,7 +148,9 @@ class MainWindow(QtGui.QMainWindow):
             self.addToQueue.emit(o[0], o[1])
         
         if self.configuration.highlight_enable:
+            self.javascriptMutex.lock()
             self.ui.webView.page().mainFrame().evaluateJavaScript('SetBeginning()')
+            self.javascriptMutex.unlock()
             self.isFirst = True
         
         self.startPlayback.emit()
@@ -146,15 +161,23 @@ class MainWindow(QtGui.QMainWindow):
             if not self.isFirst:
                 if label == "text":
                     if label != self.lastElement[2] or (location != self.lastElement[1]) or (stream != self.lastElement[3]):
+                        self.javascriptMutex.lock()
                         self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement()')
+                        self.javascriptMutex.unlock()
                 elif label == "math":
                     if label != self.lastElement[2]:
+                        self.javascriptMutex.lock()
                         self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement()')
+                        self.javascriptMutex.unlock()
                 elif label == "image":
                     if label != self.lastElement[2]:
+                        self.javascriptMutex.lock()
                         self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement()')
+                        self.javascriptMutex.unlock()
                 else:
+                    self.javascriptMutex.lock()
                     self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement()')
+                    self.javascriptMutex.unlock()
             else:
                 # Do this because the SetBeginning() function highlighted it
                 self.isFirst = False
@@ -164,7 +187,9 @@ class MainWindow(QtGui.QMainWindow):
         
     def onSpeechFinished(self):
         print 'Speech finished.'
-        self.ui.webView.page().mainFrame().evaluateJavaScript('ClearAllHighlights()');
+        self.javascriptMutex.lock()
+        self.ui.webView.page().mainFrame().evaluateJavaScript('ClearAllHighlights()')
+        self.javascriptMutex.unlock()
         self.isFirst = False
         
     def pauseButton_clicked(self):
@@ -263,7 +288,6 @@ class MainWindow(QtGui.QMainWindow):
         self.patternWindow.show()
         
     def onChangedPatternEditor(self, databaseFileName):
-        print 'Change fired!'
         self.mathTTS.setPatternDatabase(databaseFileName)
         
     def showAllMathML(self):
@@ -272,10 +296,9 @@ class MainWindow(QtGui.QMainWindow):
         
     def bookmarksTree_clicked(self, index):
         node = index.internalPointer()
-        
-        # Do the anchor navigation
-        print 'Node anchor id:', node.anchorId
-        self.ui.webView.page().mainFrame().evaluateJavaScript('GotoPageAnchor(' + node.anchorId + ');')
+        self.javascriptMutex.lock()
+        self.ui.webView.page().mainFrame().evaluateJavaScript('GotoPageAnchor()' + node.anchorId + ');')
+        self.javascriptMutex.unlock()
         
     def refreshDocument(self):
         if len(self.lastDocumentFilePath) > 0:

@@ -417,4 +417,13 @@ function GetChildIndex(elem) {
 		i++;
 	}
 	return i;
+}
+
+function IsInView(elem) {
+	
+	var myRect = elem.getBoundingClientRect();
+
+	console.debug("Top: " + myRect.top.toString() + " Bottom: " + myRect.bottom.toString());
+	
+	return false;
 }

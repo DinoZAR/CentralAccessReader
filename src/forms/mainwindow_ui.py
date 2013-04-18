@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Documents\Special Projects\Graffe, Spencer\workspace2\another\src\forms/mainwindow.ui'
 #
-# Created: Fri Apr 12 15:43:31 2013
+# Created: Thu Apr 18 09:04:31 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -61,10 +61,10 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addWidget(self.bookmarksTreeView)
         self.layoutWidget1 = QtGui.QWidget(self.splitter)
         self.layoutWidget1.setObjectName(_fromUtf8("layoutWidget1"))
-        self.verticalLayout = QtGui.QVBoxLayout(self.layoutWidget1)
-        self.verticalLayout.setSpacing(0)
-        self.verticalLayout.setMargin(0)
-        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.webViewLayout = QtGui.QVBoxLayout(self.layoutWidget1)
+        self.webViewLayout.setSpacing(0)
+        self.webViewLayout.setMargin(0)
+        self.webViewLayout.setObjectName(_fromUtf8("webViewLayout"))
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.playButton = QtGui.QPushButton(self.layoutWidget1)
@@ -140,17 +140,17 @@ class Ui_MainWindow(object):
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.horizontalLayout.setStretch(5, 1)
-        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.webViewLayout.addLayout(self.horizontalLayout)
         self.webView = QtWebKit.QWebView(self.layoutWidget1)
         self.webView.setSizeIncrement(QtCore.QSize(1, 1))
         self.webView.setUrl(QtCore.QUrl(_fromUtf8("about:blank")))
         self.webView.setObjectName(_fromUtf8("webView"))
-        self.verticalLayout.addWidget(self.webView)
-        self.verticalLayout.setStretch(1, 1)
+        self.webViewLayout.addWidget(self.webView)
+        self.webViewLayout.setStretch(1, 1)
         self.verticalLayout_3.addWidget(self.splitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1075, 27))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1075, 21))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuMenu = QtGui.QMenu(self.menubar)
         self.menuMenu.setObjectName(_fromUtf8("menuMenu"))

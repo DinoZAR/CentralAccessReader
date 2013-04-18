@@ -10,6 +10,7 @@ from src.gui.bookmarks import BookmarkNode
 
 rootPath = os.path.dirname(inspect.getfile(inspect.currentframe()))
 
+# Get my OMML to MathML stylesheet compiled
 ommlXSLTPath = os.path.normpath(rootPath + '/OMMLToMathML.xsl')
 f = open(ommlXSLTPath, 'r')
 xslRoot = etree.parse(f)
@@ -139,10 +140,13 @@ def _prepareHead(head):
     scriptFile.close()
     mathjaxConfig.text = contents
     
-    
     mathjaxScript = HTML.Element('script')
     mathjaxScript.attrib['type'] = 'text/javascript'
     mathjaxScript.attrib['src'] = r'../mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML.js'
+    
+    jqueryScript = HTML.Element('script')
+    jqueryScript.attrib['type'] = 'text/javascript'
+    jqueryScript.attrib['src'] = r'../jquery-1.9.1.min.js'
     
     myScripts = HTML.Element('script')
     myScripts.set('language', 'javascript')
@@ -160,6 +164,7 @@ def _prepareHead(head):
     
     head.append(mathjaxConfig)
     head.append(mathjaxScript)
+    head.append(jqueryScript)
     head.append(myScripts)
     head.append(css)
     
