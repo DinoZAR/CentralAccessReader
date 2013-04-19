@@ -3,16 +3,15 @@ Created on Mar 3, 2013
 
 @author: Spencer Graffe
 '''
-from mathtype import parser, latex
+from src.docx.importer import DocxDocument
 
 if __name__ == '__main__':
     
-    # Let's test out the Mathtype library
-    testPath = 'mathtype/image40.wmf'
-    test = open(testPath, 'rb')
+    testPath = 'tests\\Chapter 3 Test.docx'
     
-    stuff = parser.parseWMF(test)
+    mydoc = DocxDocument(testPath)
     
-    test.close()
+    print 'My Main Page!'
+    print mydoc.getMainPage()
     
     print 'Done!'
