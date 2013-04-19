@@ -7,13 +7,11 @@ Created on Apr 18, 2013
 import zipfile
 from lxml import etree
 from lxml import html as HTML
-from lxml.builder import E
-import copy
 import os
-import platform
 import inspect
 from src.gui.bookmarks import BookmarkNode
 
+# The path to this particular module
 rootPath = os.path.dirname(inspect.getfile(inspect.currentframe()))
 
 # Get my OMML to MathML stylesheet compiled
@@ -32,6 +30,24 @@ r_NS = '{http://schemas.openxmlformats.org/package/2006/relationships}'
 rel_NS = '{http://schemas.openxmlformats.org/officeDocument/2006/relationships}'
 a_NS = '{http://schemas.openxmlformats.org/drawingml/2006/main}'
 
+# Heirarchical levels of each of the styles
+heirarchyStyles = {'Title' : 1,
+                  'Heading 1': 2,
+                  'heading 1' : 2,
+                  'Heading 2': 3,
+                  'heading 2': 3,
+                  'Heading 3': 4,
+                  'heading 3': 4,
+                  'Heading 4': 5,
+                  'heading 4': 5}
+
+# HTML elements for each level
+htmlLevels = {1 : 'h1',
+              2 : 'h2',
+              3 : 'h3',
+              4 : 'h4',
+              5 : 'h5',
+              -1 : 'p'} # Default
 
 class DocxDocument(object):
     '''
@@ -95,7 +111,7 @@ class DocxDocument(object):
                 self.paragraphData.append(self._parseParagraph(p))
             elif p.tag == '{0}tbl'.format(w_NS):
                 self.paragraphData.append(self._parseTable(p))
-        
+                
         zip.close()
         
     def _parseParagraph(self, elem):
@@ -125,7 +141,7 @@ class DocxDocument(object):
     
     def _parseOMMLPara(self, elem, parentData):
         mathRoot = elem[0]  # Get the first child
-        self._parseOMML(elem, parentData)
+        self._parseOMML(mathRoot, parentData)
     
     def _parseOMML(self, elem, parentData):
         data = {'type' : 'math'}
@@ -254,13 +270,92 @@ class DocxDocument(object):
         head.append(jqueryScript)
         head.append(myScripts)
         head.append(css)
+        
+    def _prepareBody(self, body):
+        anchorCount = 1
+        for p in self.paragraphData:
+            if p['type'] == 'paragraph':
+                data = self._generateParagraphHTMLNode(p, anchorCount)
+                if data[1]:
+                    anchorCount += 1
+                body.append(data[0])
+            elif p['type'] == 'table':
+                body.append(self._generateTableHTMLNode(p))
+                
+    def _generateTableHTMLNode(self, t):
+        '''
+        From a table dictionary, create the HTML for it.
+        '''
+        tRoot = HTML.Element('table')
+        
+        for r in t['rows']:
+            rRoot = etree.SubElement(tRoot, 'tr')
+            
+            for c in r['columns']:
+                cRoot = etree.SubElement(rRoot, 'td')
+                cRoot.append(self._generateParagraphHTMLNode(c, 0)[0])
+                
+        return tRoot
+    
+    def _generateParagraphHTMLNode(self, p, anchorId):
+        '''
+        From a paragraph dictionary, create the HTML for it, and whether the
+        anchorID needs to be increased:
+        (htmlELement, boolean)
+        '''
+        pRoot = None
+        incrementAnchorId = False
+        # Figure out what my root HTML will be
+        level = -1
+        if 'style' in p:
+            if p['style'] in heirarchyStyles:
+                level = heirarchyStyles[p['style']]
+                incrementAnchorId = True
+                
+        pRoot = HTML.Element(htmlLevels[level])
+        
+        if level >= 0:
+            pRoot.set('id', str(anchorId))
+        
+        # Loop through the content in the paragraph
+        currTextNode = pRoot
+        currTextNode.text = ''
+        currTextNode.tail = ''
+        onRoot = True
+        for c in p['data']:
+            
+            if c['type'] == 'row':
+                if 'text' in c:
+                    if onRoot:
+                        currTextNode.text += c['text']
+                    else:
+                        currTextNode.tail += c['text']
+                    onRoot = True
+                    
+                elif 'image' in c:
+                    image = c['image']
+                    imageTag = etree.SubElement(pRoot, 'img')
+                    imageTag.set('src', self.imageFolder + '/' + image['filename'])
+                    if 'altText' in image:
+                        imageTag.set('alt', image['altText'])
+                    onRoot = False
+            
+            elif c['type'] == 'math':
+                mathSpan = etree.SubElement(pRoot, 'span')
+                mathSpan.set('class', 'mathmlEquation')
+                mathSpan.append(c['data'])
+                currTextNode = mathSpan
+                currTextNode.tail = ''
+                onRoot = False
+        
+        # Return what I got
+        return (pRoot, incrementAnchorId)
             
     def getMainPage(self):
         '''
         Returns the HTML of the main landing page. This page will have the
         scripts for highlighting as well as content streaming (when available).
         '''
-        
         # Start with the basics
         html = HTML.Element('html')
         head = HTML.Element('head')
@@ -270,6 +365,71 @@ class DocxDocument(object):
         
         # Create the scripts and other references here in the head
         self._prepareHead(head)
+        self._prepareBody(body)
         
         return HTML.tostring(html, pretty_print=True)
+    
+    def getBookmarks(self):
+        '''
+        Returns the BookmarkNodes for this particular document.
+        '''
+        
+        # State data for creating the bookmarks
+        lastNode = (BookmarkNode(None, 'Docx'), 0)
+        parentStack = []
+        currLevel = -1
+        anchorCount = 1
+        
+        print 'Bookmarking:'
+        
+        # The paragraphs are just a bunch of dictionaries
+        for p in self.paragraphData:
+            
+            if 'style' in p:
+                if p['style'] in heirarchyStyles:
+                    currLevel = heirarchyStyles[p['style']]
+                else:
+                    currLevel = -1
+            else:
+                currLevel = -1
+        
+            # Create a bookmark if it is an actual hierarchical piece of content  
+            if currLevel > 0:
+                # Figure out my parent
+                while True:
+                    if len(parentStack) > 0:
+                        if currLevel > parentStack[-1][1]:
+                            parentStack.append(lastNode)
+                            print 'Appending parent...', currLevel, parentStack[-1]
+                            break
+                        elif currLevel < (parentStack[-1][1] - 1):
+                            # Pop off the next parent on the stack
+                            print 'Popping off parent...'
+                            lastNode = parentStack.pop()
+                        elif currLevel == parentStack[-1][1]:
+                            print 'Same level pop-off...'
+                            lastNode = parentStack.pop()
+                        else:
+                            break
+                    else:
+                        if currLevel > lastNode[1]:
+                            print 'Appending root-level parent'
+                            parentStack.append(lastNode)
+                        break
+                    
+                # Make my BookmarkNode and stuff
+                if len(parentStack) > 0:
+                    myNode = BookmarkNode(parentStack[-1][0], self._generateParagraphHTMLNode(p, 0)[0].text_content(), anchorId=str(anchorCount))
+                    print 'currLevel in adding:', currLevel
+                    lastNode = (myNode, currLevel)
+                else:
+                    myNode = BookmarkNode(lastNode[0], self._generateParagraphHTMLNode(p, 0)[0].text_content(), anchorId=str(anchorCount))
+                    print 'currLevel in adding:', currLevel
+                    lastNode = (myNode, currLevel)
+                    
+                anchorCount += 1
+                
+        # Return my root bookmark
+        return parentStack[0][0]
+            
         

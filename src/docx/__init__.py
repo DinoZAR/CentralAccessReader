@@ -218,7 +218,6 @@ def _prepareBody(body, paraData, rels, stylesDict, importFolder):
             pRoot = HTML.Element('p')
             body.append(pRoot)
             currLevel = -1
-            
         
         # Loop through the content that is in that paragraph
         currTextNode = pRoot

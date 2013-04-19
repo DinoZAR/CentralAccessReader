@@ -11,7 +11,4 @@ if __name__ == '__main__':
     
     mydoc = DocxDocument(testPath)
     
-    print 'My Main Page!'
-    print mydoc.getMainPage()
-    
     print 'Done!'

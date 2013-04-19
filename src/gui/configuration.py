@@ -235,6 +235,12 @@ max-width: 300px;
 max-height: 300px
 }
 
+table, th, td
+{
+border: 1px solid ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
+padding: 15px;
+}
+
 .mathmlEquation
 {
 font-size: 230%;

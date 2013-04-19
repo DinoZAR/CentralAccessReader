@@ -12,7 +12,7 @@ from PyQt4.QtWebKit import QWebInspector, QWebSettings
 from src.script_test_environment.forms.mainwindow_ui import Ui_MainWindow
 from src.script_test_environment.script_editor import ScriptEditor
 
-from src import docx
+from src.docx.importer import DocxDocument
 
 class MainWindow(QtGui.QMainWindow):
     '''
@@ -35,6 +35,7 @@ class MainWindow(QtGui.QMainWindow):
             
         # Document filename
         self.docxFile = ''
+        self.document = None
             
         # Create one new one
         newTab = ScriptEditor()
@@ -56,7 +57,6 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.run2Button.clicked.connect(self.runScript2)
         self.ui.run3Button.clicked.connect(self.runScript3)
         
-        
         # For my web inspector
         self.ui.documentView.settings().setAttribute(QWebSettings.DeveloperExtrasEnabled, True)
         self.webInspector = QWebInspector()
@@ -76,8 +76,8 @@ class MainWindow(QtGui.QMainWindow):
             self.docxFile = str(newFile)
             url = os.path.join(os.getcwd(), '../import')
             baseUrl = QUrl.fromLocalFile(url)
-            content = docx.getHtmlAndNavigation(str(self.docxFile))[0]
-            self.ui.documentView.setHtml(content, baseUrl)
+            self.document = DocxDocument(str(self.docxFile))
+            self.ui.documentView.setHtml(self.document.getMainPage(), baseUrl)
         
         print 'Done!'
         

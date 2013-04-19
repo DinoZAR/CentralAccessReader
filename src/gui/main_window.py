@@ -16,11 +16,11 @@ from src.gui.mathmlcodes_dialog import MathMLCodesDialog
 from src.gui.configuration import Configuration
 from src.gui.npa_webview import NPAWebView
 from src.gui.bookmarks import BookmarksTreeModel, BookmarkNode
-from src import pyttsx, docx
 from src.mathml.tts import MathTTS
 from src.mathml import pattern_editor
 from src.speech.assigner import Assigner
 from src.speech.worker import SpeechWorker
+from src.docx.importer import DocxDocument
 
 class MainWindow(QtGui.QMainWindow):
     loc = 0
@@ -96,9 +96,10 @@ class MainWindow(QtGui.QMainWindow):
         self.configuration.loadFromFile('configuration.xml')
         self.updateSettings()
         
-        # Used for refreshing the document later to make changes
+        # Used for refreshing the document later to make changes. Also store
+        # the data for the document itself.
         self.lastDocumentFilePath = ''
-        
+        self.document = None
         
     def connect_signals(self):
         '''
@@ -165,12 +166,12 @@ class MainWindow(QtGui.QMainWindow):
                         self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement()')
                         self.javascriptMutex.unlock()
                 elif label == "math":
-                    if label != self.lastElement[2]:
+                    if (label != self.lastElement[2]) or (stream != self.lastElement[3]):
                         self.javascriptMutex.lock()
                         self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement()')
                         self.javascriptMutex.unlock()
                 elif label == "image":
-                    if label != self.lastElement[2]:
+                    if (label != self.lastElement[2]) or (stream != self.lastElement[3]):
                         self.javascriptMutex.lock()
                         self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement()')
                         self.javascriptMutex.unlock()
@@ -263,13 +264,14 @@ class MainWindow(QtGui.QMainWindow):
             url = os.path.join(os.getcwd(), 'import')
             baseUrl = QUrl.fromLocalFile(url)
             
-            docxHtml = docx.getHtmlAndNavigation(str(filePath))
+            self.document = DocxDocument(str(filePath))
+            docxHtml = self.document.getMainPage()
             
-            self.assigner.prepare(docxHtml[0])
-            self.ui.webView.setHtml(docxHtml[0], baseUrl)
+            self.assigner.prepare(docxHtml)
+            self.ui.webView.setHtml(docxHtml, baseUrl)
             
             # Set the root bookmark for the tree model
-            self.bookmarksModel = BookmarksTreeModel(docxHtml[1])
+            self.bookmarksModel = BookmarksTreeModel(self.document.getBookmarks())
             self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
             
             self.lastDocumentFilePath = filePath
@@ -297,7 +299,8 @@ class MainWindow(QtGui.QMainWindow):
     def bookmarksTree_clicked(self, index):
         node = index.internalPointer()
         self.javascriptMutex.lock()
-        self.ui.webView.page().mainFrame().evaluateJavaScript('GotoPageAnchor()' + node.anchorId + ');')
+        print 'Navigating to anchor:', node.anchorId
+        self.ui.webView.page().mainFrame().evaluateJavaScript('GotoPageAnchor(' + node.anchorId + ');')
         self.javascriptMutex.unlock()
         
     def refreshDocument(self):
@@ -305,15 +308,16 @@ class MainWindow(QtGui.QMainWindow):
             url = os.path.join(os.getcwd(), 'import')
             baseUrl = QUrl.fromLocalFile(url)
             
-            docxHtml = docx.getHtmlAndNavigation(str(self.lastDocumentFilePath))
+            self.document = DocxDocument(str(self.lastDocumentFilePath))
+            docxHtml = self.document.getMainPage()
             
-            self.assigner.prepare(docxHtml[0])
+            self.assigner.prepare(docxHtml)
             
             # Clear all of the caches
             QWebSettings.clearMemoryCaches()
             
-            self.ui.webView.setHtml(docxHtml[0], baseUrl)
+            self.ui.webView.setHtml(docxHtml, baseUrl)
             
             # Set the root bookmark for the tree model
-            self.bookmarksModel = BookmarksTreeModel(docxHtml[1])
+            self.bookmarksModel = BookmarksTreeModel(self.document.getBookmarks())
             self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
