@@ -5,6 +5,7 @@ Created on Apr 18, 2013
 '''
 from PyQt4.QtWebKit import QWebView
 from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QApplication
 
 class NPAWebView(QWebView):
     '''
@@ -17,11 +18,11 @@ class NPAWebView(QWebView):
         '''
         QWebView.__init__(self, parent)
         
-        self.isControlPressed = False
         self.myZoomFactor = 1.0
         
     def wheelEvent(self, event):
-        if self.isControlPressed:
+        modifiers = QApplication.keyboardModifiers()
+        if modifiers and Qt.ControlModifier:
             # Zoom the window
             if event.delta() > 0:
                 self.myZoomFactor -= 0.1
@@ -42,16 +43,10 @@ class NPAWebView(QWebView):
         event.ignore()
         
     def keyPressEvent(self, event):
-        #super(NPAWebView, self).keyPressEvent(event)
-        if event.key() == Qt.Key_Control:
-            self.isControlPressed = True
         
         event.ignore()
         
     def keyReleaseEvent(self, event):
-        #super(NPAWebView, self).keyReleaseEvent(event)
-        if event.key() == Qt.Key_Control:
-            self.isControlPressed = False
             
         event.ignore()
         

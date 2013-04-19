@@ -373,7 +373,6 @@ class DocxDocument(object):
         '''
         Returns the BookmarkNodes for this particular document.
         '''
-        
         # State data for creating the bookmarks
         lastNode = (BookmarkNode(None, 'Docx'), 0)
         parentStack = []
