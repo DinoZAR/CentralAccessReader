@@ -60,6 +60,9 @@ class DocxDocument(object):
         '''
         Generates the document structure from the .docx file.
         '''
+        
+        self.docxFilePath = docxFilePath
+        
         # .docx is just a zip file
         zip = zipfile.ZipFile(docxFilePath, 'r')
         
@@ -81,7 +84,7 @@ class DocxDocument(object):
         stylesFile.close()
         
         # Set the import folder to put all of my images and stuff
-        self.imageFolder = 'import/images'
+        self.importFolder = 'import'
         
         # Now generate a dictionary that can look up the name of the style depending
         # on the id of the style
@@ -95,12 +98,8 @@ class DocxDocument(object):
         
         # Open my main document file
         document = zip.open('word/document.xml', 'r')
-        
         tree = etree.parse(document)
-        
-        # When we are done with them, close them up
         document.close()
-        
         root = tree.getroot()
         
         # Parse every paragraph in this document into a form I can convert later
@@ -335,7 +334,7 @@ class DocxDocument(object):
                 elif 'image' in c:
                     image = c['image']
                     imageTag = etree.SubElement(pRoot, 'img')
-                    imageTag.set('src', self.imageFolder + '/' + image['filename'])
+                    imageTag.set('src', self.importFolder + '/images/' + image['filename'])
                     if 'altText' in image:
                         imageTag.set('alt', image['altText'])
                     onRoot = False
@@ -350,6 +349,32 @@ class DocxDocument(object):
         
         # Return what I got
         return (pRoot, incrementAnchorId)
+    
+    def _saveImages(self):
+        
+        # Open a zip file of my docx file
+        zip = zipfile.ZipFile(self.docxFilePath, 'r')
+        
+        # Delete images directory, if there is one
+        if os.path.isdir(self.importFolder + '/images'):
+            for the_file in os.listdir(self.importFolder + '/images'):
+                file_path = os.path.join(self.importFolder + '/images', the_file)
+                try:
+                    if os.path.isfile(file_path):
+                        os.unlink(file_path)
+                except Exception, e:
+                    print e
+        else:
+            os.makedirs(self.importFolder + '/images')
+    
+        for f in zip.namelist():
+            if f.find('word/media/') == 0:
+                # Extract it to my import folder
+                imageFile = open(self.importFolder + '/images/' + f.replace('word/media/', ''), 'wb')
+                imageFile.write(zip.read(f))
+                imageFile.close()
+        
+        zip.close()
             
     def getMainPage(self):
         '''
@@ -367,6 +392,9 @@ class DocxDocument(object):
         self._prepareHead(head)
         self._prepareBody(body)
         
+        # Write out the images to the import folder
+        self._saveImages()
+        
         return HTML.tostring(html, pretty_print=True)
     
     def getBookmarks(self):
@@ -374,12 +402,10 @@ class DocxDocument(object):
         Returns the BookmarkNodes for this particular document.
         '''
         # State data for creating the bookmarks
-        lastNode = (BookmarkNode(None, 'Docx'), 0)
-        parentStack = []
+        parentStack = [(BookmarkNode(None, 'Docx'), 0)]
+        lastNode = parentStack[0]
         currLevel = -1
         anchorCount = 1
-        
-        print 'Bookmarking:'
         
         # The paragraphs are just a bunch of dictionaries
         for p in self.paragraphData:
@@ -394,36 +420,24 @@ class DocxDocument(object):
         
             # Create a bookmark if it is an actual hierarchical piece of content  
             if currLevel > 0:
-                # Figure out my parent
+                
+                # Add last node inserted as parent if it is logical to do so
+                if lastNode[1] < currLevel:
+                    parentStack.append(lastNode)
+                    
+                # Pop off unsuitable parents
                 while True:
-                    if len(parentStack) > 0:
-                        if currLevel > parentStack[-1][1]:
-                            parentStack.append(lastNode)
-                            print 'Appending parent...', currLevel, parentStack[-1]
-                            break
-                        elif currLevel < (parentStack[-1][1] - 1):
-                            # Pop off the next parent on the stack
-                            print 'Popping off parent...'
-                            lastNode = parentStack.pop()
-                        elif currLevel == parentStack[-1][1]:
-                            print 'Same level pop-off...'
-                            lastNode = parentStack.pop()
-                        else:
-                            break
+                    if parentStack[-1][1] >= currLevel:
+                        parentStack.pop()
                     else:
-                        if currLevel > lastNode[1]:
-                            print 'Appending root-level parent'
-                            parentStack.append(lastNode)
                         break
                     
                 # Make my BookmarkNode and stuff
                 if len(parentStack) > 0:
                     myNode = BookmarkNode(parentStack[-1][0], self._generateParagraphHTMLNode(p, 0)[0].text_content(), anchorId=str(anchorCount))
-                    print 'currLevel in adding:', currLevel
                     lastNode = (myNode, currLevel)
                 else:
                     myNode = BookmarkNode(lastNode[0], self._generateParagraphHTMLNode(p, 0)[0].text_content(), anchorId=str(anchorCount))
-                    print 'currLevel in adding:', currLevel
                     lastNode = (myNode, currLevel)
                     
                 anchorCount += 1

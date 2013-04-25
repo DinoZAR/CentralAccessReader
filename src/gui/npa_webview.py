@@ -3,7 +3,7 @@ Created on Apr 18, 2013
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtWebKit import QWebView
+from PyQt4.QtWebKit import QWebView, QWebPage
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QApplication
 
@@ -44,6 +44,13 @@ class NPAWebView(QWebView):
         
     def keyPressEvent(self, event):
         
+        # Ctrl+A should do Select All
+        print 'Control pressed', QApplication.keyboardModifiers() and Qt.ControlModifier
+        if (event.modifiers() and Qt.ControlModifier) and (event.key == Qt.Key_A):
+            print 'Ctrl A-ing !'
+            self.pageAction(QWebPage.MoveToStartOfDocument)
+            self.pageAction(QWebPage.SelectEndOfDocument)
+            
         event.ignore()
         
     def keyReleaseEvent(self, event):
