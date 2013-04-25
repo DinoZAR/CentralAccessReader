@@ -105,23 +105,28 @@ class MainWindow(QtGui.QMainWindow):
         '''
         A method I made to connect all of my signals to the correct functions.
         '''
-        
+        # Toolbar buttons
         self.ui.playButton.clicked.connect(self.playButton_clicked)
         self.ui.pauseButton.clicked.connect(self.pauseButton_clicked)
         self.ui.settingsButton.clicked.connect(self.settingsButton_clicked)
-        self.ui.repeatButton.clicked.connect(self.repeatButton_clicked)
+        self.ui.zoomInButton.clicked.connect(self.zoomInButton_clicked)
+        self.ui.zoomOutButton.clicked.connect(self.zoomOutButton_clicked)
+        
+        # Main menu actions
         self.ui.actionOpen_HTML.triggered.connect(self.openHTML)
         self.ui.actionOpen_Docx.triggered.connect(self.openDocx)
         self.ui.actionQuit.triggered.connect(self.quit)
         self.ui.actionOpen_Pattern_Editor.triggered.connect(self.openPatternEditor)
         self.ui.actionShow_All_MathML.triggered.connect(self.showAllMathML)
         
+        # Sliders
         self.ui.volumeSlider.valueChanged.connect(self.volumeSlider_valueChanged)
         self.ui.rateSlider.valueChanged.connect(self.rateSlider_valueChanged)
         
-        
-        # For the bookmarks
+        # Bookmark controls and widgets
         self.ui.bookmarksTreeView.clicked.connect(self.bookmarksTree_clicked)
+        self.ui.bookmarkZoomInButton.clicked.connect(self.bookmarkZoomInButton_clicked)
+        self.ui.bookmarkZoomOutButton.clicked.connect(self.bookmarkZoomOutButton_clicked)
         
     def updateSettings(self):
         
@@ -133,9 +138,6 @@ class MainWindow(QtGui.QMainWindow):
         # Update main window sliders to match
         self.ui.rateSlider.setValue(self.configuration.rate)
         self.ui.volumeSlider.setValue(int(self.configuration.volume * 100))
-        
-        self.ui.rateLabel.setText(str(self.configuration.rate))
-        self.ui.volumeLabel.setText(str(int(self.configuration.volume * 100)))
         
         # Finally, save it all to file
         self.configuration.saveToFile('configuration.xml')
@@ -214,36 +216,11 @@ class MainWindow(QtGui.QMainWindow):
         self.configuration.loadFromFile('configuration.xml')
         self.updateSettings()
         
-    def repeatButton_clicked(self):
-        self.repeat = not self.repeat
-        self.repeatText = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml()))
-        self.size = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml())).__len__()
-        
-        if self.repeat:
-            
-            self.stop = False
-            self.ui.webView.page().setContentEditable(True)
-            self.ui.webView.triggerPageAction(QWebPage.MoveToPreviousChar)
-            self.ui.webView.triggerPageAction(QWebPage.SelectNextWord)
-            self.ui.webView.page().setContentEditable(False)
-            
-            while not self.stop:
-                self.loc = 0
-                
-                if self.ttsEngine._inLoop:
-                    self.ttsEngine.endLoop()
-                self.ttsEngine.say(self.repeatText)
-                self.ttsEngine.runAndWait()
-                self.ui.webView.page().setContentEditable(True)
-                self.ui.webView.triggerPageAction(QWebPage.MoveToNextChar)
-                for x in range(0,self.size):
-                    self.ui.webView.triggerPageAction(QWebPage.MoveToPreviousChar)
-                self.ui.webView.triggerPageAction(QWebPage.MoveToPreviousChar)
-                self.ui.webView.triggerPageAction(QWebPage.SelectNextWord)
-                self.ui.webView.page().setContentEditable(False)
-            
-        else:
-            self.stop = True
+    def zoomInButton_clicked(self):
+        self.ui.webView.zoomIn()
+    
+    def zoomOutButton_clicked(self):
+        self.ui.webView.zoomOut()
             
     def openHTML(self):
         fileName = QtGui.QFileDialog.getOpenFileName(self, 'Open HTML...','./tests','(*.html)')
@@ -302,6 +279,32 @@ class MainWindow(QtGui.QMainWindow):
         print 'Navigating to anchor:', node.anchorId
         self.ui.webView.page().mainFrame().evaluateJavaScript('GotoPageAnchor(' + node.anchorId + ');')
         self.javascriptMutex.unlock()
+        
+    def bookmarkZoomInButton_clicked(self):
+        # Get the current font
+        currentFont = self.ui.bookmarksTreeView.font()
+        
+        # Make it a litter bigger
+        size = currentFont.pointSize()
+        size += 2
+        currentFont.setPointSize(size)
+        
+        # Set the font
+        self.ui.bookmarksTreeView.setFont(currentFont)
+        
+    def bookmarkZoomOutButton_clicked(self):
+        # Get the current font
+        currentFont = self.ui.bookmarksTreeView.font()
+        
+        # Make it a litter smaller
+        size = currentFont.pointSize()
+        size -= 2
+        if size < 4:
+            size = 4
+        currentFont.setPointSize(size)
+        
+        # Set the font
+        self.ui.bookmarksTreeView.setFont(currentFont)
         
     def refreshDocument(self):
         if len(self.lastDocumentFilePath) > 0:

@@ -45,16 +45,32 @@ class NPAWebView(QWebView):
     def keyPressEvent(self, event):
         
         # Ctrl+A should do Select All
-        print 'Control pressed', QApplication.keyboardModifiers() and Qt.ControlModifier
-        if (event.modifiers() and Qt.ControlModifier) and (event.key == Qt.Key_A):
-            print 'Ctrl A-ing !'
-            self.pageAction(QWebPage.MoveToStartOfDocument)
-            self.pageAction(QWebPage.SelectEndOfDocument)
+        if (event.key() == Qt.Key_A) and (event.nativeModifiers() and Qt.ControlModifier):
+            self.page().triggerAction(QWebPage.SelectAll)
             
         event.ignore()
         
     def keyReleaseEvent(self, event):
-            
         event.ignore()
+        
+    def zoomIn(self):
+        '''
+        Called by application to zoom the view in.
+        '''
+        self.myZoomFactor += 0.1
+        if self.myZoomFactor > 20.0:
+            self.myZoomFactor = 20.0
+        self.setZoomFactor(self.myZoomFactor)
+        self.update()
+    
+    def zoomOut(self):
+        '''
+        Called by application to zoom the view out.
+        '''
+        self.myZoomFactor -= 0.1
+        if self.myZoomFactor < 0.2:
+            self.myZoomFactor = 0.2
+        self.setZoomFactor(self.myZoomFactor)
+        self.update()
         
         
