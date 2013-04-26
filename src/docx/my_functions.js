@@ -24,7 +24,7 @@ function PrintSelection() {
 }
 
 // Sets the beginning to start the speech. It will start at beginning if no selection was made.
-function SetBeginning() {
+function SetBeginning(doLine) {
 
 	console.debug("SetBeginning");
 
@@ -42,14 +42,14 @@ function SetBeginning() {
 			var nElem = NextElement(startNode);
 			range = document.createRange();
 		}
-		SetHighlight(range);
+		SetHighlight(range, doLine);
 
 		window.getSelection().empty();
 	}
 }
 
 // Move the highlight to the next element that should be highlighted 
-function HighlightNextElement() {
+function HighlightNextElement(doLine) {
 	
 	console.debug("HighlightNextElement");
 
@@ -65,7 +65,7 @@ function HighlightNextElement() {
 		ClearAllHighlights();
 	}
 	else {
-		SetHighlight(range);
+		SetHighlight(range, doLine);
 	}
 }
 
@@ -163,17 +163,19 @@ function ClearLineHighlight() {
 
 	console.debug("ClearLineHighlight");
 	
-	var p = highlightLine.parentNode;
+	if (highlightLine != null) {
+		var p = highlightLine.parentNode;
 	
-	InsertAllChildNodes(p, highlightLine);
+		InsertAllChildNodes(p, highlightLine);
 
-	// Recapture my highlight element reference
-	highlight = document.getElementById("npaHighlight");
+		// Recapture my highlight element reference
+		highlight = document.getElementById("npaHighlight");
 	
-	p.normalize();
-	p.removeChild(highlightLine);
-	p.normalize();
-	highlightLine = null;
+		p.normalize();
+		p.removeChild(highlightLine);
+		p.normalize();
+		highlightLine = null;
+	}
 }
 
 // Clears both the line highlight and the individual element highlight
@@ -192,7 +194,7 @@ function ClearAllHighlights() {
 
 // Given a Range object, this will clean up any previous highlight and create a highlight
 // over the new range
-function SetHighlight(range) {
+function SetHighlight(range, doLine) {
 	
 	if (highlight != null) {
 		ClearHighlight();
@@ -209,8 +211,10 @@ function SetHighlight(range) {
 	highlight.appendChild(contents);
 	
 	range.insertNode(highlight);
-
-	SetLineHighlight();
+	
+	if (doLine == true) {
+		SetLineHighlight();
+	}
 }
 
 // This function will set the line highlight to surround that particular range.

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>429</width>
-    <height>244</height>
+    <width>493</width>
+    <height>316</height>
    </rect>
   </property>
   <property name="font">
@@ -18,19 +18,12 @@
   <property name="windowTitle">
    <string>Highlight, Colors, and Fonts</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <layout class="QGridLayout" name="gridLayout_3" rowstretch="0,0,0">
      <property name="verticalSpacing">
       <number>15</number>
      </property>
-     <item row="0" column="2">
-      <widget class="QCheckBox" name="enableHighlightCheckbox">
-       <property name="text">
-        <string>Enable</string>
-       </property>
-      </widget>
-     </item>
      <item row="2" column="0">
       <widget class="QLabel" name="label_9">
        <property name="text">
@@ -212,6 +205,24 @@
      <item row="2" column="2">
       <widget class="QFontComboBox" name="fontComboBox"/>
      </item>
+     <item row="0" column="2">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QCheckBox" name="enableHTextCheckBox">
+         <property name="text">
+          <string>Text</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="enableHLineCheckBox">
+         <property name="text">
+          <string>Line</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
     </layout>
    </item>
    <item>
@@ -230,6 +241,16 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
+      <widget class="QPushButton" name="restoreButton">
+       <property name="toolTip">
+        <string>Restores settings to what they were when you opened the window</string>
+       </property>
+       <property name="text">
+        <string>Restore</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -243,12 +264,9 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="restoreButton">
-       <property name="toolTip">
-        <string>Restores settings to what they were when you opened the window</string>
-       </property>
+      <widget class="QPushButton" name="previewButton">
        <property name="text">
-        <string>Restore</string>
+        <string>Preview</string>
        </property>
       </widget>
      </item>

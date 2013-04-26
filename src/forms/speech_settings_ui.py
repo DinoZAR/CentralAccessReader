@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Documents\Special Projects\Graffe, Spencer\workspace2\another\src\forms/speech_settings.ui'
 #
-# Created: Thu Apr 25 15:47:55 2013
+# Created: Fri Apr 26 10:06:26 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_SpeechSettings(object):
     def setupUi(self, SpeechSettings):
         SpeechSettings.setObjectName(_fromUtf8("SpeechSettings"))
-        SpeechSettings.resize(443, 320)
+        SpeechSettings.resize(492, 318)
         font = QtGui.QFont()
         font.setPointSize(12)
         SpeechSettings.setFont(font)
@@ -34,16 +34,6 @@ class Ui_SpeechSettings(object):
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.gridLayout = QtGui.QGridLayout()
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.label_3 = QtGui.QLabel(SpeechSettings)
-        self.label_3.setObjectName(_fromUtf8("label_3"))
-        self.gridLayout.addWidget(self.label_3, 2, 0, 1, 1)
-        self.comboBox = QtGui.QComboBox(SpeechSettings)
-        self.comboBox.setEditable(False)
-        self.comboBox.setObjectName(_fromUtf8("comboBox"))
-        self.gridLayout.addWidget(self.comboBox, 2, 1, 1, 1)
-        self.label = QtGui.QLabel(SpeechSettings)
-        self.label.setObjectName(_fromUtf8("label"))
-        self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
         self.rateSlider = QtGui.QSlider(SpeechSettings)
         self.rateSlider.setMinimumSize(QtCore.QSize(201, 0))
         self.rateSlider.setMinimum(100)
@@ -54,6 +44,19 @@ class Ui_SpeechSettings(object):
         self.rateSlider.setTickInterval(10)
         self.rateSlider.setObjectName(_fromUtf8("rateSlider"))
         self.gridLayout.addWidget(self.rateSlider, 0, 1, 1, 1)
+        self.label = QtGui.QLabel(SpeechSettings)
+        self.label.setObjectName(_fromUtf8("label"))
+        self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
+        self.comboBox = QtGui.QComboBox(SpeechSettings)
+        self.comboBox.setEditable(False)
+        self.comboBox.setObjectName(_fromUtf8("comboBox"))
+        self.gridLayout.addWidget(self.comboBox, 2, 1, 1, 1)
+        self.label_2 = QtGui.QLabel(SpeechSettings)
+        self.label_2.setObjectName(_fromUtf8("label_2"))
+        self.gridLayout.addWidget(self.label_2, 1, 0, 1, 1)
+        self.label_3 = QtGui.QLabel(SpeechSettings)
+        self.label_3.setObjectName(_fromUtf8("label_3"))
+        self.gridLayout.addWidget(self.label_3, 2, 0, 1, 1)
         self.volumeSlider = QtGui.QSlider(SpeechSettings)
         self.volumeSlider.setMinimumSize(QtCore.QSize(201, 0))
         self.volumeSlider.setMaximum(100)
@@ -63,9 +66,6 @@ class Ui_SpeechSettings(object):
         self.volumeSlider.setTickInterval(10)
         self.volumeSlider.setObjectName(_fromUtf8("volumeSlider"))
         self.gridLayout.addWidget(self.volumeSlider, 1, 1, 1, 1)
-        self.label_2 = QtGui.QLabel(SpeechSettings)
-        self.label_2.setObjectName(_fromUtf8("label_2"))
-        self.gridLayout.addWidget(self.label_2, 1, 0, 1, 1)
         self.verticalLayout.addLayout(self.gridLayout)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
@@ -84,11 +84,11 @@ class Ui_SpeechSettings(object):
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem1)
         self.restoreButton = QtGui.QPushButton(SpeechSettings)
         self.restoreButton.setObjectName(_fromUtf8("restoreButton"))
         self.horizontalLayout.addWidget(self.restoreButton)
+        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem1)
         self.applyButton = QtGui.QPushButton(SpeechSettings)
         self.applyButton.setIconSize(QtCore.QSize(50, 50))
         self.applyButton.setObjectName(_fromUtf8("applyButton"))
@@ -100,12 +100,12 @@ class Ui_SpeechSettings(object):
 
     def retranslateUi(self, SpeechSettings):
         SpeechSettings.setWindowTitle(_translate("SpeechSettings", "Dialog", None))
-        self.label_3.setText(_translate("SpeechSettings", "Voices:", None))
-        self.comboBox.setToolTip(_translate("SpeechSettings", "Drop down box for selecting the voice", None))
-        self.label.setText(_translate("SpeechSettings", "Rate:", None))
         self.rateSlider.setToolTip(_translate("SpeechSettings", "Words per minute slider (rate)", None))
-        self.volumeSlider.setToolTip(_translate("SpeechSettings", "Volume slider", None))
+        self.label.setText(_translate("SpeechSettings", "Rate:", None))
+        self.comboBox.setToolTip(_translate("SpeechSettings", "Drop down box for selecting the voice", None))
         self.label_2.setText(_translate("SpeechSettings", "Volume:", None))
+        self.label_3.setText(_translate("SpeechSettings", "Voices:", None))
+        self.volumeSlider.setToolTip(_translate("SpeechSettings", "Volume slider", None))
         self.testSpeechText.setToolTip(_translate("SpeechSettings", "The text entered here is used when the test speech button is pressed", None))
         self.testSpeechText.setPlainText(_translate("SpeechSettings", "This is a test of the current text to speech settings.", None))
         self.testButton.setToolTip(_translate("SpeechSettings", "Apply and test current speech settings", None))

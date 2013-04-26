@@ -152,7 +152,7 @@ class MainWindow(QtGui.QMainWindow):
     def resetDocx(self, e):
         print 'Resetting document...'
         if len(self.docxFile) > 0:
-            content = docx.getHtmlAndNavigation(str(self.docxFile))[0]
+            content = self.document.getMainPage()
             baseUrl = QUrl.fromLocalFile(os.path.join(os.getcwd(), '../import'))
             self.ui.documentView.setHtml(content, baseUrl)
             

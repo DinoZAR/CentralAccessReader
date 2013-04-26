@@ -42,6 +42,7 @@ class SpeechSettings(QtGui.QDialog):
         '''
         self.ui.applyButton.clicked.connect(self.applyButton_clicked)
         self.ui.restoreButton.clicked.connect(self.restoreButton_clicked)
+        
         self.ui.testButton.clicked.connect(self.testButton_clicked)
         
         self.ui.rateSlider.valueChanged.connect(self.rateSlider_valueChanged)
@@ -61,7 +62,7 @@ class SpeechSettings(QtGui.QDialog):
     def applyButton_clicked(self):
         self.beforeConfiguration = copy.deepcopy(self.configuration)
         self.configuration.saveToFile('configuration.xml')
-        self.mainWindow.refreshDocument()
+        self.done(0)
         
     def restoreButton_clicked(self):
         self.configuration = copy.deepcopy(self.beforeConfiguration)

@@ -139,14 +139,8 @@ class MainWindow(QtGui.QMainWindow):
         self.changeVoice.emit(self.configuration.voice)
         
         # Update main window sliders to match
-        self.ui.rateSlider.blockSignals(True)
-        self.ui.volumeSlider.blockSignals(True)
-        
         self.ui.rateSlider.setValue(self.configuration.rate)
         self.ui.volumeSlider.setValue(int(self.configuration.volume * 100))
-        
-        self.ui.rateSlider.blockSignals(False)
-        self.ui.volumeSlider.blockSignals(False)
         
         # Finally, save it all to file
         self.configuration.saveToFile('configuration.xml')
@@ -159,9 +153,12 @@ class MainWindow(QtGui.QMainWindow):
         for o in outputList:
             self.addToQueue.emit(o[0], o[1])
         
-        if self.configuration.highlight_enable:
+        if self.configuration.highlight_text_enable:
             self.javascriptMutex.lock()
-            self.ui.webView.page().mainFrame().evaluateJavaScript('SetBeginning()')
+            if self.configuration.highlight_line_enable:
+                self.ui.webView.page().mainFrame().evaluateJavaScript('SetBeginning(true)')
+            else:
+                self.ui.webView.page().mainFrame().evaluateJavaScript('SetBeginning(false)')
             self.javascriptMutex.unlock()
             self.isFirst = True
         
@@ -172,26 +169,38 @@ class MainWindow(QtGui.QMainWindow):
         
     def onWord(self, text, location, label, stream):
         
-        if self.configuration.highlight_enable:
+        if self.configuration.highlight_text_enable:
             if not self.isFirst:
                 if label == "text":
                     if label != self.lastElement[2] or (location != self.lastElement[1]) or (stream != self.lastElement[3]):
                         self.javascriptMutex.lock()
-                        self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement()')
+                        if self.configuration.highlight_line_enable:
+                            self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(true)')
+                        else:
+                            self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(false)')
                         self.javascriptMutex.unlock()
                 elif label == "math":
                     if (label != self.lastElement[2]) or (stream != self.lastElement[3]):
                         self.javascriptMutex.lock()
-                        self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement()')
+                        if self.configuration.highlight_line_enable:
+                            self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(true)')
+                        else:
+                            self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(false)')
                         self.javascriptMutex.unlock()
                 elif label == "image":
                     if (label != self.lastElement[2]) or (stream != self.lastElement[3]):
                         self.javascriptMutex.lock()
-                        self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement()')
+                        if self.configuration.highlight_line_enable:
+                            self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(true)')
+                        else:
+                            self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(false)')
                         self.javascriptMutex.unlock()
                 else:
                     self.javascriptMutex.lock()
-                    self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement()')
+                    if self.configuration.highlight_line_enable:
+                        self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(true)')
+                    else:
+                        self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(false)')
                     self.javascriptMutex.unlock()
             else:
                 # Do this because the SetBeginning() function highlighted it
@@ -228,8 +237,10 @@ class MainWindow(QtGui.QMainWindow):
         
     def colorSettingsButton_clicked(self):
         dialog = ColorSettings(self)
-        dialog.exec_()
+        result = dialog.exec_()
         self.configuration.loadFromFile('configuration.xml')
+        if result == ColorSettings.RESULT_NEED_REFRESH:
+            self.refreshDocument()
         self.updateSettings()
         
     def speechSettingsButton_clicked(self):

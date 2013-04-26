@@ -21,7 +21,8 @@ class Configuration(object):
         self.voice = ''
         
         # Highlighter settings
-        self.highlight_enable = True
+        self.highlight_text_enable = True
+        self.highlight_line_enable = True
         
         # Color settings
         self.color_contentText = QColor(255,255,255)
@@ -37,6 +38,7 @@ class Configuration(object):
         self.font_all = 'Ariel'
     
     def loadFromFile(self, filePath):
+        print 'Loading config...'
         
         # Check if the file exists first. Otherwise, create the file
         configFile = None
@@ -59,11 +61,17 @@ class Configuration(object):
             self.voice = ''
             
         # Highlighter Settings
-        self.highlight_enable = int(configDOM.xpath('/Configuration/EnableHighlighter')[0].text)
-        if self.highlight_enable == 1:
-            self.highlight_enable = True
+        self.highlight_text_enable = int(configDOM.xpath('/Configuration/EnableTextHighlight')[0].text)
+        if self.highlight_text_enable == 1:
+            self.highlight_text_enable = True
         else:
-            self.highlight_enable = False
+            self.highlight_text_enable = False
+        
+        self.highlight_line_enable = int(configDOM.xpath('/Configuration/EnableLineHighlight')[0].text)
+        if self.highlight_line_enable == 1:
+            self.highlight_line_enable = True
+        else:
+            self.highlight_line_enable = False
         
         # Color Settings
         self.color_contentText = self._createQColorFromCommaSeparated(configDOM.xpath('/Configuration/Colors/ContentText')[0].text)
@@ -79,6 +87,8 @@ class Configuration(object):
         self.font_all = configDOM.xpath('/Configuration/Fonts/All')[0].text
         
     def saveToFile(self, filePath):
+        print 'Saving config...'
+        
         root = etree.Element("Configuration")
         
         # Speech Settings
@@ -90,8 +100,14 @@ class Configuration(object):
         voiceElem.text = self.voice
         
         # Highlighter Settings
-        elem = etree.SubElement(root, 'EnableHighlighter')
-        if self.highlight_enable:
+        elem = etree.SubElement(root, 'EnableTextHighlight')
+        if self.highlight_text_enable:
+            elem.text = '1'
+        else:
+            elem.text = '0'
+            
+        elem = etree.SubElement(root, 'EnableLineHighlight')
+        if self.highlight_line_enable:
             elem.text = '1'
         else:
             elem.text = '0'
@@ -140,6 +156,17 @@ class Configuration(object):
         Writes out the CSS file that has my configurations in it.
         '''
         
+        # If text highlighting is disabled, I will give it a completely clear
+        # background to imitate that it is off.
+        highlightTextColor = ''
+        highlightTextBackgroundColor = ''
+        if self.highlight_text_enable:
+            highlightTextColor = self._createRGBStringFromQColor(self.color_highlightText)
+            highlightTextBackgroundColor = self._createRGBStringFromQColor(self.color_highlightBackground)
+        else:
+            highlightTextColor = self._createRGBStringFromQColor(self.color_contentText)
+            highlightTextBackgroundColor = 'transparent'
+        
         # BEGIN CSS FILE
         # -------------------------------------------
         
@@ -156,7 +183,7 @@ h1
 {
 color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
 text-align: center;
-font-size: 48pt;
+font-size: 300%;
 }
 
 h2
@@ -164,23 +191,23 @@ h2
 color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
 border-style: dashed;
 border-width: 0px 0px 1px 0px;
-border-color: #EEEEEE;
+border-color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
 padding: 15px;
-font-size: 36pt;
+font-size: 200%;
 }
 
 h3
 {
 color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
 padding: 10px;
-font-size: 28pt;
+font-size: 175%;
 
 }
 
 h4
 {
 color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
-font-size: 20pt;
+font-size: 150%;
 }
 
 p
@@ -214,9 +241,9 @@ color: ''' + self._createRGBStringFromQColor(self.color_highlightLineText) + '''
 
 #npaHighlight
 {
-background-color: ''' + self._createRGBStringFromQColor(self.color_highlightBackground) + ''';
-color: ''' + self._createRGBStringFromQColor(self.color_highlightText) + ''';
--webkit-border-radius: 5px;
+background-color: ''' + highlightTextBackgroundColor + ''';
+color: ''' + highlightTextColor + ''';
+-webkit-border-radius: 3px;
 display: inline-block;
 }'''
         # -------------------------------------------

@@ -57,7 +57,7 @@ class PatternEditorWindow(QtGui.QMainWindow):
     def speakButton_clicked(self):
         print 'Speak button pressed!'
         self.stageTrees = []
-        stuff = self.mathTTS.parse(unicode(self.ui.mathmlEditor.setText()), stageSink=self.stageTrees)
+        stuff = self.mathTTS.parse(unicode(self.ui.mathmlEditor.text()), stageSink=self.stageTrees)
         
         # Output what the text was
         self.ui.outputText.setText(stuff)
