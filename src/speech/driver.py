@@ -126,12 +126,60 @@ class SAPIDriver(object):
         pythoncom.PumpWaitingMessages()
         
         return
+    
+    def runSaveFileLoop(self, saveFilePath):
+        
+        # Normally, I wouldn't be repeating myself like this. But, for COM to
+        # work, I have to initialize and use my COM objects all from the same
+        # thread.
+        pythoncom.CoInitialize()
+        
+        # Get my filestream to save all of the sounds to
+        saveFileStream = win32com.client.Dispatch('SAPI.SpFileStream')
+        saveFileStream.Open(saveFilePath, 3) # SSFMCreateForWrite
+        
+        self.voice = win32com.client.Dispatch('SAPI.SPVoice')
+        
+        self.voice.SetOutput(saveFileStream)
+        
+        self.voice.EventInterests = 33790 # SVEAllEvents
+        self.voice.AlertBoundary = 64 # SVEPhoneme
+        
+        # Set the characteristics of the voice
+        if len(self.voiceId) > 0:
+            token = self.voiceTokenFromId(self.voiceId)
+            self.voice.Voice = token
+        
+        self.voice.Volume = self.volume
+        self.voice.Rate = self.rate
+        
+        # Get the events from the speech playback
+        self.advisor = win32com.client.WithEvents(self.voice, SAPIEventSink)
+        self.advisor.setDriver(self)
+        
+        for i in range(len(self.queue)):
+            # Make the voice say this asynchronously
+            self.queue[i][2] = self.voice.Speak(self.queue[i][0], 1)
+        
+        while self.running:
+            pythoncom.PumpWaitingMessages()
+        
+        # Use this empty message to completely clear queue
+        self.voice.Speak('', 3) # SPF_PURGEBEFORESPEAK
+        pythoncom.PumpWaitingMessages()
+        
+        saveFileStream.Close()
+        
+        return
         
     def stop(self):
         '''
         Kills everything so that TTS playback stops.
         '''
         self.running = False
+        
+    def speakToWavFile(self, wavFilePath):
+        pass
         
     def waitUntilDone(self):
         while self.running:

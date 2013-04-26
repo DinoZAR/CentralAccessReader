@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Documents\Special Projects\Graffe, Spencer\workspace2\another\src\forms/mainwindow.ui'
 #
-# Created: Thu Apr 25 16:00:48 2013
+# Created: Fri Apr 26 15:46:20 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(1183, 773)
+        MainWindow.resize(1054, 741)
         font = QtGui.QFont()
         font.setPointSize(12)
         MainWindow.setFont(font)
@@ -130,15 +130,24 @@ class Ui_MainWindow(object):
         self.speechSettingsButton.setFlat(True)
         self.speechSettingsButton.setObjectName(_fromUtf8("speechSettingsButton"))
         self.horizontalLayout.addWidget(self.speechSettingsButton)
+        self.saveToMP3Button = QtGui.QPushButton(self.layoutWidget1)
+        self.saveToMP3Button.setText(_fromUtf8(""))
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/text_speak.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.saveToMP3Button.setIcon(icon7)
+        self.saveToMP3Button.setIconSize(QtCore.QSize(50, 50))
+        self.saveToMP3Button.setFlat(True)
+        self.saveToMP3Button.setObjectName(_fromUtf8("saveToMP3Button"))
+        self.horizontalLayout.addWidget(self.saveToMP3Button)
         self.zoomInButton = QtGui.QPushButton(self.layoutWidget1)
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Times New Roman"))
         font.setItalic(False)
         self.zoomInButton.setFont(font)
         self.zoomInButton.setText(_fromUtf8(""))
-        icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/zoom_in.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.zoomInButton.setIcon(icon7)
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/zoom_in.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.zoomInButton.setIcon(icon8)
         self.zoomInButton.setIconSize(QtCore.QSize(50, 50))
         self.zoomInButton.setFlat(True)
         self.zoomInButton.setObjectName(_fromUtf8("zoomInButton"))
@@ -149,9 +158,9 @@ class Ui_MainWindow(object):
         font.setItalic(False)
         self.zoomOutButton.setFont(font)
         self.zoomOutButton.setText(_fromUtf8(""))
-        icon8 = QtGui.QIcon()
-        icon8.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/zoom_out.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.zoomOutButton.setIcon(icon8)
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/zoom_out.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.zoomOutButton.setIcon(icon9)
         self.zoomOutButton.setIconSize(QtCore.QSize(50, 50))
         self.zoomOutButton.setFlat(True)
         self.zoomOutButton.setObjectName(_fromUtf8("zoomOutButton"))
@@ -186,7 +195,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addLayout(self.gridLayout)
         spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
-        self.horizontalLayout.setStretch(7, 1)
+        self.horizontalLayout.setStretch(8, 1)
         self.webViewLayout.addLayout(self.horizontalLayout)
         self.webView = QtWebKit.QWebView(self.layoutWidget1)
         self.webView.setSizeIncrement(QtCore.QSize(1, 1))
@@ -197,7 +206,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.addWidget(self.splitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1183, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1054, 21))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuMenu = QtGui.QMenu(self.menubar)
         self.menuMenu.setObjectName(_fromUtf8("menuMenu"))

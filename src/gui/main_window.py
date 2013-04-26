@@ -112,6 +112,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.pauseButton.clicked.connect(self.pauseButton_clicked)
         self.ui.colorSettingsButton.clicked.connect(self.colorSettingsButton_clicked)
         self.ui.speechSettingsButton.clicked.connect(self.speechSettingsButton_clicked)
+        self.ui.saveToMP3Button.clicked.connect(self.saveToMP3Button_clicked)
         self.ui.zoomInButton.clicked.connect(self.zoomInButton_clicked)
         self.ui.zoomOutButton.clicked.connect(self.zoomOutButton_clicked)
         
@@ -153,14 +154,13 @@ class MainWindow(QtGui.QMainWindow):
         for o in outputList:
             self.addToQueue.emit(o[0], o[1])
         
-        if self.configuration.highlight_text_enable:
-            self.javascriptMutex.lock()
-            if self.configuration.highlight_line_enable:
-                self.ui.webView.page().mainFrame().evaluateJavaScript('SetBeginning(true)')
-            else:
-                self.ui.webView.page().mainFrame().evaluateJavaScript('SetBeginning(false)')
-            self.javascriptMutex.unlock()
-            self.isFirst = True
+        self.javascriptMutex.lock()
+        if self.configuration.highlight_line_enable:
+            self.ui.webView.page().mainFrame().evaluateJavaScript('SetBeginning(true)')
+        else:
+            self.ui.webView.page().mainFrame().evaluateJavaScript('SetBeginning(false)')
+        self.javascriptMutex.unlock()
+        self.isFirst = True
         
         self.startPlayback.emit()
         
@@ -169,33 +169,25 @@ class MainWindow(QtGui.QMainWindow):
         
     def onWord(self, text, location, label, stream):
         
-        if self.configuration.highlight_text_enable:
-            if not self.isFirst:
-                if label == "text":
-                    if label != self.lastElement[2] or (location != self.lastElement[1]) or (stream != self.lastElement[3]):
-                        self.javascriptMutex.lock()
-                        if self.configuration.highlight_line_enable:
-                            self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(true)')
-                        else:
-                            self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(false)')
-                        self.javascriptMutex.unlock()
-                elif label == "math":
-                    if (label != self.lastElement[2]) or (stream != self.lastElement[3]):
-                        self.javascriptMutex.lock()
-                        if self.configuration.highlight_line_enable:
-                            self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(true)')
-                        else:
-                            self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(false)')
-                        self.javascriptMutex.unlock()
-                elif label == "image":
-                    if (label != self.lastElement[2]) or (stream != self.lastElement[3]):
-                        self.javascriptMutex.lock()
-                        if self.configuration.highlight_line_enable:
-                            self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(true)')
-                        else:
-                            self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(false)')
-                        self.javascriptMutex.unlock()
-                else:
+        if not self.isFirst:
+            if label == "text":
+                if label != self.lastElement[2] or (location != self.lastElement[1]) or (stream != self.lastElement[3]):
+                    self.javascriptMutex.lock()
+                    if self.configuration.highlight_line_enable:
+                        self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(true)')
+                    else:
+                        self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(false)')
+                    self.javascriptMutex.unlock()
+            elif label == "math":
+                if (label != self.lastElement[2]) or (stream != self.lastElement[3]):
+                    self.javascriptMutex.lock()
+                    if self.configuration.highlight_line_enable:
+                        self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(true)')
+                    else:
+                        self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(false)')
+                    self.javascriptMutex.unlock()
+            elif label == "image":
+                if (label != self.lastElement[2]) or (stream != self.lastElement[3]):
                     self.javascriptMutex.lock()
                     if self.configuration.highlight_line_enable:
                         self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(true)')
@@ -203,8 +195,15 @@ class MainWindow(QtGui.QMainWindow):
                         self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(false)')
                     self.javascriptMutex.unlock()
             else:
-                # Do this because the SetBeginning() function highlighted it
-                self.isFirst = False
+                self.javascriptMutex.lock()
+                if self.configuration.highlight_line_enable:
+                    self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(true)')
+                else:
+                    self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(false)')
+                self.javascriptMutex.unlock()
+        else:
+            # Do this because the SetBeginning() function highlighted it
+            self.isFirst = False
             
         # Store what the last element was that was being spoken
         self.lastElement = [text, location, label, stream]
@@ -248,6 +247,16 @@ class MainWindow(QtGui.QMainWindow):
         dialog.exec_()
         self.configuration.loadFromFile('configuration.xml')
         self.updateSettings()
+        
+    def saveToMP3Button_clicked(self):
+        # Generate a filename that is basically the original file but with the
+        # .mp3 extension at the end
+        defaultFileName = os.path.splitext(str(self.lastDocumentFilePath))[0] + '.mp3'
+        
+        fileName = QtGui.QFileDialog.getSaveFileName(self, 'Save MP3...', defaultFileName, '(*.mp3)')
+        
+        if len(fileName) > 0:
+            print 'Got a saved place!'
         
     def zoomInButton_clicked(self):
         self.ui.webView.zoomIn()

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1183</width>
-    <height>773</height>
+    <width>1054</width>
+    <height>741</height>
    </rect>
   </property>
   <property name="font">
@@ -140,7 +140,7 @@
       <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="webViewLayout" stretch="0,1">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,0,0,1">
+         <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,0,0,0,1">
           <item>
            <widget class="QPushButton" name="playButton">
             <property name="toolTip">
@@ -215,6 +215,26 @@
             <property name="icon">
              <iconset resource="resource.qrc">
               <normaloff>:/icons/icons/system_config_services.png</normaloff>:/icons/icons/system_config_services.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>50</width>
+              <height>50</height>
+             </size>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="saveToMP3Button">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="resource.qrc">
+              <normaloff>:/icons/icons/text_speak.png</normaloff>:/icons/icons/text_speak.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -406,7 +426,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1183</width>
+     <width>1054</width>
      <height>21</height>
     </rect>
    </property>
