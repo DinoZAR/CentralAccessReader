@@ -140,7 +140,7 @@
       <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="webViewLayout" stretch="0,1">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,0,0,0,1">
+         <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,0,0,1">
           <item>
            <widget class="QPushButton" name="playButton">
             <property name="toolTip">
@@ -175,35 +175,6 @@
             <property name="icon">
              <iconset resource="resource.qrc">
               <normaloff>:/icons/icons/stop.png</normaloff>:/icons/icons/stop.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>50</width>
-              <height>50</height>
-             </size>
-            </property>
-            <property name="flat">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="settingsButton">
-            <property name="font">
-             <font>
-              <family>Times New Roman</family>
-              <italic>false</italic>
-             </font>
-            </property>
-            <property name="toolTip">
-             <string>Settings button</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="resource.qrc">
-              <normaloff>:/icons/icons/system_config_services.png</normaloff>:/icons/icons/system_config_services.png</iconset>
             </property>
             <property name="iconSize">
              <size>

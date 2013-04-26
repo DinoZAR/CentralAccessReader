@@ -67,15 +67,12 @@
           </widget>
          </item>
          <item>
-          <widget class="QPlainTextEdit" name="databaseEditor">
-           <property name="font">
-            <font>
-             <family>DejaVu Sans Mono</family>
-             <pointsize>10</pointsize>
-            </font>
+          <widget class="QsciScintilla" name="databaseEditor">
+           <property name="toolTip">
+            <string/>
            </property>
-           <property name="lineWrapMode">
-            <enum>QPlainTextEdit::NoWrap</enum>
+           <property name="whatsThis">
+            <string/>
            </property>
           </widget>
          </item>
@@ -91,12 +88,12 @@
           </widget>
          </item>
          <item>
-          <widget class="QPlainTextEdit" name="mathmlEditor">
-           <property name="font">
-            <font>
-             <family>DejaVu Sans Mono</family>
-             <pointsize>10</pointsize>
-            </font>
+          <widget class="QsciScintilla" name="mathmlEditor">
+           <property name="toolTip">
+            <string/>
+           </property>
+           <property name="whatsThis">
+            <string/>
            </property>
           </widget>
          </item>
@@ -238,6 +235,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QsciScintilla</class>
+   <extends>QFrame</extends>
+   <header>Qsci/qsciscintilla.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

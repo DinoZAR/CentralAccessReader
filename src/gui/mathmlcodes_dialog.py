@@ -15,14 +15,12 @@ class MathMLCodesDialog(QtGui.QDialog):
     in debugging which MathML works and which doesn't.
     '''
 
-    def __init__(self, ttsEngine, mathmlCodes, parent=None):
+    def __init__(self, mathmlCodes, parent=None):
         QtGui.QWidget.__init__(self, parent)
         
         self.ui = Ui_MathMLCodesDialog()
         
         self.ui.setupUi(self)
-        
-        self.ttsEngine = ttsEngine
         self.mathmlCodes = mathmlCodes
         
         # Set the items in the list box using WebViews of all of my MathML code

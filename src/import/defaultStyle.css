@@ -1,0 +1,76 @@
+
+body
+{
+background: rgb(10, 10, 10);
+color: rgb(255, 255, 255);
+font-size: 12pt;
+font-family: "Ariel";
+}
+
+h1
+{
+color: rgb(255, 255, 255);
+text-align: center;
+font-size: 48pt;
+}
+
+h2
+{
+color: rgb(255, 255, 255);
+border-style: dashed;
+border-width: 0px 0px 1px 0px;
+border-color: #EEEEEE;
+padding: 15px;
+font-size: 36pt;
+}
+
+h3
+{
+color: rgb(255, 255, 255);
+padding: 10px;
+font-size: 28pt;
+
+}
+
+h4
+{
+color: rgb(255, 255, 255);
+font-size: 20pt;
+}
+
+p
+{
+color: rgb(255, 255, 255);
+}
+
+img
+{
+max-width: 300px;
+max-height: 300px
+}
+
+table, th, td
+{
+border: 1px solid rgb(255, 255, 255);
+padding: 15px;
+}
+
+.mathmlEquation
+{
+font-size: 230%;
+}
+
+#npaHighlightLine
+{
+background-color: rgb(0, 255, 0);
+color: rgb(0, 0, 0);
+-webkit-border-radius: 5px;
+}
+
+#npaHighlight
+{
+background-color: rgb(255, 255, 0);
+color: rgb(0, 0, 0);
+-webkit-border-radius: 5px;
+display: inline-block;
+}

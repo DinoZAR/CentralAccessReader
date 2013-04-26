@@ -11,7 +11,6 @@ class Configuration(object):
     Object that holds all of the settings for the Nifty Prose Articulator
     '''
 
-
     def __init__(self):
         '''
         Fill it with all of the basic stuff.
@@ -35,16 +34,7 @@ class Configuration(object):
         self.color_highlightLineBackground = QColor(0,255,0)
         
         # Font settings
-        self.font_paragraph = 'Times New Roman'
-        self.font_paragraphSize = 12
-        self.font_header1 = 'Times New Roman'
-        self.font_header1Size = 42
-        self.font_header2 = 'Times New Roman'
-        self.font_header2Size = 30
-        self.font_header3 = 'Times New Roman'
-        self.font_header3Size = 25
-        self.font_header4 = 'Times New Roman'
-        self.font_header4Size = 20
+        self.font_all = 'Ariel'
     
     def loadFromFile(self, filePath):
         
@@ -86,16 +76,7 @@ class Configuration(object):
         self.color_highlightLineBackground = self._createQColorFromCommaSeparated(configDOM.xpath('/Configuration/Colors/HighlightLineBackground')[0].text)
         
         # Font Settings
-        self.font_paragraph = configDOM.xpath('/Configuration/Fonts/ParagraphFont')[0].text
-        self.font_paragraphSize = int(configDOM.xpath('/Configuration/Fonts/ParagraphSize')[0].text)
-        self.font_header1 = configDOM.xpath('/Configuration/Fonts/Header1Font')[0].text
-        self.font_header1Size = int(configDOM.xpath('/Configuration/Fonts/Header1Size')[0].text)
-        self.font_header2 = configDOM.xpath('/Configuration/Fonts/Header2Font')[0].text
-        self.font_header2Size = int(configDOM.xpath('/Configuration/Fonts/Header2Size')[0].text)
-        self.font_header3 = configDOM.xpath('/Configuration/Fonts/Header3Font')[0].text
-        self.font_header3Size = int(configDOM.xpath('/Configuration/Fonts/Header3Size')[0].text)
-        self.font_header4 = configDOM.xpath('/Configuration/Fonts/Header4Font')[0].text
-        self.font_header4Size = int(configDOM.xpath('/Configuration/Fonts/Header4Size')[0].text)
+        self.font_all = configDOM.xpath('/Configuration/Fonts/All')[0].text
         
     def saveToFile(self, filePath):
         root = etree.Element("Configuration")
@@ -132,26 +113,8 @@ class Configuration(object):
         
         # Font settings
         fontRoot = etree.SubElement(root, 'Fonts')
-        elem = etree.SubElement(fontRoot, 'ParagraphFont')
-        elem.text = self.font_paragraph
-        elem = etree.SubElement(fontRoot, 'ParagraphSize')
-        elem.text = str(self.font_paragraphSize)
-        elem = etree.SubElement(fontRoot, 'Header1Font')
-        elem.text = self.font_header1
-        elem = etree.SubElement(fontRoot, 'Header1Size')
-        elem.text = str(self.font_header1Size)
-        elem = etree.SubElement(fontRoot, 'Header2Font')
-        elem.text = self.font_header2
-        elem = etree.SubElement(fontRoot, 'Header2Size')
-        elem.text = str(self.font_header2Size)
-        elem = etree.SubElement(fontRoot, 'Header3Font')
-        elem.text = self.font_header3
-        elem = etree.SubElement(fontRoot, 'Header3Size')
-        elem.text = str(self.font_header3Size)
-        elem = etree.SubElement(fontRoot, 'Header4Font')
-        elem.text = self.font_header4
-        elem = etree.SubElement(fontRoot, 'Header4Size')
-        elem.text = str(self.font_header4Size)
+        elem = etree.SubElement(fontRoot, 'All')
+        elem.text = self.font_all
         
         configFile = open(filePath, 'w')
         configFile.write(etree.tostring(root, pretty_print=True))
@@ -185,16 +148,15 @@ body
 {
 background: ''' + self._createRGBStringFromQColor(self.color_contentBackground) + ''';
 color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
-font-size: ''' + str(self.font_paragraphSize) + '''pt;
-font-family: "''' + self.font_paragraph + '''";
+font-size: 12pt;
+font-family: "''' + self.font_all + '''";
 }
 
 h1
 {
 color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
 text-align: center;
-font-size: ''' + str(self.font_header1Size) + '''pt;
-font-family: "''' + self.font_header1 + '''";
+font-size: 48pt;
 }
 
 h2
@@ -204,24 +166,21 @@ border-style: dashed;
 border-width: 0px 0px 1px 0px;
 border-color: #EEEEEE;
 padding: 15px;
-font-size: ''' + str(self.font_header2Size) + '''pt;
-font-family: "''' + self.font_header2 + '''";
+font-size: 36pt;
 }
 
 h3
 {
 color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
 padding: 10px;
-font-size: ''' + str(self.font_header3Size) + '''pt;
-font-family: "''' + self.font_header3 + '''";
+font-size: 28pt;
 
 }
 
 h4
 {
 color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
-font-size: ''' + str(self.font_header4Size) + '''pt;
-font-family: "''' + self.font_header4 + '''";
+font-size: 20pt;
 }
 
 p

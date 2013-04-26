@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Documents\Special Projects\Graffe, Spencer\workspace2\another\src\forms/settings.ui'
 #
-# Created: Wed Apr 17 17:42:45 2013
+# Created: Thu Apr 25 15:46:15 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!

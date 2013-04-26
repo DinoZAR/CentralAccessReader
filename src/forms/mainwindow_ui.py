@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Documents\Special Projects\Graffe, Spencer\workspace2\another\src\forms/mainwindow.ui'
 #
-# Created: Thu Apr 25 10:49:30 2013
+# Created: Thu Apr 25 16:00:48 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -112,31 +112,20 @@ class Ui_MainWindow(object):
         self.pauseButton.setFlat(True)
         self.pauseButton.setObjectName(_fromUtf8("pauseButton"))
         self.horizontalLayout.addWidget(self.pauseButton)
-        self.settingsButton = QtGui.QPushButton(self.layoutWidget1)
-        font = QtGui.QFont()
-        font.setFamily(_fromUtf8("Times New Roman"))
-        font.setItalic(False)
-        self.settingsButton.setFont(font)
-        self.settingsButton.setText(_fromUtf8(""))
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/system_config_services.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.settingsButton.setIcon(icon5)
-        self.settingsButton.setIconSize(QtCore.QSize(50, 50))
-        self.settingsButton.setFlat(True)
-        self.settingsButton.setObjectName(_fromUtf8("settingsButton"))
-        self.horizontalLayout.addWidget(self.settingsButton)
         self.colorSettingsButton = QtGui.QPushButton(self.layoutWidget1)
         self.colorSettingsButton.setText(_fromUtf8(""))
-        icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/color_settings.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.colorSettingsButton.setIcon(icon6)
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/color_settings.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.colorSettingsButton.setIcon(icon5)
         self.colorSettingsButton.setIconSize(QtCore.QSize(50, 50))
         self.colorSettingsButton.setFlat(True)
         self.colorSettingsButton.setObjectName(_fromUtf8("colorSettingsButton"))
         self.horizontalLayout.addWidget(self.colorSettingsButton)
         self.speechSettingsButton = QtGui.QPushButton(self.layoutWidget1)
         self.speechSettingsButton.setText(_fromUtf8(""))
-        self.speechSettingsButton.setIcon(icon5)
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/system_config_services.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.speechSettingsButton.setIcon(icon6)
         self.speechSettingsButton.setIconSize(QtCore.QSize(50, 50))
         self.speechSettingsButton.setFlat(True)
         self.speechSettingsButton.setObjectName(_fromUtf8("speechSettingsButton"))
@@ -197,7 +186,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addLayout(self.gridLayout)
         spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
-        self.horizontalLayout.setStretch(8, 1)
+        self.horizontalLayout.setStretch(7, 1)
         self.webViewLayout.addLayout(self.horizontalLayout)
         self.webView = QtWebKit.QWebView(self.layoutWidget1)
         self.webView.setSizeIncrement(QtCore.QSize(1, 1))
@@ -246,7 +235,6 @@ class Ui_MainWindow(object):
         self.label_3.setText(_translate("MainWindow", "Bookmarks:", None))
         self.playButton.setToolTip(_translate("MainWindow", "Play button", None))
         self.pauseButton.setToolTip(_translate("MainWindow", "Stop button", None))
-        self.settingsButton.setToolTip(_translate("MainWindow", "Settings button", None))
         self.zoomInButton.setToolTip(_translate("MainWindow", "Settings button", None))
         self.zoomOutButton.setToolTip(_translate("MainWindow", "Settings button", None))
         self.label_2.setText(_translate("MainWindow", "Volume:", None))

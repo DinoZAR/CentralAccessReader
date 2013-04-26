@@ -11,7 +11,8 @@ from PyQt4 import QtCore
 from PyQt4.QtWebKit import QWebPage, QWebInspector, QWebSettings
 from lxml import etree
 from src.forms.mainwindow_ui import Ui_MainWindow
-from src.gui.settings import Settings
+from src.gui.color_settings import ColorSettings
+from src.gui.speech_settings import SpeechSettings
 from src.gui.mathmlcodes_dialog import MathMLCodesDialog
 from src.gui.configuration import Configuration
 from src.gui.npa_webview import NPAWebView
@@ -66,6 +67,7 @@ class MainWindow(QtGui.QMainWindow):
         self.mathTTS = MathTTS('mathml/parser_pattern_database.txt')
         
         # TTS states
+        self.ttsPlaying = False
         self.stopSpeech = True
         self.isFirst = False
         self.lastElement = ['', -1, '', -1]
@@ -108,7 +110,8 @@ class MainWindow(QtGui.QMainWindow):
         # Toolbar buttons
         self.ui.playButton.clicked.connect(self.playButton_clicked)
         self.ui.pauseButton.clicked.connect(self.pauseButton_clicked)
-        self.ui.settingsButton.clicked.connect(self.settingsButton_clicked)
+        self.ui.colorSettingsButton.clicked.connect(self.colorSettingsButton_clicked)
+        self.ui.speechSettingsButton.clicked.connect(self.speechSettingsButton_clicked)
         self.ui.zoomInButton.clicked.connect(self.zoomInButton_clicked)
         self.ui.zoomOutButton.clicked.connect(self.zoomOutButton_clicked)
         
@@ -136,8 +139,14 @@ class MainWindow(QtGui.QMainWindow):
         self.changeVoice.emit(self.configuration.voice)
         
         # Update main window sliders to match
+        self.ui.rateSlider.blockSignals(True)
+        self.ui.volumeSlider.blockSignals(True)
+        
         self.ui.rateSlider.setValue(self.configuration.rate)
         self.ui.volumeSlider.setValue(int(self.configuration.volume * 100))
+        
+        self.ui.rateSlider.blockSignals(False)
+        self.ui.volumeSlider.blockSignals(False)
         
         # Finally, save it all to file
         self.configuration.saveToFile('configuration.xml')
@@ -157,6 +166,9 @@ class MainWindow(QtGui.QMainWindow):
             self.isFirst = True
         
         self.startPlayback.emit()
+        
+        self.ttsPlaying = True
+        self.setSlidersEnableState()
         
     def onWord(self, text, location, label, stream):
         
@@ -194,10 +206,14 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.webView.page().mainFrame().evaluateJavaScript('ClearAllHighlights()')
         self.javascriptMutex.unlock()
         self.isFirst = False
+        self.ttsPlaying = False
+        self.setSlidersEnableState()
         
     def pauseButton_clicked(self):
         self.isFirst = False
         self.stopPlayback.emit()
+        self.ttsPlaying = False
+        self.setSlidersEnableState()
 
     def muteButton_clicked(self):
         pass
@@ -210,8 +226,14 @@ class MainWindow(QtGui.QMainWindow):
         self.configuration.volume = float(value) / 100.0
         self.updateSettings()
         
-    def settingsButton_clicked(self):
-        dialog = Settings(self)
+    def colorSettingsButton_clicked(self):
+        dialog = ColorSettings(self)
+        dialog.exec_()
+        self.configuration.loadFromFile('configuration.xml')
+        self.updateSettings()
+        
+    def speechSettingsButton_clicked(self):
+        dialog = SpeechSettings(self)
         dialog.exec_()
         self.configuration.loadFromFile('configuration.xml')
         self.updateSettings()
@@ -270,7 +292,7 @@ class MainWindow(QtGui.QMainWindow):
         self.mathTTS.setPatternDatabase(databaseFileName)
         
     def showAllMathML(self):
-        self.mathmlDialog = MathMLCodesDialog(self.ttsEngine, self.assigner._maths)
+        self.mathmlDialog = MathMLCodesDialog(self.assigner._maths)
         self.mathmlDialog.show()
         
     def bookmarksTree_clicked(self, index):
@@ -324,3 +346,15 @@ class MainWindow(QtGui.QMainWindow):
             # Set the root bookmark for the tree model
             self.bookmarksModel = BookmarksTreeModel(self.document.getBookmarks())
             self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
+            
+    def setSlidersEnableState(self):
+        '''
+        Disables or enables the TTS sliders depending on whether we are playing
+        back right now or not.
+        '''
+        if self.ttsPlaying:
+            self.ui.rateSlider.setEnabled(False)
+            self.ui.volumeSlider.setEnabled(False)
+        else:
+            self.ui.rateSlider.setEnabled(True)
+            self.ui.volumeSlider.setEnabled(True)

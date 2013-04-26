@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\Spen-ZAR\workspace\NiftyProseArticulator\src\mathml\pattern_editor\forms/patterneditorwindow.ui'
+# Form implementation generated from reading ui file 'W:\Documents\Special Projects\Graffe, Spencer\workspace2\another\src\mathml\pattern_editor\forms/patterneditorwindow.ui'
 #
-# Created: Wed Feb 27 08:44:32 2013
-#      by: PyQt4 UI code generator 4.9.6
+# Created: Thu Apr 25 15:25:51 2013
+#      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -58,12 +58,9 @@ class Ui_PatternEditorWindow(object):
         self.databaseLabel = QtGui.QLabel(self.layoutWidget)
         self.databaseLabel.setObjectName(_fromUtf8("databaseLabel"))
         self.verticalLayout_3.addWidget(self.databaseLabel)
-        self.databaseEditor = QtGui.QPlainTextEdit(self.layoutWidget)
-        font = QtGui.QFont()
-        font.setFamily(_fromUtf8("DejaVu Sans Mono"))
-        font.setPointSize(10)
-        self.databaseEditor.setFont(font)
-        self.databaseEditor.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
+        self.databaseEditor = Qsci.QsciScintilla(self.layoutWidget)
+        self.databaseEditor.setToolTip(_fromUtf8(""))
+        self.databaseEditor.setWhatsThis(_fromUtf8(""))
         self.databaseEditor.setObjectName(_fromUtf8("databaseEditor"))
         self.verticalLayout_3.addWidget(self.databaseEditor)
         self.layoutWidget1 = QtGui.QWidget(self.splitter)
@@ -74,11 +71,9 @@ class Ui_PatternEditorWindow(object):
         self.label_4 = QtGui.QLabel(self.layoutWidget1)
         self.label_4.setObjectName(_fromUtf8("label_4"))
         self.verticalLayout.addWidget(self.label_4)
-        self.mathmlEditor = QtGui.QPlainTextEdit(self.layoutWidget1)
-        font = QtGui.QFont()
-        font.setFamily(_fromUtf8("DejaVu Sans Mono"))
-        font.setPointSize(10)
-        self.mathmlEditor.setFont(font)
+        self.mathmlEditor = Qsci.QsciScintilla(self.layoutWidget1)
+        self.mathmlEditor.setToolTip(_fromUtf8(""))
+        self.mathmlEditor.setWhatsThis(_fromUtf8(""))
         self.mathmlEditor.setObjectName(_fromUtf8("mathmlEditor"))
         self.verticalLayout.addWidget(self.mathmlEditor)
         self.layoutWidget2 = QtGui.QWidget(self.splitter_2)
@@ -165,3 +160,4 @@ class Ui_PatternEditorWindow(object):
         self.actionOpen_MathML.setText(_translate("PatternEditorWindow", "Open MathML", None))
         self.actionOpen_MathML.setShortcut(_translate("PatternEditorWindow", "Ctrl+Shift+O", None))
 
+from PyQt4 import Qsci

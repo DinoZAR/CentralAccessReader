@@ -6,7 +6,6 @@ Created on Feb 20, 2013
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtGui import QStandardItemModel, QStandardItem
 from mathml.pattern_editor.forms.patterneditorwindow_ui import Ui_PatternEditorWindow
-import pyttsx
 from mathml.tts import MathTTS
 
 class PatternEditorWindow(QtGui.QMainWindow):
@@ -20,9 +19,6 @@ class PatternEditorWindow(QtGui.QMainWindow):
         self.ui = Ui_PatternEditorWindow()
         self.ui.setupUi(self)
         
-        self.ttsEngine = pyttsx.init()
-        self.ttsEngine.setProperty('rate', 140)
-        
         self.currentFile = databaseFile.strip()
         
         # If I actually got something, then let's load the file in
@@ -31,7 +27,7 @@ class PatternEditorWindow(QtGui.QMainWindow):
                 f = open(self.currentFile, 'r')
                 contents = f.read()
                 f.close()
-                self.ui.databaseEditor.setPlainText(contents)
+                self.ui.databaseEditor.setText(contents)
             except IOError:
                 print 'Database file doesn\'t exist! Resetting to nothing...'
                 self.currentFile = ''
@@ -42,7 +38,7 @@ class PatternEditorWindow(QtGui.QMainWindow):
         self.stageTrees = []
         self.updateStagesModel()
         
-        self.ui.mathmlEditor.setPlainText(unicode(lastMathML))
+        self.ui.mathmlEditor.setText(unicode(lastMathML))
         
         self.connect_signals()
         
@@ -61,16 +57,13 @@ class PatternEditorWindow(QtGui.QMainWindow):
     def speakButton_clicked(self):
         print 'Speak button pressed!'
         self.stageTrees = []
-        stuff = self.mathTTS.parse(unicode(self.ui.mathmlEditor.toPlainText()), stageSink=self.stageTrees)
+        stuff = self.mathTTS.parse(unicode(self.ui.mathmlEditor.setText()), stageSink=self.stageTrees)
         
         # Output what the text was
         self.ui.outputText.setText(stuff)
         
         # Turn my stages into a tree model with extra happy!
         self.updateStagesModel()
-        
-        self.ttsEngine.say(stuff)
-        self.ttsEngine.runAndWait()
         
     def expandButton_clicked(self):
         self.ui.stagesTreeView.expandAll()
@@ -153,7 +146,7 @@ class PatternEditorWindow(QtGui.QMainWindow):
             f = open(self.currentFile, 'r')
             contents = f.read()
             f.close()
-            self.ui.databaseEditor.setPlainText(contents)
+            self.ui.databaseEditor.setText(contents)
             
             self.changedPattern.emit(self.currentFile)
             self.mathTTS.setPatternDatabase(self.currentFile)
@@ -167,7 +160,7 @@ class PatternEditorWindow(QtGui.QMainWindow):
             f = open(newFile, 'r')
             contents = f.read()
             f.close()
-            self.ui.mathmlEditor.setPlainText(contents)
+            self.ui.mathmlEditor.setText(contents)
         
     def actionSave_triggered(self):
         print 'Save was triggered!'
@@ -177,7 +170,7 @@ class PatternEditorWindow(QtGui.QMainWindow):
             self.actionSaveAs_triggered()
         else:
             f = open(self.currentFile, 'w')
-            f.write(unicode(self.ui.databaseEditor.toPlainText()))
+            f.write(unicode(self.ui.databaseEditor.text()))
             f.close()
             
             self.changedPattern.emit(self.currentFile)
@@ -189,7 +182,7 @@ class PatternEditorWindow(QtGui.QMainWindow):
         if len(newFileName) > 0:
             self.currentFile = newFileName
             f = open(self.currentFile, 'w')
-            f.write(unicode(self.ui.databaseEditor.toPlainText()))
+            f.write(unicode(self.ui.databaseEditor.text()))
             f.close()
             
             self.changedPattern.emit(self.currentFile)
