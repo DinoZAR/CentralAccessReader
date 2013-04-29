@@ -3,11 +3,25 @@ Created on Apr 9, 2013
 
 @author: Spencer Graffe
 '''
-import win32com.client
-import pythoncom
-import win32event
 import time
 import thread
+import platform
+
+if platform.system() == 'Windows':
+    import win32com.client
+    import pythoncom
+    import win32event
+
+def get_driver():
+    '''
+    Returns the correct TTS driver for the operating system in use. It then
+    returns the TTS engine that will work for it.
+    '''
+    if platform.system() == 'Windows':
+        return SAPIDriver()
+    else:
+        print 'ERROR: I don\'t have a TTS driver for this operating system'
+        return None
 
 class SAPIDriver(object):
     '''
@@ -76,6 +90,7 @@ class SAPIDriver(object):
         
     def add(self, text, label):
         self.queue.append([text, label, 0])
+        print 'Queue contents:', self.queue
     
     def start(self):
         '''
@@ -126,51 +141,6 @@ class SAPIDriver(object):
         pythoncom.PumpWaitingMessages()
         
         return
-    
-    def runSaveFileLoop(self, saveFilePath):
-        
-        # Normally, I wouldn't be repeating myself like this. But, for COM to
-        # work, I have to initialize and use my COM objects all from the same
-        # thread.
-        pythoncom.CoInitialize()
-        
-        # Get my filestream to save all of the sounds to
-        saveFileStream = win32com.client.Dispatch('SAPI.SpFileStream')
-        saveFileStream.Open(saveFilePath, 3) # SSFMCreateForWrite
-        
-        self.voice = win32com.client.Dispatch('SAPI.SPVoice')
-        
-        self.voice.SetOutput(saveFileStream)
-        
-        self.voice.EventInterests = 33790 # SVEAllEvents
-        self.voice.AlertBoundary = 64 # SVEPhoneme
-        
-        # Set the characteristics of the voice
-        if len(self.voiceId) > 0:
-            token = self.voiceTokenFromId(self.voiceId)
-            self.voice.Voice = token
-        
-        self.voice.Volume = self.volume
-        self.voice.Rate = self.rate
-        
-        # Get the events from the speech playback
-        self.advisor = win32com.client.WithEvents(self.voice, SAPIEventSink)
-        self.advisor.setDriver(self)
-        
-        for i in range(len(self.queue)):
-            # Make the voice say this asynchronously
-            self.queue[i][2] = self.voice.Speak(self.queue[i][0], 1)
-        
-        while self.running:
-            pythoncom.PumpWaitingMessages()
-        
-        # Use this empty message to completely clear queue
-        self.voice.Speak('', 3) # SPF_PURGEBEFORESPEAK
-        pythoncom.PumpWaitingMessages()
-        
-        saveFileStream.Close()
-        
-        return
         
     def stop(self):
         '''
@@ -178,8 +148,44 @@ class SAPIDriver(object):
         '''
         self.running = False
         
-    def speakToWavFile(self, wavFilePath):
-        pass
+    def speakToWavFile(self, wavFilePath, outputList, progressCallback):
+        '''
+        This is a separate function that runs on a different thread.
+        This will not return until it has completely written the speech to the
+        file.
+        
+        The output list should be the following:
+        [('Speech!', 'label'), ('Speech!', 'label'), ...]
+        
+        The progressCallback should be a function that takes an int from 0-100,
+        100 being when it is done.
+        '''
+        pythoncom.CoInitialize()
+    
+        saveFileStream = win32com.client.Dispatch('SAPI.SpFileStream')
+        saveFileStream.Format.Type = 18  # Some magic number that gives good results
+        saveFileStream.Open(wavFilePath, 3)
+    
+        voice = win32com.client.Dispatch('SAPI.SpVoice')
+        voice.AudioOutputStream = saveFileStream
+        voice.EventInterests = 33790 # SVEAllEvents
+        voice.AlertBoundary = 64 # SVEPhoneme
+        
+        voice.Volume = self.volume
+        voice.Rate = self.rate
+        
+        # Voice events for updating the progress thing
+        advisor = win32com.client.WithEvents(voice, SAPIEventSink)
+        advisor.setDriver(self)
+        
+        for i in range(len(outputList)):
+            progressCallback(int(float(i) / len(outputList) * 100.0 - 1))
+            voice.Speak(outputList[i][0], 1)
+            voice.WaitUntilDone(0xFFFFFFF) # Maximum time
+        
+        progressCallback(99)
+        
+        saveFileStream.Close()
         
     def waitUntilDone(self):
         while self.running:

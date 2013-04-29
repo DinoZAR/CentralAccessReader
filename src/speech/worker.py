@@ -5,13 +5,14 @@ Created on Apr 8, 2013
 '''
 from PyQt4.QtCore import QThread
 from PyQt4 import QtCore
-from src.speech.driver import SAPIDriver
+from src.speech import driver
 import pythoncom
 
 class SpeechWorker(QThread):
     
     onWord = QtCore.pyqtSignal(str, int, str, int)
     onFinish = QtCore.pyqtSignal()
+    onProgress = QtCore.pyqtSignal(int)
     
     def __init__(self):
         QThread.__init__(self)
@@ -36,7 +37,7 @@ class SpeechWorker(QThread):
             self.running = False
             self.onFinish.emit()
         
-        self.ttsEngine = SAPIDriver()
+        self.ttsEngine = driver.get_driver()
         self.ttsEngine.connect('onWord', myOnWord)
         self.ttsEngine.connect('onFinish', myOnFinish)
         
@@ -77,6 +78,17 @@ class SpeechWorker(QThread):
         if self.running:
             self.ttsEngine.stop()
             self.running = False
+            
+    def saveToMP3(self, mp3Path, outputList):
+        print 'Saving to MP3...'
+        
+        # Create the WAV file first
+        def myOnProgress(percent):
+            self.onProgress.emit(percent)
+        
+        self.ttsEngine.speakToWavFile(mp3Path, outputList, myOnProgress)
+        
+        print 'Done!'
     
     def setVolume(self, v):
         self.volume = v

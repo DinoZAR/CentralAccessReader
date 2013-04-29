@@ -5,6 +5,7 @@ Created on Jan 21, 2013
 '''
 import sys
 import os.path
+import time
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt, QUrl, QMutex
 from PyQt4 import QtCore
@@ -92,6 +93,10 @@ class MainWindow(QtGui.QMainWindow):
         self.changeVoice.connect(self.speechThread.setVoice)
         
         self.speechThread.start()
+        
+        # Create the general-purpose progress dialog
+        self.progressDialog = QtGui.QProgressDialog('Stuff', 'Cancel', 0, 100, self)
+        
         
         # Load the configuration file
         self.configuration = Configuration()
@@ -251,12 +256,39 @@ class MainWindow(QtGui.QMainWindow):
     def saveToMP3Button_clicked(self):
         # Generate a filename that is basically the original file but with the
         # .mp3 extension at the end
-        defaultFileName = os.path.splitext(str(self.lastDocumentFilePath))[0] + '.mp3'
-        
-        fileName = QtGui.QFileDialog.getSaveFileName(self, 'Save MP3...', defaultFileName, '(*.mp3)')
-        
+        defaultFileName = os.path.splitext(str(self.lastDocumentFilePath))[0] + '.wav'
+        fileName = QtGui.QFileDialog.getSaveFileName(self, 'Save Wav...', defaultFileName, '(*.wav)')
+        print 'Saving to...', fileName
         if len(fileName) > 0:
             print 'Got a saved place!'
+            
+            # Show a progress dialog
+            self.progressDialog.setWindowModality(Qt.WindowModal)
+            self.progressDialog.setWindowTitle('Saving to MP3...')
+            self.progressDialog.setLabelText('Generating speech...')
+            self.progressDialog.setValue(0)
+            self.progressDialog.show()
+            QtGui.qApp.processEvents()
+            
+            # Get my speech output list
+            outputList = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml()))
+            
+            # Say we are speaking to the file
+            self.progressDialog.setLabelText('Speaking into file...')
+            self.progressDialog.setValue(50)
+            QtGui.qApp.processEvents()
+            
+            # Get the progress of the thing from the speech thread
+            def myOnProgress(percent):
+                print 'Setting percent!'
+                self.progressDialog.setValue(percent)
+                QtGui.qApp.processEvents()
+            
+            self.speechThread.onProgress.connect(myOnProgress)
+            self.speechThread.saveToMP3(fileName, outputList)
+            
+            # Just hide it so that we can use it later
+            self.progressDialog.hide()
         
     def zoomInButton_clicked(self):
         self.ui.webView.zoomIn()
