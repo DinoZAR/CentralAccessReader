@@ -256,8 +256,8 @@ class MainWindow(QtGui.QMainWindow):
     def saveToMP3Button_clicked(self):
         # Generate a filename that is basically the original file but with the
         # .mp3 extension at the end
-        defaultFileName = os.path.splitext(str(self.lastDocumentFilePath))[0] + '.wav'
-        fileName = QtGui.QFileDialog.getSaveFileName(self, 'Save Wav...', defaultFileName, '(*.wav)')
+        defaultFileName = os.path.splitext(str(self.lastDocumentFilePath))[0] + '.mp3'
+        fileName = QtGui.QFileDialog.getSaveFileName(self, 'Save MP3...', defaultFileName, '(*.mp3)')
         print 'Saving to...', fileName
         if len(fileName) > 0:
             print 'Got a saved place!'
@@ -273,22 +273,31 @@ class MainWindow(QtGui.QMainWindow):
             # Get my speech output list
             outputList = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml()))
             
-            # Say we are speaking to the file
-            self.progressDialog.setLabelText('Speaking into file...')
-            self.progressDialog.setValue(50)
-            QtGui.qApp.processEvents()
-            
             # Get the progress of the thing from the speech thread
             def myOnProgress(percent):
-                print 'Setting percent!'
                 self.progressDialog.setValue(percent)
                 QtGui.qApp.processEvents()
-            
+                
+            def myOnProgressLabel(newLabel):
+                self.progressDialog.setLabelText(newLabel)
+                QtGui.qApp.processEvents()
+                
             self.speechThread.onProgress.connect(myOnProgress)
-            self.speechThread.saveToMP3(fileName, outputList)
+            self.speechThread.onProgressLabel.connect(myOnProgressLabel)
+            self.speechThread.saveToMP3(str(fileName), outputList)
             
             # Just hide it so that we can use it later
             self.progressDialog.hide()
+            
+            # Show a message box saying the file was successfully saved
+            messageBox = QtGui.QMessageBox()
+            messageText = 'Success!\nYour MP3 was saved as:\n' + str(fileName)
+            messageBox.setText(messageText)
+            messageBox.setStandardButtons(QtGui.QMessageBox.Ok)
+            messageBox.setDefaultButton(QtGui.QMessageBox.Ok)
+            messageBox.setWindowTitle('MP3 Saved Successfully')
+            messageBox.setIcon(QtGui.QMessageBox.Information)
+            messageBox.exec_()
         
     def zoomInButton_clicked(self):
         self.ui.webView.zoomIn()

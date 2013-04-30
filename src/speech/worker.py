@@ -4,15 +4,18 @@ Created on Apr 8, 2013
 @author: Spencer Graffe
 '''
 from PyQt4.QtCore import QThread
-from PyQt4 import QtCore
+from PyQt4 import QtCore, QtGui
 from src.speech import driver
 import pythoncom
+import os
+import subprocess
 
 class SpeechWorker(QThread):
     
     onWord = QtCore.pyqtSignal(str, int, str, int)
     onFinish = QtCore.pyqtSignal()
     onProgress = QtCore.pyqtSignal(int)
+    onProgressLabel = QtCore.pyqtSignal(str)
     
     def __init__(self):
         QThread.__init__(self)
@@ -84,9 +87,22 @@ class SpeechWorker(QThread):
         
         # Create the WAV file first
         def myOnProgress(percent):
-            self.onProgress.emit(percent)
+            self.onProgress.emit(int((float(percent) / 100.0) * 70.0))
         
-        self.ttsEngine.speakToWavFile(mp3Path, outputList, myOnProgress)
+        wavSavePath = os.path.abspath('tmp.wav')
+        
+        self.onProgressLabel.emit('Speaking into WAV...')
+        self.ttsEngine.speakToWavFile(wavSavePath, outputList, myOnProgress)
+        
+        # Then convert it to MP3
+        self.onProgressLabel.emit('Converting to MP3...')
+        lameCommand = os.path.abspath('../lame.exe') + ' -h "' + wavSavePath + '" "' + mp3Path + '"'
+        ps = subprocess.Popen(lameCommand)
+        
+        while ps.poll() == None:
+            QtGui.qApp.processEvents()
+        
+        self.onProgress.emit(100)
         
         print 'Done!'
     
@@ -106,7 +122,6 @@ class SpeechWorker(QThread):
         return self.ttsEngine.getVoiceList()
     
     def addToQueue(self, text, label):
-        print 'Adding to queue:', text, ',', label
         self.outputList.append([text,label])
         
     def connect_signals(self, mainWindow):

@@ -90,7 +90,6 @@ class SAPIDriver(object):
         
     def add(self, text, label):
         self.queue.append([text, label, 0])
-        print 'Queue contents:', self.queue
     
     def start(self):
         '''

@@ -70,7 +70,7 @@ class Assigner(object):
                     myList.extend(self._recursiveGetSpeech(child))
                         
             elif testTag == 'img':
-                myList.append([child.get('alt'), "image"])
+                myList.append(['Image. ' + child.get('alt'), "image"])
             
             else:
                 myList.extend(self._recursiveGetSpeech(child))
