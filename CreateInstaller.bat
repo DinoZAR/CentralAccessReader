@@ -1,0 +1,1 @@
+python ../../pyinstaller-2.0/utils/Build.py "Nifty Prose Articulator.spec"

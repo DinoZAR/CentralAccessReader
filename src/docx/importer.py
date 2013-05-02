@@ -8,14 +8,30 @@ import zipfile
 from lxml import etree
 from lxml import html as HTML
 import os
+import sys
 import inspect
 from src.gui.bookmarks import BookmarkNode
 
+def resource_path(relative):
+    '''
+    Returns the path to the resource. The absolute path will depend on whether
+    we are inside a developing context or an installation context.
+    '''
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative)
+
 # The path to this particular module
-rootPath = os.path.dirname(inspect.getfile(inspect.currentframe()))
+#rootPath = os.path.dirname(inspect.getfile(inspect.currentframe()))
+rootPath = resource_path('docx')
 
 # Get my OMML to MathML stylesheet compiled
 ommlXSLTPath = os.path.normpath(rootPath + '/OMMLToMathML.xsl')
+
 f = open(ommlXSLTPath, 'r')
 xslRoot = etree.parse(f)
 ommlTransform = etree.XSLT(xslRoot)

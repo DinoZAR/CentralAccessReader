@@ -4,7 +4,7 @@ Created on Jan 21, 2013
 @author: Spencer
 '''
 import sys
-import os.path
+import os
 import time
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt, QUrl, QMutex
@@ -23,6 +23,21 @@ from src.mathml import pattern_editor
 from src.speech.assigner import Assigner
 from src.speech.worker import SpeechWorker
 from src.docx.importer import DocxDocument
+
+
+def resource_path(relative):
+    '''
+    Returns the path to the resource. The absolute path will depend on whether
+    we are inside a developing context or an installation context.
+    '''
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative)
+
 
 class MainWindow(QtGui.QMainWindow):
     loc = 0
@@ -65,7 +80,7 @@ class MainWindow(QtGui.QMainWindow):
         self.webInspector = QWebInspector()
         
         # Set the math TTS using the internal pattern database
-        self.mathTTS = MathTTS('mathml/parser_pattern_database.txt')
+        self.mathTTS = MathTTS(resource_path('mathml/parser_pattern_database.txt'))
         
         # TTS states
         self.ttsPlaying = False
@@ -100,7 +115,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # Load the configuration file
         self.configuration = Configuration()
-        self.configuration.loadFromFile('configuration.xml')
+        self.configuration.loadFromFile(resource_path('configuration.xml'))
         self.updateSettings()
         
         # Used for refreshing the document later to make changes. Also store
@@ -149,7 +164,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.volumeSlider.setValue(int(self.configuration.volume * 100))
         
         # Finally, save it all to file
-        self.configuration.saveToFile('configuration.xml')
+        self.configuration.saveToFile(resource_path('configuration.xml'))
             
     def playButton_clicked(self):
         
@@ -242,7 +257,7 @@ class MainWindow(QtGui.QMainWindow):
     def colorSettingsButton_clicked(self):
         dialog = ColorSettings(self)
         result = dialog.exec_()
-        self.configuration.loadFromFile('configuration.xml')
+        self.configuration.loadFromFile(resource_path('configuration.xml'))
         if result == ColorSettings.RESULT_NEED_REFRESH:
             self.refreshDocument()
         self.updateSettings()
@@ -250,7 +265,7 @@ class MainWindow(QtGui.QMainWindow):
     def speechSettingsButton_clicked(self):
         dialog = SpeechSettings(self)
         dialog.exec_()
-        self.configuration.loadFromFile('configuration.xml')
+        self.configuration.loadFromFile(resource_path('configuration.xml'))
         self.updateSettings()
         
     def saveToMP3Button_clicked(self):
@@ -343,7 +358,7 @@ class MainWindow(QtGui.QMainWindow):
         
         from mathml.pattern_editor.gui.patterneditorwindow import PatternEditorWindow
 
-        patternFilePath = 'mathml/parser_pattern_database.txt'
+        patternFilePath = resource_path('mathml/parser_pattern_database.txt')
         
         self.patternWindow = PatternEditorWindow(patternFilePath, '')
         self.patternWindow.changedPattern.connect(self.onChangedPatternEditor)
