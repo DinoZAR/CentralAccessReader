@@ -5,6 +5,8 @@ Created on Apr 12, 2013
 '''
 from PyQt4.QtGui import QColor
 from lxml import etree
+from src.misc import resource_path
+import os
 
 class Configuration(object):
     '''
@@ -136,7 +138,7 @@ class Configuration(object):
         configFile.write(etree.tostring(root, pretty_print=True))
         configFile.close()
         
-        self._writeCSS('import/defaultStyle.css')
+        self._writeCSS(resource_path('import/defaultStyle.css', True))
     
     def _createQColorFromCommaSeparated(self, colorString):
         tokens = colorString.split(',')
@@ -249,7 +251,9 @@ display: inline-block;
         # -------------------------------------------
         # END CSS FILE
         print 'Writing CSS file...'
-            
+        
+        if not os.path.exists(os.path.dirname(filePath)):
+            os.makedirs(os.path.dirname(filePath))
         cssFile = open(filePath, 'w')
         cssFile.write(outtext)
         cssFile.close()

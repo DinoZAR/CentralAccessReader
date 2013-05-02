@@ -11,26 +11,19 @@ import os
 import sys
 import inspect
 from src.gui.bookmarks import BookmarkNode
-
-def resource_path(relative):
-    '''
-    Returns the path to the resource. The absolute path will depend on whether
-    we are inside a developing context or an installation context.
-    '''
-    try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
-
-    return os.path.join(base_path, relative)
+from src.misc import resource_path
 
 # The path to this particular module
 #rootPath = os.path.dirname(inspect.getfile(inspect.currentframe()))
-rootPath = resource_path('docx')
+rootPath = 'docx'
 
 # Get my OMML to MathML stylesheet compiled
-ommlXSLTPath = os.path.normpath(rootPath + '/OMMLToMathML.xsl')
+ommlXSLTPath = resource_path(os.path.join(rootPath, 'OMMLToMathML.xsl'))
+
+print 'Opening the OMML File:'
+print '----------------------------'
+print ommlXSLTPath
+print '----------------------------'
 
 f = open(ommlXSLTPath, 'r')
 xslRoot = etree.parse(f)
@@ -253,24 +246,33 @@ class DocxDocument(object):
         
         mathjaxConfig = HTML.Element('script')
         mathjaxConfig.set('type', 'text/x-mathjax-config')
-        scriptFile = open(os.path.normpath(rootPath + '/mathjax_config.js'))
+        scriptFile = open(resource_path(os.path.join(rootPath, 'mathjax_config.js')))
         contents = scriptFile.read()
         scriptFile.close()
         mathjaxConfig.text = contents
         
         mathjaxScript = HTML.Element('script')
         mathjaxScript.attrib['type'] = 'text/javascript'
-        mathjaxScript.attrib['src'] = r'../mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML.js'
+        
+        # This has to change depending on whether we have built this as .exe or
+        # not
+        if getattr(sys, 'frozen', None):
+            mathjaxScript.attrib['src'] = r'mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML.js'
+        else:
+            mathjaxScript.attrib['src'] = r'../mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML.js'
         
         jqueryScript = HTML.Element('script')
         jqueryScript.attrib['type'] = 'text/javascript'
-        jqueryScript.attrib['src'] = r'../jquery-1.9.1.min.js'
+        if getattr(sys, 'frozen', None):
+            jqueryScript.attrib['src'] = r'jquery-1.9.1.min.js'
+        else:
+            jqueryScript.attrib['src'] = r'../jquery-1.9.1.min.js'
         
         myScripts = HTML.Element('script')
         myScripts.set('language', 'javascript')
         myScripts.set('type', 'text/javascript')
         
-        scriptFile = open(os.path.normpath(rootPath + '/my_functions.js'), 'r')
+        scriptFile = open(resource_path(os.path.join(rootPath, 'my_functions.js')), 'r')
         contents = scriptFile.read()
         scriptFile.close()
         myScripts.text = contents

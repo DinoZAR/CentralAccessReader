@@ -23,21 +23,7 @@ from src.mathml import pattern_editor
 from src.speech.assigner import Assigner
 from src.speech.worker import SpeechWorker
 from src.docx.importer import DocxDocument
-
-
-def resource_path(relative):
-    '''
-    Returns the path to the resource. The absolute path will depend on whether
-    we are inside a developing context or an installation context.
-    '''
-    try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
-
-    return os.path.join(base_path, relative)
-
+from src.misc import resource_path
 
 class MainWindow(QtGui.QMainWindow):
     loc = 0
@@ -78,6 +64,8 @@ class MainWindow(QtGui.QMainWindow):
         
         # This is my web inspector for debugging my JavaScript code
         self.webInspector = QWebInspector()
+        self.ui.webView.settings().setAttribute(QWebSettings.DeveloperExtrasEnabled, True)
+        self.webInspector.setPage(self.ui.webView.page())
         
         # Set the math TTS using the internal pattern database
         self.mathTTS = MathTTS(resource_path('mathml/parser_pattern_database.txt'))

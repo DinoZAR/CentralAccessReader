@@ -11,6 +11,12 @@ import ply.lex as lex
 import ply.yacc as yacc
 from parse_elements import *
 
+print 'In database. Testing my path function...'
+
+from src.misc import resource_path
+
+print resource_path('docx/YourMom.txt')
+
 # LEXER
 
 tokens = [

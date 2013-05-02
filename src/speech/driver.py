@@ -9,6 +9,8 @@ import platform
 
 if platform.system() == 'Windows':
     import win32com.client
+    win32com.client.gencache.is_readonly = False
+
     import pythoncom
     import win32event
 
