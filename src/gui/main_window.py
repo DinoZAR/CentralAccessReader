@@ -158,9 +158,10 @@ class MainWindow(QtGui.QMainWindow):
         
         # Get list of string output for feeding into my speech
         if len(self.ui.webView.selectedHtml()) > 0:
-            outputList = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml()))
+            outputList = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml()).encode('utf-8', errors='ignore'))
         else:
-            outputList = self.assigner.getSpeech(unicode(self.ui.webView.page().mainFrame().documentElement().toInnerXml()))
+            self.ui.webView.selectAll()
+            outputList = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml()).encode('utf-8', errors='ignore'))
         
         # Stop whatever the speech thread may be saying
         self.stopPlayback.emit()
@@ -336,6 +337,10 @@ class MainWindow(QtGui.QMainWindow):
             
             self.document = DocxDocument(str(filePath))
             docxHtml = self.document.getMainPage()
+            
+            # Clear the cache in the web view
+            QWebSettings.clearIconDatabase()
+            QWebSettings.clearMemoryCaches()
             
             self.assigner.prepare(docxHtml)
             self.ui.webView.setHtml(docxHtml, baseUrl)

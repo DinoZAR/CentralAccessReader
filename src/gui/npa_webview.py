@@ -42,6 +42,9 @@ class NPAWebView(QWebView):
         
         event.ignore()
         
+    def selectAll(self):
+        self.page().triggerAction(QWebPage.SelectAll)
+        
     def keyPressEvent(self, event):
         
         # Ctrl+A should do Select All

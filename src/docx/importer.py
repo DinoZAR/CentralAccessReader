@@ -116,7 +116,9 @@ class DocxDocument(object):
         self.paragraphData = []
         for p in paragraphs:
             if p.tag == '{0}p'.format(w_NS):
-                self.paragraphData.append(self._parseParagraph(p))
+                newPara = self._parseParagraph(p)
+                if len(newPara['data']) > 0:
+                    self.paragraphData.append(newPara)
             elif p.tag == '{0}tbl'.format(w_NS):
                 self.paragraphData.append(self._parseTable(p))
                 
@@ -168,7 +170,7 @@ class DocxDocument(object):
         for child in elem:
             # Text
             if child.tag == '{0}t'.format(w_NS):
-                data['text'] = child.text
+                data['text'] = child.text.encode('utf-8', errors='ignore')
             
             # Image or some drawing
             if child.tag == '{0}drawing'.format(w_NS):
@@ -374,6 +376,8 @@ class DocxDocument(object):
                     if 'altText' in image:
                         imageTag.set('alt', image['altText'])
                         imageTag.set('title', image['altText'])
+                    currTextNode = imageTag
+                    currTextNode.tail = ''
                     onRoot = False
             
             elif c['type'] == 'math':

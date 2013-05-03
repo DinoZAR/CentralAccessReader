@@ -46,7 +46,9 @@ function PrintSelection() {
 function SetBeginning(doLine) {
 	console.debug("SetBeginning");	
 	var range = null;
-	if (window.getSelection()) {
+	if (window.getSelection() === null) {		
+		console.debug("Something got selected! Range: " + range.toString());
+		
 		range = window.getSelection();
 		
 		if (range.anchorNode.compareDocumentPosition(range.focusNode) & Node.DOCUMENT_POSITION_PRECEDING) {
@@ -78,10 +80,13 @@ function SetBeginning(doLine) {
 			}
 		}
 	}
+	
 	else {
-		// Get the whole body as the range
+		console.debug("Nothing was selected!");
+		// Get the first deepest child in the document and go from there
 		range = document.createRange();
-		range.selectNode(document.body);
+		range.selectNode(DeepestChild(document.body.firstChild));
+		console.debug("Selecting everything! Range: " + range.toString());
 	}
 	
 	console.debug("My range! " + range.toString());
