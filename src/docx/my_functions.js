@@ -4,10 +4,9 @@ function GotoPageAnchor(anchorName) {
 	element_to_scroll_to.scrollIntoView();
 }
 
+// ---------------------------------------------------------------------------
+// HIGHLIGHTING FUNCTIONS
 // ---------------------------------------------------------------------------
-// HIGHLIGHTING FUNCTIONS
-// ---------------------------------------------------------------------------
-
 var highlight; // The highlighter element that has the highlighted content.
 var highlightLine; // The highlighter element that has the whole line that will be highlighted
 
@@ -22,412 +21,397 @@ function PrintSelection() {
 		alert(buildString);
 	}
 }
-
-// Sets the beginning to start the speech. It will start at beginning if no selection was made.
+
+// Sets the beginning to start the speech. It will start at beginning if no selection was made.
+
 function SetBeginning(doLine) {
-
-	console.debug("SetBeginning");
-
+	console.debug("SetBeginning");	
+	var range = null;
 	if (window.getSelection()) {
-		var range = window.getSelection()
-		var startNode = range.anchorNode;
-		var offset = range.anchorOffset;
-		
-		// Check to see if the start is inside a math equation. If so, adjust selection to
-		// only select that node. Otherwise, have it select the first whole word there.
-		range = GetNextWord(startNode, offset);
-			
-		// If I can't get another word, get another element.
-		if (range == null) {
-			var nElem = NextElement(startNode);
-			range = document.createRange();
-		}
-		SetHighlight(range, doLine);
-
-		window.getSelection().empty();
-	}
+		range = window.getSelection();
+		
+		if (range.anchorNode.compareDocumentPosition(range.focusNode) & Node.DOCUMENT_POSITION_PRECEDING) {
+			var newRange = document.createRange();
+			newRange.setStart(range.focusNode, range.focusOffset);
+			newRange.setEnd(range.anchorNode, range.anchorOffset);
+			console.debug("New range being modified!" + newRange.toString());
+			range = newRange;
+		}
+		else {
+			if (range.anchorNode === range.focusNode) {
+				// Switch around the offsets if needed
+				var newRange = document.createRange()
+				if (range.anchorOffset > range.focusOffset) {
+					newRange.setStart(range.anchorNode, range.focusOffset);
+					newRange.setEnd(range.focusNode, range.anchorOffset);
+				}
+				else {
+					newRange.setStart(range.anchorNode, range.anchorOffset);
+					newRange.setEnd(range.focusNode, range.focusOffset);
+				}
+				range = newRange;
+			}
+			else {
+				var newRange = document.createRange();
+				newRange.setStart(range.anchorNode, range.anchorOffset);
+				newRange.setEnd(range.focusNode, range.focusOffset);
+				range = newRange;
+			}
+		}
+	}
+	else {
+		// Get the whole body as the range
+		range = document.createRange();
+		range.selectNode(document.body);
+	}
+	
+	console.debug("My range! " + range.toString());
+	
+	// Check to see if the start is inside a math equation. If so, adjust selection to
+	// only select that node. Otherwise, have it select the first whole word there.
+	range = GetNextWord(range.startContainer, range.startOffset);
+	// If I can't get another word, get another element.
+	if (range == null) {
+		var nElem = NextElement(startNode);
+		range = document.createRange();
+	}
+	
+	SetHighlight(range, doLine);
+	window.getSelection().empty();
 }
 
 // Move the highlight to the next element that should be highlighted 
 function HighlightNextElement(doLine) {
-	
 	console.debug("HighlightNextElement");
-
-	// Get the sibling of the highlight node. It will either be more text or an actual element.
+	// Get the sibling of the highlight node. It will either be more text or an actual element.
 	ClearLineHighlight();
-	
-	var next = NextElement(highlight);
+	var next = NextElement(highlight);
 	var range = GetNextWord(next, 0);
-	
-	// Check to see if I actually have something coming up. Otherwise, just
-	// clear all the highlights
-	if (range == null) {
-		ClearAllHighlights();
+	// Check to see if I actually have something coming up. Otherwise, just
+	// clear all the highlights
+	if (range == null) {
+		ClearAllHighlights();
 	}
-	else {
-		SetHighlight(range, doLine);
+	else {
+		SetHighlight(range, doLine);
 	}
 }
 
 // Returns the equation node if node is inside an equation.
 function GetEquation(node) {	
-
 	var myNode = node
-
-	// Check to see if this node is an equation
-	if (myNode.className == "mathmlEquation") {
-		return myNode;
+	// Check to see if this node is an equation
+	if (myNode.className == "mathmlEquation") {
+		return myNode;
 	}
-
-	while (myNode.parentNode != null) {
+	while (myNode.parentNode != null) {
 		myNode = myNode.parentNode
-		// Check to see if it is an equation by checking its class
-		if (myNode.className == "mathmlEquation") {
-			return myNode;
-		}
-	}
-	return null;
+		// Check to see if it is an equation by checking its class
+		if (myNode.className == "mathmlEquation") {
+			return myNode;
+		}
+	}
+	return null;
 }
 
 // Returns a range that has the next word
 function GetNextWord(node, offset) {
 	console.debug("GetNextWord");
-
-	// See if it is an equation
-	var equation = GetEquation(node);
-	if (equation != null) {
-		console.debug("It is an equation!");
-		var range = document.createRange();
-		range.selectNode(equation);
-		return range;
+	// See if it is an equation
+	var equation = GetEquation(node);
+	if (equation != null) {
+		console.debug("It is an equation!");
+		var range = document.createRange();
+		range.selectNode(equation);
+		return range;
 	}
-
-	// See if it is an image
-	if (node.nodeName == "IMG") {
-		console.debug("Got next image!");
-		var range = document.createRange();
-		range.selectNode(node);
-		return range;
+	// See if it is an image
+	if (node.nodeName == "IMG") {
+		console.debug("Got next image!");
+		var range = document.createRange();
+		range.selectNode(node);
+		return range;
 	}
-
-	// See if it is anything else, like text
-	else {
-		// Check to see if I can find the start of the next word. Otherwise, return null.
+	// See if it is anything else, like text
+	else {
+		// Check to see if I can find the start of the next word. Otherwise, return null.
 		var nextIndex = node.textContent.substring(offset).search(/\w/);
-		if (nextIndex == -1) {
-			// If I can't find another word, try to find another element
-			var elem = NextElement(node);
-			if (elem == null) {
-				return null;
-			}
-			else {
-				return GetNextWord(elem, 0);
-			}
+		if (nextIndex == -1) {
+			// If I can't find another word, try to find another element
+			var elem = NextElement(node);
+			if (elem == null) {
+				return null;
+			}
+			else {
+				return GetNextWord(elem, 0);
+			}
 		}
 		nextIndex = nextIndex + offset;
-	
-		var endIndex = node.textContent.substring(nextIndex).search(/\s/);
-		if (endIndex == -1) {
-			endIndex = node.length; // Most likely reached the end of whatever element I was in.
+		var endIndex = node.textContent.substring(nextIndex).search(/\s/);
+		if (endIndex == -1) {
+			endIndex = node.length; // Most likely reached the end of whatever element I was in.
 		}
-		else {
-			endIndex = endIndex + nextIndex;
+		else {
+			endIndex = endIndex + nextIndex;
 		}
-
-		range = document.createRange();
-		range.setStart(node, nextIndex);
+		range = document.createRange();
+		range.setStart(node, nextIndex);
 		range.setEnd(node, endIndex);
-
 		return range;
 	}
 }
 
 // Clears the highlight of where it was before.
 function ClearHighlight() {
-
 	console.debug("ClearHighlight");
-
-	// Replace the highlight node with my contents
+	// Replace the highlight node with my contents
 	var p = highlight.parentNode;
-	
 	InsertAllChildNodes(p, highlight);
-	
-	// Cleanup the highlight and its reference
-	p.removeChild(highlight);
-	p.normalize();
+	// Cleanup the highlight and its reference
+	p.removeChild(highlight);
+	p.normalize();
 	highlight = null;
 }
 
 // Clears the line highlight
 function ClearLineHighlight() {
-
 	console.debug("ClearLineHighlight");
-	
 	if (highlightLine != null) {
 		var p = highlightLine.parentNode;
-	
 		InsertAllChildNodes(p, highlightLine);
-
-		// Recapture my highlight element reference
+		// Recapture my highlight element reference
 		highlight = document.getElementById("npaHighlight");
-	
-		p.normalize();
-		p.removeChild(highlightLine);
-		p.normalize();
-		highlightLine = null;
+		p.normalize();
+		p.removeChild(highlightLine);
+		p.normalize();
+		highlightLine = null;
 	}
 }
 
 // Clears both the line highlight and the individual element highlight
 function ClearAllHighlights() {
-	
 	console.debug("ClearAllHighlights");
-
-	if (highlightLine != null) {
-		ClearLineHighlight();
+	if (highlightLine != null) {
+		ClearLineHighlight();
 	}
-
-	if (highlight != null) {
-		ClearHighlight(); 
+	if (highlight != null) {
+		ClearHighlight(); 
 	}
 }
 
 // Given a Range object, this will clean up any previous highlight and create a highlight
 // over the new range
 function SetHighlight(range, doLine) {
-	
-	if (highlight != null) {
-		ClearHighlight();
+	if (highlight != null) {
+		ClearHighlight();
+	}
+
+	if (highlightLine != null) {
+		ClearLineHighlight();
 	}
-
-	if (highlightLine != null) {
-		ClearLineHighlight();
-	}
-	
-	highlight = document.createElement("span");
+	highlight = document.createElement("span");
 	highlight.setAttribute("id", "npaHighlight");
-
-	var contents = range.extractContents();
+	var contents = range.extractContents();
 	highlight.appendChild(contents);
-	
 	range.insertNode(highlight);
-	
-	if (doLine == true) {
-		SetLineHighlight();
-	}
+	if (doLine == true) {
+		SetLineHighlight();
+	}
 }
 
-// This function will set the line highlight to surround that particular range.
-// It will highlight all the way to the previous sentence end to the next
-// sentence end, or just the node if there are no sentences.
+// This function will set the line highlight to surround that particular range.
+// It will highlight all the way to the previous sentence end to the next
+// sentence end, or just the node if there are no sentences.
 function SetLineHighlight() {
-
-	highlightLine = document.createElement("span");
+	highlightLine = document.createElement("span");
 	highlightLine.setAttribute("id", "npaHighlightLine");
-	
-	// Adjust beginning of range so that it arrives at the end of previous sentence, or just 
-	// the beginning of the first child node.
-	var startNode = highlight;
+	// Adjust beginning of range so that it arrives at the end of previous sentence, or just 
+	// the beginning of the first child node.
+	var startNode = highlight;
 	var startOffset = 0;
-	
 	var done = false;
-
-	while (!done) {
-		if (startNode.nodeName == "#text") {
-			console.debug("Searching inside text node...");
-			
-			var lastEnd = -1;
+	while (!done) {
+		if (startNode.nodeName == "#text") {
+			console.debug("Searching inside text node...");
+			var lastEnd = -1;
 			var patt = /[.!\?]\s/g;
-			while (patt.test(startNode.textContent) == true) {
-				lastEnd = patt.lastIndex;
+			while (patt.test(startNode.textContent) == true) {
+				lastEnd = patt.lastIndex;
 			}
-			if (lastEnd == -1) {
-				console.debug("Couldn't find end of last sentence!");
-				// Check if there are more nodes before this
-				var prev = startNode.previousSibling;
-				if (prev != null) {
-					startNode = prev;
-					startOffset = 0;
+			if (lastEnd == -1) {
+				console.debug("Couldn't find end of last sentence!");
+				// Check if there are more nodes before this
+				var prev = startNode.previousSibling;
+				if (prev != null) {
+					startNode = prev;
+					startOffset = 0;
 				}
-				else {
-					done = true;
-				}
+				else {
+					done = true;
+				}
 			}
-			else {
-				console.debug("Got an end of last sentence! " + lastEnd.toString());
-				startOffset = lastEnd - 1;  // Subtracting 1 to ignore the space
-				done = true;
-			}
+			else {
+				console.debug("Got an end of last sentence! " + lastEnd.toString());
+				startOffset = lastEnd - 1;  // Subtracting 1 to ignore the space
+				done = true;
+			}
 		}
-		else {
-			var prev = startNode.previousSibling;
-			if (prev != null) {
-				startNode = prev;
-				startOffset = 0;
-			}
-			else {
-				done = true;
-			}
-		}
+		else {
+			var prev = startNode.previousSibling;
+			if (prev != null) {
+				startNode = prev;
+				startOffset = 0;
+			}
+			else {
+				done = true;
+			}
+		}
 	}
-	
 	console.debug("Start Node: " + startNode.nodeName + " Start Offset: " + startOffset.toString());
-
-	// Set the end index
-	// Adjust beginning of range so that it arrives at the end of previous sentence, or just 
-	// the beginning of the first child node.
-	var endNode = highlight;
+	// Set the end index
+	// Adjust beginning of range so that it arrives at the end of previous sentence, or just 
+	// the beginning of the first child node.
+	var endNode = highlight;
 	var endOffset = 0;
-	
 	done = false;
-
-	while (!done) {
-		if (endNode.nodeName == "#text") {
+	while (!done) {
+		if (endNode.nodeName == "#text") {
 			console.debug("Searching inside text node...");
-			
-			var lastEnd = -1;
-			var patt = /[.!\?]\s/g;
-			if (patt.test(endNode.textContent) == true) {
-				lastEnd = patt.lastIndex;
+			var lastEnd = -1;
+			var patt = /[.!\?]\s/g;
+			if (patt.test(endNode.textContent) == true) {
+				lastEnd = patt.lastIndex;
+			}
+			if (lastEnd == -1) {
+				console.debug("Couldn't find end of next sentence!");
+				// Check if there are more nodes before this
+				var next = endNode.nextSibling;
+				if (next != null) {
+					endNode = next;
+					endOffset = 0;
+				}
+				else {
+					endOffset = endNode.textContent.length;
+					done = true;
+				}
 			}
-			if (lastEnd == -1) {
-				console.debug("Couldn't find end of next sentence!");
-				// Check if there are more nodes before this
-				var next = endNode.nextSibling;
-				if (next != null) {
-					endNode = next;
-					endOffset = 0;
-				}
-				else {
-					endOffset = endNode.textContent.length;
-					done = true;
-				}
-			}
-			else {
-				console.debug("Got an end of next sentence! " + lastEnd.toString());
-				endOffset = lastEnd;
-				done = true;
+			else {
+				console.debug("Got an end of next sentence! " + lastEnd.toString());
+				endOffset = lastEnd;
+				done = true;
 			}
 		}
 		else if ((endNode.nodeName == "SPAN") && (endNode.getAttribute("id") == "npaHighlight")) {
-			// Check if there is some punctuation mark at the end inside of the node
-			// and there is another sibling after this node. If so, make the highlight
-			// stop at the beginning of the next sibling.
-			var punctPatt = /[.!\?]/g;
-			if ((endNode.lastChild.nodeName == "#text") && (endNode.nextSibling != null)){
-				
-				var lastPunct = -1;
-				while (punctPatt.test(endNode.lastChild.nodeValue) == true) {
-					lastPunct = punctPatt.lastIndex;
+			// Check if there is some punctuation mark at the end inside of the node
+			// and there is another sibling after this node. If so, make the highlight
+			// stop at the beginning of the next sibling.
+			var punctPatt = /[.!\?]/g;
+			if ((endNode.lastChild.nodeName == "#text") && (endNode.nextSibling != null)){
+				var lastPunct = -1;
+				while (punctPatt.test(endNode.lastChild.nodeValue) == true) {
+					lastPunct = punctPatt.lastIndex;
 				}
-
-				if (lastPunct == endNode.lastChild.nodeValue.length) {	
-					endNode = endNode.nextSibling;
-					endOffset = 0;
-					done = true;
+				if (lastPunct == endNode.lastChild.nodeValue.length) {	
+					endNode = endNode.nextSibling;
+					endOffset = 0;
+					done = true;
 				}
-				else {
-					console.debug("Test failed...." + lastPunct.toString() + ' != ' + (endNode.lastChild.nodeValue.length - 1).toString());
-					console.debug(endNode.lastChild.nodeValue);
-					endNode = endNode.nextSibling;
-					endOffset = 0;
-				}
-			}
-			else {
-				var next = endNode.nextSibling;
-				if (next != null) {
-					endNode = next;
-					endOffset = 0;
-				}
-				else {
-					endOffset = 0;
-					done = true;
-				}
-			}
-		}
-		else {
-			var next = endNode.nextSibling;
-			if (next != null) {
-				endNode = next;
-				endOffset = 0;
-			}
-			else {
-				endOffset = 0;
-				done = true;
-			}
-		}
-	}
-	
-	console.debug("End Node: " + endNode.nodeName + " End Offset: " + endOffset.toString());
-
-
-	// Create the range for my highlighter line thing
-	var range = document.createRange();
-	range.setStart(startNode, startOffset);
-	range.setEnd(endNode, endOffset);
-	
-	var contents = range.extractContents();
-	highlightLine.appendChild(contents);
-
-	range.insertNode(highlightLine);
-
+				else {
+					console.debug("Test failed...." + lastPunct.toString() + ' != ' + (endNode.lastChild.nodeValue.length - 1).toString());
+					console.debug(endNode.lastChild.nodeValue);
+					endNode = endNode.nextSibling;
+					endOffset = 0;
+				}
+			}
+			else {
+				var next = endNode.nextSibling;
+				if (next != null) {
+					endNode = next;
+					endOffset = 0;
+				}
+				else {
+					endOffset = 0;
+					done = true;
+				}
+			}
+		}
+		else {
+			var next = endNode.nextSibling;
+			if (next != null) {
+				endNode = next;
+				endOffset = 0;
+			}
+			else {
+				endOffset = 0;
+				done = true;
+			}
+		}
+	}
+	
+	console.debug("End Node: " + endNode.nodeName + " End Offset: " + endOffset.toString());
+
+
+	// Create the range for my highlighter line thing
+	var range = document.createRange();
+	range.setStart(startNode, startOffset);
+	range.setEnd(endNode, endOffset);
+	
+	var contents = range.extractContents();
+	highlightLine.appendChild(contents);
+
+	range.insertNode(highlightLine);
+
+}
+
+// --------------------------------------------------------------------------------------------------
+// GENERAL UTILITY FUNCTIONS
+// --------------------------------------------------------------------------------------------------
+
+function InsertAllChildNodes(parent, node) {
+	var contents = node.cloneNode(true);
+	
+	var currentNode = contents.firstChild;
+	
+	while(currentNode != null) {
+		var nodeCopy = currentNode.cloneNode(true);
+		parent.insertBefore(nodeCopy, node);
+		currentNode = currentNode.nextSibling;
+	}
+}
+
+function NextElement(elem) {
+	var next = elem.nextSibling;
+	if (next == null) {
+		if (elem.parentNode == null) {
+			return null;
+		}
+		else {
+			elem = NextElement(elem.parentNode);
+			return elem;
+		}
+	}
+	else {
+		return DeepestChild(next);
+	}
 }
-
-// --------------------------------------------------------------------------------------------------
-// GENERAL UTILITY FUNCTIONS
-// --------------------------------------------------------------------------------------------------
-
-function InsertAllChildNodes(parent, node) {
-	var contents = node.cloneNode(true);
-	
-	var currentNode = contents.firstChild;
-	
-	while(currentNode != null) {
-		var nodeCopy = currentNode.cloneNode(true);
-		parent.insertBefore(nodeCopy, node);
-		currentNode = currentNode.nextSibling;
-	}
+function DeepestChild(parent) {
+	if (parent.childNodes.length == 0) {
+		return parent;
+	}
+	else {
+		var child = parent.firstChild;
+		return DeepestChild(child);
+	}
 }
-
-function NextElement(elem) {
-	var next = elem.nextSibling;
-	if (next == null) {
-		if (elem.parentNode == null) {
-			return null;
-		}
-		else {
-			elem = NextElement(elem.parentNode);
-			return elem;
-		}
-	}
-	else {
-		return DeepestChild(next);
-	}
+function GetChildIndex(elem) {
+	var i = 0;
+	while ((elem = elem.previousSibling) != null) {
+		i++;
+	}
+	return i;
 }
-
-function DeepestChild(parent) {
-	if (parent.childNodes.length == 0) {
-		return parent;
-	}
-	else {
-		var child = parent.firstChild;
-		return DeepestChild(child);
-	}
-}
-
-function GetChildIndex(elem) {
-	var i = 0;
-	while ((elem = elem.previousSibling) != null) {
-		i++;
-	}
-	return i;
-}
-
-function IsInView(elem) {
-	
-	var myRect = elem.getBoundingClientRect();
-
-	console.debug("Top: " + myRect.top.toString() + " Bottom: " + myRect.bottom.toString());
-	
-	return false;
+function IsInView(elem) {
+	var myRect = elem.getBoundingClientRect();
+	console.debug("Top: " + myRect.top.toString() + " Bottom: " + myRect.bottom.toString());
+	return false;
 }

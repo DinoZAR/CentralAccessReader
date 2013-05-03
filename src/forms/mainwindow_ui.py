@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'W:\Documents\Special Projects\Graffe, Spencer\workspace2\another\src\forms/mainwindow.ui'
+# Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/mainwindow.ui'
 #
-# Created: Fri Apr 26 15:46:20 2013
+# Created: Thu May 02 16:41:08 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -177,8 +177,9 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
         self.rateSlider = QtGui.QSlider(self.layoutWidget1)
         self.rateSlider.setMinimumSize(QtCore.QSize(201, 0))
-        self.rateSlider.setMinimum(100)
-        self.rateSlider.setMaximum(300)
+        self.rateSlider.setMinimum(0)
+        self.rateSlider.setMaximum(100)
+        self.rateSlider.setProperty("value", 50)
         self.rateSlider.setOrientation(QtCore.Qt.Horizontal)
         self.rateSlider.setTickPosition(QtGui.QSlider.TicksAbove)
         self.rateSlider.setTickInterval(10)

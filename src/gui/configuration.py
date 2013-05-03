@@ -19,7 +19,7 @@ class Configuration(object):
         '''
         # Speech settings
         self.volume = 100
-        self.rate = 200
+        self.rate = 50
         self.voice = ''
         
         # Highlighter settings
@@ -56,7 +56,7 @@ class Configuration(object):
         configFile.close()
         
         # Speech Settings
-        self.volume = float(configDOM.xpath('/Configuration/Volume')[0].text)
+        self.volume = int(configDOM.xpath('/Configuration/Volume')[0].text)
         self.rate = int(configDOM.xpath('/Configuration/Rate')[0].text)
         self.voice = configDOM.xpath('/Configuration/Voice')[0].text
         if self.voice == None:

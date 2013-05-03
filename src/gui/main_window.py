@@ -149,7 +149,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # Update main window sliders to match
         self.ui.rateSlider.setValue(self.configuration.rate)
-        self.ui.volumeSlider.setValue(int(self.configuration.volume * 100))
+        self.ui.volumeSlider.setValue(int(self.configuration.volume))
         
         # Finally, save it all to file
         self.configuration.saveToFile(resource_path('configuration.xml'))
@@ -157,8 +157,15 @@ class MainWindow(QtGui.QMainWindow):
     def playButton_clicked(self):
         
         # Get list of string output for feeding into my speech
-        outputList = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml()))
+        if len(self.ui.webView.selectedHtml()) > 0:
+            outputList = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml()))
+        else:
+            outputList = self.assigner.getSpeech(unicode(self.ui.webView.page().mainFrame().documentElement().toInnerXml()))
         
+        # Stop whatever the speech thread may be saying
+        self.stopPlayback.emit()
+        
+        # Add my words to the queue
         for o in outputList:
             self.addToQueue.emit(o[0], o[1])
         
@@ -239,7 +246,7 @@ class MainWindow(QtGui.QMainWindow):
         self.updateSettings()
 
     def volumeSlider_valueChanged(self, value):
-        self.configuration.volume = float(value) / 100.0
+        self.configuration.volume = value
         self.updateSettings()
         
     def colorSettingsButton_clicked(self):

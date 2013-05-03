@@ -3,7 +3,7 @@ Created on Apr 8, 2013
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtCore import QThread
+from PyQt4.QtCore import QThread, QMutex
 from PyQt4 import QtCore, QtGui
 from src.speech import driver
 import pythoncom
@@ -17,14 +17,16 @@ class SpeechWorker(QThread):
     onProgress = QtCore.pyqtSignal(int)
     onProgressLabel = QtCore.pyqtSignal(str)
     
+    queueLock = QMutex()
+    
     def __init__(self):
         QThread.__init__(self)
         
         self.outputList = []
         self.running = False
         
-        self.volume = 1.0
-        self.rate = 200
+        self.volume = 100
+        self.rate = 50
         self.voice = ''
         
         self.isChange = False
@@ -50,8 +52,10 @@ class SpeechWorker(QThread):
         
         while True:
             if self.running:
+                self.queueLock.lock()
                 for o in self.outputList:
                     self.ttsEngine.add(text=o[0], label=o[1])
+                self.queueLock.unlock()
                     
                 self.outputList = []
                 
@@ -122,7 +126,9 @@ class SpeechWorker(QThread):
         return self.ttsEngine.getVoiceList()
     
     def addToQueue(self, text, label):
+        self.queueLock.lock()
         self.outputList.append([text,label])
+        self.queueLock.unlock()
         
     def connect_signals(self, mainWindow):
         mainWindow.startPlayback.connect(self.startPlayback)

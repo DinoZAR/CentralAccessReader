@@ -9,7 +9,7 @@ import platform
 
 if platform.system() == 'Windows':
     import win32com.client
-    win32com.client.gencache.is_readonly = False
+    from src.speech.SapiCOM import SpVoice, SpFileStream
 
     import pythoncom
     import win32event
@@ -48,17 +48,17 @@ class SAPIDriver(object):
         
     def setRate(self, rate):
         '''
-        Sets the rate of the voice, in BPM
+        Sets the rate of the voice,  a value between 0-100
         '''
         # 200 BPM = 0
-        self.rate = int((rate / 20.0) - 10)
+        self.rate = int((rate / 5.0) - 10)
         print 'New rate:', self.rate
         
     def setVolume(self, volume):
         '''
         Sets the volume of the voice, from 0-100
         '''
-        self.volume = int(volume * 100)
+        self.volume = int(volume)
         print 'New volume:', self.volume
         
     def setVoice(self, voice):
@@ -77,7 +77,7 @@ class SAPIDriver(object):
         '''
         
         # Initialize the speech object so I can do stuff with it
-        self.voice = win32com.client.Dispatch('SAPI.SPVoice')
+        self.voice = SpVoice()
         
         sapiVoices = self.voice.GetVoices()
         
@@ -91,7 +91,7 @@ class SAPIDriver(object):
         return myList
         
     def add(self, text, label):
-        self.queue.append([text, label, 0])
+        self.queue.append([str(text), label, 0])
     
     def start(self):
         '''
@@ -113,7 +113,7 @@ class SAPIDriver(object):
         
         pythoncom.CoInitialize()
         
-        self.voice = win32com.client.Dispatch('SAPI.SPVoice')
+        self.voice = SpVoice()
         
         self.voice.EventInterests = 33790 # SVEAllEvents
         self.voice.AlertBoundary = 64 # SVEPhoneme
@@ -148,6 +148,7 @@ class SAPIDriver(object):
         Kills everything so that TTS playback stops.
         '''
         self.running = False
+        self.queue = []
         
     def speakToWavFile(self, wavFilePath, outputList, progressCallback):
         '''
@@ -163,11 +164,11 @@ class SAPIDriver(object):
         '''
         pythoncom.CoInitialize()
     
-        saveFileStream = win32com.client.Dispatch('SAPI.SpFileStream')
+        saveFileStream = SpFileStream()
         saveFileStream.Format.Type = 18  # Some magic number that gives good results
         saveFileStream.Open(wavFilePath, 3)
     
-        voice = win32com.client.Dispatch('SAPI.SpVoice')
+        voice = SpVoice()
         voice.AudioOutputStream = saveFileStream
         voice.EventInterests = 33790 # SVEAllEvents
         voice.AlertBoundary = 64 # SVEPhoneme
