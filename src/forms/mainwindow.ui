@@ -438,7 +438,6 @@
      <string>File</string>
     </property>
     <addaction name="actionOpen_Docx"/>
-    <addaction name="actionOpen_HTML"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -449,12 +448,21 @@
     <addaction name="actionOpen_Pattern_Editor"/>
     <addaction name="actionShow_All_MathML"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionTutorial"/>
+    <addaction name="actionAbout_2"/>
+    <addaction name="actionReport_a_Bug"/>
+   </widget>
    <addaction name="menuMenu"/>
    <addaction name="menuMathML"/>
+   <addaction name="menuHelp"/>
   </widget>
   <action name="actionOpen_Docx">
    <property name="text">
-    <string>Open Docx</string>
+    <string>Open Word Document</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -494,6 +502,21 @@
   <action name="actionAbout">
    <property name="text">
     <string>About...</string>
+   </property>
+  </action>
+  <action name="actionTutorial">
+   <property name="text">
+    <string>Tutorial</string>
+   </property>
+  </action>
+  <action name="actionAbout_2">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionReport_a_Bug">
+   <property name="text">
+    <string>Report a Bug</string>
    </property>
   </action>
  </widget>

@@ -1,13 +1,32 @@
+// Have tooltips pop up anytime there is an image with a tooltip
+$(function() {
+    $( document ).tooltip({
+      position: {
+        my: "center top+20",
+        at: "center bottom",
+        using: function( position, feedback ) {
+          $( this ).css( position );
+          $( "<div>" )
+            .addClass( "arrow" )
+            .addClass( feedback.vertical )
+            .addClass( feedback.horizontal )
+            .appendTo( this );
+        }
+      },
+      hide: false,
+      show: false
+    });
+  });
+
 // Used in page navigation to move to an anchor point with specific id
 function GotoPageAnchor(anchorName) {
 	element_to_scroll_to = document.getElementById(anchorName);
-	element_to_scroll_to.scrollIntoView();
-}
-
+	$.scrollTo(element_to_scroll_to, {duration: 200});
+}
 // ---------------------------------------------------------------------------
 // HIGHLIGHTING FUNCTIONS
-// ---------------------------------------------------------------------------
-var highlight; // The highlighter element that has the highlighted content.
+// ---------------------------------------------------------------------------
+var highlight; // The highlighter element that has the highlighted content.
 var highlightLine; // The highlighter element that has the whole line that will be highlighted
 
 function PrintSelection() {
@@ -94,7 +113,12 @@ function HighlightNextElement(doLine) {
 	}
 	else {
 		SetHighlight(range, doLine);
-	}
+	}
+	
+	// Scroll to the element containing the highlight
+	if (ElementInViewport(highlight) != true) {
+		$(this).scrollTo(highlight.parentNode, {duration: 1000, offset: {top: -120}});
+	}
 }
 
 // Returns the equation node if node is inside an equation.
@@ -161,7 +185,7 @@ function GetNextWord(node, offset) {
 	}
 }
 
-// Clears the highlight of where it was before.
+// Clears the highlight of where it was before.
 function ClearHighlight() {
 	console.debug("ClearHighlight");
 	// Replace the highlight node with my contents
@@ -170,12 +194,12 @@ function ClearHighlight() {
 	// Cleanup the highlight and its reference
 	p.removeChild(highlight);
 	p.normalize();
-	highlight = null;
+	highlight = null;
 }
 
-// Clears the line highlight
-function ClearLineHighlight() {
-	console.debug("ClearLineHighlight");
+// Clears the line highlight
+function ClearLineHighlight() {
+	console.debug("ClearLineHighlight");
 	if (highlightLine != null) {
 		var p = highlightLine.parentNode;
 		InsertAllChildNodes(p, highlightLine);
@@ -409,9 +433,24 @@ function GetChildIndex(elem) {
 		i++;
 	}
 	return i;
-}
-function IsInView(elem) {
-	var myRect = elem.getBoundingClientRect();
-	console.debug("Top: " + myRect.top.toString() + " Bottom: " + myRect.bottom.toString());
-	return false;
+}
+
+function ElementInViewport(el) {
+  var top = el.offsetTop;
+  var left = el.offsetLeft;
+  var width = el.offsetWidth;
+  var height = el.offsetHeight;
+
+  while(el.offsetParent) {
+    el = el.offsetParent;
+    top += el.offsetTop;
+    left += el.offsetLeft;
+  }
+
+  return (
+    top >= window.pageYOffset &&
+    left >= window.pageXOffset &&
+    (top + height) <= (window.pageYOffset + window.innerHeight) &&
+    (left + width) <= (window.pageXOffset + window.innerWidth)
+  );
 }

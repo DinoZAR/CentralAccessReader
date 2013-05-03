@@ -267,6 +267,22 @@ class DocxDocument(object):
             jqueryScript.attrib['src'] = r'jquery-1.9.1.min.js'
         else:
             jqueryScript.attrib['src'] = r'../jquery-1.9.1.min.js'
+            
+        jqueryUIScript = HTML.Element('script')
+        jqueryUIScript.attrib['type'] = 'text/javascript'
+        if getattr(sys, 'frozen', None):
+            jqueryUIScript.attrib['src'] = r'jquery-ui/js/jquery-ui-1.9.2.custom.js'
+        else:
+            jqueryUIScript.attrib['src'] = r'../jquery-ui/js/jquery-ui-1.9.2.custom.js'
+            
+            
+        
+        jqueryScrollTo = HTML.Element('script')
+        jqueryScrollTo.attrib['type'] = 'text/javascript'
+        if getattr(sys, 'frozen', None):
+            jqueryScrollTo.attrib['src'] = r'jquery.scrollTo-1.4.3.1-min.js'
+        else:
+            jqueryScrollTo.attrib['src'] = r'../jquery.scrollTo-1.4.3.1-min.js'
         
         myScripts = HTML.Element('script')
         myScripts.set('language', 'javascript')
@@ -285,6 +301,8 @@ class DocxDocument(object):
         head.append(mathjaxConfig)
         head.append(mathjaxScript)
         head.append(jqueryScript)
+        head.append(jqueryUIScript)
+        head.append(jqueryScrollTo)
         head.append(myScripts)
         head.append(css)
         
@@ -355,6 +373,7 @@ class DocxDocument(object):
                     imageTag.set('src', self.importFolder + '/images/' + image['filename'])
                     if 'altText' in image:
                         imageTag.set('alt', image['altText'])
+                        imageTag.set('title', image['altText'])
                     onRoot = False
             
             elif c['type'] == 'math':
