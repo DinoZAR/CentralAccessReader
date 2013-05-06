@@ -6,6 +6,7 @@ Created on Jan 21, 2013
 import sys
 import os
 import time
+import threading
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt, QUrl, QMutex
 from PyQt4 import QtCore
@@ -101,7 +102,6 @@ class MainWindow(QtGui.QMainWindow):
         # Create the general-purpose progress dialog
         self.progressDialog = QtGui.QProgressDialog('Stuff', 'Cancel', 0, 100, self)
         
-        
         # Load the configuration file
         self.configuration = Configuration()
         self.configuration.loadFromFile(resource_path('configuration.xml'))
@@ -111,6 +111,14 @@ class MainWindow(QtGui.QMainWindow):
         # the data for the document itself.
         self.lastDocumentFilePath = ''
         self.document = None
+        
+        # Show the tutorial if I user hasn't seen it yet
+        if self.configuration.showTutorial:
+            self.openTutorial()
+            
+            # Immediately turn the switch off
+            self.configuration.showTutorial = False
+            self.updateSettings()
         
     def connect_signals(self):
         '''
@@ -126,10 +134,11 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.zoomOutButton.clicked.connect(self.zoomOutButton_clicked)
         
         # Main menu actions
-        self.ui.actionOpen_Docx.triggered.connect(self.openDocx)
+        self.ui.actionOpen_Docx.triggered.connect(self.showOpenDocxDialog)
         self.ui.actionQuit.triggered.connect(self.quit)
         self.ui.actionOpen_Pattern_Editor.triggered.connect(self.openPatternEditor)
         self.ui.actionShow_All_MathML.triggered.connect(self.showAllMathML)
+        self.ui.actionTutorial.triggered.connect(self.openTutorial)
         self.ui.actionAbout.triggered.connect(self.openAboutDialog)
         
         # Sliders
@@ -326,15 +335,27 @@ class MainWindow(QtGui.QMainWindow):
         baseUrl = QUrl.fromLocalFile(fileName)
         self.ui.webView.setHtml(content, baseUrl)
         
-    def openDocx(self):
-        savePath = os.path.dirname(os.path.realpath(__file__))
-        savePath = savePath.replace('\\','/')
-        savePath = str(savePath).rsplit('/',1).pop(0) + '/tests/'
-        filePath = QtGui.QFileDialog.getOpenFileName(self, 'Open Docx...','./tests','(*.docx)')
+    def openDocx(self, filePath):
         
         if len(filePath) > 0:
             url = os.path.join(os.getcwd(), 'import')
             baseUrl = QUrl.fromLocalFile(url)
+            
+            # Show a progress dialog
+            self.progressDialog.setWindowModality(Qt.WindowModal)
+            self.progressDialog.setWindowTitle('Opening Word document...')
+            self.progressDialog.setLabelText('Reading Word contents...')
+            self.progressDialog.setValue(0)
+            self.progressDialog.show()
+            QtGui.qApp.processEvents()
+            
+            def myProcessEvents():
+                while True:
+                    QtGui.qApp.processEvents()
+                
+            # Run a separate thread for updating my stuff
+            t = threading.Thread(myProcessEvents)
+            t.start()
             
             self.document = DocxDocument(str(filePath))
             docxHtml = self.document.getMainPage()
@@ -351,6 +372,20 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
             
             self.lastDocumentFilePath = filePath
+            
+            t.join(20)
+            self.progressDialog.hide()
+            
+    def showOpenDocxDialog(self):
+        savePath = os.path.dirname(os.path.realpath(__file__))
+        savePath = savePath.replace('\\','/')
+        savePath = str(savePath).rsplit('/',1).pop(0) + '/tests/'
+        filePath = QtGui.QFileDialog.getOpenFileName(self, 'Open Docx...','./tests','(*.docx)')
+        
+        self.openDocx(filePath)
+            
+    def openTutorial(self):
+        self.openDocx(resource_path('Tutorial.docx'))
             
     def openAboutDialog(self):
         dialog = AboutDialog()

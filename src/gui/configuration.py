@@ -37,7 +37,10 @@ class Configuration(object):
         self.color_highlightLineBackground = QColor(0,255,0)
         
         # Font settings
-        self.font_all = 'Ariel'
+        self.font_all = 'Arial'
+        
+        # Show Tutorial (first time thing)
+        self.showTutorial = True
     
     def loadFromFile(self, filePath):
         print 'Loading config...'
@@ -88,6 +91,13 @@ class Configuration(object):
         # Font Settings
         self.font_all = configDOM.xpath('/Configuration/Fonts/All')[0].text
         
+        # Show Tutorial
+        b = configDOM.xpath('/Configuration/ShowTutorial')[0].text
+        if b == '1':
+            self.showTutorial = True
+        else:
+            self.showTutorial = False
+        
     def saveToFile(self, filePath):
         print 'Saving config...'
         
@@ -134,6 +144,13 @@ class Configuration(object):
         elem = etree.SubElement(fontRoot, 'All')
         elem.text = self.font_all
         
+        # Show Tutorial
+        elem = etree.SubElement(root, 'ShowTutorial')
+        if self.showTutorial:
+            elem.text = '1'
+        else:
+            elem.text = '0'
+            
         configFile = open(filePath, 'w')
         configFile.write(etree.tostring(root, pretty_print=True))
         configFile.close()

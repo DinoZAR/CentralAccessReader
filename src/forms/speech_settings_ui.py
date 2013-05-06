@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'W:\Documents\Special Projects\Graffe, Spencer\workspace2\another\src\forms/speech_settings.ui'
+# Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/speech_settings.ui'
 #
-# Created: Fri Apr 26 10:06:26 2013
+# Created: Mon May 06 09:28:19 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -36,9 +36,9 @@ class Ui_SpeechSettings(object):
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.rateSlider = QtGui.QSlider(SpeechSettings)
         self.rateSlider.setMinimumSize(QtCore.QSize(201, 0))
-        self.rateSlider.setMinimum(100)
-        self.rateSlider.setMaximum(300)
-        self.rateSlider.setProperty("value", 200)
+        self.rateSlider.setMinimum(0)
+        self.rateSlider.setMaximum(100)
+        self.rateSlider.setProperty("value", 50)
         self.rateSlider.setOrientation(QtCore.Qt.Horizontal)
         self.rateSlider.setTickPosition(QtGui.QSlider.TicksAbove)
         self.rateSlider.setTickInterval(10)
@@ -60,7 +60,7 @@ class Ui_SpeechSettings(object):
         self.volumeSlider = QtGui.QSlider(SpeechSettings)
         self.volumeSlider.setMinimumSize(QtCore.QSize(201, 0))
         self.volumeSlider.setMaximum(100)
-        self.volumeSlider.setProperty("value", 99)
+        self.volumeSlider.setProperty("value", 100)
         self.volumeSlider.setOrientation(QtCore.Qt.Horizontal)
         self.volumeSlider.setTickPosition(QtGui.QSlider.TicksAbove)
         self.volumeSlider.setTickInterval(10)

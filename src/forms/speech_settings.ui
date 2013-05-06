@@ -33,13 +33,13 @@
         <string>Words per minute slider (rate)</string>
        </property>
        <property name="minimum">
-        <number>100</number>
+        <number>0</number>
        </property>
        <property name="maximum">
-        <number>300</number>
+        <number>100</number>
        </property>
        <property name="value">
-        <number>200</number>
+        <number>50</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -98,7 +98,7 @@
         <number>100</number>
        </property>
        <property name="value">
-        <number>99</number>
+        <number>100</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
