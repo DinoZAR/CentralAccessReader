@@ -57,7 +57,7 @@ class SpeechSettings(QtGui.QDialog):
         
         # Update main window sliders to match
         self.ui.rateSlider.setValue(self.configuration.rate)
-        self.ui.volumeSlider.setValue(int(self.configuration.volume * 100))
+        self.ui.volumeSlider.setValue(int(self.configuration.volume))
         
     def applyButton_clicked(self):
         self.beforeConfiguration = copy.deepcopy(self.configuration)
@@ -73,7 +73,7 @@ class SpeechSettings(QtGui.QDialog):
         self.updateSettings()
 
     def volumeSlider_valueChanged(self, value):
-        self.configuration.volume = float(value) / 100.0
+        self.configuration.volume = value
         self.updateSettings()
         
     def comboBox_currentIndexChanged(self, index):

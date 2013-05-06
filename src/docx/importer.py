@@ -58,6 +58,22 @@ htmlLevels = {1 : 'h1',
               5 : 'h5',
               -1 : 'p'} # Default
 
+def clean_XML_input(input):  
+      
+    if input:  
+              
+        import re  
+          
+        # unicode invalid characters  
+        RE_XML_ILLEGAL = u'([\u0000-\u0008\u000b-\u000c\u000e-\u001f\ufffe-\uffff])' + u'|' + u'([{0}-{1}][^{2}-{3}])|([^{4}-{5}][{6}-{7}])|([{8}-{9}]$)|(^[{10}-{11}])'.format(
+                        unichr(0xd800),unichr(0xdbff),unichr(0xdc00),unichr(0xdfff),unichr(0xd800),unichr(0xdbff),unichr(0xdc00),unichr(0xdfff),unichr(0xd800),unichr(0xdbff),unichr(0xdc00),unichr(0xdfff))
+        input = re.sub(RE_XML_ILLEGAL, "", input)  
+                          
+        # ascii control characters  
+        input = re.sub(r"[\x01-\x1F\x7F]", "", input)  
+              
+    return input.decode('utf8')
+
 class DocxDocument(object):
     '''
     Imports a .docx and transforms it to meet my needs. Although it has not been 
@@ -170,7 +186,7 @@ class DocxDocument(object):
         for child in elem:
             # Text
             if child.tag == '{0}t'.format(w_NS):
-                data['text'] = child.text.encode('utf-8', errors='ignore')
+                data['text'] = clean_XML_input(child.text.encode('utf-8'))
             
             # Image or some drawing
             if child.tag == '{0}drawing'.format(w_NS):
@@ -197,14 +213,14 @@ class DocxDocument(object):
             for rel in self.rels:
                 if rel.get('Id') == id:
                     filename = os.path.split(rel.get('Target'))[1]
-                    data['filename'] = filename
+                    data['filename'] = clean_XML_input(filename)
                     break
                 
             # Get the description text for the image
             query = elem.find('.//{0}docPr'.format(wp_NS))
             if query != None:
                 altText = query.get('descr')
-                data['altText'] = altText
+                data['altText'] = clean_XML_input(altText)
                 
             # Append this to the parent data
             parentData['image'] = data
@@ -367,7 +383,6 @@ class DocxDocument(object):
                         currTextNode.text += c['text']
                     else:
                         currTextNode.tail += c['text']
-                    onRoot = True
                     
                 elif 'image' in c:
                     image = c['image']

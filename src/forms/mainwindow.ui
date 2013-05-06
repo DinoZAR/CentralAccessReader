@@ -159,6 +159,9 @@
               <height>50</height>
              </size>
             </property>
+            <property name="shortcut">
+             <string>Ctrl+R</string>
+            </property>
             <property name="flat">
              <bool>true</bool>
             </property>
@@ -182,25 +185,8 @@
               <height>50</height>
              </size>
             </property>
-            <property name="flat">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="colorSettingsButton">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="resource.qrc">
-              <normaloff>:/icons/icons/color_settings.png</normaloff>:/icons/icons/color_settings.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>50</width>
-              <height>50</height>
-             </size>
+            <property name="shortcut">
+             <string>Ctrl+S</string>
             </property>
             <property name="flat">
              <bool>true</bool>
@@ -215,6 +201,26 @@
             <property name="icon">
              <iconset resource="resource.qrc">
               <normaloff>:/icons/icons/system_config_services.png</normaloff>:/icons/icons/system_config_services.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>50</width>
+              <height>50</height>
+             </size>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="colorSettingsButton">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="resource.qrc">
+              <normaloff>:/icons/icons/color_settings.png</normaloff>:/icons/icons/color_settings.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -271,6 +277,9 @@
               <height>50</height>
              </size>
             </property>
+            <property name="shortcut">
+             <string>Ctrl+=</string>
+            </property>
             <property name="flat">
              <bool>true</bool>
             </property>
@@ -299,6 +308,9 @@
               <width>50</width>
               <height>50</height>
              </size>
+            </property>
+            <property name="shortcut">
+             <string>Ctrl+-</string>
             </property>
             <property name="flat">
              <bool>true</bool>
@@ -453,7 +465,7 @@
      <string>Help</string>
     </property>
     <addaction name="actionTutorial"/>
-    <addaction name="actionAbout_2"/>
+    <addaction name="actionAbout"/>
     <addaction name="actionReport_a_Bug"/>
    </widget>
    <addaction name="menuMenu"/>
@@ -466,14 +478,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
-   </property>
-  </action>
-  <action name="actionOpen_HTML">
-   <property name="text">
-    <string>Open HTML</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+O</string>
    </property>
   </action>
   <action name="actionOpen_Pattern_Editor">
@@ -494,22 +498,12 @@
     <string>Ctrl+Q</string>
    </property>
   </action>
-  <action name="actionManual">
-   <property name="text">
-    <string>Manual</string>
-   </property>
-  </action>
-  <action name="actionAbout">
-   <property name="text">
-    <string>About...</string>
-   </property>
-  </action>
   <action name="actionTutorial">
    <property name="text">
     <string>Tutorial</string>
    </property>
   </action>
-  <action name="actionAbout_2">
+  <action name="actionAbout">
    <property name="text">
     <string>About</string>
    </property>

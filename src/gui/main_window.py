@@ -18,6 +18,7 @@ from src.gui.mathmlcodes_dialog import MathMLCodesDialog
 from src.gui.configuration import Configuration
 from src.gui.npa_webview import NPAWebView
 from src.gui.bookmarks import BookmarksTreeModel, BookmarkNode
+from src.gui.about import AboutDialog
 from src.mathml.tts import MathTTS
 from src.mathml import pattern_editor
 from src.speech.assigner import Assigner
@@ -125,11 +126,11 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.zoomOutButton.clicked.connect(self.zoomOutButton_clicked)
         
         # Main menu actions
-        self.ui.actionOpen_HTML.triggered.connect(self.openHTML)
         self.ui.actionOpen_Docx.triggered.connect(self.openDocx)
         self.ui.actionQuit.triggered.connect(self.quit)
         self.ui.actionOpen_Pattern_Editor.triggered.connect(self.openPatternEditor)
         self.ui.actionShow_All_MathML.triggered.connect(self.showAllMathML)
+        self.ui.actionAbout.triggered.connect(self.openAboutDialog)
         
         # Sliders
         self.ui.volumeSlider.valueChanged.connect(self.volumeSlider_valueChanged)
@@ -350,6 +351,10 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
             
             self.lastDocumentFilePath = filePath
+            
+    def openAboutDialog(self):
+        dialog = AboutDialog()
+        dialog.exec_()
             
     def quit(self):
         self.close()

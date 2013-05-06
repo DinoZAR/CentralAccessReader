@@ -45,8 +45,8 @@ function PrintSelection() {
 
 function SetBeginning(doLine) {
 	console.debug("SetBeginning");	
-	var range = null;
-	if (window.getSelection() === null) {		
+	var range = window.getSelection();
+	if (!(range === null)) {		
 		console.debug("Something got selected! Range: " + range.toString());
 		
 		range = window.getSelection();
