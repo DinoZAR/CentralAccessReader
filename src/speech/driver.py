@@ -217,18 +217,18 @@ class SAPIDriver(object):
             
     def handle_onWord(self, stream, pos, char, length):
         
-        # Get the word associated with it
+        # Get the queue item associated with the stream
         i = 0
         while i < len(self.queue):
             if self.queue[i][2] == stream:
                 break
             else:
                 i += 1
-        word = self.queue[i][0][char:char+length]
+#         word = self.queue[i][0][char:char+length]
         
         # Publish this to everyone in callbacks
         for c in self.delegator['onWord']:
-            c[1](word, char, self.queue[i][1], stream)
+            c[1](char, length, self.queue[i][1], stream)
         
     
     def handle_onEndStream(self, stream, pos):

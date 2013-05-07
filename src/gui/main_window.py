@@ -25,7 +25,7 @@ from src.mathml import pattern_editor
 from src.speech.assigner import Assigner
 from src.speech.worker import SpeechWorker
 from src.docx.importer import DocxDocument
-from src.misc import resource_path, UpdateQtThread
+from src.misc import resource_path, js_command, UpdateQtThread
 
 class MainWindow(QtGui.QMainWindow):
     loc = 0
@@ -193,46 +193,58 @@ class MainWindow(QtGui.QMainWindow):
         self.ttsPlaying = True
         self.setSlidersEnableState()
         
-    def onWord(self, text, location, label, stream):
+    def onWord(self, offset, length, label, stream):
         
-        if not self.isFirst:
-            if label == "text":
-                if label != self.lastElement[2] or (location != self.lastElement[1]) or (stream != self.lastElement[3]):
-                    self.javascriptMutex.lock()
-                    if self.configuration.highlight_line_enable:
-                        self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(true)')
-                    else:
-                        self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(false)')
-                    self.javascriptMutex.unlock()
-            elif label == "math":
-                if (label != self.lastElement[2]) or (stream != self.lastElement[3]):
-                    self.javascriptMutex.lock()
-                    if self.configuration.highlight_line_enable:
-                        self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(true)')
-                    else:
-                        self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(false)')
-                    self.javascriptMutex.unlock()
-            elif label == "image":
-                if (label != self.lastElement[2]) or (stream != self.lastElement[3]):
-                    self.javascriptMutex.lock()
-                    if self.configuration.highlight_line_enable:
-                        self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(true)')
-                    else:
-                        self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(false)')
-                    self.javascriptMutex.unlock()
-            else:
-                self.javascriptMutex.lock()
-                if self.configuration.highlight_line_enable:
-                    self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(true)')
-                else:
-                    self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(false)')
-                self.javascriptMutex.unlock()
+        if label == 'text':
+            self.javascriptMutex.lock()
+            self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightWord', [self.configuration.highlight_line_enable, offset, length]))
+            self.javascriptMutex.unlock()
+        elif label == 'math':
+            pass
+        elif label == 'image':
+            pass
         else:
-            # Do this because the SetBeginning() function highlighted it
-            self.isFirst = False
-            
-        # Store what the last element was that was being spoken
-        self.lastElement = [text, location, label, stream]
+            print 'ERROR: I don\'t know what this label refers to for highlighting:', label
+        
+        self.lastElement = [offset, length, label, stream]
+#         if not self.isFirst:
+#             if label == "text":
+#                 if label != self.lastElement[2] or (offset != self.lastElement[1]) or (stream != self.lastElement[3]):
+#                     self.javascriptMutex.lock()
+#                     if self.configuration.highlight_line_enable:
+#                         self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(true)')
+#                     else:
+#                         self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(false)')
+#                     self.javascriptMutex.unlock()
+#             elif label == "math":
+#                 if (label != self.lastElement[2]) or (stream != self.lastElement[3]):
+#                     self.javascriptMutex.lock()
+#                     if self.configuration.highlight_line_enable:
+#                         self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(true)')
+#                     else:
+#                         self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(false)')
+#                     self.javascriptMutex.unlock()
+#             elif label == "image":
+#                 if (label != self.lastElement[2]) or (stream != self.lastElement[3]):
+#                     self.javascriptMutex.lock()
+#                     if self.configuration.highlight_line_enable:
+#                         self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(true)')
+#                     else:
+#                         self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(false)')
+#                     self.javascriptMutex.unlock()
+#             else:
+#                 self.javascriptMutex.lock()
+#                 if self.configuration.highlight_line_enable:
+#                     self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(true)')
+#                 else:
+#                     self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(false)')
+#                 self.javascriptMutex.unlock()
+#         else:
+#             # Do this because the SetBeginning() function highlighted it
+#             self.isFirst = False
+#             
+#         # Store what the last element was that was being spoken
+#         self.lastElement = [text, location, label, stream]
         
     def onSpeechFinished(self):
         print 'Speech finished.'

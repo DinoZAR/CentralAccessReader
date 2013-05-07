@@ -29,6 +29,29 @@ def resource_path(resourceFile, forceDir=False):
         print 'Resource:', os.path.abspath(resourceFile)
         return os.path.abspath(resourceFile)
     
+def js_command(functionName, args):
+    '''
+    Returns a correctly formatted JavaScript function call that is called
+    <functionName> and uses a list of args as [arg1, arg2, ...]
+    '''
+    commandString = functionName + '('
+    
+    for i in args:
+        if isinstance(i, bool):
+            if i:
+                commandString += 'true'
+            else:
+                commandString += 'false'
+        else:
+            commandString += str(i)
+        commandString += ','
+        
+    # Remove last comma and add closing parenthesis
+    commandString = commandString[:-1]
+    commandString += ')'
+    
+    return commandString
+    
 
 class UpdateQtThread(Thread):
     '''

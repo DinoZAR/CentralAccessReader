@@ -35,8 +35,8 @@ class SpeechWorker(QThread):
         
         print 'Running Speech Worker thread...'
         
-        def myOnWord(word, location, label, stream):
-            self.onWord.emit(word, location, label, stream)
+        def myOnWord(offset, length, label, stream):
+            self.onWord.emit(offset, length, label, stream)
         
         def myOnFinish():
             self.running = False

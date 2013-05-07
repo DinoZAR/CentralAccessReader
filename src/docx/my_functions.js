@@ -28,21 +28,11 @@ function GotoPageAnchor(anchorName) {
 // ---------------------------------------------------------------------------
 var highlight; // The highlighter element that has the highlighted content.
 var highlightLine; // The highlighter element that has the whole line that will be highlighted
-
-function PrintSelection() {
-	if (window.getSelection()) {
-		var range = window.getSelection();
-		var buildString = "My Range!\n";
-		buildString += "Anchor Node: " + range.anchorNode.parentNode.nodeName + " ";
-		buildString += range.anchorOffset.toString() + "\n";
-		buildString += "Focus Node: " + range.focusNode.parentNode.nodeName + " ";
-		buildString += range.focusOffset.toString() + "\n";
-		alert(buildString);
-	}
-}
+var lastElement;
+var atBeginning = false;
+var beginOffset = 0;
 
 // Sets the beginning to start the speech. It will start at beginning if no selection was made.
-
 function SetBeginning(doLine) {
 	console.debug("SetBeginning");	
 	var range = window.getSelection();
@@ -103,8 +93,8 @@ function SetBeginning(doLine) {
 	SetHighlight(range, doLine);
 	window.getSelection().empty();
 }
-
-// Move the highlight to the next element that should be highlighted 
+
+// Move the highlight to the next element that should be highlighted 
 function HighlightNextElement(doLine) {
 	console.debug("HighlightNextElement");
 	// Get the sibling of the highlight node. It will either be more text or an actual element.
@@ -125,8 +115,7 @@ function HighlightNextElement(doLine) {
 		$(this).scrollTo(highlight.parentNode, {duration: 1000, offset: {top: -120}});
 	}
 }
-
-// Returns the equation node if node is inside an equation.
+// Returns the equation node if node is inside an equation.
 function GetEquation(node) {	
 	var myNode = node
 	// Check to see if this node is an equation
@@ -142,8 +131,7 @@ function GetEquation(node) {
 	}
 	return null;
 }
-
-// Returns a range that has the next word
+// Returns a range that has the next word
 function GetNextWord(node, offset) {
 	console.debug("GetNextWord");
 	// See if it is an equation
@@ -189,7 +177,6 @@ function GetNextWord(node, offset) {
 		return range;
 	}
 }
-
 // Clears the highlight of where it was before.
 function ClearHighlight() {
 	console.debug("ClearHighlight");
@@ -201,7 +188,6 @@ function ClearHighlight() {
 	p.normalize();
 	highlight = null;
 }
-
 // Clears the line highlight
 function ClearLineHighlight() {
 	console.debug("ClearLineHighlight");
@@ -216,8 +202,7 @@ function ClearLineHighlight() {
 		highlightLine = null;
 	}
 }
-
-// Clears both the line highlight and the individual element highlight
+// Clears both the line highlight and the individual element highlight
 function ClearAllHighlights() {
 	console.debug("ClearAllHighlights");
 	if (highlightLine != null) {
@@ -227,9 +212,8 @@ function ClearAllHighlights() {
 		ClearHighlight(); 
 	}
 }
-
-// Given a Range object, this will clean up any previous highlight and create a highlight
-// over the new range
+// Given a Range object, this will clean up any previous highlight and create a highlight
+// over the new range
 function SetHighlight(range, doLine) {
 	if (highlight != null) {
 		ClearHighlight();
@@ -247,7 +231,6 @@ function SetHighlight(range, doLine) {
 		SetLineHighlight();
 	}
 }
-
 // This function will set the line highlight to surround that particular range.
 // It will highlight all the way to the previous sentence end to the next
 // sentence end, or just the node if there are no sentences.
