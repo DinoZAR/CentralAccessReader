@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/mainwindow.ui'
 #
-# Created: Mon May 06 08:22:56 2013
+# Created: Tue May 07 09:25:46 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -247,7 +247,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "Nifty Prose Articulator", None))
-        self.label_3.setText(_translate("MainWindow", "Bookmarks:", None))
+        self.label_3.setText(_translate("MainWindow", "Navigation:", None))
         self.playButton.setToolTip(_translate("MainWindow", "Play button", None))
         self.playButton.setShortcut(_translate("MainWindow", "Ctrl+R", None))
         self.pauseButton.setToolTip(_translate("MainWindow", "Stop button", None))

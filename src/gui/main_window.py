@@ -25,7 +25,7 @@ from src.mathml import pattern_editor
 from src.speech.assigner import Assigner
 from src.speech.worker import SpeechWorker
 from src.docx.importer import DocxDocument
-from src.misc import resource_path
+from src.misc import resource_path, UpdateQtThread
 
 class MainWindow(QtGui.QMainWindow):
     loc = 0
@@ -344,17 +344,13 @@ class MainWindow(QtGui.QMainWindow):
             # Show a progress dialog
             self.progressDialog.setWindowModality(Qt.WindowModal)
             self.progressDialog.setWindowTitle('Opening Word document...')
-            self.progressDialog.setLabelText('Reading Word contents...')
+            self.progressDialog.setLabelText('Reading ' + os.path.basename(str(filePath)) + '...')
             self.progressDialog.setValue(0)
             self.progressDialog.show()
             QtGui.qApp.processEvents()
-            
-            def myProcessEvents():
-                while True:
-                    QtGui.qApp.processEvents()
                 
             # Run a separate thread for updating my stuff
-            t = threading.Thread(myProcessEvents)
+            t = UpdateQtThread()
             t.start()
             
             self.document = DocxDocument(str(filePath))
@@ -373,7 +369,8 @@ class MainWindow(QtGui.QMainWindow):
             
             self.lastDocumentFilePath = filePath
             
-            t.join(20)
+            t.stop()
+            t.join()
             self.progressDialog.hide()
             
     def showOpenDocxDialog(self):

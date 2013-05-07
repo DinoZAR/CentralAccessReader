@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/speech_settings.ui'
 #
-# Created: Mon May 06 09:28:19 2013
+# Created: Tue May 07 08:31:24 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -99,7 +99,7 @@ class Ui_SpeechSettings(object):
         QtCore.QMetaObject.connectSlotsByName(SpeechSettings)
 
     def retranslateUi(self, SpeechSettings):
-        SpeechSettings.setWindowTitle(_translate("SpeechSettings", "Dialog", None))
+        SpeechSettings.setWindowTitle(_translate("SpeechSettings", "Speech", None))
         self.rateSlider.setToolTip(_translate("SpeechSettings", "Words per minute slider (rate)", None))
         self.label.setText(_translate("SpeechSettings", "Rate:", None))
         self.comboBox.setToolTip(_translate("SpeechSettings", "Drop down box for selecting the voice", None))

@@ -23,28 +23,22 @@ function GotoPageAnchor(anchorName) {
 	element_to_scroll_to = document.getElementById(anchorName);
 	$.scrollTo(element_to_scroll_to, {duration: 200});
 }
-// ---------------------------------------------------------------------------
-// HIGHLIGHTING FUNCTIONS
-// ---------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// HIGHLIGHTING FUNCTIONS AND STATE DATA
+// -----------------------------------------------------------------------------
+
 var highlight; // The highlighter element that has the highlighted content.
 var highlightLine; // The highlighter element that has the whole line that will be highlighted
+var beginOffset;
+var atBeginning = false;
 
-function PrintSelection() {
-	if (window.getSelection()) {
-		var range = window.getSelection();
-		var buildString = "My Range!\n";
-		buildString += "Anchor Node: " + range.anchorNode.parentNode.nodeName + " ";
-		buildString += range.anchorOffset.toString() + "\n";
-		buildString += "Focus Node: " + range.focusNode.parentNode.nodeName + " ";
-		buildString += range.focusOffset.toString() + "\n";
-		alert(buildString);
-	}
-}
-
+// -----------------------------------------------------------------------------
+// END STATE DATA
+// -----------------------------------------------------------------------------
 // Sets the beginning to start the speech. It will start at beginning if no selection was made.
-
 function SetBeginning(doLine) {
 	console.debug("SetBeginning");	
+	// Get a range of the selection first
 	var range = window.getSelection();
 	if (!(range === null)) {		
 		console.debug("Something got selected! Range: " + range.toString());
@@ -86,25 +80,39 @@ function SetBeginning(doLine) {
 		// Get the first deepest child in the document and go from there
 		range = document.createRange();
 		range.selectNode(DeepestChild(document.body.firstChild));
-		console.debug("Selecting everything! Range: " + range.toString());
 	}
 	
-	console.debug("My range! " + range.toString());
+	// Set some of my states
+	beginOffset = range.startOffset;
+	atBeginning = true;
 	
 	// Check to see if the start is inside a math equation. If so, adjust selection to
 	// only select that node. Otherwise, have it select the first whole word there.
-	range = GetNextWord(range.startContainer, range.startOffset);
+	range = SelectWord(range.startContainer, range.startOffset, 1);
 	// If I can't get another word, get another element.
 	if (range == null) {
 		var nElem = NextElement(startNode);
 		range = document.createRange();
 	}
 	
+	// Set the highlight there
 	SetHighlight(range, doLine);
+	
+	// Clear the user selection, if any
 	window.getSelection().empty();
 }
-
-// Move the highlight to the next element that should be highlighted 
+
+// Highlight a word in the current element. The JavaScript keeps track of the
+// beginning offset, since it doesn't expect the TTS calling this to know that.
+function HighlightWord(doLine, offset, length) {
+	var start = offset;
+	if (atBeginning == True) {
+		start += beginOffset;
+	}
+	var end = start + length;
+}
+
+// Move the highlight to the next element that should be highlighted 
 function HighlightNextElement(doLine) {
 	console.debug("HighlightNextElement");
 	// Get the sibling of the highlight node. It will either be more text or an actual element.
@@ -125,8 +133,7 @@ function HighlightNextElement(doLine) {
 		$(this).scrollTo(highlight.parentNode, {duration: 1000, offset: {top: -120}});
 	}
 }
-
-// Returns the equation node if node is inside an equation.
+// Returns the equation node if node is inside an equation.
 function GetEquation(node) {	
 	var myNode = node
 	// Check to see if this node is an equation
@@ -142,54 +149,42 @@ function GetEquation(node) {
 	}
 	return null;
 }
-
-// Returns a range that has the next word
-function GetNextWord(node, offset) {
-	console.debug("GetNextWord");
+// Returns a range that has the next word (or element if not word)
+function SelectWord(node, offset, length) {
+	console.debug("SelectWord");
 	// See if it is an equation
 	var equation = GetEquation(node);
 	if (equation != null) {
 		console.debug("It is an equation!");
 		var range = document.createRange();
 		range.selectNode(equation);
+		atBeginning = false;
 		return range;
 	}
 	// See if it is an image
 	if (node.nodeName == "IMG") {
-		console.debug("Got next image!");
+		console.debug("It is an image!");
 		var range = document.createRange();
 		range.selectNode(node);
+		atBeginning = false;
 		return range;
 	}
-	// See if it is anything else, like text
+	// If it is anything else, it is probably text
 	else {
-		// Check to see if I can find the start of the next word. Otherwise, return null.
-		var nextIndex = node.textContent.substring(offset).search(/\w/);
-		if (nextIndex == -1) {
-			// If I can't find another word, try to find another element
-			var elem = NextElement(node);
-			if (elem == null) {
-				return null;
-			}
-			else {
-				return GetNextWord(elem, 0);
-			}
-		}
-		nextIndex = nextIndex + offset;
-		var endIndex = node.textContent.substring(nextIndex).search(/\s/);
-		if (endIndex == -1) {
-			endIndex = node.length; // Most likely reached the end of whatever element I was in.
-		}
-		else {
-			endIndex = endIndex + nextIndex;
-		}
+		
+		var nextIndex = offset;
+		if (atBeginning == true) {
+			nextIndex += beginOffset
+		}
+		var endIndex = offset + length;
+		
 		range = document.createRange();
 		range.setStart(node, nextIndex);
-		range.setEnd(node, endIndex);
-		return range;
-	}
+		range.setEnd(node, endIndex);
+		
+		return range;
+	}
 }
-
 // Clears the highlight of where it was before.
 function ClearHighlight() {
 	console.debug("ClearHighlight");
@@ -201,7 +196,6 @@ function ClearHighlight() {
 	p.normalize();
 	highlight = null;
 }
-
 // Clears the line highlight
 function ClearLineHighlight() {
 	console.debug("ClearLineHighlight");
@@ -216,8 +210,7 @@ function ClearLineHighlight() {
 		highlightLine = null;
 	}
 }
-
-// Clears both the line highlight and the individual element highlight
+// Clears both the line highlight and the individual element highlight
 function ClearAllHighlights() {
 	console.debug("ClearAllHighlights");
 	if (highlightLine != null) {
@@ -227,9 +220,8 @@ function ClearAllHighlights() {
 		ClearHighlight(); 
 	}
 }
-
-// Given a Range object, this will clean up any previous highlight and create a highlight
-// over the new range
+// Given a Range object, this will clean up any previous highlight and create a highlight
+// over the new range
 function SetHighlight(range, doLine) {
 	if (highlight != null) {
 		ClearHighlight();
@@ -247,7 +239,6 @@ function SetHighlight(range, doLine) {
 		SetLineHighlight();
 	}
 }
-
 // This function will set the line highlight to surround that particular range.
 // It will highlight all the way to the previous sentence end to the next
 // sentence end, or just the node if there are no sentences.

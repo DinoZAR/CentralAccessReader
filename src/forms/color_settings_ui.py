@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'W:\Documents\Special Projects\Graffe, Spencer\workspace2\another\src\forms/color_settings.ui'
+# Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/color_settings.ui'
 #
-# Created: Fri Apr 26 10:40:13 2013
+# Created: Tue May 07 08:55:32 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -144,7 +144,7 @@ class Ui_ColorSettings(object):
         QtCore.QMetaObject.connectSlotsByName(ColorSettings)
 
     def retranslateUi(self, ColorSettings):
-        ColorSettings.setWindowTitle(_translate("ColorSettings", "Highlight, Colors, and Fonts", None))
+        ColorSettings.setWindowTitle(_translate("ColorSettings", "Highlighting, Colors, and Fonts", None))
         self.label_9.setText(_translate("ColorSettings", "Font", None))
         self.label_7.setText(_translate("ColorSettings", "Colors", None))
         self.label_6.setText(_translate("ColorSettings", "Content:", None))

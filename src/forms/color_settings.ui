@@ -16,7 +16,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Highlight, Colors, and Fonts</string>
+   <string>Highlighting, Colors, and Fonts</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>

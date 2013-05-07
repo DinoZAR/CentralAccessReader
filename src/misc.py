@@ -1,10 +1,15 @@
 '''
 Created on May 2, 2013
 
+Contains some very useful but otherwise random functions and classes that are
+practically universally applicable.
+
 @author: Spencer Graffe
 '''
 import sys
 import os
+from threading import Thread
+from PyQt4 import QtGui
 
 def resource_path(resourceFile, forceDir=False):
     '''
@@ -23,3 +28,21 @@ def resource_path(resourceFile, forceDir=False):
     else:
         print 'Resource:', os.path.abspath(resourceFile)
         return os.path.abspath(resourceFile)
+    
+
+class UpdateQtThread(Thread):
+    '''
+    Used to process events in the PyQt main thread while something else is
+    hogging up my main thread.
+    '''
+    def __init__(self):
+        Thread.__init__(self)
+        self._stopping = False
+        
+    def run(self):
+        while not self._stopping:
+            QtGui.qApp.processEvents()
+    
+    def stop(self):
+        self._stopping = True
+    
