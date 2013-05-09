@@ -29,8 +29,7 @@ function GotoPageAnchor(anchorName) {
 var highlight; // The highlighter element that has the highlighted content.
 var highlightLine; // The highlighter element that has the whole line that will be highlighted
 var lastElement;
-var atBeginning = false;
-var beginOffset = 0;
+var beginOffset;
 
 // Sets the beginning to start the speech. It will start at beginning if no selection was made.
 function SetBeginning(doLine) {
@@ -79,7 +78,7 @@ function SetBeginning(doLine) {
 		console.debug("Selecting everything! Range: " + range.toString());
 	}
 	
-	console.debug("My range! " + range.toString());
+	beginOffset = range.startOffset;
 	
 	// Check to see if the start is inside a math equation. If so, adjust selection to
 	// only select that node. Otherwise, have it select the first whole word there.
@@ -105,7 +104,7 @@ function HighlightNextElement(doLine) {
 	// clear all the highlights
 	if (range == null) {
 		ClearAllHighlights();
-	}
+	}
 	else {
 		SetHighlight(range, doLine);
 	}
@@ -114,6 +113,44 @@ function HighlightNextElement(doLine) {
 	if (ElementInViewport(highlight) != true) {
 		$(this).scrollTo(highlight.parentNode, {duration: 1000, offset: {top: -120}});
 	}
+}
+
+// Highlights a word in the current element based on the offset and length from
+// the TTS driver. This function will handle the offsets from the selection.
+function HighlightWord(doLine, offset, length) {
+	
+	console.debug("HighlightWord");
+	
+	// Get the parent element from the highlight from which we do these calculations
+	var p = null;
+	var childNum = 0;
+	if (!(highlightLine === null)) {
+		p = highlightLine.parentNode;
+		childNum = GetChildIndex(highlightLine);
+	}
+	else {
+		p = highlight.parentNode;
+		childNum = GetChildIndex(highlight);
+	}
+	
+	console.debug("Child number! " + childNum.toString());
+	
+	// Get rid of highlights
+	ClearAllHighlights();
+	
+	// Get the text content of the child I want
+	var t = $(p).contents()[childNum];
+	
+	console.debug('Text node: ' + t.toString());
+	
+	// Create range and select that text correctly
+	var range = document.createRange();
+	range.setStart(t, offset + beginOffset);
+	range.setEnd(t, offset + length + beginOffset);
+	
+	// Create the highlight
+	SetHighlight(range, doLine);
+	
 }
 // Returns the equation node if node is inside an equation.
 function GetEquation(node) {	
@@ -240,8 +277,10 @@ function SetLineHighlight() {
 	// Adjust beginning of range so that it arrives at the end of previous sentence, or just 
 	// the beginning of the first child node.
 	var startNode = highlight;
-	var startOffset = 0;
-	var done = false;
+	var startOffset = 0;
+	
+	var done = false;
+	
 	while (!done) {
 		if (startNode.nodeName == "#text") {
 			console.debug("Searching inside text node...");
@@ -267,16 +306,21 @@ function SetLineHighlight() {
 				startOffset = lastEnd - 1;  // Subtracting 1 to ignore the space
 				done = true;
 			}
-		}
-		else {
-			var prev = startNode.previousSibling;
-			if (prev != null) {
-				startNode = prev;
+		}
+		// Check to see if it is my own highlight
+		else if (startNode.nodeName == "SPAN") {
+			console.debug("Got a span!");
+			if ((startNode.getAttribute("id") == "npaHighlightLine") || (startNode.getAttribute("id") == "npaHighlight")) {
+				console.debug("Ran into my own highlight!");
+				startNode = startNode.previousSibling;
 				startOffset = 0;
 			}
 			else {
 				done = true;
 			}
+		}
+		else {
+			done = true;
 		}
 	}
 	console.debug("Start Node: " + startNode.nodeName + " Start Offset: " + startOffset.toString());
@@ -296,17 +340,9 @@ function SetLineHighlight() {
 			}
 			if (lastEnd == -1) {
 				console.debug("Couldn't find end of next sentence!");
-				// Check if there are more nodes before this
-				var next = endNode.nextSibling;
-				if (next != null) {
-					endNode = next;
-					endOffset = 0;
-				}
-				else {
-					endOffset = endNode.textContent.length;
-					done = true;
-				}
-			}
+				endOffset = endNode.textContent.length;
+				done = true;
+			}
 			else {
 				console.debug("Got an end of next sentence! " + lastEnd.toString());
 				endOffset = lastEnd;
@@ -348,15 +384,8 @@ function SetLineHighlight() {
 			}
 		}
 		else {
-			var next = endNode.nextSibling;
-			if (next != null) {
-				endNode = next;
-				endOffset = 0;
-			}
-			else {
-				endOffset = 0;
-				done = true;
-			}
+			endOffset = 0;
+			done = true;
 		}
 	}
 	
@@ -420,7 +449,7 @@ function GetChildIndex(elem) {
 	while ((elem = elem.previousSibling) != null) {
 		i++;
 	}
-	return i;
+	return i-1;
 }
 
 function ElementInViewport(el) {
