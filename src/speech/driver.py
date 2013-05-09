@@ -92,7 +92,8 @@ class SAPIDriver(object):
         return myList
         
     def add(self, text, label):
-        self.queue.append([unicode(text).encode('utf-8', errors='ignore'), label, 0])
+        print ' --> --> Adding queue items to driver:', [text, label]
+        self.queue.append([text, label, 0])
     
     def start(self):
         '''

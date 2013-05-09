@@ -31,6 +31,8 @@ def resource_path(resourceFile, forceDir=False):
     
 def clean_XML_input(input):  
       
+    print 'Input:', [input]
+    
     if input:  
               
         import re  
@@ -43,7 +45,7 @@ def clean_XML_input(input):
         # ascii control characters  
         input = re.sub(r"[\x01-\x1F\x7F]", "", input)  
               
-    return input.decode('utf8')
+    return input
     
 def js_command(functionName, args):
     '''
@@ -59,6 +61,8 @@ def js_command(functionName, args):
                     commandString += 'true'
                 else:
                     commandString += 'false'
+            elif isinstance(i, basestring):
+                commandString += '\"' + i + '\"'
             else:
                 commandString += str(i)
             commandString += ','

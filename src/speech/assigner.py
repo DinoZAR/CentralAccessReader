@@ -48,7 +48,6 @@ class Assigner(object):
         
         [[text, label], [text, label], ...]
         '''
-        print 'HTML Content:', htmlContent
         htmlDom = html.fromstring(htmlContent)
         return self._recursiveGetSpeech(htmlDom)
         
@@ -58,7 +57,7 @@ class Assigner(object):
         myList = []
         
         if element.text != None:
-            myList.append([clean_XML_input(element.text.encode('utf8')), 'text'])
+            myList.append([element.text, 'text'])
         
         for child in element:
             testTag = child.tag.split('}')[-1]
@@ -74,13 +73,13 @@ class Assigner(object):
             elif testTag == 'img':
                 myList.append(['Image. ' + child.get('alt'), 'image'])
                 if child.tail != None:
-                    myList.append([clean_XML_input(child.tail.encode('utf8')), 'text'])
+                    myList.append([child.tail, 'text'])
             
             else:
                 myList.extend(self._recursiveGetSpeech(child))
         
         if element.tail != None:
-            myList.append([clean_XML_input(element.tail.encode('utf8')), 'text'])
+            myList.append([element.tail, 'text'])
             
         return myList
             

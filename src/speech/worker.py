@@ -127,7 +127,8 @@ class SpeechWorker(QThread):
     
     def addToQueue(self, text, label):
         self.queueLock.lock()
-        self.outputList.append([text,label])
+        print ' --> Sending text to driver:', [unicode(text), unicode(label)]
+        self.outputList.append([unicode(text),unicode(label)])
         self.queueLock.unlock()
         
     def connect_signals(self, mainWindow):

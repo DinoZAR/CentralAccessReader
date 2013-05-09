@@ -149,6 +149,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.bookmarksTreeView.clicked.connect(self.bookmarksTree_clicked)
         self.ui.bookmarkZoomInButton.clicked.connect(self.bookmarkZoomInButton_clicked)
         self.ui.bookmarkZoomOutButton.clicked.connect(self.bookmarkZoomOutButton_clicked)
+        self.ui.refreshButton.clicked.connect(self.refreshDocument)
         
     def updateSettings(self):
         
@@ -168,10 +169,11 @@ class MainWindow(QtGui.QMainWindow):
         
         # Get list of string output for feeding into my speech
         if len(self.ui.webView.selectedHtml()) > 0:
-            outputList = self.assigner.getSpeech(clean_XML_input(unicode(self.ui.webView.selectedHtml()).encode('utf-8')))
+            print 'HTML Content:', [unicode(self.ui.webView.selectedHtml())]
+            outputList = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml()))
         else:
             self.ui.webView.selectAll()
-            outputList = self.assigner.getSpeech(clean_XML_input(unicode(self.ui.webView.selectedHtml()).encode('utf-8')))
+            outputList = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml()))
         
         print 'Output:', outputList
         
@@ -197,7 +199,7 @@ class MainWindow(QtGui.QMainWindow):
         if label == 'text':
             if self.lastElement[3] != stream:
                 self.javascriptMutex.lock()
-                self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightNextElement', [self.configuration.highlight_line_enable]))
+                self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label)]))
                 self.javascriptMutex.unlock()
             self.javascriptMutex.lock()
             self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightWord', [self.configuration.highlight_line_enable, offset, length]))
@@ -205,12 +207,12 @@ class MainWindow(QtGui.QMainWindow):
         elif label == 'math':
             if label != self.lastElement[2] or stream != self.lastElement[3]:
                 self.javascriptMutex.lock()
-                self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightNextElement', [self.configuration.highlight_line_enable]))
+                self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label)]))
                 self.javascriptMutex.unlock()
         elif label == 'image':
             if label != self.lastElement[2] or stream != self.lastElement[3]:
                 self.javascriptMutex.lock()
-                self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightNextElement', [self.configuration.highlight_line_enable]))
+                self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label)]))
                 self.javascriptMutex.unlock()
         else:
             print 'ERROR: I don\'t know what this label refers to for highlighting:', label
