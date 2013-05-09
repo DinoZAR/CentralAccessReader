@@ -32,11 +32,9 @@ var lastElement;
 var beginOffset;
 
 // Sets the beginning to start the speech. It will start at beginning if no selection was made.
-function SetBeginning(doLine) {
-	console.debug("SetBeginning");	
+function SetBeginning(doLine) {	
 	var range = window.getSelection();
-	if (!(range === null)) {		
-		console.debug("Something got selected! Range: " + range.toString());
+	if (!(range === null)) {
 		
 		range = window.getSelection();
 		
@@ -44,7 +42,6 @@ function SetBeginning(doLine) {
 			var newRange = document.createRange();
 			newRange.setStart(range.focusNode, range.focusOffset);
 			newRange.setEnd(range.anchorNode, range.anchorOffset);
-			console.debug("New range being modified!" + newRange.toString());
 			range = newRange;
 		}
 		else {
@@ -71,11 +68,11 @@ function SetBeginning(doLine) {
 	}
 	
 	else {
-		console.debug("Nothing was selected!");
 		// Get the first deepest child in the document and go from there
 		range = document.createRange();
 		range.selectNode(DeepestChild(document.body.firstChild));
-		console.debug("Selecting everything! Range: " + range.toString());
+		range.startOffset = 0;
+		range.endOffset = 1;
 	}
 	
 	beginOffset = range.startOffset;
@@ -94,12 +91,48 @@ function SetBeginning(doLine) {
 }
 
 // Move the highlight to the next element that should be highlighted 
-function HighlightNextElement(doLine) {
-	console.debug("HighlightNextElement");
-	// Get the sibling of the highlight node. It will either be more text or an actual element.
-	ClearLineHighlight();
-	var next = NextElement(highlight);
-	var range = GetNextWord(next, 0);
+function HighlightNextElement(doLine, elementType) {
+	// Clear the line highlight first to make this process easier
+	ClearLineHighlight();
+	
+	var range = null;
+	var next = null;
+	
+	console.debug("Element type: " + elementType);
+	
+	if (elementType == "text") {
+		console.debug("Trying to get next text!");
+	
+		// Keep getting the next text element until the parent has changed.
+		var origParent = highlight.parentNode;
+		next = NextElement(highlight);
+		while ((origParent == next.parent) || (next.nodeName != "#text")) {
+			next = NextElement(next);
+		}
+		range = document.createRange()
+		range.setStart(next, 0);
+		range.setEnd(next, 1);
+		console.debug("New next: " + next.toString());
+	}
+	else if (elementType == "image") {
+		next = NextElement(highlight);
+		while (next.nodeName != "IMG") {
+			next = NextElement(next);
+		}
+		range = document.createRange();
+		range.selectNode(next);
+	}
+	else if (elementType == "math") {
+		next = NextElement(highlight);
+		while (GetEquation(next) === null) {
+			next = NextElement(next);
+		}
+		range = document.createRange();
+		range.selectNode(GetEquation(next));
+	}
+	else {
+		alert("The highlighter does not recognize the element type: " + elementType + ". The problem is in TTS driver.");
+	}
 	// Check to see if I actually have something coming up. Otherwise, just
 	// clear all the highlights
 	if (range == null) {
@@ -111,15 +144,18 @@ function HighlightNextElement(doLine) {
 	
 	// Scroll to the element containing the highlight
 	if (ElementInViewport(highlight) != true) {
-		$(this).scrollTo(highlight.parentNode, {duration: 1000, offset: {top: -120}});
+		if (doLine == true) {
+			$.scrollTo(highlightLine.parentNode, {duration: 1000, offset: {top: -120}});
+		}
+		else {
+			$.scrollTo(highlightLine.parentNode, {duration: 1000, offset: {top: -120}});
+		}
 	}
 }
 
 // Highlights a word in the current element based on the offset and length from
 // the TTS driver. This function will handle the offsets from the selection.
 function HighlightWord(doLine, offset, length) {
-	
-	console.debug("HighlightWord");
 	
 	// Get the parent element from the highlight from which we do these calculations
 	var p = null;
@@ -133,15 +169,11 @@ function HighlightWord(doLine, offset, length) {
 		childNum = GetChildIndex(highlight);
 	}
 	
-	console.debug("Child number! " + childNum.toString());
-	
 	// Get rid of highlights
 	ClearAllHighlights();
 	
 	// Get the text content of the child I want
 	var t = $(p).contents()[childNum];
-	
-	console.debug('Text node: ' + t.toString());
 	
 	// Create range and select that text correctly
 	var range = document.createRange();
@@ -170,64 +202,40 @@ function GetEquation(node) {
 }
 // Returns a range that has the next word
 function GetNextWord(node, offset) {
-	console.debug("GetNextWord");
 	// See if it is an equation
 	var equation = GetEquation(node);
 	if (equation != null) {
-		console.debug("It is an equation!");
 		var range = document.createRange();
 		range.selectNode(equation);
 		return range;
 	}
 	// See if it is an image
 	if (node.nodeName == "IMG") {
-		console.debug("Got next image!");
 		var range = document.createRange();
 		range.selectNode(node);
 		return range;
 	}
 	// See if it is anything else, like text
 	else {
-		// Check to see if I can find the start of the next word. Otherwise, return null.
-		var nextIndex = node.textContent.substring(offset).search(/\w/);
-		if (nextIndex == -1) {
-			// If I can't find another word, try to find another element
-			var elem = NextElement(node);
-			if (elem == null) {
-				return null;
-			}
-			else {
-				return GetNextWord(elem, 0);
-			}
-		}
-		nextIndex = nextIndex + offset;
-		var endIndex = node.textContent.substring(nextIndex).search(/\s/);
-		if (endIndex == -1) {
-			endIndex = node.length; // Most likely reached the end of whatever element I was in.
-		}
-		else {
-			endIndex = endIndex + nextIndex;
-		}
 		range = document.createRange();
-		range.setStart(node, nextIndex);
-		range.setEnd(node, endIndex);
-		return range;
+		range.setStart(node, offset);
+		range.setEnd(node, offset + 1);
+		return range;
 	}
 }
 // Clears the highlight of where it was before.
 function ClearHighlight() {
-	console.debug("ClearHighlight");
 	// Replace the highlight node with my contents
 	var p = highlight.parentNode;
 	InsertAllChildNodes(p, highlight);
 	// Cleanup the highlight and its reference
+	p.normalize();
 	p.removeChild(highlight);
 	p.normalize();
 	highlight = null;
 }
 // Clears the line highlight
 function ClearLineHighlight() {
-	console.debug("ClearLineHighlight");
 	if (highlightLine != null) {
 		var p = highlightLine.parentNode;
 		InsertAllChildNodes(p, highlightLine);
@@ -241,7 +249,6 @@ function ClearLineHighlight() {
 }
 // Clears both the line highlight and the individual element highlight
 function ClearAllHighlights() {
-	console.debug("ClearAllHighlights");
 	if (highlightLine != null) {
 		ClearLineHighlight();
 	}
@@ -274,134 +281,23 @@ function SetHighlight(range, doLine) {
 function SetLineHighlight() {
 	highlightLine = document.createElement("span");
 	highlightLine.setAttribute("id", "npaHighlightLine");
-	// Adjust beginning of range so that it arrives at the end of previous sentence, or just 
-	// the beginning of the first child node.
-	var startNode = highlight;
-	var startOffset = 0;
+	// Start my range where my highlight is
+	var range = document.createRange()
+	range.selectNode(highlight);
 	
-	var done = false;
-	
-	while (!done) {
-		if (startNode.nodeName == "#text") {
-			console.debug("Searching inside text node...");
-			var lastEnd = -1;
-			var patt = /[.!\?]\s/g;
-			while (patt.test(startNode.textContent) == true) {
-				lastEnd = patt.lastIndex;
-			}
-			if (lastEnd == -1) {
-				console.debug("Couldn't find end of last sentence!");
-				// Check if there are more nodes before this
-				var prev = startNode.previousSibling;
-				if (prev != null) {
-					startNode = prev;
-					startOffset = 0;
-				}
-				else {
-					done = true;
-				}
-			}
-			else {
-				console.debug("Got an end of last sentence! " + lastEnd.toString());
-				startOffset = lastEnd - 1;  // Subtracting 1 to ignore the space
-				done = true;
-			}
-		}
-		// Check to see if it is my own highlight
-		else if (startNode.nodeName == "SPAN") {
-			console.debug("Got a span!");
-			if ((startNode.getAttribute("id") == "npaHighlightLine") || (startNode.getAttribute("id") == "npaHighlight")) {
-				console.debug("Ran into my own highlight!");
-				startNode = startNode.previousSibling;
-				startOffset = 0;
-			}
-			else {
-				done = true;
-			}
-		}
-		else {
-			done = true;
-		}
-	}
-	console.debug("Start Node: " + startNode.nodeName + " Start Offset: " + startOffset.toString());
-	// Set the end index
-	// Adjust beginning of range so that it arrives at the end of previous sentence, or just 
-	// the beginning of the first child node.
-	var endNode = highlight;
-	var endOffset = 0;
-	done = false;
-	while (!done) {
-		if (endNode.nodeName == "#text") {
-			console.debug("Searching inside text node...");
-			var lastEnd = -1;
-			var patt = /[.!\?]\s/g;
-			if (patt.test(endNode.textContent) == true) {
-				lastEnd = patt.lastIndex;
-			}
-			if (lastEnd == -1) {
-				console.debug("Couldn't find end of next sentence!");
-				endOffset = endNode.textContent.length;
-				done = true;
-			}
-			else {
-				console.debug("Got an end of next sentence! " + lastEnd.toString());
-				endOffset = lastEnd;
-				done = true;
-			}
-		}
-		else if ((endNode.nodeName == "SPAN") && (endNode.getAttribute("id") == "npaHighlight")) {
-			// Check if there is some punctuation mark at the end inside of the node
-			// and there is another sibling after this node. If so, make the highlight
-			// stop at the beginning of the next sibling.
-			var punctPatt = /[.!\?]/g;
-			if ((endNode.lastChild.nodeName == "#text") && (endNode.nextSibling != null)){
-				var lastPunct = -1;
-				while (punctPatt.test(endNode.lastChild.nodeValue) == true) {
-					lastPunct = punctPatt.lastIndex;
-				}
-				if (lastPunct == endNode.lastChild.nodeValue.length) {	
-					endNode = endNode.nextSibling;
-					endOffset = 0;
-					done = true;
-				}
-				else {
-					console.debug("Test failed...." + lastPunct.toString() + ' != ' + (endNode.lastChild.nodeValue.length - 1).toString());
-					console.debug(endNode.lastChild.nodeValue);
-					endNode = endNode.nextSibling;
-					endOffset = 0;
-				}
-			}
-			else {
-				var next = endNode.nextSibling;
-				if (next != null) {
-					endNode = next;
-					endOffset = 0;
-				}
-				else {
-					endOffset = 0;
-					done = true;
-				}
-			}
-		}
-		else {
-			endOffset = 0;
-			done = true;
-		}
+	// If I have text in text highlight, do shifting. Otherwise, don't do anything
+	if (highlight.firstChild.nodeName == "#text") {
+		// stuff
 	}
-	
-	console.debug("End Node: " + endNode.nodeName + " End Offset: " + endOffset.toString());
-
 
 	// Create the range for my highlighter line thing
-	var range = document.createRange();
-	range.setStart(startNode, startOffset);
-	range.setEnd(endNode, endOffset);
+	//var range = document.createRange();
+	//range.setStart(startNode, startOffset);
+	//range.setEnd(endNode, endOffset);
 	
 	var contents = range.extractContents();
 	highlightLine.appendChild(contents);
-
 	range.insertNode(highlightLine);
-
 }
 
 // --------------------------------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/mainwindow.ui'
 #
-# Created: Tue May 07 09:25:46 2013
+# Created: Thu May 09 08:40:10 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -77,6 +77,9 @@ class Ui_MainWindow(object):
         self.bookmarkZoomOutButton.setFlat(True)
         self.bookmarkZoomOutButton.setObjectName(_fromUtf8("bookmarkZoomOutButton"))
         self.horizontalLayout_2.addWidget(self.bookmarkZoomOutButton)
+        self.refreshButton = QtGui.QPushButton(self.layoutWidget)
+        self.refreshButton.setObjectName(_fromUtf8("refreshButton"))
+        self.horizontalLayout_2.addWidget(self.refreshButton)
         spacerItem = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
@@ -248,6 +251,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "Nifty Prose Articulator", None))
         self.label_3.setText(_translate("MainWindow", "Navigation:", None))
+        self.refreshButton.setText(_translate("MainWindow", "Refresh", None))
         self.playButton.setToolTip(_translate("MainWindow", "Play button", None))
         self.playButton.setShortcut(_translate("MainWindow", "Ctrl+R", None))
         self.pauseButton.setToolTip(_translate("MainWindow", "Stop button", None))
