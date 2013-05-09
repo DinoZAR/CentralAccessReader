@@ -91,7 +91,7 @@ function SetBeginning(doLine) {
 }
 
 // Move the highlight to the next element that should be highlighted 
-function HighlightNextElement(doLine, elementType) {
+function HighlightNextElement(doLine, elementType, lastElementType) {
 	// Clear the line highlight first to make this process easier
 	ClearLineHighlight();
 	
@@ -106,8 +106,20 @@ function HighlightNextElement(doLine, elementType) {
 		// Keep getting the next text element until the parent has changed.
 		var origParent = highlight.parentNode;
 		next = NextElement(highlight);
-		while ((origParent == next.parent) || (next.nodeName != "#text")) {
-			next = NextElement(next);
+		var done = false;
+		while (done != true) {
+			console.debug("Keep trying to find next text...");
+			if (elementType == lastElementType) {
+				if ((origParent != next.parentNode) && (next.nodeName == "#text")) {
+					done = true;
+				}
+			}
+			else if (next.nodeName == "#text") {
+				done = true;
+			}
+			else {
+				next = NextElement(next);
+			}
 		}
 		range = document.createRange()
 		range.setStart(next, 0);
@@ -165,6 +177,7 @@ function HighlightWord(doLine, offset, length) {
 		childNum = GetChildIndex(highlightLine);
 	}
 	else {
+		console.debug("Highlight node: " + highlight.toString());
 		p = highlight.parentNode;
 		childNum = GetChildIndex(highlight);
 	}
@@ -316,6 +329,7 @@ function InsertAllChildNodes(parent, node) {
 	}
 }
 
+// Gets the next element, whether that is a text element or a normal element.
 function NextElement(elem) {
 	var next = elem.nextSibling;
 	if (next == null) {
