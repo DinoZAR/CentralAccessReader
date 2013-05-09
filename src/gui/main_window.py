@@ -197,22 +197,22 @@ class MainWindow(QtGui.QMainWindow):
     def onWord(self, offset, length, label, stream):
         
         if label == 'text':
-            if self.lastElement[3] != stream:
+            if (self.lastElement[3] != stream) and (self.lastElement[3] >= 0):
                 self.javascriptMutex.lock()
-                self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label)]))
+                self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
                 self.javascriptMutex.unlock()
             self.javascriptMutex.lock()
             self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightWord', [self.configuration.highlight_line_enable, offset, length]))
             self.javascriptMutex.unlock()
         elif label == 'math':
-            if label != self.lastElement[2] or stream != self.lastElement[3]:
+            if label != self.lastElement[2] or stream != self.lastElement[3] and (self.lastElement[3] >= 0):
                 self.javascriptMutex.lock()
-                self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label)]))
+                self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
                 self.javascriptMutex.unlock()
         elif label == 'image':
-            if label != self.lastElement[2] or stream != self.lastElement[3]:
+            if label != self.lastElement[2] or stream != self.lastElement[3] and (self.lastElement[3] >= 0):
                 self.javascriptMutex.lock()
-                self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label)]))
+                self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
                 self.javascriptMutex.unlock()
         else:
             print 'ERROR: I don\'t know what this label refers to for highlighting:', label
@@ -264,6 +264,7 @@ class MainWindow(QtGui.QMainWindow):
         self.javascriptMutex.unlock()
         self.isFirst = False
         self.ttsPlaying = False
+        self.lastElement = ['', -1, '', -1]
         self.setSlidersEnableState()
         
     def pauseButton_clicked(self):
