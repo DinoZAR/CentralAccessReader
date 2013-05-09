@@ -6,6 +6,7 @@ Created on Apr 9, 2013
 import time
 import thread
 import platform
+from src.misc import clean_XML_input
 
 if platform.system() == 'Windows':
     import win32com.client
@@ -132,6 +133,7 @@ class SAPIDriver(object):
         
         for i in range(len(self.queue)):
             # Make the voice say this asynchronously
+            print 'About to say this:', self.queue[i][0]
             self.queue[i][2] = self.voice.Speak(self.queue[i][0], 1)
         
         while self.running:

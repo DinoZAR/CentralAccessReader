@@ -6,7 +6,7 @@ Created on Feb 20, 2013
 from lxml import etree, html
 from HTMLParser import HTMLParser
 from src.mathml.tts import MathTTS
-from src.misc import resource_path
+from src.misc import resource_path, clean_XML_input
 
 # Namespace for XHTML
 html_NS = '{http://www.w3.org/1999/xhtml}'
@@ -48,6 +48,7 @@ class Assigner(object):
         
         [[text, label], [text, label], ...]
         '''
+        print 'HTML Content:', htmlContent
         htmlDom = html.fromstring(htmlContent)
         return self._recursiveGetSpeech(htmlDom)
         
@@ -57,7 +58,7 @@ class Assigner(object):
         myList = []
         
         if element.text != None:
-            myList.append([element.text, "text"])
+            myList.append([clean_XML_input(element.text.encode('utf8')), 'text'])
         
         for child in element:
             testTag = child.tag.split('}')[-1]
@@ -66,18 +67,20 @@ class Assigner(object):
                 if child.get('class') == 'MathJax':
                     # Parse MathML and get output!
                     mathOutput = self.mathTTS.parse(self._maths[child.get('id')])
-                    myList.append([mathOutput, "math"])
+                    myList.append([mathOutput, 'math'])
                 else:
                     myList.extend(self._recursiveGetSpeech(child))
                         
             elif testTag == 'img':
-                myList.append(['Image. ' + child.get('alt'), "image"])
+                myList.append(['Image. ' + child.get('alt'), 'image'])
+                if child.tail != None:
+                    myList.append([clean_XML_input(child.tail.encode('utf8')), 'text'])
             
             else:
                 myList.extend(self._recursiveGetSpeech(child))
         
         if element.tail != None:
-            myList.append([element.tail, "text"])
+            myList.append([clean_XML_input(element.tail.encode('utf8')), 'text'])
             
         return myList
             

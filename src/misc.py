@@ -29,6 +29,22 @@ def resource_path(resourceFile, forceDir=False):
         print 'Resource:', os.path.abspath(resourceFile)
         return os.path.abspath(resourceFile)
     
+def clean_XML_input(input):  
+      
+    if input:  
+              
+        import re  
+          
+        # unicode invalid characters  
+        RE_XML_ILLEGAL = u'([\u0000-\u0008\u000b-\u000c\u000e-\u001f\ufffe-\uffff])' + u'|' + u'([{0}-{1}][^{2}-{3}])|([^{4}-{5}][{6}-{7}])|([{8}-{9}]$)|(^[{10}-{11}])'.format(
+                        unichr(0xd800),unichr(0xdbff),unichr(0xdc00),unichr(0xdfff),unichr(0xd800),unichr(0xdbff),unichr(0xdc00),unichr(0xdfff),unichr(0xd800),unichr(0xdbff),unichr(0xdc00),unichr(0xdfff))
+        input = re.sub(RE_XML_ILLEGAL, "", input)  
+                          
+        # ascii control characters  
+        input = re.sub(r"[\x01-\x1F\x7F]", "", input)  
+              
+    return input.decode('utf8')
+    
 def js_command(functionName, args):
     '''
     Returns a correctly formatted JavaScript function call that is called
@@ -36,19 +52,24 @@ def js_command(functionName, args):
     '''
     commandString = functionName + '('
     
-    for i in args:
-        if isinstance(i, bool):
-            if i:
-                commandString += 'true'
+    if len(args) > 0:
+        for i in args:
+            if isinstance(i, bool):
+                if i:
+                    commandString += 'true'
+                else:
+                    commandString += 'false'
             else:
-                commandString += 'false'
-        else:
-            commandString += str(i)
-        commandString += ','
-        
-    # Remove last comma and add closing parenthesis
-    commandString = commandString[:-1]
+                commandString += str(i)
+            commandString += ','
+            
+        # Remove last comma
+        commandString = commandString[:-1]
+    
+    # Add closing parenthesis
     commandString += ')'
+    
+    print 'JavaScript command string:', commandString
     
     return commandString
     

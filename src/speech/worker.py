@@ -12,7 +12,7 @@ import subprocess
 
 class SpeechWorker(QThread):
     
-    onWord = QtCore.pyqtSignal(str, int, str, int)
+    onWord = QtCore.pyqtSignal(int, int, str, int)
     onFinish = QtCore.pyqtSignal()
     onProgress = QtCore.pyqtSignal(int)
     onProgressLabel = QtCore.pyqtSignal(str)

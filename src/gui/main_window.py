@@ -25,7 +25,7 @@ from src.mathml import pattern_editor
 from src.speech.assigner import Assigner
 from src.speech.worker import SpeechWorker
 from src.docx.importer import DocxDocument
-from src.misc import resource_path, js_command, UpdateQtThread
+from src.misc import resource_path, js_command, UpdateQtThread, clean_XML_input
 
 class MainWindow(QtGui.QMainWindow):
     loc = 0
@@ -168,10 +168,12 @@ class MainWindow(QtGui.QMainWindow):
         
         # Get list of string output for feeding into my speech
         if len(self.ui.webView.selectedHtml()) > 0:
-            outputList = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml()).encode('utf-8', errors='ignore'))
+            outputList = self.assigner.getSpeech(clean_XML_input(unicode(self.ui.webView.selectedHtml()).encode('utf-8')))
         else:
             self.ui.webView.selectAll()
-            outputList = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml()).encode('utf-8', errors='ignore'))
+            outputList = self.assigner.getSpeech(clean_XML_input(unicode(self.ui.webView.selectedHtml()).encode('utf-8')))
+        
+        print 'Output:', outputList
         
         # Stop whatever the speech thread may be saying
         self.stopPlayback.emit()
@@ -181,10 +183,7 @@ class MainWindow(QtGui.QMainWindow):
             self.addToQueue.emit(o[0], o[1])
         
         self.javascriptMutex.lock()
-        if self.configuration.highlight_line_enable:
-            self.ui.webView.page().mainFrame().evaluateJavaScript('SetBeginning(true)')
-        else:
-            self.ui.webView.page().mainFrame().evaluateJavaScript('SetBeginning(false)')
+        self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('SetBeginning', [self.configuration.highlight_line_enable]))
         self.javascriptMutex.unlock()
         self.isFirst = True
         
@@ -196,13 +195,23 @@ class MainWindow(QtGui.QMainWindow):
     def onWord(self, offset, length, label, stream):
         
         if label == 'text':
+            if self.lastElement[3] != stream:
+                self.javascriptMutex.lock()
+                self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightNextElement', [self.configuration.highlight_line_enable]))
+                self.javascriptMutex.unlock()
             self.javascriptMutex.lock()
             self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightWord', [self.configuration.highlight_line_enable, offset, length]))
             self.javascriptMutex.unlock()
         elif label == 'math':
-            pass
+            if label != self.lastElement[2] or stream != self.lastElement[3]:
+                self.javascriptMutex.lock()
+                self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightNextElement', [self.configuration.highlight_line_enable]))
+                self.javascriptMutex.unlock()
         elif label == 'image':
-            pass
+            if label != self.lastElement[2] or stream != self.lastElement[3]:
+                self.javascriptMutex.lock()
+                self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightNextElement', [self.configuration.highlight_line_enable]))
+                self.javascriptMutex.unlock()
         else:
             print 'ERROR: I don\'t know what this label refers to for highlighting:', label
         
