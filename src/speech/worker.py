@@ -13,6 +13,7 @@ import subprocess
 class SpeechWorker(QThread):
     
     onWord = QtCore.pyqtSignal(int, int, str, int)
+    onEndStream = QtCore.pyqtSignal(int, str)
     onFinish = QtCore.pyqtSignal()
     onProgress = QtCore.pyqtSignal(int)
     onProgressLabel = QtCore.pyqtSignal(str)
@@ -36,6 +37,9 @@ class SpeechWorker(QThread):
         def myOnWord(offset, length, label, stream):
             self.onWord.emit(offset, length, label, stream)
         
+        def myOnEndStream(stream, label):
+            self.onEndStream.emit(stream, label)
+        
         def myOnFinish():
             self.running = False
             self.onFinish.emit()
@@ -43,6 +47,7 @@ class SpeechWorker(QThread):
         self.ttsEngine = driver.get_driver()
         self.ttsEngine.connect('onWord', myOnWord)
         self.ttsEngine.connect('onFinish', myOnFinish)
+        self.ttsEngine.connect('onEndStream', myOnEndStream)
         
         self.ttsEngine.setVolume(self.volume)
         self.ttsEngine.setRate(self.rate)

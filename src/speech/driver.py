@@ -42,7 +42,7 @@ class SAPIDriver(object):
         self.voiceId = ''
         
         # Used for callback functions
-        self.delegator = {'onWord': [], 'onFinish' : []}
+        self.delegator = {'onWord': [], 'onEndStream' : [], 'onFinish' : []}
         
         self.running = False
         
@@ -234,6 +234,11 @@ class SAPIDriver(object):
         i = 0
         while i < len(self.queue):
             if self.queue[i][2] == stream:
+                
+                # Tell all of the people that a stream ended
+                for c in self.delegator['onEndStream']:
+                    c[1](stream, self.queue[i][1])
+                    
                 self.queue.pop(i)
                 i = 0
             else:

@@ -73,8 +73,6 @@ def js_command(functionName, args):
     # Add closing parenthesis
     commandString += ')'
     
-    print 'JavaScript command string:', commandString
-    
     return commandString
     
 

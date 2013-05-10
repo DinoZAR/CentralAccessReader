@@ -76,6 +76,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ttsPlaying = False
         self.stopSpeech = True
         self.isFirst = False
+        self.hasWorded = False;
         self.lastElement = ['', -1, '', -1]
         self.repeat = False
         self.repeatText = ' '
@@ -88,6 +89,7 @@ class MainWindow(QtGui.QMainWindow):
         self.speechThread = SpeechWorker()
         
         self.speechThread.onWord.connect(self.onWord)
+        self.speechThread.onEndStream.connect(self.onEndStream)
         self.speechThread.onFinish.connect(self.onSpeechFinished)   
         
         self.startPlayback.connect(self.speechThread.startPlayback)
@@ -199,6 +201,8 @@ class MainWindow(QtGui.QMainWindow):
         
     def onWord(self, offset, length, label, stream):
         
+        self.hasWorded = True
+        
         if label == 'text':
             if (self.lastElement[3] != stream) and (self.lastElement[3] >= 0):
                 self.javascriptMutex.lock()
@@ -228,6 +232,14 @@ class MainWindow(QtGui.QMainWindow):
             print 'ERROR: I don\'t know what this label refers to for highlighting:', label
         
         self.lastElement = [offset, length, label, stream]
+        
+    def onEndStream(self, stream, label):
+        print 'Stream ended!'
+        
+        if not self.hasWorded and (label == 'text'):
+            self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
+            
+        self.hasWorded = False
         
     def onSpeechFinished(self):
         print 'Speech finished.'
