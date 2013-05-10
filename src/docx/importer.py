@@ -220,7 +220,8 @@ class DocxDocument(object):
             query = elem.find('.//{0}docPr'.format(wp_NS))
             if query != None:
                 altText = query.get('descr')
-                data['altText'] = clean_XML_input(altText)
+                if altText != None:
+                    data['altText'] = clean_XML_input(altText)
                 
             # Append this to the parent data
             parentData['image'] = data

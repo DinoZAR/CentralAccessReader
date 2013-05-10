@@ -23,7 +23,6 @@ def get_driver():
     if platform.system() == 'Windows':
         return SAPIDriver()
     else:
-        print 'ERROR: I don\'t have a TTS driver for this operating system'
         return None
 
 class SAPIDriver(object):
@@ -53,14 +52,12 @@ class SAPIDriver(object):
         '''
         # 200 BPM = 0
         self.rate = int((rate / 5.0) - 10)
-        print 'New rate:', self.rate
         
     def setVolume(self, volume):
         '''
         Sets the volume of the voice, from 0-100
         '''
         self.volume = int(volume)
-        print 'New volume:', self.volume
         
     def setVoice(self, voice):
         '''
@@ -92,7 +89,6 @@ class SAPIDriver(object):
         return myList
         
     def add(self, text, label):
-        print ' --> --> Adding queue items to driver:', [text, label]
         self.queue.append([text, label, 0])
     
     def start(self):
@@ -134,7 +130,6 @@ class SAPIDriver(object):
         
         for i in range(len(self.queue)):
             # Make the voice say this asynchronously
-            print 'About to say this:', self.queue[i][0]
             self.queue[i][2] = self.voice.Speak(self.queue[i][0], 1)
         
         while self.running:
@@ -215,7 +210,6 @@ class SAPIDriver(object):
             self.delegator[eventLabel].append([SAPIDriver.CALLBACK_GEN, callback])
             return SAPIDriver.CALLBACK_GEN
         else:
-            print 'ERROR: Event label', eventLabel, ' is not a valid label.'
             return -1
             
     def handle_onWord(self, stream, pos, char, length):

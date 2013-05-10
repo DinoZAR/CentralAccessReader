@@ -25,7 +25,7 @@ from src.mathml import pattern_editor
 from src.speech.assigner import Assigner
 from src.speech.worker import SpeechWorker
 from src.docx.importer import DocxDocument
-from src.misc import resource_path, js_command, UpdateQtThread, clean_XML_input
+from src.misc import resource_path, js_command, UpdateQtThread
 
 class MainWindow(QtGui.QMainWindow):
     loc = 0
@@ -186,14 +186,16 @@ class MainWindow(QtGui.QMainWindow):
             self.addToQueue.emit(o[0], o[1])
         
         self.javascriptMutex.lock()
-        self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('SetBeginning', [self.configuration.highlight_line_enable]))
+        self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('SetBeginning', [self.configuration.highlight_line_enable, outputList[0][1]]))
         self.javascriptMutex.unlock()
+        
         self.isFirst = True
+        self.lastElement = ['', -1, '', -1]
         
         self.startPlayback.emit()
         
         self.ttsPlaying = True
-        self.setSlidersEnableState()
+        self.setSettingsEnableState()
         
     def onWord(self, offset, length, label, stream):
         
@@ -205,58 +207,27 @@ class MainWindow(QtGui.QMainWindow):
             self.javascriptMutex.lock()
             self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightWord', [self.configuration.highlight_line_enable, offset, length]))
             self.javascriptMutex.unlock()
+            self.isFirst = False
         elif label == 'math':
-            if label != self.lastElement[2] or stream != self.lastElement[3] and (self.lastElement[3] >= 0):
-                self.javascriptMutex.lock()
-                self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
-                self.javascriptMutex.unlock()
+            if not self.isFirst:
+                if label != self.lastElement[2] or stream != self.lastElement[3] and (self.lastElement[3] >= 0):
+                    self.javascriptMutex.lock()
+                    self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
+                    self.javascriptMutex.unlock()
+            else:
+                self.isFirst = False
         elif label == 'image':
-            if label != self.lastElement[2] or stream != self.lastElement[3] and (self.lastElement[3] >= 0):
-                self.javascriptMutex.lock()
-                self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
-                self.javascriptMutex.unlock()
+            if not self.isFirst:
+                if label != self.lastElement[2] or stream != self.lastElement[3] and (self.lastElement[3] >= 0):
+                    self.javascriptMutex.lock()
+                    self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
+                    self.javascriptMutex.unlock()
+            else:
+                self.isFirst = False
         else:
             print 'ERROR: I don\'t know what this label refers to for highlighting:', label
         
         self.lastElement = [offset, length, label, stream]
-#         if not self.isFirst:
-#             if label == "text":
-#                 if label != self.lastElement[2] or (offset != self.lastElement[1]) or (stream != self.lastElement[3]):
-#                     self.javascriptMutex.lock()
-#                     if self.configuration.highlight_line_enable:
-#                         self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(true)')
-#                     else:
-#                         self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(false)')
-#                     self.javascriptMutex.unlock()
-#             elif label == "math":
-#                 if (label != self.lastElement[2]) or (stream != self.lastElement[3]):
-#                     self.javascriptMutex.lock()
-#                     if self.configuration.highlight_line_enable:
-#                         self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(true)')
-#                     else:
-#                         self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(false)')
-#                     self.javascriptMutex.unlock()
-#             elif label == "image":
-#                 if (label != self.lastElement[2]) or (stream != self.lastElement[3]):
-#                     self.javascriptMutex.lock()
-#                     if self.configuration.highlight_line_enable:
-#                         self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(true)')
-#                     else:
-#                         self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(false)')
-#                     self.javascriptMutex.unlock()
-#             else:
-#                 self.javascriptMutex.lock()
-#                 if self.configuration.highlight_line_enable:
-#                     self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(true)')
-#                 else:
-#                     self.ui.webView.page().mainFrame().evaluateJavaScript('HighlightNextElement(false)')
-#                 self.javascriptMutex.unlock()
-#         else:
-#             # Do this because the SetBeginning() function highlighted it
-#             self.isFirst = False
-#             
-#         # Store what the last element was that was being spoken
-#         self.lastElement = [text, location, label, stream]
         
     def onSpeechFinished(self):
         print 'Speech finished.'
@@ -266,13 +237,13 @@ class MainWindow(QtGui.QMainWindow):
         self.isFirst = False
         self.ttsPlaying = False
         self.lastElement = ['', -1, '', -1]
-        self.setSlidersEnableState()
+        self.setSettingsEnableState()
         
     def pauseButton_clicked(self):
         self.isFirst = False
         self.stopPlayback.emit()
         self.ttsPlaying = False
-        self.setSlidersEnableState()
+        self.setSettingsEnableState()
 
     def muteButton_clicked(self):
         pass
@@ -491,8 +462,9 @@ class MainWindow(QtGui.QMainWindow):
             # Set the root bookmark for the tree model
             self.bookmarksModel = BookmarksTreeModel(self.document.getBookmarks())
             self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
+            self.ui.bookmarksTreeView.expandAll()
             
-    def setSlidersEnableState(self):
+    def setSettingsEnableState(self):
         '''
         Disables or enables the TTS sliders depending on whether we are playing
         back right now or not.
@@ -500,6 +472,12 @@ class MainWindow(QtGui.QMainWindow):
         if self.ttsPlaying:
             self.ui.rateSlider.setEnabled(False)
             self.ui.volumeSlider.setEnabled(False)
+            self.ui.colorSettingsButton.setEnabled(False)
+            self.ui.speechSettingsButton.setEnabled(False)
+            self.ui.saveToMP3Button.setEnabled(False)
         else:
             self.ui.rateSlider.setEnabled(True)
             self.ui.volumeSlider.setEnabled(True)
+            self.ui.colorSettingsButton.setEnabled(True)
+            self.ui.speechSettingsButton.setEnabled(True)
+            self.ui.saveToMP3Button.setEnabled(True)

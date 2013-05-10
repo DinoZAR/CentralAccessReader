@@ -240,9 +240,14 @@ max-width: 300px;
 max-height: 300px
 }
 
-table, th, td
+table
 {
 border: 1px solid ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
+padding: 15px;
+}
+
+th, td 
+{
 padding: 15px;
 }
 

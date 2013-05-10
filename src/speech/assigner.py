@@ -6,7 +6,7 @@ Created on Feb 20, 2013
 from lxml import etree, html
 from HTMLParser import HTMLParser
 from src.mathml.tts import MathTTS
-from src.misc import resource_path, clean_XML_input
+from src.misc import resource_path
 
 # Namespace for XHTML
 html_NS = '{http://www.w3.org/1999/xhtml}'

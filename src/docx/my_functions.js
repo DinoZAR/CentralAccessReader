@@ -21,6 +21,15 @@ $(function() {
 function GotoPageAnchor(anchorName) {
 	element_to_scroll_to = document.getElementById(anchorName);
 	$.scrollTo(element_to_scroll_to, {duration: 200});
+}
+
+function ScrollToHighlight() {
+	if (highlightLine != null) {
+		$.scrollTo(highlightLine.parentNode, {duration: 1000, offset: {top: -120}});
+	}
+	else {
+		$.scrollTo(highlight.parentNode, {duration: 1000, offset: {top: -120}});
+	}
 }
 // ---------------------------------------------------------------------------
 // HIGHLIGHTING FUNCTIONS
@@ -31,7 +40,7 @@ var lastElement;
 var beginOffset;
 
 // Sets the beginning to start the speech. It will start at beginning if no selection was made.
-function SetBeginning(doLine) {	
+function SetBeginning(doLine, elementType) {	
 	var range = window.getSelection();
 	if (!(range === null)) {
 		
@@ -156,14 +165,7 @@ function HighlightNextElement(doLine, elementType, lastElementType) {
 	beginOffset = 0;
 	
 	// Scroll to the element containing the highlight
-	if (ElementInViewport(highlight) != true) {
-		if (doLine == true) {
-			$.scrollTo(highlightLine.parentNode, {duration: 1000, offset: {top: -120}});
-		}
-		else {
-			$.scrollTo(highlightLine.parentNode, {duration: 1000, offset: {top: -120}});
-		}
-	}
+	ScrollToHighlight();
 }
 
 // Highlights a word in the current element based on the offset and length from

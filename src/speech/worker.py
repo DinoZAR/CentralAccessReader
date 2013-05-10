@@ -33,8 +33,6 @@ class SpeechWorker(QThread):
         
     def run(self):
         
-        print 'Running Speech Worker thread...'
-        
         def myOnWord(offset, length, label, stream):
             self.onWord.emit(offset, length, label, stream)
         
@@ -71,24 +69,18 @@ class SpeechWorker(QThread):
                 self.ttsEngine.setVoice(self.voice)
                 self.isChange = False
         
-        print 'Closed thread!'
-        
         return
     
     
     def startPlayback(self):
-        print 'Starting playback...'
         self.running = True
     
     def stopPlayback(self):
-        print 'Stopping playback...'
         if self.running:
             self.ttsEngine.stop()
             self.running = False
             
     def saveToMP3(self, mp3Path, outputList):
-        print 'Saving to MP3...'
-        
         # Create the WAV file first
         def myOnProgress(percent):
             self.onProgress.emit(int((float(percent) / 100.0) * 70.0))
@@ -107,8 +99,6 @@ class SpeechWorker(QThread):
             QtGui.qApp.processEvents()
         
         self.onProgress.emit(100)
-        
-        print 'Done!'
     
     def setVolume(self, v):
         self.volume = v
@@ -127,7 +117,6 @@ class SpeechWorker(QThread):
     
     def addToQueue(self, text, label):
         self.queueLock.lock()
-        print ' --> Sending text to driver:', [unicode(text), unicode(label)]
         self.outputList.append([unicode(text),unicode(label)])
         self.queueLock.unlock()
         
