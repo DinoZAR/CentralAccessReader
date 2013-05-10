@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1054</width>
-    <height>741</height>
+    <width>1209</width>
+    <height>829</height>
    </rect>
   </property>
   <property name="font">
@@ -33,10 +33,7 @@
    </size>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_3">
-    <property name="spacing">
-     <number>0</number>
-    </property>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
     <property name="margin">
      <number>0</number>
     </property>
@@ -46,13 +43,13 @@
        <enum>Qt::Horizontal</enum>
       </property>
       <property name="handleWidth">
-       <number>15</number>
+       <number>20</number>
       </property>
       <property name="childrenCollapsible">
        <bool>false</bool>
       </property>
-      <widget class="QWidget" name="layoutWidget">
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+      <widget class="QWidget" name="">
+       <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <property name="spacing">
@@ -109,9 +106,34 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="refreshButton">
+           <widget class="QPushButton" name="expandBookmarksButton">
             <property name="text">
-             <string>Refresh</string>
+             <string>Expand</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>32</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="collapseBookmarksButton">
+            <property name="text">
+             <string>Collapse</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>32</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -448,7 +470,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1054</width>
+     <width>1209</width>
      <height>21</height>
     </rect>
    </property>

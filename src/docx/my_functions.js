@@ -7,7 +7,6 @@ $(function() {
         using: function( position, feedback ) {
           $( this ).css( position );
           $( "<div>" )
-            .addClass( "arrow" )
             .addClass( feedback.vertical )
             .addClass( feedback.horizontal )
             .appendTo( this );
@@ -98,20 +97,19 @@ function HighlightNextElement(doLine, elementType, lastElementType) {
 	var range = null;
 	var next = null;
 	
-	console.debug("Element type: " + elementType);
-	
 	if (elementType == "text") {
-		console.debug("Trying to get next text!");
 	
 		// Keep getting the next text element until the parent has changed.
 		var origParent = highlight.parentNode;
 		next = NextElement(highlight);
 		var done = false;
 		while (done != true) {
-			console.debug("Keep trying to find next text...");
 			if (elementType == lastElementType) {
 				if ((origParent != next.parentNode) && (next.nodeName == "#text")) {
 					done = true;
+				}
+				else {
+					next = NextElement(next);
 				}
 			}
 			else if (next.nodeName == "#text") {
@@ -153,6 +151,9 @@ function HighlightNextElement(doLine, elementType, lastElementType) {
 	else {
 		SetHighlight(range, doLine);
 	}
+	
+	// Set the begin offset back to nothing
+	beginOffset = 0;
 	
 	// Scroll to the element containing the highlight
 	if (ElementInViewport(highlight) != true) {
@@ -300,7 +301,33 @@ function SetLineHighlight() {
 	
 	// If I have text in text highlight, do shifting. Otherwise, don't do anything
 	if (highlight.firstChild.nodeName == "#text") {
-		// stuff
+		if (highlight.previousSibling.nodeName == "#text") {
+			var endSentenceRegex = /[!?.][\s]/g
+			var t = highlight.previousSibling.data;
+			var start = -1;
+			var m;
+			while ((m = endSentenceRegex.exec(t)) != null) {
+				start = m.index + 2;
+			}
+			if (start == -1) {
+				start = 0;
+			}
+			range.setStart(highlight.previousSibling, start);
+		}
+		
+		if (highlight.nextSibling.nodeName == "#text") {
+			var endSentenceRegex = /[!?.][\s]/g
+			var t = highlight.nextSibling.data;
+			var end = -1;
+			var m = endSentenceRegex.exec(t);
+			if (m != null) {
+				end = m.index + 1;
+			}
+			if (end == -1) {
+				end = highlight.nextSibling.data.length;
+			}
+			range.setEnd(highlight.nextSibling, end);
+		}
 	}
 
 	// Create the range for my highlighter line thing

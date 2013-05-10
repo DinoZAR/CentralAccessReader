@@ -251,7 +251,7 @@ padding: 15px;
 font-size: 230%;
 }
 
-.ui-tooltip, .arrow:after
+.ui-tooltip
 {
 background: ''' + self._createRGBStringFromQColor(self.color_contentBackground) + ''';
 border: 2px solid ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
@@ -266,49 +266,6 @@ border-radius: 20px;
 box-shadow: 0 0 7px ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
 }
 
-.arrow 
-{
-width: 70px;
-height: 16px;
-overflow: hidden;
-position: absolute;
-left: 50%;
-margin-left: -35px;
-bottom: -16px;
-}
-
-.arrow.top 
-{
-top: -16px;
-bottom: auto;
-}
-
-.arrow.left 
-{
-left: 20%;
-}
-
-.arrow:after 
-{
-content: "";
-position: absolute;
-left: 20px;
-top: -20px;
-width: 25px;
-height: 25px;
-box-shadow: 6px 5px 9px -9px ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
--webkit-transform: rotate(45deg);
--moz-transform: rotate(45deg);
--ms-transform: rotate(45deg);
--o-transform: rotate(45deg);
-tranform: rotate(45deg);
-}
-
-.arrow.top:after 
-{
-bottom: -20px;
-top: auto;
-}
 
 #npaHighlightLine
 {

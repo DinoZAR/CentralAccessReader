@@ -149,7 +149,8 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.bookmarksTreeView.clicked.connect(self.bookmarksTree_clicked)
         self.ui.bookmarkZoomInButton.clicked.connect(self.bookmarkZoomInButton_clicked)
         self.ui.bookmarkZoomOutButton.clicked.connect(self.bookmarkZoomOutButton_clicked)
-        self.ui.refreshButton.clicked.connect(self.refreshDocument)
+        self.ui.expandBookmarksButton.clicked.connect(self.expandBookmarksButton_clicked)
+        self.ui.collapseBookmarksButton.clicked.connect(self.collapseBookmarksButton_clicked)
         
     def updateSettings(self):
         
@@ -390,6 +391,7 @@ class MainWindow(QtGui.QMainWindow):
             # Set the root bookmark for the tree model
             self.bookmarksModel = BookmarksTreeModel(self.document.getBookmarks())
             self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
+            self.ui.bookmarksTreeView.expandAll()
             
             self.lastDocumentFilePath = filePath
             
@@ -464,6 +466,12 @@ class MainWindow(QtGui.QMainWindow):
         
         # Set the font
         self.ui.bookmarksTreeView.setFont(currentFont)
+        
+    def expandBookmarksButton_clicked(self):
+        self.ui.bookmarksTreeView.expandAll()
+        
+    def collapseBookmarksButton_clicked(self):
+        self.ui.bookmarksTreeView.collapseAll()
         
     def refreshDocument(self):
         if len(self.lastDocumentFilePath) > 0:
