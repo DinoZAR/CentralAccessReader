@@ -24,11 +24,13 @@ function GotoPageAnchor(anchorName) {
 }
 
 function ScrollToHighlight() {
-	if (highlightLine != null) {
-		$.scrollTo(highlightLine.parentNode, {duration: 1000, offset: {top: -120}});
-	}
-	else {
-		$.scrollTo(highlight.parentNode, {duration: 1000, offset: {top: -120}});
+	if (ElementInViewport(highlight) != true) {
+		if (highlightLine != null) {
+			$.scrollTo(highlightLine.parentNode, {duration: 1000, offset: {top: -100}});
+		}
+		else {
+			$.scrollTo(highlight.parentNode, {duration: 1000, offset: {top: -100}});
+		}
 	}
 }
 // ---------------------------------------------------------------------------
@@ -40,7 +42,7 @@ var lastElement;
 var beginOffset;
 
 // Sets the beginning to start the speech. It will start at beginning if no selection was made.
-function SetBeginning(doLine, elementType) {	
+function SetBeginning(doLine) {	
 	var range = window.getSelection();
 	if (!(range === null)) {
 		
@@ -74,6 +76,7 @@ function SetBeginning(doLine, elementType) {
 			}
 		}
 	}
+	
 	else {
 		// Get the first deepest child in the document and go from there
 		range = document.createRange();
@@ -84,14 +87,9 @@ function SetBeginning(doLine, elementType) {
 	
 	beginOffset = range.startOffset;
 	
-	//range.setEnd(range.startContainer, range.startOffset);
-	
 	// Check to see if the start is inside a math equation. If so, adjust selection to
 	// only select that node. Otherwise, have it select the first whole word there.
-	stuff = GetNextWord(range.startContainer, range.startOffset);
-	range = stuff[0];
-	goToNext = stuff[1];
-	
+	range = GetNextWord(range.startContainer, range.startOffset);
 	// If I can't get another word, get another element.
 	if (range == null) {
 		var nElem = NextElement(startNode);
@@ -99,11 +97,8 @@ function SetBeginning(doLine, elementType) {
 	}
 	
 	SetHighlight(range, doLine);
+	ScrollToHighlight();
 	window.getSelection().empty();
-	
-	if (goToNext == true) {
-		HighlightNextElement(doLine, elementType, elementType);
-	}
 }
 
 // Move the highlight to the next element that should be highlighted 
@@ -172,7 +167,6 @@ function HighlightNextElement(doLine, elementType, lastElementType) {
 	// Set the begin offset back to nothing
 	beginOffset = 0;
 	
-	// Scroll to the element containing the highlight
 	ScrollToHighlight();
 }
 
@@ -224,9 +218,8 @@ function GetEquation(node) {
 	}
 	return null;
 }
-// Returns a range that has the next word or element
-function GetNextWord(node, offset, type) {	var needToGoToNext = false;
-	
+// Returns a range that has the next word
+function GetNextWord(node, offset) {
 	// See if it is an equation
 	var equation = GetEquation(node);
 	if (equation != null) {
@@ -241,24 +234,12 @@ function GetNextWord(node, offset, type) {	var needToGoToNext = false;
 		return range;
 	}
 	// See if it is anything else, like text
-	else if (node.nodeName == "#text"){
+	else {
 		range = document.createRange();
-		
-		console.debug("Content: <start>" + node.data + "<end><offset>" + offset.toString() + "<length>" + node.data.length.toString());
-		
-		// Adjust end if they exceed the length of the data
-		if ((offset + 1) >= node.data.length) {
-			range.setStart(node, node.data.length - 1);
-			range.setEnd(node, node.data.length);
-			needToGoToNext = true;
-		}
-		else {
-			range.setStart(node, offset);
-			range.setEnd(node, offset + 1);
-		}
-		
-		return [range, needToGoToNext];
-	}
+		range.setStart(node, offset);
+		range.setEnd(node, offset + 1);
+		return range;
+	}
 }
 // Clears the highlight of where it was before.
 function ClearHighlight() {
@@ -324,35 +305,32 @@ function SetLineHighlight() {
 	
 	// If I have text in text highlight, do shifting. Otherwise, don't do anything
 	if (highlight.firstChild.nodeName == "#text") {
-		if (!(highlight.previousSibling === null)) {
-			if (highlight.previousSibling.nodeName == "#text") {
-				var endSentenceRegex = /[!?.][\s]/g
-				var t = highlight.previousSibling.data;
-				var start = -1;
-				var m;
-				while ((m = endSentenceRegex.exec(t)) != null) {
-					start = m.index + 2;
-				}
-				if (start == -1) {
-					start = 0;
-				}
-				range.setStart(highlight.previousSibling, start);
+		if (highlight.previousSibling.nodeName == "#text") {
+			var endSentenceRegex = /[!?.][\s]/g
+			var t = highlight.previousSibling.data;
+			var start = -1;
+			var m;
+			while ((m = endSentenceRegex.exec(t)) != null) {
+				start = m.index + 2;
 			}
+			if (start == -1) {
+				start = 0;
+			}
+			range.setStart(highlight.previousSibling, start);
 		}
-		if (!(highlight.nextSibling === null)) {
-			if (highlight.nextSibling.nodeName == "#text") {
-				var endSentenceRegex = /[!?.][\s]/g
-				var t = highlight.nextSibling.data;
-				var end = -1;
-				var m = endSentenceRegex.exec(t);
-				if (m != null) {
-					end = m.index + 1;
-				}
-				if (end == -1) {
-					end = highlight.nextSibling.data.length;
-				}
-				range.setEnd(highlight.nextSibling, end);
+		
+		if (highlight.nextSibling.nodeName == "#text") {
+			var endSentenceRegex = /[!?.][\s]/g
+			var t = highlight.nextSibling.data;
+			var end = -1;
+			var m = endSentenceRegex.exec(t);
+			if (m != null) {
+				end = m.index + 1;
 			}
+			if (end == -1) {
+				end = highlight.nextSibling.data.length;
+			}
+			range.setEnd(highlight.nextSibling, end);
 		}
 	}
 
