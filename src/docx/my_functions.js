@@ -30,7 +30,8 @@ function ScrollToHighlight() {
 	else {
 		$.scrollTo(highlight.parentNode, {duration: 1000, offset: {top: -120}});
 	}
-}
+}
+
 // ---------------------------------------------------------------------------
 // HIGHLIGHTING FUNCTIONS
 // ---------------------------------------------------------------------------
@@ -40,7 +41,8 @@ var lastElement;
 var beginOffset;
 
 // Sets the beginning to start the speech. It will start at beginning if no selection was made.
-function SetBeginning(doLine, elementType) {	
+function SetBeginning(doLine, elementType) {
+	
 	var range = window.getSelection();
 	if (!(range === null)) {
 		
@@ -90,12 +92,11 @@ function SetBeginning(doLine, elementType) {
 	// only select that node. Otherwise, have it select the first whole word there.
 	stuff = GetNextWord(range.startContainer, range.startOffset);
 	range = stuff[0];
-	goToNext = stuff[1];
+	var goToNext = stuff[1];
+	var clearBeginOffset = stuff[2]
 	
-	// If I can't get another word, get another element.
-	if (range == null) {
-		var nElem = NextElement(startNode);
-		range = document.createRange();
+	if (clearBeginOffset == true) {
+		beginOffset = 0;
 	}
 	
 	SetHighlight(range, doLine);
@@ -107,7 +108,8 @@ function SetBeginning(doLine, elementType) {
 }
 
 // Move the highlight to the next element that should be highlighted 
-function HighlightNextElement(doLine, elementType, lastElementType) {
+function HighlightNextElement(doLine, elementType, lastElementType) {
+
 	// Clear the line highlight first to make this process easier
 	ClearLineHighlight();
 	
@@ -123,16 +125,31 @@ function HighlightNextElement(doLine, elementType, lastElementType) {
 		while (done != true) {
 			if (elementType == lastElementType) {
 				if ((origParent != next.parentNode) && (next.nodeName == "#text")) {
-					done = true;
+					if ($.trim(next.data) == "") {
+						console.debug("Encountered empty text. Skipping...");
+						next = NextElement(next);
+					}
+					else {
+						console.debug("Got unique parent and node stuff");
+						done = true;
+					}
 				}
 				else {
 					next = NextElement(next);
 				}
 			}
 			else if (next.nodeName == "#text") {
-				done = true;
+				console.debug("Got text!");
+				if ($.trim(next.data) == "") {
+					console.debug("Encountered empty text. Skipping...");
+					next = NextElement(next);
+				}
+				else {
+					done = true;
+				}
 			}
 			else {
+				console.debug("Nothing in the stuff...");
 				next = NextElement(next);
 			}
 		}
@@ -140,6 +157,9 @@ function HighlightNextElement(doLine, elementType, lastElementType) {
 		range.setStart(next, 0);
 		range.setEnd(next, 1);
 		console.debug("New next: " + next.toString());
+		if (next.nodeName == "#text") {
+			console.debug("Text!" + next.data + ", " + next.data.length.toString());
+		}
 	}
 	else if (elementType == "image") {
 		next = NextElement(highlight);
@@ -159,7 +179,8 @@ function HighlightNextElement(doLine, elementType, lastElementType) {
 	}
 	else {
 		alert("The highlighter does not recognize the element type: " + elementType + ". The problem is in TTS driver.");
-	}
+	}
+
 	// Check to see if I actually have something coming up. Otherwise, just
 	// clear all the highlights
 	if (range == null) {
@@ -207,39 +228,48 @@ function HighlightWord(doLine, offset, length) {
 	// Create the highlight
 	SetHighlight(range, doLine);
 	
-}
+}
+
 // Returns the equation node if node is inside an equation.
-function GetEquation(node) {	
-	var myNode = node
+function GetEquation(node) {	
+
+	var myNode = node
+
 	// Check to see if this node is an equation
 	if (myNode.className == "mathmlEquation") {
 		return myNode;
-	}
+	}
+
 	while (myNode.parentNode != null) {
-		myNode = myNode.parentNode
+		myNode = myNode.parentNode
+
 		// Check to see if it is an equation by checking its class
 		if (myNode.className == "mathmlEquation") {
 			return myNode;
 		}
 	}
 	return null;
-}
+}
+
 // Returns a range that has the next word or element
-function GetNextWord(node, offset, type) {	var needToGoToNext = false;
+function GetNextWord(node, offset, type) {
+	var needToGoToNext = false;
 	
 	// See if it is an equation
 	var equation = GetEquation(node);
 	if (equation != null) {
 		var range = document.createRange();
 		range.selectNode(equation);
-		return range;
-	}
+		return [range, needToGoToNext, true];
+	}
+
 	// See if it is an image
 	if (node.nodeName == "IMG") {
 		var range = document.createRange();
 		range.selectNode(node);
-		return range;
-	}
+		return [range, needToGoToNext, true];
+	}
+
 	// See if it is anything else, like text
 	else if (node.nodeName == "#text"){
 		range = document.createRange();
@@ -257,67 +287,90 @@ function GetNextWord(node, offset, type) {	var needToGoToNext = false;
 			range.setEnd(node, offset + 1);
 		}
 		
-		return [range, needToGoToNext];
+		return [range, needToGoToNext, false];
 	}
-}
+}
+
 // Clears the highlight of where it was before.
-function ClearHighlight() {
+function ClearHighlight() {
+
 	// Replace the highlight node with my contents
-	var p = highlight.parentNode;
-	InsertAllChildNodes(p, highlight);
+	var p = highlight.parentNode;
+
+	InsertAllChildNodes(p, highlight);
+
 	// Cleanup the highlight and its reference
 	p.normalize();
 	p.removeChild(highlight);
 	p.normalize();
 	highlight = null;
-}
+}
+
 // Clears the line highlight
 function ClearLineHighlight() {
-	if (highlightLine != null) {
-		var p = highlightLine.parentNode;
-		InsertAllChildNodes(p, highlightLine);
+	if (highlightLine != null) {
+
+		var p = highlightLine.parentNode;
+
+		InsertAllChildNodes(p, highlightLine);
+
 		// Recapture my highlight element reference
-		highlight = document.getElementById("npaHighlight");
+		highlight = document.getElementById("npaHighlight");
+
 		p.normalize();
 		p.removeChild(highlightLine);
 		p.normalize();
 		highlightLine = null;
-	}
-}
+	}
+
+}
+
 // Clears both the line highlight and the individual element highlight
-function ClearAllHighlights() {
+function ClearAllHighlights() {
+
 	if (highlightLine != null) {
 		ClearLineHighlight();
-	}
+	}
+
 	if (highlight != null) {
 		ClearHighlight(); 
-	}
-}
+	}
+
+}
+
 // Given a Range object, this will clean up any previous highlight and create a highlight
 // over the new range
-function SetHighlight(range, doLine) {
+function SetHighlight(range, doLine) {
+
 	if (highlight != null) {
 		ClearHighlight();
 	}
 
 	if (highlightLine != null) {
 		ClearLineHighlight();
-	}
+	}
+
 	highlight = document.createElement("span");
-	highlight.setAttribute("id", "npaHighlight");
+	highlight.setAttribute("id", "npaHighlight");
+
 	var contents = range.extractContents();
-	highlight.appendChild(contents);
-	range.insertNode(highlight);
+	highlight.appendChild(contents);
+
+	range.insertNode(highlight);
+
 	if (doLine == true) {
 		SetLineHighlight();
 	}
-}
+}
+
 // This function will set the line highlight to surround that particular range.
 // It will highlight all the way to the previous sentence end to the next
 // sentence end, or just the node if there are no sentences.
-function SetLineHighlight() {
+function SetLineHighlight() {
+
 	highlightLine = document.createElement("span");
-	highlightLine.setAttribute("id", "npaHighlightLine");
+	highlightLine.setAttribute("id", "npaHighlightLine");
+
 	// Start my range where my highlight is
 	var range = document.createRange()
 	range.selectNode(highlight);
@@ -397,7 +450,8 @@ function NextElement(elem) {
 	else {
 		return DeepestChild(next);
 	}
-}
+}
+
 function DeepestChild(parent) {
 	if (parent.childNodes.length == 0) {
 		return parent;
@@ -406,7 +460,8 @@ function DeepestChild(parent) {
 		var child = parent.firstChild;
 		return DeepestChild(child);
 	}
-}
+}
+
 function GetChildIndex(elem) {
 	var i = 0;
 	while ((elem = elem.previousSibling) != null) {
