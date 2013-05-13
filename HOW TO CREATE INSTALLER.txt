@@ -1,0 +1,3 @@
+Here are the steps to create the installer for the Nifty Prose Articulator:
+
+1. Run CreateInstaller.bat. This will generate the executable

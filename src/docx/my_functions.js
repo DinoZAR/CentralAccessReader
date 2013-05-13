@@ -42,7 +42,7 @@ var beginOffset;
 
 // Sets the beginning to start the speech. It will start at beginning if no selection was made.
 function SetBeginning(doLine, elementType) {
-	
+	console.debug("SetBeginning()");
 	var range = window.getSelection();
 	if (!(range === null)) {
 		
@@ -109,7 +109,7 @@ function SetBeginning(doLine, elementType) {
 
 // Move the highlight to the next element that should be highlighted 
 function HighlightNextElement(doLine, elementType, lastElementType) {
-
+	console.debug("HighlightNextElement()");
 	// Clear the line highlight first to make this process easier
 	ClearLineHighlight();
 	
@@ -200,7 +200,7 @@ function HighlightNextElement(doLine, elementType, lastElementType) {
 // Highlights a word in the current element based on the offset and length from
 // the TTS driver. This function will handle the offsets from the selection.
 function HighlightWord(doLine, offset, length) {
-	
+	console.debug("HighlightWord()");
 	// Get the parent element from the highlight from which we do these calculations
 	var p = null;
 	var childNum = 0;
@@ -232,7 +232,7 @@ function HighlightWord(doLine, offset, length) {
 
 // Returns the equation node if node is inside an equation.
 function GetEquation(node) {	
-
+	console.debug("GetEquation()");
 	var myNode = node
 
 	// Check to see if this node is an equation
@@ -253,6 +253,7 @@ function GetEquation(node) {
 
 // Returns a range that has the next word or element
 function GetNextWord(node, offset, type) {
+	console.debug("GetNextWord()");
 	var needToGoToNext = false;
 	
 	// See if it is an equation
@@ -293,7 +294,7 @@ function GetNextWord(node, offset, type) {
 
 // Clears the highlight of where it was before.
 function ClearHighlight() {
-
+	console.debug("ClearHighlight()");
 	// Replace the highlight node with my contents
 	var p = highlight.parentNode;
 
@@ -308,6 +309,7 @@ function ClearHighlight() {
 
 // Clears the line highlight
 function ClearLineHighlight() {
+	console.debug("ClearLineHighlight()");
 	if (highlightLine != null) {
 
 		var p = highlightLine.parentNode;

@@ -1,5 +1,9 @@
 @echo off
 
+:: Deleting temp files and configuration files
+:: echo Deleting temporary files and configurations...
+:: DEL 
+
 :: Creating the executable
 echo Creating executable...
 python ../../pyinstaller-2.0/utils/Build.py "Nifty Prose Articulator.spec"

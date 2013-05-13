@@ -170,6 +170,13 @@ class MainWindow(QtGui.QMainWindow):
             
     def playButton_clicked(self):
         
+        # Stop whatever the speech thread may be saying
+        self.stopPlayback.emit()
+        
+        # Wait for the speech to quit completely
+        while self.ttsPlaying:
+            QtGui.qApp.processEvents()
+        
         # Get list of string output for feeding into my speech
         if len(self.ui.webView.selectedHtml()) > 0:
             print 'HTML Content:', [unicode(self.ui.webView.selectedHtml())]
@@ -179,9 +186,6 @@ class MainWindow(QtGui.QMainWindow):
             outputList = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml()))
         
         print 'Output:', outputList
-        
-        # Stop whatever the speech thread may be saying
-        self.stopPlayback.emit()
         
         # Add my words to the queue
         for o in outputList:
