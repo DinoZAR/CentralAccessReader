@@ -492,9 +492,11 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.colorSettingsButton.setEnabled(False)
             self.ui.speechSettingsButton.setEnabled(False)
             self.ui.saveToMP3Button.setEnabled(False)
+            self.ui.playButton.setEnabled(False)
         else:
             self.ui.rateSlider.setEnabled(True)
             self.ui.volumeSlider.setEnabled(True)
             self.ui.colorSettingsButton.setEnabled(True)
             self.ui.speechSettingsButton.setEnabled(True)
             self.ui.saveToMP3Button.setEnabled(True)
+            self.ui.playButton.setEnabled(True)
