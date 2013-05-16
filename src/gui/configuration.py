@@ -207,6 +207,7 @@ class Configuration(object):
         '''
         Writes out the CSS file that has my configurations in it.
         '''
+        print 'Writing CSS file...', filePath
         
         # If text highlighting is disabled, I will give it a completely clear
         # background to imitate that it is off.
@@ -316,7 +317,6 @@ display: inline-block;
 }'''
         # -------------------------------------------
         # END CSS FILE
-        print 'Writing CSS file...'
         
         if not os.path.exists(os.path.dirname(filePath)):
             os.makedirs(os.path.dirname(filePath))

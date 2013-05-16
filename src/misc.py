@@ -8,26 +8,46 @@ practically universally applicable.
 '''
 import sys
 import os
+import platform
 from threading import Thread
 from PyQt4 import QtGui
 
-def resource_path(resourceFile, forceDir=False):
+_PROGRAM_ROOT = 'Nifty Prose Articulator'
+
+def program_path(resourceFile):
     '''
-    Returns the correct path to the resource file. This path will change
-    depending on whether we are in a "frozen" distribution or in a development
-    context
-    '''
+    Returns the path to the program installation folder, whether it is in a
+    development environment or in an installed environment.
+    ''' 
     if getattr(sys, 'frozen', None):
-        basedir = sys._MEIPASS
-        if forceDir:
-            print 'Resource:', os.path.join(basedir, os.path.normpath(resourceFile))
-            return os.path.join(basedir, os.path.normpath(resourceFile))
-        else:
-            print 'Resource:', os.path.join(basedir, os.path.basename(resourceFile))
-            return os.path.join(basedir, os.path.basename(resourceFile))
+        myPath = os.path.join(sys._MEIPASS, resourceFile)
+        print 'Resource:', myPath
+        return os.path.join(myPath, resourceFile)
     else:
         print 'Resource:', os.path.abspath(resourceFile)
         return os.path.abspath(resourceFile)
+    
+def app_data_path(resourceFile):
+    '''
+    Returns the path to the resource file stored in the app data. This path will
+    be different on different operating systems.
+    '''
+    newPath = ''
+    if 'Windows' in platform.system():
+        newPath = os.path.join(os.path.join(os.environ['APPDATA'], _PROGRAM_ROOT), resourceFile)
+    
+    return newPath
+
+def temp_path(resourceFile):
+    '''
+    Returns the path to the resource file relative to the temporary directory.
+    This directory will be different depending on the operating system.
+    '''
+    newPath = ''
+    if 'Windows' in platform.system():
+        newPath = os.path.join(os.path.join(os.environ['TEMP'], _PROGRAM_ROOT), resourceFile)
+    
+    return newPath
     
 def clean_XML_input(input):  
       

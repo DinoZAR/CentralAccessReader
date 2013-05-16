@@ -41,7 +41,7 @@ XCOPY jquery.scrollTo-1.4.3.1-min.js "dist\Nifty Prose Articulator\" /D /Y /Q
 
 :: Grabbing the LAME encoder executable
 echo Copying LAME MP3 encoder...
-XCOPY lame.exe "dist\Nifty Prose Articulator\" /D /Y /Q
+XCOPY src\lame.exe "dist\Nifty Prose Articulator\" /D /Y /Q
 
 :: Also getting Tutorial
 echo Copying tutorial...

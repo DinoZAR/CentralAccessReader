@@ -277,6 +277,7 @@ class MainWindow(QtGui.QMainWindow):
         result = dialog.exec_()
         self.configuration.loadFromFile(resource_path('configuration.xml'))
         if result == ColorSettings.RESULT_NEED_REFRESH:
+            print 'Color settings needing refresh...'
             self.refreshDocument()
         self.updateSettings()
         
@@ -471,23 +472,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def refreshDocument(self):
         if len(self.lastDocumentFilePath) > 0:
-            url = os.path.join(os.getcwd(), 'import')
-            baseUrl = QUrl.fromLocalFile(url)
-            
-            self.document = DocxDocument(str(self.lastDocumentFilePath))
-            docxHtml = self.document.getMainPage()
-            
-            self.assigner.prepare(docxHtml)
-            
-            # Clear all of the caches
-            QWebSettings.clearMemoryCaches()
-            
-            self.ui.webView.setHtml(docxHtml, baseUrl)
-            
-            # Set the root bookmark for the tree model
-            self.bookmarksModel = BookmarksTreeModel(self.document.getBookmarks())
-            self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
-            self.ui.bookmarksTreeView.expandAll()
+            self.openDocx(self.lastDocumentFilePath)
             
     def setSettingsEnableState(self):
         '''

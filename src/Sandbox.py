@@ -3,18 +3,14 @@ Created on Mar 3, 2013
 
 @author: Spencer Graffe
 '''
-from src.docx.importer import DocxDocument
-import pythoncom
-import win32com.client
-from glob import glob
 import os
-
+import platform
 if __name__ == '__main__':
     
-    # Using this to figure out my Unicode problems
-    myTestString = 'Try it out on Herman Melville\xe2\x80\x99s Moby Dick below:'
     
-    s = myTestString.decode('utf-8')
+    myRoot = 'Nifty Prose Articulator'
+    myFile = 'stuff.txt'
     
-    print s
-    
+    if 'Windows' in platform.system():
+        print 'App Data:', os.path.join(os.path.join(os.environ['APPDATA'], myRoot), myFile)
+        print 'Temp:', os.path.join(os.path.join(os.environ['TEMP'], myRoot), myFile)
