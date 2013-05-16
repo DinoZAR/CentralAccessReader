@@ -3,10 +3,8 @@ Created on Jan 21, 2013
 
 @author: Spencer
 '''
-import sys
 import os
-import time
-import threading
+import webbrowser
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt, QUrl, QMutex
 from PyQt4 import QtCore
@@ -142,6 +140,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.actionShow_All_MathML.triggered.connect(self.showAllMathML)
         self.ui.actionTutorial.triggered.connect(self.openTutorial)
         self.ui.actionAbout.triggered.connect(self.openAboutDialog)
+        self.ui.actionReport_a_Bug.triggered.connect(self.openReportBugWindow)
         
         # Sliders
         self.ui.volumeSlider.valueChanged.connect(self.volumeSlider_valueChanged)
@@ -401,6 +400,10 @@ class MainWindow(QtGui.QMainWindow):
     def openAboutDialog(self):
         dialog = AboutDialog()
         dialog.exec_()
+        
+    def openReportBugWindow(self):
+        url = 'http://www.cwu.edu/central-access/report-bug-central-access-reader'
+        webbrowser.open_new(url)
             
     def quit(self):
         self.close()
