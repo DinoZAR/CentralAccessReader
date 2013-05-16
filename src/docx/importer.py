@@ -14,16 +14,10 @@ from src.gui.bookmarks import BookmarkNode
 from src.misc import resource_path
 
 # The path to this particular module
-#rootPath = os.path.dirname(inspect.getfile(inspect.currentframe()))
 rootPath = 'docx'
 
 # Get my OMML to MathML stylesheet compiled
 ommlXSLTPath = resource_path(os.path.join(rootPath, 'OMMLToMathML.xsl'))
-
-print 'Opening the OMML File:'
-print '----------------------------'
-print ommlXSLTPath
-print '----------------------------'
 
 f = open(ommlXSLTPath, 'r')
 xslRoot = etree.parse(f)
@@ -109,7 +103,7 @@ class DocxDocument(object):
         stylesFile.close()
         
         # Set the import folder to put all of my images and stuff
-        self.importFolder = 'import'
+        self.importFolder = resource_path('import')
         
         # Now generate a dictionary that can look up the name of the style depending
         # on the id of the style

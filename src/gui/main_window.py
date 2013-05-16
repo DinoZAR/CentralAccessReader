@@ -350,8 +350,9 @@ class MainWindow(QtGui.QMainWindow):
     def openDocx(self, filePath):
         
         if len(filePath) > 0:
-            url = os.path.join(os.getcwd(), 'import')
+            url = resource_path('import')
             baseUrl = QUrl.fromLocalFile(url)
+            print 'Base url:', url
             
             # Show a progress dialog
             self.progressDialog.setWindowModality(Qt.WindowModal)

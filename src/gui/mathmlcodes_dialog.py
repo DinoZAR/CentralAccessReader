@@ -4,10 +4,12 @@ Created on Feb 27, 2013
 @author: Spen-ZAR
 '''
 import os
+import sys
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtWebKit import QWebView
 from lxml import etree, html
 from src.forms.mathmlcodesdialog_ui import Ui_MathMLCodesDialog
+from src.misc import resource_path
 
 class MathMLCodesDialog(QtGui.QDialog):
     '''
@@ -62,7 +64,11 @@ class MathMLItem(QtGui.QWidget):
         
         mathjaxScript = etree.Element('script')
         mathjaxScript.attrib['type'] = 'text/javascript'
-        mathjaxScript.attrib['src'] = r'../../mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML.js'
+        if getattr(sys, 'frozen', None):
+            mathjaxScript.attrib['src'] = r'mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML.js'
+        else:
+            mathjaxScript.attrib['src'] = r'../mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML.js'
+        
         
         head.append(mathjaxScript)
         
@@ -74,9 +80,8 @@ class MathMLItem(QtGui.QWidget):
         mathML = etree.fromstring(mathmlCode)
         div.append(mathML)
         
-        url = os.path.join(os.getcwd(), 'tests\\test_file.html')
+        url = resource_path('import')
         baseUrl = QtCore.QUrl.fromLocalFile(url)
-        
         
         # Create the web view
         webView = QWebView()
