@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/mainwindow.ui'
 #
-# Created: Fri May 10 09:58:54 2013
+# Created: Thu May 16 08:33:00 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -239,6 +239,8 @@ class Ui_MainWindow(object):
         self.actionAbout.setObjectName(_fromUtf8("actionAbout"))
         self.actionReport_a_Bug = QtGui.QAction(MainWindow)
         self.actionReport_a_Bug.setObjectName(_fromUtf8("actionReport_a_Bug"))
+        self.actionTake_A_Survey = QtGui.QAction(MainWindow)
+        self.actionTake_A_Survey.setObjectName(_fromUtf8("actionTake_A_Survey"))
         self.menuMenu.addAction(self.actionOpen_Docx)
         self.menuMenu.addSeparator()
         self.menuMenu.addAction(self.actionQuit)
@@ -247,6 +249,7 @@ class Ui_MainWindow(object):
         self.menuHelp.addAction(self.actionTutorial)
         self.menuHelp.addAction(self.actionAbout)
         self.menuHelp.addAction(self.actionReport_a_Bug)
+        self.menuHelp.addAction(self.actionTake_A_Survey)
         self.menubar.addAction(self.menuMenu.menuAction())
         self.menubar.addAction(self.menuMathML.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
@@ -283,6 +286,7 @@ class Ui_MainWindow(object):
         self.actionTutorial.setText(_translate("MainWindow", "Tutorial", None))
         self.actionAbout.setText(_translate("MainWindow", "About", None))
         self.actionReport_a_Bug.setText(_translate("MainWindow", "Report a Bug", None))
+        self.actionTake_A_Survey.setText(_translate("MainWindow", "Take A Survey", None))
 
 from PyQt4 import QtWebKit
 import resource_rc

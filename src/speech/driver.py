@@ -171,6 +171,10 @@ class SAPIDriver(object):
         voice.EventInterests = 33790 # SVEAllEvents
         voice.AlertBoundary = 64 # SVEPhoneme
         
+        if len(self.voiceId) > 0:
+            token = self.voiceTokenFromId(self.voiceId)
+            voice.Voice = token
+            
         voice.Volume = self.volume
         voice.Rate = self.rate
         

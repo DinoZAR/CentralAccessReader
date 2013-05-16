@@ -42,16 +42,16 @@ class Assigner(object):
             self._maths[key] = mathContent
             i += 1
     
-    def getSpeech(self, htmlContent):
+    def getSpeech(self, htmlContent, configuration):
         '''
         Returns a list of utterances to say the HTML content in the following format:
         
         [[text, label], [text, label], ...]
         '''
         htmlDom = html.fromstring(htmlContent)
-        return self._recursiveGetSpeech(htmlDom)
+        return self._recursiveGetSpeech(htmlDom, configuration)
         
-    def _recursiveGetSpeech(self, element):
+    def _recursiveGetSpeech(self, element, configuration):
         
         # Use recursion to handle it.
         myList = []
@@ -66,17 +66,23 @@ class Assigner(object):
                 if child.get('class') == 'MathJax':
                     # Parse MathML and get output!
                     mathOutput = self.mathTTS.parse(self._maths[child.get('id')])
-                    myList.append([mathOutput, 'math'])
+                    if configuration.tag_math:
+                        myList.append(['Math. ' + mathOutput + '. End math.', 'math'])
+                    else:
+                        myList.append([mathOutput, 'math'])
                 else:
-                    myList.extend(self._recursiveGetSpeech(child))
+                    myList.extend(self._recursiveGetSpeech(child, configuration))
                         
             elif testTag == 'img':
-                myList.append(['Image. ' + child.get('alt'), 'image'])
+                if configuration.tag_image:
+                    myList.append(['Image. ' + child.get('alt') + '. End image.', 'image'])
+                else:
+                    myList.append([child.get('alt'), 'image'])
                 if child.tail != None:
                     myList.append([child.tail, 'text'])
             
             else:
-                myList.extend(self._recursiveGetSpeech(child))
+                myList.extend(self._recursiveGetSpeech(child, configuration))
         
         if element.tail != None:
             myList.append([element.tail, 'text'])

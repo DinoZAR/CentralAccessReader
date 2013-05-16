@@ -180,10 +180,10 @@ class MainWindow(QtGui.QMainWindow):
         # Get list of string output for feeding into my speech
         if len(self.ui.webView.selectedHtml()) > 0:
             print 'HTML Content:', [unicode(self.ui.webView.selectedHtml())]
-            outputList = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml()))
+            outputList = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml()), self.configuration)
         else:
             self.ui.webView.selectAll()
-            outputList = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml()))
+            outputList = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml()), self.configuration)
         
         print 'Output:', outputList
         
@@ -304,7 +304,7 @@ class MainWindow(QtGui.QMainWindow):
             QtGui.qApp.processEvents()
             
             # Get my speech output list
-            outputList = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml()))
+            outputList = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml()), self.configuration)
             
             # Get the progress of the thing from the speech thread
             def myOnProgress(percent):

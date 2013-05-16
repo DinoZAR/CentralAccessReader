@@ -49,16 +49,24 @@ class SpeechSettings(QtGui.QDialog):
         self.ui.volumeSlider.valueChanged.connect(self.volumeSlider_valueChanged)
         self.ui.comboBox.currentIndexChanged.connect(self.comboBox_currentIndexChanged)
         
-    def updateSettings(self):
+        self.ui.imageTagCheckBox.stateChanged.connect(self.imageTagCheckBox_stateChanged)
+        self.ui.mathTagCheckBox.stateChanged.connect(self.mathTagCheckBox_stateChanged)
+        
+    def updateSettings(self, controls=True):
         # Update speech thread with my stuff
         self.mainWindow.changeVolume.emit(self.configuration.volume)
         self.mainWindow.changeRate.emit(self.configuration.rate)
         self.mainWindow.changeVoice.emit(self.configuration.voice)
         
-        # Update main window sliders to match
-        self.ui.rateSlider.setValue(self.configuration.rate)
-        self.ui.volumeSlider.setValue(int(self.configuration.volume))
-        
+        if controls:
+            # Update main window sliders to match
+            self.ui.rateSlider.setValue(self.configuration.rate)
+            self.ui.volumeSlider.setValue(int(self.configuration.volume))
+            
+            # Update checkboxes
+            self.ui.imageTagCheckBox.setChecked(self.configuration.tag_image)
+            self.ui.mathTagCheckBox.setChecked(self.configuration.tag_math)
+            
     def applyButton_clicked(self):
         self.beforeConfiguration = copy.deepcopy(self.configuration)
         self.configuration.saveToFile('configuration.xml')
@@ -70,17 +78,33 @@ class SpeechSettings(QtGui.QDialog):
         
     def rateSlider_valueChanged(self, value):
         self.configuration.rate = value
-        self.updateSettings()
+        self.updateSettings(controls=False)
 
     def volumeSlider_valueChanged(self, value):
         self.configuration.volume = value
-        self.updateSettings()
+        self.updateSettings(controls=False)
         
     def comboBox_currentIndexChanged(self, index):
         self.configuration.voice = str(self.ui.comboBox.itemData(index).toString())
-        self.updateSettings()
+        self.updateSettings(controls=False)
         
     def testButton_clicked(self):
         myText = self.ui.testSpeechText.toPlainText()
         self.mainWindow.addToQueue.emit(myText, 'text')
         self.mainWindow.startPlayback.emit()
+        
+    def imageTagCheckBox_stateChanged(self, state):
+        if state == Qt.Checked:
+            self.configuration.tag_image = True
+        else:
+            self.configuration.tag_image = False
+        
+        self.updateSettings(controls=False)
+        
+    def mathTagCheckBox_stateChanged(self, state):
+        if state == Qt.Checked:
+            self.configuration.tag_math = True
+        else:
+            self.configuration.tag_math = False
+            
+        self.updateSettings(controls=False)

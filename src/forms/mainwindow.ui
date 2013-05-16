@@ -496,6 +496,7 @@
     <addaction name="actionTutorial"/>
     <addaction name="actionAbout"/>
     <addaction name="actionReport_a_Bug"/>
+    <addaction name="actionTake_A_Survey"/>
    </widget>
    <addaction name="menuMenu"/>
    <addaction name="menuMathML"/>
@@ -540,6 +541,11 @@
   <action name="actionReport_a_Bug">
    <property name="text">
     <string>Report a Bug</string>
+   </property>
+  </action>
+  <action name="actionTake_A_Survey">
+   <property name="text">
+    <string>Take A Survey</string>
    </property>
   </action>
  </widget>

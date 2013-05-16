@@ -22,6 +22,9 @@ class Configuration(object):
         self.rate = 50
         self.voice = ''
         
+        self.tag_image = False
+        self.tag_math = False
+        
         # Highlighter settings
         self.highlight_text_enable = True
         self.highlight_line_enable = True
@@ -55,6 +58,11 @@ class Configuration(object):
             self.saveToFile(filePath)
             configFile = open(filePath, 'r')
             configDOM = etree.parse(configFile)
+        except Exception:
+            # If the thing doesn't parse, then destroy settings and make new one
+            self.saveToFile(filePath)
+            configFile = open(filePath, 'r')
+            configDOM = etree.parse(configFile)
             
         configFile.close()
         
@@ -64,6 +72,19 @@ class Configuration(object):
         self.voice = configDOM.xpath('/Configuration/Voice')[0].text
         if self.voice == None:
             self.voice = ''
+            
+        self.tag_image = int(configDOM.xpath('/Configuration/TagImage')[0].text)
+        if self.tag_image == 1:
+            self.tag_image = True
+        else:
+            self.tag_image = False
+        
+        self.tag_math = int(configDOM.xpath('/Configuration/TagMath')[0].text)
+        if self.tag_math == 1:
+            self.tag_math = True
+        else:
+            self.tag_math = False
+        
             
         # Highlighter Settings
         self.highlight_text_enable = int(configDOM.xpath('/Configuration/EnableTextHighlight')[0].text)
@@ -110,6 +131,18 @@ class Configuration(object):
         rateElem.text = str(self.rate)
         voiceElem = etree.SubElement(root, 'Voice')
         voiceElem.text = self.voice
+        
+        elem = etree.SubElement(root, 'TagImage')
+        if self.tag_image:
+            elem.text = '1'
+        else:
+            elem.text = '0'
+            
+        elem = etree.SubElement(root, 'TagMath')
+        if self.tag_math:
+            elem.text = '1'
+        else:
+            elem.text = '0'
         
         # Highlighter Settings
         elem = etree.SubElement(root, 'EnableTextHighlight')
