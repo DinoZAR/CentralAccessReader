@@ -141,6 +141,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.actionTutorial.triggered.connect(self.openTutorial)
         self.ui.actionAbout.triggered.connect(self.openAboutDialog)
         self.ui.actionReport_a_Bug.triggered.connect(self.openReportBugWindow)
+        self.ui.actionTake_A_Survey.triggered.connect(self.openSurveyWindow)
         
         # Sliders
         self.ui.volumeSlider.valueChanged.connect(self.volumeSlider_valueChanged)
@@ -403,6 +404,10 @@ class MainWindow(QtGui.QMainWindow):
         
     def openReportBugWindow(self):
         url = 'http://www.cwu.edu/central-access/report-bug-central-access-reader'
+        webbrowser.open_new(url)
+        
+    def openSurveyWindow(self):
+        url = 'http://www.cwu.edu/central-access/central-access-reader-survey'
         webbrowser.open_new(url)
             
     def quit(self):
