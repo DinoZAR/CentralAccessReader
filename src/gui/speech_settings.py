@@ -7,6 +7,7 @@ from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
 from lxml import etree
 import copy
+from src.misc import app_data_path
 
 from src.forms.speech_settings_ui import Ui_SpeechSettings
 
@@ -69,7 +70,7 @@ class SpeechSettings(QtGui.QDialog):
             
     def applyButton_clicked(self):
         self.beforeConfiguration = copy.deepcopy(self.configuration)
-        self.configuration.saveToFile('configuration.xml')
+        self.configuration.saveToFile(app_data_path('configuration.xml'))
         self.done(0)
         
     def restoreButton_clicked(self):

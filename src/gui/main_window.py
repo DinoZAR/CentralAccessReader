@@ -23,7 +23,7 @@ from src.mathml import pattern_editor
 from src.speech.assigner import Assigner
 from src.speech.worker import SpeechWorker
 from src.docx.importer import DocxDocument
-from src.misc import resource_path, js_command, UpdateQtThread
+from src.misc import app_data_path, temp_path, program_path, js_command, UpdateQtThread
 
 class MainWindow(QtGui.QMainWindow):
     loc = 0
@@ -68,7 +68,7 @@ class MainWindow(QtGui.QMainWindow):
         self.webInspector.setPage(self.ui.webView.page())
         
         # Set the math TTS using the internal pattern database
-        self.mathTTS = MathTTS(resource_path('mathml/parser_pattern_database.txt'))
+        self.mathTTS = MathTTS(program_path('src/mathml/parser_pattern_database.txt'))
         
         # TTS states
         self.ttsPlaying = False
@@ -104,7 +104,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # Load the configuration file
         self.configuration = Configuration()
-        self.configuration.loadFromFile(resource_path('configuration.xml'))
+        self.configuration.loadFromFile(app_data_path('configuration.xml'))
         self.updateSettings()
         
         # Used for refreshing the document later to make changes. Also store
@@ -166,7 +166,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.volumeSlider.setValue(int(self.configuration.volume))
         
         # Finally, save it all to file
-        self.configuration.saveToFile(resource_path('configuration.xml'))
+        self.configuration.saveToFile(app_data_path('configuration.xml'))
             
     def playButton_clicked(self):
         
@@ -275,7 +275,7 @@ class MainWindow(QtGui.QMainWindow):
     def colorSettingsButton_clicked(self):
         dialog = ColorSettings(self)
         result = dialog.exec_()
-        self.configuration.loadFromFile(resource_path('configuration.xml'))
+        self.configuration.loadFromFile(app_data_path('configuration.xml'))
         if result == ColorSettings.RESULT_NEED_REFRESH:
             print 'Color settings needing refresh...'
             self.refreshDocument()
@@ -284,7 +284,7 @@ class MainWindow(QtGui.QMainWindow):
     def speechSettingsButton_clicked(self):
         dialog = SpeechSettings(self)
         dialog.exec_()
-        self.configuration.loadFromFile(resource_path('configuration.xml'))
+        self.configuration.loadFromFile(app_data_path('configuration.xml'))
         self.updateSettings()
         
     def saveToMP3Button_clicked(self):
@@ -351,7 +351,7 @@ class MainWindow(QtGui.QMainWindow):
     def openDocx(self, filePath):
         
         if len(filePath) > 0:
-            url = resource_path('import')
+            url = temp_path('import')
             baseUrl = QUrl.fromLocalFile(url)
             print 'Base url:', url
             
@@ -389,15 +389,11 @@ class MainWindow(QtGui.QMainWindow):
             self.progressDialog.hide()
             
     def showOpenDocxDialog(self):
-        savePath = os.path.dirname(os.path.realpath(__file__))
-        savePath = savePath.replace('\\','/')
-        savePath = str(savePath).rsplit('/',1).pop(0) + '/tests/'
-        filePath = QtGui.QFileDialog.getOpenFileName(self, 'Open Docx...','./tests','(*.docx)')
-        
+        filePath = QtGui.QFileDialog.getOpenFileName(self, 'Open Docx...',os.path.join(os.path.expanduser('~'), 'Documents'),'(*.docx)')
         self.openDocx(filePath)
             
     def openTutorial(self):
-        self.openDocx(resource_path('Tutorial.docx'))
+        self.openDocx(program_path('Tutorial.docx'))
             
     def openAboutDialog(self):
         dialog = AboutDialog()
@@ -418,7 +414,7 @@ class MainWindow(QtGui.QMainWindow):
         
         from mathml.pattern_editor.gui.patterneditorwindow import PatternEditorWindow
 
-        patternFilePath = resource_path('mathml/parser_pattern_database.txt')
+        patternFilePath = program_path('mathml/parser_pattern_database.txt')
         
         self.patternWindow = PatternEditorWindow(patternFilePath, '')
         self.patternWindow.changedPattern.connect(self.onChangedPatternEditor)

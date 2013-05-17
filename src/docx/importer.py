@@ -8,16 +8,15 @@ import zipfile
 from lxml import etree
 from lxml import html as HTML
 import os
-import sys
-import inspect
+import urllib
 from src.gui.bookmarks import BookmarkNode
-from src.misc import resource_path
+from src.misc import program_path, app_data_path, temp_path
 
 # The path to this particular module
-rootPath = 'docx'
+rootPath = 'src/docx'
 
 # Get my OMML to MathML stylesheet compiled
-ommlXSLTPath = resource_path(os.path.join(rootPath, 'OMMLToMathML.xsl'))
+ommlXSLTPath = program_path(os.path.join(rootPath, 'OMMLToMathML.xsl'))
 
 f = open(ommlXSLTPath, 'r')
 xslRoot = etree.parse(f)
@@ -103,7 +102,7 @@ class DocxDocument(object):
         stylesFile.close()
         
         # Set the import folder to put all of my images and stuff
-        self.importFolder = resource_path('import')
+        self.importFolder = temp_path('import')
         
         # Now generate a dictionary that can look up the name of the style depending
         # on the id of the style
@@ -259,49 +258,32 @@ class DocxDocument(object):
         
         mathjaxConfig = HTML.Element('script')
         mathjaxConfig.set('type', 'text/x-mathjax-config')
-        scriptFile = open(resource_path(os.path.join(rootPath, 'mathjax_config.js')))
+        scriptFile = open(program_path(os.path.join(rootPath, 'mathjax_config.js')))
         contents = scriptFile.read()
         scriptFile.close()
         mathjaxConfig.text = contents
         
         mathjaxScript = HTML.Element('script')
         mathjaxScript.attrib['type'] = 'text/javascript'
-        
-        # This has to change depending on whether we have built this as .exe or
-        # not
-        if getattr(sys, 'frozen', None):
-            mathjaxScript.attrib['src'] = r'mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML.js'
-        else:
-            mathjaxScript.attrib['src'] = r'../mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML.js'
+        mathjaxScript.attrib['src'] = 'file:' + urllib.pathname2url(program_path('mathjax/MathJax.js')) + r'?config=TeX-AMS-MML_HTMLorMML.js'
         
         jqueryScript = HTML.Element('script')
         jqueryScript.attrib['type'] = 'text/javascript'
-        if getattr(sys, 'frozen', None):
-            jqueryScript.attrib['src'] = r'jquery-1.9.1.min.js'
-        else:
-            jqueryScript.attrib['src'] = r'../jquery-1.9.1.min.js'
+        jqueryScript.attrib['src'] = 'file:' + urllib.pathname2url(program_path('jquery-1.9.1.min.js'))
             
         jqueryUIScript = HTML.Element('script')
         jqueryUIScript.attrib['type'] = 'text/javascript'
-        if getattr(sys, 'frozen', None):
-            jqueryUIScript.attrib['src'] = r'jquery-ui/js/jquery-ui-1.9.2.custom.js'
-        else:
-            jqueryUIScript.attrib['src'] = r'../jquery-ui/js/jquery-ui-1.9.2.custom.js'
-            
-            
+        jqueryUIScript.attrib['src'] = 'file:' + urllib.pathname2url(program_path('jquery-ui/js/jquery-ui-1.9.2.custom.js'))
         
         jqueryScrollTo = HTML.Element('script')
         jqueryScrollTo.attrib['type'] = 'text/javascript'
-        if getattr(sys, 'frozen', None):
-            jqueryScrollTo.attrib['src'] = r'jquery.scrollTo-1.4.3.1-min.js'
-        else:
-            jqueryScrollTo.attrib['src'] = r'../jquery.scrollTo-1.4.3.1-min.js'
+        jqueryScrollTo.attrib['src'] = 'file:' + urllib.pathname2url(program_path('jquery.scrollTo-1.4.3.1-min.js'))
         
         myScripts = HTML.Element('script')
         myScripts.set('language', 'javascript')
         myScripts.set('type', 'text/javascript')
         
-        scriptFile = open(resource_path(os.path.join(rootPath, 'my_functions.js')), 'r')
+        scriptFile = open(program_path(os.path.join(rootPath, 'my_functions.js')), 'r')
         contents = scriptFile.read()
         scriptFile.close()
         myScripts.text = contents
@@ -309,7 +291,7 @@ class DocxDocument(object):
         css = HTML.Element('link')
         css.attrib['rel'] = 'stylesheet'
         css.attrib['type'] = 'text/css'
-        css.attrib['href'] = 'import/defaultStyle.css'
+        css.attrib['href'] = 'file:' + urllib.pathname2url(temp_path('import/defaultStyle.css'))
         
         head.append(mathjaxConfig)
         head.append(mathjaxScript)

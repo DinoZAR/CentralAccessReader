@@ -16,8 +16,6 @@ exe = EXE(pyz,
           console=True )
 coll = COLLECT(exe,
 			   Tree(os.path.abspath('src/forms/icons')),
-			   Tree(os.path.abspath('src/docx')),
-			   Tree(os.path.abspath('src/mathml')),
                a.binaries,
                a.zipfiles,
                a.datas,

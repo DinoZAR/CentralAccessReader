@@ -9,7 +9,7 @@ from src.speech import driver
 import pythoncom
 import os
 import subprocess
-from src.misc import resource_path
+from src.misc import temp_path, program_path
 
 class SpeechWorker(QThread):
     
@@ -91,14 +91,14 @@ class SpeechWorker(QThread):
         def myOnProgress(percent):
             self.onProgress.emit(int((float(percent) / 100.0) * 70.0))
         
-        wavSavePath = resource_path('tmp.wav')
+        wavSavePath = temp_path('tmp.wav')
         
         self.onProgressLabel.emit('Speaking into WAV...')
         self.ttsEngine.speakToWavFile(wavSavePath, outputList, myOnProgress)
         
         # Then convert it to MP3
         self.onProgressLabel.emit('Converting to MP3...')
-        lameCommand = resource_path('lame.exe') + ' -h "' + wavSavePath + '" "' + mp3Path + '"'
+        lameCommand = program_path('src/lame.exe') + ' -h "' + wavSavePath + '" "' + mp3Path + '"'
         ps = subprocess.Popen(lameCommand)
         
         while ps.poll() == None:

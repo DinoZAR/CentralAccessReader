@@ -21,11 +21,12 @@ def program_path(resourceFile):
     ''' 
     if getattr(sys, 'frozen', None):
         myPath = os.path.join(sys._MEIPASS, resourceFile)
-        print 'Resource:', myPath
-        return os.path.join(myPath, resourceFile)
+        print 'Program Path:', myPath
+        return myPath
     else:
-        print 'Resource:', os.path.abspath(resourceFile)
-        return os.path.abspath(resourceFile)
+        myPath = os.path.abspath('../' + resourceFile)
+        print 'Program Path:', myPath
+        return myPath
     
 def app_data_path(resourceFile):
     '''
@@ -36,6 +37,7 @@ def app_data_path(resourceFile):
     if 'Windows' in platform.system():
         newPath = os.path.join(os.path.join(os.environ['APPDATA'], _PROGRAM_ROOT), resourceFile)
     
+    print 'App Data Path:', newPath
     return newPath
 
 def temp_path(resourceFile):
@@ -47,6 +49,7 @@ def temp_path(resourceFile):
     if 'Windows' in platform.system():
         newPath = os.path.join(os.path.join(os.environ['TEMP'], _PROGRAM_ROOT), resourceFile)
     
+    print 'Temp Path:', newPath
     return newPath
     
 def clean_XML_input(input):  

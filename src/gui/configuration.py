@@ -5,7 +5,7 @@ Created on Apr 12, 2013
 '''
 from PyQt4.QtGui import QColor
 from lxml import etree
-from src.misc import resource_path
+from src.misc import app_data_path, temp_path
 import os
 
 class Configuration(object):
@@ -183,12 +183,12 @@ class Configuration(object):
             elem.text = '1'
         else:
             elem.text = '0'
-            
+        
         configFile = open(filePath, 'w')
         configFile.write(etree.tostring(root, pretty_print=True))
         configFile.close()
         
-        self._writeCSS(resource_path('import/defaultStyle.css', True))
+        self._writeCSS(temp_path('import/defaultStyle.css'))
     
     def _createQColorFromCommaSeparated(self, colorString):
         tokens = colorString.split(',')

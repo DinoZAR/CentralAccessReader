@@ -9,7 +9,7 @@ from PyQt4 import QtGui, QtCore
 from PyQt4.QtWebKit import QWebView
 from lxml import etree, html
 from src.forms.mathmlcodesdialog_ui import Ui_MathMLCodesDialog
-from src.misc import resource_path
+from src.misc import temp_path
 
 class MathMLCodesDialog(QtGui.QDialog):
     '''
@@ -80,7 +80,7 @@ class MathMLItem(QtGui.QWidget):
         mathML = etree.fromstring(mathmlCode)
         div.append(mathML)
         
-        url = resource_path('import')
+        url = temp_path('import')
         baseUrl = QtCore.QUrl.fromLocalFile(url)
         
         # Create the web view

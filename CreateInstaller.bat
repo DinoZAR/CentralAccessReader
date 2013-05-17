@@ -3,16 +3,8 @@
 :: Add NSIS and Python to my path
 set PATH=%PATH%;C:\Program Files (x86)\NSIS;C:\Python27
 
-:: Deleting temp files and configuration files
-echo Deleting temporary files and configurations...
-DEL src\configuration.xml
-echo import folder...
-RMDIR src\import /S /Q
-DEL src\tmp.wav
-DEL src\ttsSettings.txt
-
-:: Delete previous distribution folder
-echo dist folder...
+:: Deleting
+echo Deleting previous distribution folder...
 RMDIR dist /S /Q
 
 :: Creating the executable
@@ -39,13 +31,26 @@ XCOPY jquery.scrollTo-1.4.3.1-min.js "dist\Nifty Prose Articulator\" /D /Y /Q
 
 :: Other Files
 
+:: Get the pattern database
+echo Copying the MathML pattern database...
+XCOPY src\mathml\parser_pattern_database.txt "dist\Nifty Prose Articulator\src\mathml\" /D /Y /Q
+
 :: Grabbing the LAME encoder executable
 echo Copying LAME MP3 encoder...
-XCOPY src\lame.exe "dist\Nifty Prose Articulator\" /D /Y /Q
+XCOPY src\lame.exe "dist\Nifty Prose Articulator\src\" /D /Y /Q
+
+:: Grabbing JavaScript functions
+echo Copying JavaScript functions and configurations
+XCOPY src\docx\mathjax_config.js "dist\Nifty Prose Articulator\src\docx\" /D /Y /Q
+XCOPY src\docx\my_functions.js "dist\Nifty Prose Articulator\src\docx\" /D /Y /Q
+
+:: Get the OMML to MathML XSLT
+echo Copying OMML to MathML XSLT...
+XCOPY src\docx\OMMLToMathML.xsl "dist\Nifty Prose Articulator\src\docx\" /D /Y /Q
 
 :: Also getting Tutorial
 echo Copying tutorial...
-XCOPY src\Tutorial.docx "dist\Nifty Prose Articulator\" /D /Y /Q
+XCOPY Tutorial.docx "dist\Nifty Prose Articulator\" /D /Y /Q
 
 :: Create the NSIS script
 echo Creating NSIS script...

@@ -6,7 +6,7 @@ Created on Feb 20, 2013
 from lxml import etree, html
 from HTMLParser import HTMLParser
 from src.mathml.tts import MathTTS
-from src.misc import resource_path
+from src.misc import program_path
 
 # Namespace for XHTML
 html_NS = '{http://www.w3.org/1999/xhtml}'
@@ -22,7 +22,7 @@ class Assigner(object):
         Constructor
         '''
         self._maths = {}
-        self.mathTTS = MathTTS(resource_path('mathml/parser_pattern_database.txt'))
+        self.mathTTS = MathTTS(program_path('src/mathml/parser_pattern_database.txt'))
         
         
     def prepare(self, content):

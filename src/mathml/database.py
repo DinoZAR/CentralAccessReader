@@ -183,7 +183,7 @@ def p_error(p):
 	print 'Error culprit:', p
 	
 # Create my parser from these definitions
-parser = yacc.yacc()
+parser = yacc.yacc(debug=False)
 
 # ------------------------------------------------------------------------------
 # User Functions : These are what other programmers should be using

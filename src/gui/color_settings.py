@@ -7,6 +7,7 @@ from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
 from lxml import etree
 import copy
+from src.misc import app_data_path
 
 from src.forms.color_settings_ui import Ui_ColorSettings
 
@@ -90,17 +91,17 @@ class ColorSettings(QtGui.QDialog):
         self.done(ColorSettings.RESULT_NEED_REFRESH)
         
     def previewButton_clicked(self):
-        self.configuration.saveToFile('configuration.xml')
+        self.configuration.saveToFile(app_data_path('configuration.xml'))
         self.mainWindow.refreshDocument()
         
     def restoreButton_clicked(self):
         self.configuration = copy.deepcopy(self.beforeConfiguration)
-        self.configuration.saveToFile('configuration.xml')
+        self.configuration.saveToFile(app_data_path('configuration.xml'))
         self.mainWindow.refreshDocument()
         self.updateSettings()
         
     def this_finished(self):
-        self.beforeConfiguration.saveToFile('configuration.xml')
+        self.beforeConfiguration.saveToFile(app_data_path('configuration.xml'))
     
     def contentTextButton_clicked(self):
         self.configuration.color_contentText = QtGui.QColorDialog.getColor(initial=self.configuration.color_contentText)
