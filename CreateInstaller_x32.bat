@@ -37,7 +37,7 @@ XCOPY src\mathml\parser_pattern_database.txt "dist\Nifty Prose Articulator\src\m
 
 :: Grabbing the LAME encoder executable
 echo Copying LAME MP3 encoder...
-XCOPY src\lame.exe "dist\Nifty Prose Articulator\src\" /D /Y /Q
+XCOPY src\lame_32.exe "dist\Nifty Prose Articulator\src\" /D /Y /Q
 
 :: Grabbing JavaScript functions
 echo Copying JavaScript functions and configurations
@@ -54,7 +54,7 @@ XCOPY Tutorial.docx "dist\Nifty Prose Articulator\" /D /Y /Q
 
 :: Create the NSIS script
 echo Creating NSIS script...
-python generate_nsis_script.py
+python generate_nsis_script.py 32
 
 :: Compile NSIS script
 echo Compiling NSIS script into installer...
@@ -62,9 +62,9 @@ makensis /V4 NSIS_installer_script.nsi
 
 :: Copy the setup file to the top of the Nifty Prose Articulator directory
 echo Moving setup file to top...
-move /Y NPA_Setup.exe ../../
+move /Y NPA_Setup_32.exe ../../
 
 echo ----------------------------------
 echo Done!
-echo Your file can be found as NPA_Setup.exe.
+echo Your file can be found as NPA_Setup_32.exe.
 echo ----------------------------------

@@ -81,38 +81,15 @@ class DocxDocument(object):
         
         self.docxFilePath = docxFilePath
         
+        self.importFolder = temp_path('import')
+        
         # .docx is just a zip file
         zip = zipfile.ZipFile(docxFilePath, 'r')
         
-        # First, grab the relationships file. This has the id's and pointers to 
-        # different bits of data, most importantly images.
-        relFile = zip.open('word/_rels/document.xml.rels', 'r')
-        
-        self.rels = etree.parse(relFile)
-        self.rels = self.rels.findall('./{0}Relationship'.format(r_NS))
-        
-        relFile.close()
-        
-        # Grab the styles too to match up the headings and other parts.
-        stylesFile = zip.open('word/styles.xml', 'r')
-        
-        self.styles = etree.parse(stylesFile)
-        self.styles = self.styles.findall('./{0}style'.format(w_NS))
-        
-        stylesFile.close()
-        
-        # Set the import folder to put all of my images and stuff
-        self.importFolder = temp_path('import')
-        
-        # Now generate a dictionary that can look up the name of the style depending
-        # on the id of the style
-        self.stylesDict = {}
-        for s in self.styles:
-            query = s.find('./{0}name'.format(w_NS))
-            if query != None:
-                key = s.get('{0}styleId'.format(w_NS))
-                value = query.get('{0}val'.format(w_NS))
-                self.stylesDict[key] = value
+        self.rels = self._getRels(zip)
+        self.styles = self._getStyles(zip)
+        self.paraStylesDict = self._getParaStylesDict(self.styles)
+        self.numberingDict = self._getNumberingDict(zip)
         
         # Open my main document file
         document = zip.open('word/document.xml', 'r')
@@ -132,6 +109,60 @@ class DocxDocument(object):
                 self.paragraphData.append(self._parseTable(p))
                 
         zip.close()
+        
+    def _getRels(self, zip):
+        relFile = zip.open('word/_rels/document.xml.rels', 'r')
+        myRels = etree.parse(relFile)
+        myRels = myRels.findall('./{0}Relationship'.format(r_NS))
+        relFile.close()
+        return myRels
+    
+    def _getStyles(self, zip):
+        stylesFile = zip.open('word/styles.xml', 'r')
+        myStyles = etree.parse(stylesFile)
+        myStyles = myStyles.findall('./{0}style'.format(w_NS))
+        stylesFile.close()
+        return myStyles
+    
+    def _getParaStylesDict(self, styles):
+        '''
+        Returns a dictionary where the key is the style id and the value is the
+        name of that style.
+        '''
+        myDict = {}
+        for s in styles:
+            query = s.find('./{0}name'.format(w_NS))
+            if query != None:
+                key = s.get('{0}styleId'.format(w_NS))
+                value = query.get('{0}val'.format(w_NS))
+                myDict[key] = value
+        return myDict
+    
+    def _getNumberingDict(self, zip):
+        '''
+        Returns a nested dictionary that looks like the following:
+        
+        {numId : {levelId : {"format" : "decimal|bullet", "start" : 0}, levelId : {...}, ...}}
+        '''
+        myDict = {}
+        
+        if 'word/numbering.xml' in zip.namelist():
+            # Get the numbering XML
+            numberingFile = zip.open('word/numbering.xml', 'r')
+            numXML = etree.parse(numberingFile)
+            numberingFile.close()
+            
+            # Get all numberings and get the abstract element they refer to
+            # (pointless indirection in my opinion)
+            nums = numXML.findall('./{0}num'.format(w_NS))
+            abstractNumIds = {}
+            for e in nums:
+                val = e.find('./{0}abstractNumId'.format(w_NS))['{0}val'.format(w_NS)]
+                abstractNumIds[e['{0}numId'.format(w_NS)]] = val
+                
+            print 'Abstract num dictionary:', abstractNumIds
+        
+        return myDict
         
     def _parseParagraph(self, elem):
         parseData = {'type' : 'paragraph'}
@@ -171,8 +202,8 @@ class DocxDocument(object):
         query = elem.find('./{0}pStyle'.format(w_NS))
         if query != None:
             style = query.get('{0}val'.format(w_NS))
-            if style in self.stylesDict:
-                parentData['style'] = self.stylesDict[style]
+            if style in self.paraStylesDict:
+                parentData['style'] = self.paraStylesDict[style]
     
     def _parseRow(self, elem, parentData):
         data = {'type' : 'row'}

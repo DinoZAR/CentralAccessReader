@@ -4,6 +4,7 @@ Created on May 14, 2013
 @author: Spencer Graffe
 '''
 import os
+import argparse
 
 NSIS_INSTALLER_FILE = 'NSIS_installer_script.nsi'
 DIST_DIRECTORY = 'dist'
@@ -35,6 +36,10 @@ def remove_top_folders(path, num):
     return myPath
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Generates NSIS file for specific bit-ness', version='1.0')
+    parser.add_argument('bit', type=int, default='64', help='either 32 or 64')
+    args = parser.parse_args()
+    
     outString = r'''
 RequestExecutionLevel admin
 
@@ -88,8 +93,20 @@ FunctionEnd
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "NPA_Setup.exe"
+'''
+    if args.bit == 32:
+        outString += r'''
+OutFile "NPA_Setup_32.exe"
 InstallDir "$PROGRAMFILES\Nifty Prose Articulator"
+'''
+
+    elif args.bit == 64:
+	    outString += r'''
+OutFile "NPA_Setup_64.exe"
+InstallDir "$PROGRAMFILES64\Nifty Prose Articulator"
+'''
+    
+    outString += r'''
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
 ShowUnInstDetails show

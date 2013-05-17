@@ -113,13 +113,13 @@ class DocxDocument(object):
         
         # Now generate a dictionary that can look up the name of the style depending
         # on the id of the style
-        self.stylesDict = {}
+        self.paraStylesDict = {}
         for s in self.styles:
             query = s.find('./{0}name'.format(w_NS))
             if query != None:
                 key = s.get('{0}styleId'.format(w_NS))
                 value = query.get('{0}val'.format(w_NS))
-                self.stylesDict[key] = value
+                self.paraStylesDict[key] = value
         
         # Open my main document file
         document = zip.open('word/document.xml', 'r')
@@ -178,8 +178,8 @@ class DocxDocument(object):
         query = elem.find('./{0}pStyle'.format(w_NS))
         if query != None:
             style = query.get('{0}val'.format(w_NS))
-            if style in self.stylesDict:
-                parentData['style'] = self.stylesDict[style]
+            if style in self.paraStylesDict:
+                parentData['style'] = self.paraStylesDict[style]
     
     def _parseRow(self, elem, parentData):
         data = {'type' : 'row'}

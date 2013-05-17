@@ -8,6 +8,7 @@ from PyQt4 import QtCore, QtGui
 from src.speech import driver
 import pythoncom
 import os
+import platform
 import subprocess
 from src.misc import temp_path, program_path
 
@@ -98,7 +99,12 @@ class SpeechWorker(QThread):
         
         # Then convert it to MP3
         self.onProgressLabel.emit('Converting to MP3...')
-        lameCommand = program_path('src/lame.exe') + ' -h "' + wavSavePath + '" "' + mp3Path + '"'
+        lameExe = ''
+        if '64' in platform.architecture()[0]:
+            lameExe = program_path('src/lame_64.exe')
+        else:
+            lameExe = program_path('src/lame_32.exe')
+        lameCommand = lameExe + ' -h "' + wavSavePath + '" "' + mp3Path + '"'
         ps = subprocess.Popen(lameCommand)
         
         while ps.poll() == None:
