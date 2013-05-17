@@ -54,9 +54,7 @@ htmlLevels = {1 : 'h1',
 def clean_XML_input(input):  
       
     if input:  
-              
-        import re  
-          
+        import re
         # unicode invalid characters  
         RE_XML_ILLEGAL = u'([\u0000-\u0008\u000b-\u000c\u000e-\u001f\ufffe-\uffff])' + u'|' + u'([{0}-{1}][^{2}-{3}])|([^{4}-{5}][{6}-{7}])|([{8}-{9}]$)|(^[{10}-{11}])'.format(
                         unichr(0xd800),unichr(0xdbff),unichr(0xdc00),unichr(0xdfff),unichr(0xd800),unichr(0xdbff),unichr(0xdc00),unichr(0xdfff),unichr(0xd800),unichr(0xdbff),unichr(0xdc00),unichr(0xdfff))
@@ -155,18 +153,43 @@ class DocxDocument(object):
             # Get all numberings and get the abstract element they refer to
             # (pointless indirection in my opinion)
             nums = numXML.findall('./{0}num'.format(w_NS))
-            abstractNumIds = {}
             for e in nums:
-                val = e.find('./{0}abstractNumId'.format(w_NS))['{0}val'.format(w_NS)]
-                abstractNumIds[e['{0}numId'.format(w_NS)]] = val
+                abstractId = e.find('./{0}abstractNumId'.format(w_NS)).attrib['{0}val'.format(w_NS)]
+                abstractNum = numXML.find('./{0}abstractNum[@{0}abstractNumId=\''.format(w_NS) + abstractId + '\']')
                 
-            print 'Abstract num dictionary:', abstractNumIds
-        
+                # Get list of levels in that particular element
+                levels = abstractNum.findall('./{0}lvl'.format(w_NS))
+                levelDicts = {}
+                for l in levels:
+                    format = l.find('./{0}numFmt'.format(w_NS)).attrib['{0}val'.format(w_NS)]
+                    #start = l.find('./{0}start'.format(w_NS)).attrib['{0}val'.format(w_NS)]
+                    key = l.attrib['{0}ilvl'.format(w_NS)]
+                    levelDicts[key] = {'format': format}
+                
+                key = e.attrib['{0}numId'.format(w_NS)]
+                myDict[key] = levelDicts
+                
         return myDict
+    
+    def _isList(self, elem):
+        '''
+        Returns whether the element is numbered, or in other words, a part of an
+        ordered list or unordered list
+        '''
+        return elem.find('./{0}pPr/{0}numPr'.format(w_NS)) != None
         
     def _parseParagraph(self, elem):
         parseData = {'type' : 'paragraph'}
         parseData['data'] = []
+        
+        # Add bullet or numbered list information if any
+        if self._isList(elem):
+            numId = elem.find('./{0}pPr/{0}numPr/{0}numId'.format(w_NS)).attrib['{0}val'.format(w_NS)]
+            levelId = elem.find('./{0}pPr/{0}numPr/{0}ilvl'.format(w_NS)).attrib['{0}val'.format(w_NS)]
+            myNumDict = self.numberingDict[numId][levelId]
+            parseData['list'] = True
+            parseData['format'] = myNumDict['format']
+            parseData['start'] = int(myNumDict['start'])
         
         for child in elem:
             
@@ -334,14 +357,40 @@ class DocxDocument(object):
         
     def _prepareBody(self, body):
         anchorCount = 1
-        for p in self.paragraphData:
-            if p['type'] == 'paragraph':
-                data = self._generateParagraphHTMLNode(p, anchorCount)
-                if data[1]:
-                    anchorCount += 1
-                body.append(data[0])
-            elif p['type'] == 'table':
-                body.append(self._generateTableHTMLNode(p))
+        i = 0
+        while i < len(self.paragraphData):
+            if self.paragraphData[i]['type'] == 'paragraph':
+                if 'list' in self.paragraphData[i]:
+                    # Make a list of bullets or numbered elements
+                    parent = None
+                    startFormat = self.paragraphData[i]['format']
+                    if startFormat == 'bullet':
+                        parent = etree.SubElement(body, 'ul')
+                    elif startFormat == 'decimal':
+                        parent = etree.SubElement(body, 'ol')
+                    else:
+                        parent = etree.SubElement(body, 'ul')
+                    while i < len(self.paragraphData) and 'list' in self.paragraphData[i]:
+                        if self.paragraphData[i]['format'] != startFormat:
+                            break
+                        data = self._generateParagraphHTMLNode(self.paragraphData[i], anchorCount)
+                        if data[1]:
+                            anchorCount += 1
+                        childElem = etree.SubElement(parent, 'li')
+                        childElem.append(data[0])
+                        i += 1
+                    
+                else:
+                    data = self._generateParagraphHTMLNode(self.paragraphData[i], anchorCount)
+                    if data[1]:
+                        anchorCount += 1
+                        body.append(data[0])
+                    else:
+                        body.append(data[0])
+                    i += 1
+            elif self.paragraphData[i]['type'] == 'table':
+                body.append(self._generateTableHTMLNode(self.paragraphData[i]))
+                i += 1
                 
     def _generateTableHTMLNode(self, t):
         '''
