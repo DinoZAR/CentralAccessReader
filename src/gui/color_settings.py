@@ -95,7 +95,7 @@ class ColorSettings(QtGui.QDialog):
         self.mainWindow.refreshDocument()
         
     def restoreButton_clicked(self):
-        self.configuration = copy.deepcopy(self.beforeConfiguration)
+        self.configuration.restoreDefaults()
         self.configuration.saveToFile(app_data_path('configuration.xml'))
         self.mainWindow.refreshDocument()
         self.updateSettings()

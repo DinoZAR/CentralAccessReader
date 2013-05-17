@@ -17,6 +17,15 @@ class Configuration(object):
         '''
         Fill it with all of the basic stuff.
         '''
+        self.restoreDefaults()
+        
+        # Show Tutorial (first time thing)
+        self.showTutorial = True
+        
+    def restoreDefaults(self):
+        '''
+        As it implies, restores the configuration back to its default settings.
+        '''
         # Speech settings
         self.volume = 100
         self.rate = 50
@@ -41,9 +50,6 @@ class Configuration(object):
         
         # Font settings
         self.font_all = 'Arial'
-        
-        # Show Tutorial (first time thing)
-        self.showTutorial = True
     
     def loadFromFile(self, filePath):
         print 'Loading config...'

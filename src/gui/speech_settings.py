@@ -74,7 +74,7 @@ class SpeechSettings(QtGui.QDialog):
         self.done(0)
         
     def restoreButton_clicked(self):
-        self.configuration = copy.deepcopy(self.beforeConfiguration)
+        self.configuration.restoreDefaults()
         self.updateSettings()
         
     def rateSlider_valueChanged(self, value):
