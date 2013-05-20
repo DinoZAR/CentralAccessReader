@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/about.ui'
 #
-# Created: Mon May 06 08:15:06 2013
+# Created: Mon May 20 09:50:18 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_AboutDialog(object):
     def setupUi(self, AboutDialog):
         AboutDialog.setObjectName(_fromUtf8("AboutDialog"))
-        AboutDialog.resize(382, 281)
+        AboutDialog.resize(432, 315)
         self.verticalLayout_2 = QtGui.QVBoxLayout(AboutDialog)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.verticalLayout = QtGui.QVBoxLayout()
@@ -37,6 +37,9 @@ class Ui_AboutDialog(object):
         self.label.setFont(font)
         self.label.setObjectName(_fromUtf8("label"))
         self.verticalLayout.addWidget(self.label)
+        self.label_3 = QtGui.QLabel(AboutDialog)
+        self.label_3.setObjectName(_fromUtf8("label_3"))
+        self.verticalLayout.addWidget(self.label_3)
         self.label_2 = QtGui.QLabel(AboutDialog)
         font = QtGui.QFont()
         font.setPointSize(14)
@@ -63,6 +66,7 @@ class Ui_AboutDialog(object):
     def retranslateUi(self, AboutDialog):
         AboutDialog.setWindowTitle(_translate("AboutDialog", "About", None))
         self.label.setText(_translate("AboutDialog", "Nifty Prose Articulator", None))
+        self.label_3.setText(_translate("AboutDialog", "Version: 1.0 (Beta)", None))
         self.label_2.setText(_translate("AboutDialog", "Central Washington University", None))
         self.label_4.setText(_translate("AboutDialog", "Author: Spencer Graffe", None))
 

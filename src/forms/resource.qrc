@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/icons">
+    <file>icons/report_bug.png</file>
     <file>icons/text_speak.png</file>
     <file>icons/color_settings.png</file>
     <file>icons/cwuLogo.png</file>

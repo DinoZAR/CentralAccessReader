@@ -14,6 +14,9 @@ from PyQt4 import QtGui
 
 _PROGRAM_ROOT = 'Nifty Prose Articulator'
 
+REPORT_BUG_URL = 'http://www.cwu.edu/central-access/report-bug-central-access-reader'
+SURVEY_URL = 'http://www.cwu.edu/central-access/central-access-reader-survey'
+
 def program_path(resourceFile):
     '''
     Returns the path to the program installation folder, whether it is in a
@@ -95,7 +98,17 @@ def js_command(functionName, args):
     print 'JavaScript: ' + commandString
     
     return commandString
+
+def prepare_bug_report(traceback, configuration):
+    '''
+    Returns a string representing the bug report that should be sent.
+    '''
+    out = 'Bug Report:\n---------------------------------------\n'
     
+    # Traceback
+    out += traceback + '\n'
+    
+    return out
 
 class UpdateQtThread(Thread):
     '''

@@ -5,6 +5,7 @@ Created on Jan 21, 2013
 '''
 import os
 import webbrowser
+import traceback
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt, QUrl, QMutex
 from PyQt4 import QtCore
@@ -18,12 +19,14 @@ from src.gui.configuration import Configuration
 from src.gui.npa_webview import NPAWebView
 from src.gui.bookmarks import BookmarksTreeModel, BookmarkNode
 from src.gui.about import AboutDialog
+from src.gui.bug_reporter import BugReporter
 from src.mathml.tts import MathTTS
 from src.mathml import pattern_editor
 from src.speech.assigner import Assigner
 from src.speech.worker import SpeechWorker
 from src.docx.importer import DocxDocument
 from src.misc import app_data_path, temp_path, program_path, js_command, UpdateQtThread
+from src import misc
 
 class MainWindow(QtGui.QMainWindow):
     loc = 0
@@ -359,44 +362,50 @@ class MainWindow(QtGui.QMainWindow):
         
     def openDocx(self, filePath):
         
-        if len(filePath) > 0:
-            url = temp_path('import')
-            baseUrl = QUrl.fromLocalFile(url)
-            print 'Base url:', url
-            
-            # Show a progress dialog
-            self.progressDialog.setWindowModality(Qt.WindowModal)
-            self.progressDialog.setWindowTitle('Opening Word document...')
-            self.progressDialog.setLabelText('Reading ' + os.path.basename(str(filePath)) + '...')
-            self.progressDialog.setValue(0)
-            self.progressDialog.show()
-            QtGui.qApp.processEvents()
+        try:
+            if len(filePath) > 0:
+                url = temp_path('import')
+                baseUrl = QUrl.fromLocalFile(url)
+                print 'Base url:', url
                 
-            # Run a separate thread for updating my stuff
-            t = UpdateQtThread()
-            t.start()
-            
-            self.document = DocxDocument(str(filePath))
-            docxHtml = self.document.getMainPage()
-            
-            # Clear the cache in the web view
-            QWebSettings.clearIconDatabase()
-            QWebSettings.clearMemoryCaches()
-            
-            self.assigner.prepare(docxHtml)
-            self.ui.webView.setHtml(docxHtml, baseUrl)
-            
-            # Set the root bookmark for the tree model
-            self.bookmarksModel = BookmarksTreeModel(self.document.getBookmarks())
-            self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
-            self.ui.bookmarksTreeView.expandAll()
-            
-            self.lastDocumentFilePath = filePath
-            
-            t.stop()
-            t.join()
-            self.progressDialog.hide()
-            
+                # Show a progress dialog
+                self.progressDialog.setWindowModality(Qt.WindowModal)
+                self.progressDialog.setWindowTitle('Opening Word document...')
+                self.progressDialog.setLabelText('Reading ' + os.path.basename(str(filePath)) + '...')
+                self.progressDialog.setValue(0)
+                self.progressDialog.show()
+                QtGui.qApp.processEvents()
+                    
+                # Run a separate thread for updating my stuff
+                t = UpdateQtThread()
+                t.start()
+                
+                self.document = DocxDocument(str(filePath))
+                docxHtml = self.document.getMainPage()
+                
+                # Clear the cache in the web view
+                QWebSettings.clearIconDatabase()
+                QWebSettings.clearMemoryCaches()
+                
+                self.assigner.prepare(docxHtml)
+                self.ui.webView.setHtml(docxHtml, baseUrl)
+                
+                # Set the root bookmark for the tree model
+                self.bookmarksModel = BookmarksTreeModel(self.document.getBookmarks())
+                self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
+                self.ui.bookmarksTreeView.expandAll()
+                
+                self.lastDocumentFilePath = filePath
+                
+                t.stop()
+                t.join()
+                self.progressDialog.hide()
+        
+        except Exception as e:
+            out = misc.prepare_bug_report(traceback.format_exc(), self.configuration)
+            dialog = BugReporter(out)
+            dialog.exec_()
+        
     def showOpenDocxDialog(self):
         filePath = QtGui.QFileDialog.getOpenFileName(self, 'Open Docx...',os.path.join(os.path.expanduser('~'), 'Documents'),'(*.docx)')
         self.openDocx(filePath)
@@ -409,12 +418,10 @@ class MainWindow(QtGui.QMainWindow):
         dialog.exec_()
         
     def openReportBugWindow(self):
-        url = 'http://www.cwu.edu/central-access/report-bug-central-access-reader'
-        webbrowser.open_new(url)
+        webbrowser.open_new(misc.REPORT_BUG_URL)
         
     def openSurveyWindow(self):
-        url = 'http://www.cwu.edu/central-access/central-access-reader-survey'
-        webbrowser.open_new(url)
+        webbrowser.open_new(misc.SURVEY_URL)
             
     def quit(self):
         self.close()
