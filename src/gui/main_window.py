@@ -206,6 +206,8 @@ class MainWindow(QtGui.QMainWindow):
         
     def onWord(self, offset, length, label, stream):
         
+        print 'On Word!', offset, length, label, stream
+        
         self.hasWorded = True
         
         if label == 'text':
@@ -239,12 +241,13 @@ class MainWindow(QtGui.QMainWindow):
         self.lastElement = [offset, length, label, stream]
         
     def onEndStream(self, stream, label):
-        print 'Stream ended!'
+        print 'Stream ended!', stream, label
         
-        if not self.hasWorded and (label == 'text'):
+        if (not self.hasWorded) and (label == 'text') and (not self.isFirst):
             self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
             
         self.hasWorded = False
+        self.isFirst = False
         
     def onSpeechFinished(self):
         print 'Speech finished.'

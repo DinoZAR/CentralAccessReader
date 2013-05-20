@@ -201,10 +201,11 @@ function HighlightNextElement(doLine, elementType, lastElementType) {
 // the TTS driver. This function will handle the offsets from the selection.
 function HighlightWord(doLine, offset, length) {
 	console.debug("HighlightWord()");
+	
 	// Get the parent element from the highlight from which we do these calculations
 	var p = null;
 	var childNum = 0;
-	if (!(highlightLine === null)) {
+	if (!(highlightLine == null)) {
 		p = highlightLine.parentNode;
 		childNum = GetChildIndex(highlightLine);
 	}
@@ -227,7 +228,6 @@ function HighlightWord(doLine, offset, length) {
 	
 	// Create the highlight
 	SetHighlight(range, doLine);
-	
 }
 
 // Returns the equation node if node is inside an equation.

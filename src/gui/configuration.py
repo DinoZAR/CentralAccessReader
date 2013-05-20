@@ -223,7 +223,10 @@ class Configuration(object):
             highlightTextColor = self._createRGBStringFromQColor(self.color_highlightText)
             highlightTextBackgroundColor = self._createRGBStringFromQColor(self.color_highlightBackground)
         else:
-            highlightTextColor = self._createRGBStringFromQColor(self.color_contentText)
+            if not self.highlight_line_enable:
+                highlightTextColor = self._createRGBStringFromQColor(self.color_contentText)
+            else:
+                highlightTextColor = self._createRGBStringFromQColor(self.color_highlightLineText)
             highlightTextBackgroundColor = 'transparent'
         
         # BEGIN CSS FILE
