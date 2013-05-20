@@ -243,8 +243,8 @@ class MainWindow(QtGui.QMainWindow):
     def onEndStream(self, stream, label):
         print 'Stream ended!', stream, label
         
-        if (not self.hasWorded) and (label == 'text') and (not self.isFirst):
-            self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
+        #if (not self.hasWorded) and (label == 'text') and (not self.isFirst):
+        #    self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightWord', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
             
         self.hasWorded = False
         self.isFirst = False

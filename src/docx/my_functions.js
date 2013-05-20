@@ -252,7 +252,7 @@ function GetEquation(node) {
 }
 
 // Returns a range that has the next word or element
-function GetNextWord(node, offset, type) {
+function GetNextWord(node, offset) {
 	console.debug("GetNextWord()");
 	var needToGoToNext = false;
 	
@@ -281,7 +281,7 @@ function GetNextWord(node, offset, type) {
 		if ((offset + 1) >= node.data.length) {
 			range.setStart(node, node.data.length - 1);
 			range.setEnd(node, node.data.length);
-			needToGoToNext = true;
+			needToGoToNext = false;
 		}
 		else {
 			range.setStart(node, offset);
