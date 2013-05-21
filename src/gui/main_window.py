@@ -18,6 +18,7 @@ from src.gui.mathmlcodes_dialog import MathMLCodesDialog
 from src.gui.configuration import Configuration
 from src.gui.npa_webview import NPAWebView
 from src.gui.bookmarks import BookmarksTreeModel, BookmarkNode
+from src.gui.pages import PagesTreeModel, PageNode
 from src.gui.about import AboutDialog
 from src.gui.bug_reporter import BugReporter
 from src.mathml.tts import MathTTS
@@ -150,8 +151,9 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.volumeSlider.valueChanged.connect(self.volumeSlider_valueChanged)
         self.ui.rateSlider.valueChanged.connect(self.rateSlider_valueChanged)
         
-        # Bookmark controls and widgets
+        # Bookmark and page controls and widgets
         self.ui.bookmarksTreeView.clicked.connect(self.bookmarksTree_clicked)
+        self.ui.pagesTreeView.clicked.connect(self.pagesTree_clicked)
         self.ui.bookmarkZoomInButton.clicked.connect(self.bookmarkZoomInButton_clicked)
         self.ui.bookmarkZoomOutButton.clicked.connect(self.bookmarkZoomOutButton_clicked)
         self.ui.expandBookmarksButton.clicked.connect(self.expandBookmarksButton_clicked)
@@ -390,10 +392,15 @@ class MainWindow(QtGui.QMainWindow):
                 self.assigner.prepare(docxHtml)
                 self.ui.webView.setHtml(docxHtml, baseUrl)
                 
-                # Set the root bookmark for the tree model
+                # Get and set the bookmarks
                 self.bookmarksModel = BookmarksTreeModel(self.document.getBookmarks())
                 self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
                 self.ui.bookmarksTreeView.expandAll()
+                
+                # Get and set the pages
+                self.pagesModel = PagesTreeModel(self.document.getPages())
+                self.ui.pagesTreeView.setModel(self.pagesModel)
+                self.ui.pagesTreeView.expandAll()
                 
                 self.lastDocumentFilePath = filePath
                 
@@ -449,8 +456,13 @@ class MainWindow(QtGui.QMainWindow):
     def bookmarksTree_clicked(self, index):
         node = index.internalPointer()
         self.javascriptMutex.lock()
-        print 'Navigating to anchor:', node.anchorId
-        self.ui.webView.page().mainFrame().evaluateJavaScript('GotoPageAnchor(' + node.anchorId + ');')
+        self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('GotoPageAnchor', [node.anchorId]))
+        self.javascriptMutex.unlock()
+        
+    def pagesTree_clicked(self, index):
+        node = index.internalPointer()
+        self.javascriptMutex.lock()
+        self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('GotoPageAnchor', [node.anchorId]))
         self.javascriptMutex.unlock()
         
     def bookmarkZoomInButton_clicked(self):
@@ -464,6 +476,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # Set the font
         self.ui.bookmarksTreeView.setFont(currentFont)
+        self.ui.pagesTreeView.setFont(currentFont)
         
     def bookmarkZoomOutButton_clicked(self):
         # Get the current font
@@ -478,6 +491,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # Set the font
         self.ui.bookmarksTreeView.setFont(currentFont)
+        self.ui.pagesTreeView.setFont(currentFont)
         
     def expandBookmarksButton_clicked(self):
         self.ui.bookmarksTreeView.expandAll()

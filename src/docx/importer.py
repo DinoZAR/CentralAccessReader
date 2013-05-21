@@ -227,6 +227,11 @@ class DocxDocument(object):
             style = query.get('{0}val'.format(w_NS))
             if style in self.paraStylesDict:
                 parentData['style'] = self.paraStylesDict[style]
+            
+        rowQuery = elem.find('./{0}rPr/{0}rStyle'.format(w_NS))
+        if rowQuery != None:
+            if 'pagenumber' in rowQuery.attrib['{0}val'.format(w_NS)].lower():
+                parentData['pageNumber'] = True
     
     def _parseRow(self, elem, parentData):
         data = {'type' : 'row'}
@@ -415,6 +420,7 @@ class DocxDocument(object):
         '''
         pRoot = None
         incrementAnchorId = False
+        
         # Figure out what my root HTML will be
         level = -1
         if 'style' in p:
@@ -424,6 +430,7 @@ class DocxDocument(object):
                 
         pRoot = HTML.Element(htmlLevels[level])
         
+        # Set the id for bookmark navigation
         if level >= 0:
             pRoot.set('id', str(anchorId))
         
@@ -459,6 +466,10 @@ class DocxDocument(object):
                 currTextNode = mathSpan
                 currTextNode.tail = ''
                 onRoot = False
+        
+        # Check to see if it is a page number
+        if 'pageNumber' in p:
+            pRoot.set('id', 'page' + pRoot.text_content())
         
         # Return what I got
         return (pRoot, incrementAnchorId)
@@ -510,9 +521,21 @@ class DocxDocument(object):
         
         return HTML.tostring(html, pretty_print=True)
     
+    def getPages(self):
+        '''
+        Returns the PageNodes for this document.
+        '''
+        myPages = []
+        
+        for p in self.paragraphData:
+            if 'pageNumber' in p:
+                myPages.append(self._generateParagraphHTMLNode(p, 0)[0].text_content())
+        
+        return myPages
+    
     def getBookmarks(self):
         '''
-        Returns the BookmarkNodes for this particular document.
+        Returns the BookmarkNodes for this document.
         '''
         # State data for creating the bookmarks
         parentStack = [(BookmarkNode(None, 'Docx'), 0)]

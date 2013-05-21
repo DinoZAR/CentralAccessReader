@@ -5,7 +5,6 @@ Created on Mar 5, 2013
 '''
 from PyQt4.QtCore import Qt, QAbstractItemModel, QModelIndex, QVariant
 
-
 class BookmarkNode(object):
     '''
     This node is used to store the bookmarking information necessary for
@@ -39,16 +38,11 @@ class BookmarkNode(object):
     
     def __repr__(self):
         myString =  '(' + self.name + ': ' + str(self.anchorId) + ')'
-#        if len(self.children) > 0:
-#            myString += '\n'
-#            for c in self.children:
-#                myString += '    ' + str(c) + '\n'
-                
         return myString
 
 class BookmarksTreeModel(QAbstractItemModel):
     '''
-    This tree model is used for the page navigation tree for our view.
+    This tree model is used for the bookmark navigation tree for our view.
     '''
 
     def __init__(self, bookmarkRoot, parent=None):
