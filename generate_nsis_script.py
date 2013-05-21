@@ -52,7 +52,7 @@ RequestExecutionLevel admin
     outString += '!define PRODUCT_VERSION "' + versionFile.read() + '"\n'
     versionFile.close()
     
-    outString += '''
+    outString += r'''
 !define PRODUCT_PUBLISHER "Central Washington University"
 !define PRODUCT_WEB_SITE "http://www.cwu.edu"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\Central Access Reader.exe"
@@ -128,7 +128,6 @@ Section "MainSection" SEC01
     # r'File "W:\Nifty Prose Articulator\workspace2\another\dist\Nifty Prose Articulator\mathjax\LICENSE"'
     
     for path, dirs, files in os.walk(DIST_DIRECTORY):
-        print 'Adding files from:', path
         outString += 'SetOutPath "' + os.path.join('$INSTDIR', remove_top_folders(path, 2)) + '"\n'
         for f in files:
             outString += 'File "' + os.path.join(os.path.abspath(path), f) + '"\n'

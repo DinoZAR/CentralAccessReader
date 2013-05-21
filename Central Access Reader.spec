@@ -1,7 +1,7 @@
 # -*- mode: python -*-
 
 a = Analysis(['src/main.py'],
-             pathex=['../'],
+             pathex=['W:\\Nifty Prose Articulator\\workspace2\\another'],
              hiddenimports=[],
              hookspath=None)
 			 

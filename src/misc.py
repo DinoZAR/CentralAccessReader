@@ -12,7 +12,7 @@ import platform
 from threading import Thread
 from PyQt4 import QtGui
 
-_PROGRAM_ROOT = 'Nifty Prose Articulator'
+_PROGRAM_ROOT = 'Central Access Reader'
 
 REPORT_BUG_URL = 'http://www.cwu.edu/central-access/report-bug-central-access-reader'
 SURVEY_URL = 'http://www.cwu.edu/central-access/central-access-reader-survey'
