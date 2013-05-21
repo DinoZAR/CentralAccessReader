@@ -5,6 +5,7 @@ Created on May 6, 2013
 '''
 from PyQt4.QtGui import QDialog, QWidget
 from src.forms.about_ui import Ui_AboutDialog
+from src.misc import program_path
 
 class AboutDialog(QDialog):
     '''
@@ -19,3 +20,7 @@ class AboutDialog(QDialog):
         
         self.ui = Ui_AboutDialog()
         self.ui.setupUi(self)
+        
+        versionFile = open(program_path('version.txt'), 'r')
+        self.ui.versionLabel.setText(versionFile.read())
+        versionFile.close()

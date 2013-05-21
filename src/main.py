@@ -16,7 +16,7 @@ from src.gui.main_window import MainWindow
 
 def main():
     
-    print 'Starting Nifty Prose Articulator...'
+    print 'Starting Central Access Reader...'
     
     # Check to see if my folders in my different paths exist. If they don't,
     # make them

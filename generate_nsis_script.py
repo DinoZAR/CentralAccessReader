@@ -44,11 +44,18 @@ if __name__ == '__main__':
 RequestExecutionLevel admin
 
 ; HM NIS Edit Wizard helper defines
-!define PRODUCT_NAME "Nifty Prose Articulator"
-!define PRODUCT_VERSION "1.0"
+!define PRODUCT_NAME "Central Access Reader"
+'''
+    
+    # Read in the version number from file
+    versionFile = open('version.txt')
+    outString += '!define PRODUCT_VERSION "' + versionFile.read() + '"\n'
+    versionFile.close()
+    
+    outString += '''
 !define PRODUCT_PUBLISHER "Central Washington University"
 !define PRODUCT_WEB_SITE "http://www.cwu.edu"
-!define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\Nifty Prose Articulator.exe"
+!define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\Central Access Reader.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 
@@ -66,7 +73,7 @@ SetCompressor lzma
 !define MUI_FINISHPAGE_SHOWREADME_FUNCTION finishpageaction
 
 Function finishpageaction
-CreateShortcut "$DESKTOP\Nifty Prose Articulator.lnk" "$INSTDIR\Nifty Prose Articulator.exe"
+CreateShortcut "$DESKTOP\Central Access Reader.lnk" "$INSTDIR\Central Access Reader.exe"
 FunctionEnd
 
 ; Welcome page
@@ -78,7 +85,7 @@ FunctionEnd
 ; Instfiles page
 !insertmacro MUI_PAGE_INSTFILES
 ; Finish page
-!define MUI_FINISHPAGE_RUN "$INSTDIR\Nifty Prose Articulator.exe"
+!define MUI_FINISHPAGE_RUN "$INSTDIR\Central Access Reader.exe"
 !insertmacro MUI_PAGE_FINISH
 
 ; Uninstaller pages
@@ -97,13 +104,13 @@ Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
     if args.bit == 32:
         outString += r'''
 OutFile "NPA_Setup_32.exe"
-InstallDir "$PROGRAMFILES\Nifty Prose Articulator"
+InstallDir "$PROGRAMFILES\Central Access Reader"
 '''
 
     elif args.bit == 64:
 	    outString += r'''
 OutFile "NPA_Setup_64.exe"
-InstallDir "$PROGRAMFILES64\Nifty Prose Articulator"
+InstallDir "$PROGRAMFILES64\Central Access Reader"
 '''
     
     outString += r'''
@@ -128,20 +135,20 @@ Section "MainSection" SEC01
     
     # Add more stuff
     outString += r'''
-    CreateShortcut "$SMPROGRAMS\Nifty Prose Articulator.lnk" "$INSTDIR\Nifty Prose Articulator.exe"
+    CreateShortcut "$SMPROGRAMS\Central Access Reader.lnk" "$INSTDIR\Central Access Reader.exe"
 SectionEnd
 
 Section -AdditionalIcons
   WriteIniStr "$INSTDIR\${PRODUCT_NAME}.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
-  CreateShortCut "$SMPROGRAMS\Nifty Prose Articulator\Uninstall.lnk" "$INSTDIR\uninst.exe"
+  CreateShortCut "$SMPROGRAMS\Central Access Reader\Uninstall.lnk" "$INSTDIR\uninst.exe"
 SectionEnd
 
 Section -Post
   WriteUninstaller "$INSTDIR\uninst.exe"
-  WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\Nifty Prose Articulator.exe"
+  WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\Central Access Reader.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\Nifty Prose Articulator.exe"
+  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\Central Access Reader.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
@@ -160,9 +167,9 @@ FunctionEnd
 Section Uninstall 
 
 RMDir /r $INSTDIR
-Delete "$SMPROGRAMS\Nifty Prose Articulator.lnk"
-Delete "$SMPROGRAMS\Nifty Prose Articulator\Uninstall.lnk"
-Delete "$DESKTOP\Nifty Prose Articulator.lnk"
+Delete "$SMPROGRAMS\Central Access Reader.lnk"
+Delete "$SMPROGRAMS\Central Access Reader\Uninstall.lnk"
+Delete "$DESKTOP\Central Access Reader.lnk"
 
 DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
   DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"

@@ -16,7 +16,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Nifty Prose Articulator</string>
+   <string>Central Access Reader</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -48,7 +48,7 @@
       <property name="handleWidth">
        <number>20</number>
       </property>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
