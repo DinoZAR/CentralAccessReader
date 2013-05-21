@@ -362,6 +362,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def openDocx(self, filePath):
         
+        t = UpdateQtThread()
         try:
             if len(filePath) > 0:
                 url = temp_path('import')
@@ -377,7 +378,6 @@ class MainWindow(QtGui.QMainWindow):
                 QtGui.qApp.processEvents()
                     
                 # Run a separate thread for updating my stuff
-                t = UpdateQtThread()
                 t.start()
                 
                 self.document = DocxDocument(str(filePath))
@@ -402,6 +402,9 @@ class MainWindow(QtGui.QMainWindow):
                 self.progressDialog.hide()
         
         except Exception as e:
+            t.stop()
+            t.join()
+            self.progressDialog.hide()
             out = misc.prepare_bug_report(traceback.format_exc(), self.configuration)
             dialog = BugReporter(out)
             dialog.exec_()

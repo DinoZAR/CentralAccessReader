@@ -105,8 +105,21 @@ def prepare_bug_report(traceback, configuration):
     '''
     out = 'Bug Report:\n---------------------------------------\n'
     
+    # Platform
+    out += 'Platform: ' + platform.system()
+    if platform.system() == 'Windows':
+        # Add some other data to it
+        data = platform.win32_ver()
+        out += ' ' + data[0] + ' ' + data[1] + ' ' + data[2] + '\n'
+    else:
+        out += '\n'
+        
+    
     # Traceback
-    out += traceback + '\n'
+    out += 'Traceback:\n' + traceback + '\n'
+    
+    # Settings
+    out += configuration.getBugReportString()
     
     return out
 

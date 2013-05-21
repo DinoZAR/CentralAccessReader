@@ -10,10 +10,10 @@ exe = EXE(pyz,
           a.scripts,
           exclude_binaries=1,
           name=os.path.join('build\\pyi.win32\\Nifty Prose Articulator', 'Nifty Prose Articulator.exe'),
-          debug=True,
+          debug=False,
           strip=None,
           upx=True,
-          console=True )
+          console=False )
 coll = COLLECT(exe,
 			   Tree(os.path.abspath('src/forms/icons')),
                a.binaries,

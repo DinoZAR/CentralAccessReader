@@ -50,7 +50,41 @@ class Configuration(object):
         
         # Font settings
         self.font_all = 'Arial'
-    
+        
+    def getBugReportString(self):
+        '''
+        Returns a string describing the settings for the bug report. It will
+        not include information that is not anonymous.
+        '''
+        out = 'Settings:\n'
+        out += '----------------------------------------------\n\n'
+        
+        # Speech
+        out += 'Speech:\n'
+        out += '- Volume: ' + str(self.volume) + '\n'
+        out += '- Rate: ' + str(self.rate) + '\n'
+        out += '- Voice: ' + self.voice + '\n'
+        out += '- Tag Images: ' + str(self.tag_image) + '\n'
+        out += '- Tag Math: ' + str(self.tag_math) + '\n'
+        out += '\n'
+        
+        # Colors
+        out += 'Colors:\n'
+        out += '- Enable Text Highlight: ' + str(self.highlight_text_enable) + '\n'
+        out += '- Enable Line Highlight: ' + str(self.highlight_line_enable) + '\n'
+        out += '- Content Text: ' + self._createRGBStringFromQColor(self.color_contentText) + '\n'
+        out += '- Content Background: ' + self._createRGBStringFromQColor(self.color_contentBackground) + '\n'
+        out += '- Highlight Text: ' + self._createRGBStringFromQColor(self.color_highlightText) + '\n'
+        out += '- Highlight Background: ' + self._createRGBStringFromQColor(self.color_highlightBackground) + '\n'
+        out += '- Highlight Line Text: ' + self._createRGBStringFromQColor(self.color_highlightLineText) + '\n'
+        out += '- Highlight Line Background: ' + self._createRGBStringFromQColor(self.color_highlightLineBackground) + '\n'
+        out += '\n'
+        
+        # Font
+        out += 'Font: ' + self.font_all + '\n'
+        
+        return out
+        
     def loadFromFile(self, filePath):
         print 'Loading config...'
         
