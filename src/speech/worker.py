@@ -6,10 +6,9 @@ Created on Apr 8, 2013
 from PyQt4.QtCore import QThread, QMutex
 from PyQt4 import QtCore, QtGui
 from src.speech import driver
-import pythoncom
-import os
 import platform
 import subprocess
+import re
 from src.misc import temp_path, program_path
 
 class SpeechWorker(QThread):
@@ -25,14 +24,16 @@ class SpeechWorker(QThread):
     def __init__(self):
         QThread.__init__(self)
         
-        self.outputList = []
-        self.running = False
+        self._outputList = []
+        self._running = False
         
-        self.volume = 100
-        self.rate = 50
-        self.voice = ''
+        self._volume = 100
+        self._rate = 50
+        self._voice = ''
         
-        self.isChange = False
+        self._stopMP3Creation = False
+        
+        self._isChange = False
         
     def run(self):
         
@@ -43,7 +44,7 @@ class SpeechWorker(QThread):
             self.onEndStream.emit(stream, label)
         
         def myOnFinish():
-            self.running = False
+            self._running = False
             self.onFinish.emit()
         
         self.ttsEngine = driver.get_driver()
@@ -51,85 +52,105 @@ class SpeechWorker(QThread):
         self.ttsEngine.connect('onFinish', myOnFinish)
         self.ttsEngine.connect('onEndStream', myOnEndStream)
         
-        self.ttsEngine.setVolume(self.volume)
-        self.ttsEngine.setRate(self.rate)
-        self.ttsEngine.setVoice(self.voice)
+        self.ttsEngine.setVolume(self._volume)
+        self.ttsEngine.setRate(self._rate)
+        self.ttsEngine.setVoice(self._voice)
         
         while True:
-            if self.running:
+            if self._running:
                 self.queueLock.lock()
-                for o in self.outputList:
+                for o in self._outputList:
                     self.ttsEngine.add(text=o[0], label=o[1])
                 self.queueLock.unlock()
                     
-                self.outputList = []
+                self._outputList = []
                 
                 self.ttsEngine.start()
                 
-                # Spin here until I'm not running anymore
-                while self.running:
+                # Spin here until I'm not _running anymore
+                while self._running:
                     pass
             
-            if self.isChange:
-                self.ttsEngine.setVolume(self.volume)
-                self.ttsEngine.setRate(self.rate)
-                self.ttsEngine.setVoice(self.voice)
-                self.isChange = False
+            if self._isChange:
+                self.ttsEngine.setVolume(self._volume)
+                self.ttsEngine.setRate(self._rate)
+                self.ttsEngine.setVoice(self._voice)
+                self._isChange = False
         
         return
     
     
     def startPlayback(self):
-        self.running = True
+        self._running = True
     
     def stopPlayback(self):
-        if self.running:
+        if self._running:
             self.ttsEngine.stop()
-            self.running = False
+            self._running = False
+            
+    def stopMP3(self):
+        self._stopMP3Creation = True
+        
+    def mp3Interrupted(self):
+        return self._stopMP3Creation
             
     def saveToMP3(self, mp3Path, outputList):
+        
+        self._stopMP3Creation = False
+        
         # Create the WAV file first
+        def myIsStop():
+            return self._stopMP3Creation
+        
         def myOnProgress(percent):
             self.onProgress.emit(int((float(percent) / 100.0) * 70.0))
         
         wavSavePath = temp_path('tmp.wav')
         
         self.onProgressLabel.emit('Speaking into WAV...')
-        self.ttsEngine.speakToWavFile(wavSavePath, outputList, myOnProgress)
+        self.ttsEngine.speakToWavFile(wavSavePath, outputList, myOnProgress, myIsStop)
         
-        # Then convert it to MP3
-        self.onProgressLabel.emit('Converting to MP3...')
-        lameExe = ''
-        if '64' in platform.architecture()[0]:
-            lameExe = program_path('src/lame_64.exe')
-        else:
-            lameExe = program_path('src/lame_32.exe')
-        lameCommand = lameExe + ' -h "' + wavSavePath + '" "' + mp3Path + '"'
-        ps = subprocess.Popen(lameCommand)
-        
-        while ps.poll() == None:
-            QtGui.qApp.processEvents()
+        if not self._stopMP3Creation:
+            # Then convert it to MP3
+            self.onProgressLabel.emit('Converting to MP3...')
+            lameExe = ''
+            if '64' in platform.architecture()[0]:
+                lameExe = program_path('src/lame_64.exe')
+            else:
+                lameExe = program_path('src/lame_32.exe')
+            lameCommand = lameExe + ' -h "' + wavSavePath + '" "' + mp3Path + '"'
+            ps = subprocess.Popen(lameCommand, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            
+            while ps.poll() == None:
+                QtGui.qApp.processEvents()
+                if self._stopMP3Creation:
+                    ps.terminate()
+                    break
+                out = ps.stderr.readline()
+                if re.search(r'\([0-9]+%\)', out) != None:
+                    percent = int(float(re.search(r'\([0-9]+%\)', out).group(0)[1:-2]) * 0.3)
+                    self.onProgress.emit(69 + percent)
         
         self.onProgress.emit(100)
     
     def setVolume(self, v):
-        self.volume = v
-        self.isChange = True
+        self._volume = v
+        self._isChange = True
     
     def setRate(self, r):
-        self.rate = r
-        self.isChange = True
+        self._rate = r
+        self._isChange = True
         
     def setVoice(self, voice):
-        self.voice = voice
-        self.isChange = True
+        self._voice = voice
+        self._isChange = True
         
     def getVoiceList(self):
         return self.ttsEngine.getVoiceList()
     
     def addToQueue(self, text, label):
         self.queueLock.lock()
-        self.outputList.append([unicode(text),unicode(label)])
+        self._outputList.append([unicode(text),unicode(label)])
         self.queueLock.unlock()
         
     def connect_signals(self, mainWindow):

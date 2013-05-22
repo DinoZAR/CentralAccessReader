@@ -332,20 +332,22 @@ class MainWindow(QtGui.QMainWindow):
                 
             self.speechThread.onProgress.connect(myOnProgress)
             self.speechThread.onProgressLabel.connect(myOnProgressLabel)
+            self.progressDialog.canceled.connect(self.speechThread.stopMP3)
             self.speechThread.saveToMP3(str(fileName), outputList)
             
             # Just hide it so that we can use it later
             self.progressDialog.hide()
             
             # Show a message box saying the file was successfully saved
-            messageBox = QtGui.QMessageBox()
-            messageText = 'Success!\nYour MP3 was saved as:\n' + str(fileName)
-            messageBox.setText(messageText)
-            messageBox.setStandardButtons(QtGui.QMessageBox.Ok)
-            messageBox.setDefaultButton(QtGui.QMessageBox.Ok)
-            messageBox.setWindowTitle('MP3 Saved Successfully')
-            messageBox.setIcon(QtGui.QMessageBox.Information)
-            messageBox.exec_()
+            if not self.speechThread.mp3Interrupted():
+                messageBox = QtGui.QMessageBox()
+                messageText = 'Success!\nYour MP3 was saved as:\n' + str(fileName)
+                messageBox.setText(messageText)
+                messageBox.setStandardButtons(QtGui.QMessageBox.Ok)
+                messageBox.setDefaultButton(QtGui.QMessageBox.Ok)
+                messageBox.setWindowTitle('MP3 Saved Successfully')
+                messageBox.setIcon(QtGui.QMessageBox.Information)
+                messageBox.exec_()
         
     def zoomInButton_clicked(self):
         self.ui.webView.zoomIn()

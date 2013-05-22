@@ -148,7 +148,7 @@ class SAPIDriver(object):
         self.running = False
         self.queue = []
         
-    def speakToWavFile(self, wavFilePath, outputList, progressCallback):
+    def speakToWavFile(self, wavFilePath, outputList, progressCallback, checkStopFunction):
         '''
         This is a separate function that runs on a different thread.
         This will not return until it has completely written the speech to the
@@ -159,6 +159,9 @@ class SAPIDriver(object):
         
         The progressCallback should be a function that takes an int from 0-100,
         100 being when it is done.
+        
+        The checkStopFunction returns a boolean value saying whether we need to
+        stop creation, False being don't stop, and True being stop.
         '''
         pythoncom.CoInitialize()
     
@@ -185,11 +188,14 @@ class SAPIDriver(object):
         for i in range(len(outputList)):
             progressCallback(int(float(i) / len(outputList) * 100.0 - 1))
             voice.Speak(outputList[i][0], 1)
-            voice.WaitUntilDone(0xFFFFFFF) # Maximum time
-        
-        progressCallback(99)
+            while not voice.WaitUntilDone(10):
+                if checkStopFunction():
+                    break
+            if checkStopFunction():
+                break
         
         saveFileStream.Close()
+        progressCallback(99)
         
     def waitUntilDone(self):
         while self.running:
