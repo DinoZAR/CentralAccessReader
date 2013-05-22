@@ -87,7 +87,7 @@ class DocxDocument(object):
         self.rels = self._getRels(zip)
         self.styles = self._getStyles(zip)
         self.paraStylesDict = self._getParaStylesDict(self.styles)
-        self.numberingDict = self._getNumberingDict(zip)
+        #self.numberingDict = self._getNumberingDict(zip)
         
         # Open my main document file
         document = zip.open('word/document.xml', 'r')
@@ -161,10 +161,17 @@ class DocxDocument(object):
                 levels = abstractNum.findall('./{0}lvl'.format(w_NS))
                 levelDicts = {}
                 for l in levels:
-                    format = l.find('./{0}numFmt'.format(w_NS)).attrib['{0}val'.format(w_NS)]
-                    #start = l.find('./{0}start'.format(w_NS)).attrib['{0}val'.format(w_NS)]
                     key = l.attrib['{0}ilvl'.format(w_NS)]
-                    levelDicts[key] = {'format': format}
+                    levelDicts[key] = {}
+                    format = l.find('./{0}numFmt'.format(w_NS)).attrib['{0}val'.format(w_NS)]
+                    
+                    if l.find('./{0}start'.format(w_NS)):
+                        levelDicts[key]['start'] = l.find('./{0}start'.format(w_NS)).attrib['{0}val'.format(w_NS)]
+                    else:
+                        levelDicts[key]['start'] = 1
+                    
+                    #start = l.find('./{0}start'.format(w_NS)).attrib['{0}val'.format(w_NS)]
+                    levelDicts[key]['format'] = format
                 
                 key = e.attrib['{0}numId'.format(w_NS)]
                 myDict[key] = levelDicts
@@ -183,13 +190,14 @@ class DocxDocument(object):
         parseData['data'] = []
         
         # Add bullet or numbered list information if any
-        if self._isList(elem):
-            numId = elem.find('./{0}pPr/{0}numPr/{0}numId'.format(w_NS)).attrib['{0}val'.format(w_NS)]
-            levelId = elem.find('./{0}pPr/{0}numPr/{0}ilvl'.format(w_NS)).attrib['{0}val'.format(w_NS)]
-            myNumDict = self.numberingDict[numId][levelId]
-            parseData['list'] = True
-            parseData['format'] = myNumDict['format']
-            parseData['start'] = int(myNumDict['start'])
+#         if self._isList(elem):
+#             numId = elem.find('./{0}pPr/{0}numPr/{0}numId'.format(w_NS)).attrib['{0}val'.format(w_NS)]
+#             levelId = elem.find('./{0}pPr/{0}numPr/{0}ilvl'.format(w_NS)).attrib['{0}val'.format(w_NS)]
+#             myNumDict = self.numberingDict[numId][levelId]
+#             parseData['list'] = True
+#             parseData['format'] = myNumDict['format']
+#             parseData['start'] = int(myNumDict['start'])
+#             parseData['level'] = int(levelId)
         
         for child in elem:
             
@@ -365,34 +373,34 @@ class DocxDocument(object):
         i = 0
         while i < len(self.paragraphData):
             if self.paragraphData[i]['type'] == 'paragraph':
-                if 'list' in self.paragraphData[i]:
-                    # Make a list of bullets or numbered elements
-                    parent = None
-                    startFormat = self.paragraphData[i]['format']
-                    if startFormat == 'bullet':
-                        parent = etree.SubElement(body, 'ul')
-                    elif startFormat == 'decimal':
-                        parent = etree.SubElement(body, 'ol')
-                    else:
-                        parent = etree.SubElement(body, 'ul')
-                    while i < len(self.paragraphData) and 'list' in self.paragraphData[i]:
-                        if self.paragraphData[i]['format'] != startFormat:
-                            break
-                        data = self._generateParagraphHTMLNode(self.paragraphData[i], anchorCount)
-                        if data[1]:
-                            anchorCount += 1
-                        childElem = etree.SubElement(parent, 'li')
-                        childElem.append(data[0])
-                        i += 1
-                    
+                
+#                 if 'list' in self.paragraphData[i]:
+#                     
+#                     # Make a list of bullets or numbered elements
+#                     parent = None
+#                     startFormat = self.paragraphData[i]['format']
+#                     if startFormat == 'bullet':
+#                         parent = etree.SubElement(body, 'ul')
+#                     elif startFormat == 'decimal':
+#                         parent = etree.SubElement(body, 'ol')
+#                     else:
+#                         parent = etree.SubElement(body, 'ul')
+#                     while i < len(self.paragraphData) and 'list' in self.paragraphData[i]:
+#                         if self.paragraphData[i]['format'] != startFormat:
+#                             break
+#                         data = self._generateParagraphHTMLNode(self.paragraphData[i], anchorCount)
+#                         if data[1]:
+#                             anchorCount += 1
+#                         childElem = etree.SubElement(parent, 'li')
+#                         childElem.append(data[0])
+#                         i += 1
+                data = self._generateParagraphHTMLNode(self.paragraphData[i], anchorCount)
+                if data[1]:
+                    anchorCount += 1
+                    body.append(data[0])
                 else:
-                    data = self._generateParagraphHTMLNode(self.paragraphData[i], anchorCount)
-                    if data[1]:
-                        anchorCount += 1
-                        body.append(data[0])
-                    else:
-                        body.append(data[0])
-                    i += 1
+                    body.append(data[0])
+                i += 1
             elif self.paragraphData[i]['type'] == 'table':
                 body.append(self._generateTableHTMLNode(self.paragraphData[i]))
                 i += 1
