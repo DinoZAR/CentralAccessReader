@@ -104,20 +104,36 @@ class ColorSettings(QtGui.QDialog):
         self.beforeConfiguration.saveToFile(app_data_path('configuration.xml'))
     
     def contentTextButton_clicked(self):
-        self.configuration.color_contentText = QtGui.QColorDialog.getColor(initial=self.configuration.color_contentText)
-        self.updateSettings()
+        dialog = QtGui.QColorDialog()
+        def myAccept():
+            self.configuration.color_contentText = dialog.currentColor()
+            self.updateSettings()
+        dialog.accepted.connect(myAccept)
+        dialog.exec_()
     
     def contentBackgroundButton_clicked(self):
-        self.configuration.color_contentBackground = QtGui.QColorDialog.getColor(initial=self.configuration.color_contentBackground)
-        self.updateSettings()
+        dialog = QtGui.QColorDialog()
+        def myAccept():
+            self.configuration.color_contentBackground = dialog.currentColor()
+            self.updateSettings()
+        dialog.accepted.connect(myAccept)
+        dialog.exec_()
     
     def highlighterTextButton_clicked(self):
-        self.configuration.color_highlightText = QtGui.QColorDialog.getColor(initial=self.configuration.color_highlightText)
-        self.updateSettings()
+        dialog = QtGui.QColorDialog()
+        def myAccept():
+            self.configuration.color_highlightText = dialog.currentColor()
+            self.updateSettings()
+        dialog.accepted.connect(myAccept)
+        dialog.exec_()
         
     def highlighterBackgroundButton_clicked(self):
-        self.configuration.color_highlightBackground = QtGui.QColorDialog.getColor(initial=self.configuration.color_highlightBackground)
-        self.updateSettings()
+        dialog = QtGui.QColorDialog()
+        def myAccept():
+            self.configuration.color_highlightBackground = dialog.currentColor()
+            self.updateSettings()
+        dialog.accepted.connect(myAccept)
+        dialog.exec_()
         
     def enableHTextCheckBox_clicked(self):
         state = self.ui.enableHTextCheckBox.checkState()
@@ -140,12 +156,20 @@ class ColorSettings(QtGui.QDialog):
         self.updateSettings()
         
     def highlighterLineTextButton_clicked(self):
-        self.configuration.color_highlightLineText = QtGui.QColorDialog.getColor(initial=self.configuration.color_highlightLineText)
-        self.updateSettings()
+        dialog = QtGui.QColorDialog()
+        def myAccept():
+            self.configuration.color_highlightLineText = dialog.currentColor()
+            self.updateSettings()
+        dialog.accepted.connect(myAccept)
+        dialog.exec_()
         
     def highlighterLineBackgroundButton_clicked(self):
-        self.configuration.color_highlightLineBackground = QtGui.QColorDialog.getColor(initial=self.configuration.color_highlightLineBackground)
-        self.updateSettings()
+        dialog = QtGui.QColorDialog()
+        def myAccept():
+            self.configuration.color_highlightLineBackground = dialog.currentColor()
+            self.updateSettings()
+        dialog.accepted.connect(myAccept)
+        dialog.exec_()
         
     def fontComboBox_currentFontChanged(self, newFont):
         fontFamily = str(newFont.family())
