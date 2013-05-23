@@ -527,7 +527,7 @@ class DocxDocument(object):
         # Write out the images to the import folder
         self._saveImages()
         
-        return HTML.tostring(html, pretty_print=True)
+        return HTML.tostring(html)
     
     def getPages(self):
         '''

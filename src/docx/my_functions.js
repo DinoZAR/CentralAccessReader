@@ -1,3 +1,10 @@
+var highlight; // The highlighter element that has the highlighted content.
+var highlightLine; // The highlighter element that has the whole line that will be highlighted
+var lastElement;
+var beginOffset;
+var lastHeadingElement;
+var startFromHeading = false;
+
 // Have tooltips pop up anytime there is an image with a tooltip
 $(function() {
     $( document ).tooltip({
@@ -19,7 +26,10 @@ $(function() {
 
 // Used in page navigation to move to an anchor point with specific id
 function GotoPageAnchor(anchorName) {
+	console.debug("GotoPageAnchor()");
 	element_to_scroll_to = document.getElementById(anchorName);
+	startFromHeading = true;
+	lastHeadingElement = element_to_scroll_to;
 	$.scrollTo(element_to_scroll_to, {duration: 200});
 }
 
@@ -35,17 +45,13 @@ function ScrollToHighlight() {
 // ---------------------------------------------------------------------------
 // HIGHLIGHTING FUNCTIONS
 // ---------------------------------------------------------------------------
-var highlight; // The highlighter element that has the highlighted content.
-var highlightLine; // The highlighter element that has the whole line that will be highlighted
-var lastElement;
-var beginOffset;
 
-// Sets the beginning to start the speech. It will start at beginning if no selection was made.
-function SetBeginning(doLine, elementType) {
-	console.debug("SetBeginning()");
+// Returns a range that has the range of selection, whether that is the user or
+// automatic
+function GetSelectionRange() {
 	var range = window.getSelection();
-	if (!(range === null)) {
-		
+	if (!range.isCollapsed) {
+		console.debug("Got something!");
 		range = window.getSelection();
 		
 		if (range.anchorNode.compareDocumentPosition(range.focusNode) & Node.DOCUMENT_POSITION_PRECEDING) {
@@ -77,12 +83,49 @@ function SetBeginning(doLine, elementType) {
 		}
 	}
 	else {
-		// Get the first deepest child in the document and go from there
-		range = document.createRange();
-		range.selectNode(DeepestChild(document.body.firstChild));
-		range.startOffset = 0;
-		range.endOffset = 1;
+		// Start from the heading, if applicable
+		if (startFromHeading == true) {
+			console.debug("Starting from heading...");
+			range = document.createRange();
+			range.selectNodeContents(DeepestChild(lastHeadingElement))
+			range.startOffset = 0;
+		}
+		else {
+			// Get the first deepest child in the document and go from there
+			range = window.getSelection();
+			range.selectAllChildren(document.body);
+			var newRange = document.createRange();
+			newRange.setStart(range.focusNode, range.focusOffset);
+			newRange.setEnd(range.anchorNode, range.anchorOffset);
+			range = newRange;
+		}
+		beginOffset = 0;
+		range.setEnd(document.body.lastChild, document.body.lastChild.length);
 	}
+	return range;
+}
+
+// Gets the HTML content of my selection and returns it
+function GetSelectionHTML() {
+	console.debug("GetSelectionHTML()");
+	var range = GetSelectionRange();
+	return GetHTMLSource(range);
+}
+
+function GetHTMLSource(range) {
+    var clonedSelection = range.cloneContents();
+	div = document.createElement('div');
+    div.appendChild(clonedSelection);
+    return div.innerHTML;
+}
+
+// Sets the beginning to start the speech. It will start at beginning if no selection was made.
+function SetBeginning(doLine, elementType) {
+	console.debug("SetBeginning()");
+	var range = GetSelectionRange();
+	startFromHeading = false;
+	lastHeadingElement = null;
+	console.debug("- Selection content: " + GetHTMLSource(range));
 	
 	beginOffset = range.startOffset;
 	
@@ -105,6 +148,8 @@ function SetBeginning(doLine, elementType) {
 	if (goToNext == true) {
 		HighlightNextElement(doLine, elementType, elementType);
 	}
+	
+	ScrollToHighlight();
 }
 
 // Move the highlight to the next element that should be highlighted 
@@ -220,6 +265,13 @@ function HighlightWord(doLine, offset, length) {
 	
 	// Get the text content of the child I want
 	var t = $(p).contents()[childNum];
+	console.debug("- p: " + p.toString());
+	console.debug("- childs: " + $(p).contents().length);
+	console.debug("- childNum: " + childNum.toString());
+	console.debug("- t: " + t.toString());
+	console.debug("- text content: " + t.textContent);
+	console.debug("- start offset: " + (offset + beginOffset).toString());
+	console.debug("- end offset: " + (offset + length + beginOffset).toString());
 	
 	// Create range and select that text correctly
 	var range = document.createRange();
@@ -272,14 +324,16 @@ function GetNextWord(node, offset) {
 	}
 
 	// See if it is anything else, like text
-	else if (node.nodeName == "#text"){
+	if (node.nodeName == "#text"){
 		range = document.createRange();
 		
 		console.debug("Content: <start>" + node.data + "<end><offset>" + offset.toString() + "<length>" + node.data.length.toString());
 		
 		// Adjust end if they exceed the length of the data
 		if ((offset + 1) >= node.data.length) {
-			range.setStart(node, node.data.length - 1);
+			if (node.data.length > 0) {
+				range.setStart(node, node.data.length - 1);
+			}
 			range.setEnd(node, node.data.length);
 			needToGoToNext = false;
 		}
@@ -289,6 +343,12 @@ function GetNextWord(node, offset) {
 		}
 		
 		return [range, needToGoToNext, false];
+	}
+	
+	else {
+		var range = document.createRange();
+		range.selectNode(node);
+		return [range, needToGoToNext, false]
 	}
 }
 

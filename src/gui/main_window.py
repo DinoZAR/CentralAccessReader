@@ -197,12 +197,11 @@ class MainWindow(QtGui.QMainWindow):
         
         # Get list of string output for feeding into my speech
         outputList = []
-        if len(self.ui.webView.selectedHtml()) > 0:
-            print 'HTML Content:', [unicode(self.ui.webView.selectedHtml())]
-            outputList = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml()), self.configuration)
-        else:
-            self.ui.webView.selectAll()
-            outputList = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml()), self.configuration)
+        self.javascriptMutex.lock()
+        selectedHTML = self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('GetSelectionHTML', [])).toString()
+        self.javascriptMutex.unlock()
+        print 'HTML Content:', [unicode(selectedHTML)]
+        outputList = self.assigner.getSpeech(unicode(selectedHTML), self.configuration)
         
         print 'Output:', outputList
         
@@ -328,11 +327,9 @@ class MainWindow(QtGui.QMainWindow):
             
             # Get my speech output list
             outputList = []
-            if len(self.ui.webView.selectedHtml()) > 0:
-                outputList = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml()), self.configuration)
-            else:
-                self.ui.webView.selectAll()
-                outputList = self.assigner.getSpeech(unicode(self.ui.webView.selectedHtml()), self.configuration)
+            selectedHTML = self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('GetSelectionHTML', [])).toString()
+            outputList = self.assigner.getSpeech(unicode(selectedHTML), self.configuration)
+                
             
             # Get the progress of the thing from the speech thread
             def myOnProgress(percent):
