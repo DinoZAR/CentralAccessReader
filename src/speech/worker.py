@@ -118,8 +118,12 @@ class SpeechWorker(QThread):
                 lameExe = program_path('src/lame_64.exe')
             else:
                 lameExe = program_path('src/lame_32.exe')
+            
+            startupInfo = subprocess.STARTUPINFO()
+            startupInfo.dwFlags = subprocess.STARTF_USESTDHANDLES | subprocess.STARTF_USESHOWWINDOW
+            startupInfo.wShowWindow = subprocess.SW_HIDE
             lameCommand = lameExe + ' -h "' + wavSavePath + '" "' + mp3Path + '"'
-            ps = subprocess.Popen(lameCommand, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            ps = subprocess.Popen(lameCommand, stdout=subprocess.PIPE, stderr=subprocess.PIPE, startupinfo=startupInfo)
             
             while ps.poll() == None:
                 QtGui.qApp.processEvents()
