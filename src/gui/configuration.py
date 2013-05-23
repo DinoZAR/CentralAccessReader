@@ -48,6 +48,10 @@ class Configuration(object):
         self.color_highlightLineText = QColor(0,0,0)
         self.color_highlightLineBackground = QColor(0,255,0)
         
+        # Zoom settings
+        self.zoom_content = 1.0
+        self.zoom_navigation_ptsize = 14
+        
         # Font settings
         self.font_all = 'Arial'
         
@@ -83,6 +87,11 @@ class Configuration(object):
         # Font
         out += 'Font: ' + self.font_all + '\n'
         
+        # Zoom
+        out += 'Zoom:/n'
+        out += 'Content: ' + str(self.zoom_content) + '\n'
+        out += 'Navigation: ' + str(self.zoom_navigation_ptsize) + '\n'
+        
         return out
         
     def loadFromFile(self, filePath):
@@ -94,70 +103,69 @@ class Configuration(object):
         try:
             configFile = open(filePath, 'r')
             configDOM = etree.parse(configFile)
-        except IOError:
-            self.saveToFile(filePath)
-            configFile = open(filePath, 'r')
-            configDOM = etree.parse(configFile)
+            configFile.close()
+            
+            # Speech Settings
+            self.volume = int(configDOM.xpath('/Configuration/Volume')[0].text)
+            self.rate = int(configDOM.xpath('/Configuration/Rate')[0].text)
+            self.voice = configDOM.xpath('/Configuration/Voice')[0].text
+            if self.voice == None:
+                self.voice = ''
+                
+            self.tag_image = int(configDOM.xpath('/Configuration/TagImage')[0].text)
+            if self.tag_image == 1:
+                self.tag_image = True
+            else:
+                self.tag_image = False
+            
+            self.tag_math = int(configDOM.xpath('/Configuration/TagMath')[0].text)
+            if self.tag_math == 1:
+                self.tag_math = True
+            else:
+                self.tag_math = False
+            
+                
+            # Highlighter Settings
+            self.highlight_text_enable = int(configDOM.xpath('/Configuration/EnableTextHighlight')[0].text)
+            if self.highlight_text_enable == 1:
+                self.highlight_text_enable = True
+            else:
+                self.highlight_text_enable = False
+            
+            self.highlight_line_enable = int(configDOM.xpath('/Configuration/EnableLineHighlight')[0].text)
+            if self.highlight_line_enable == 1:
+                self.highlight_line_enable = True
+            else:
+                self.highlight_line_enable = False
+            
+            # Color Settings
+            self.color_contentText = self._createQColorFromCommaSeparated(configDOM.xpath('/Configuration/Colors/ContentText')[0].text)
+            self.color_contentBackground = self._createQColorFromCommaSeparated(configDOM.xpath('/Configuration/Colors/ContentBackground')[0].text)
+            
+            self.color_highlightText = self._createQColorFromCommaSeparated(configDOM.xpath('/Configuration/Colors/HighlightText')[0].text)
+            self.color_highlightBackground = self._createQColorFromCommaSeparated(configDOM.xpath('/Configuration/Colors/HighlightBackground')[0].text)
+            
+            self.color_highlightLineText = self._createQColorFromCommaSeparated(configDOM.xpath('/Configuration/Colors/HighlightLineText')[0].text)
+            self.color_highlightLineBackground = self._createQColorFromCommaSeparated(configDOM.xpath('/Configuration/Colors/HighlightLineBackground')[0].text)
+            
+            # Font Settings
+            self.font_all = configDOM.xpath('/Configuration/Fonts/All')[0].text
+            
+            # Zoom Settings
+            self.zoom_content = float(configDOM.xpath('/Configuration/Zooms/Content')[0].text)
+            self.zoom_navigation_ptsize = int(configDOM.xpath('/Configuration/Zooms/Navigation')[0].text)
+            
+            # Show Tutorial
+            b = configDOM.xpath('/Configuration/ShowTutorial')[0].text
+            if b == '1':
+                self.showTutorial = True
+            else:
+                self.showTutorial = False
+            
         except Exception:
             # If the thing doesn't parse, then destroy settings and make new one
+            self.restoreDefaults()
             self.saveToFile(filePath)
-            configFile = open(filePath, 'r')
-            configDOM = etree.parse(configFile)
-            
-        configFile.close()
-        
-        # Speech Settings
-        self.volume = int(configDOM.xpath('/Configuration/Volume')[0].text)
-        self.rate = int(configDOM.xpath('/Configuration/Rate')[0].text)
-        self.voice = configDOM.xpath('/Configuration/Voice')[0].text
-        if self.voice == None:
-            self.voice = ''
-            
-        self.tag_image = int(configDOM.xpath('/Configuration/TagImage')[0].text)
-        if self.tag_image == 1:
-            self.tag_image = True
-        else:
-            self.tag_image = False
-        
-        self.tag_math = int(configDOM.xpath('/Configuration/TagMath')[0].text)
-        if self.tag_math == 1:
-            self.tag_math = True
-        else:
-            self.tag_math = False
-        
-            
-        # Highlighter Settings
-        self.highlight_text_enable = int(configDOM.xpath('/Configuration/EnableTextHighlight')[0].text)
-        if self.highlight_text_enable == 1:
-            self.highlight_text_enable = True
-        else:
-            self.highlight_text_enable = False
-        
-        self.highlight_line_enable = int(configDOM.xpath('/Configuration/EnableLineHighlight')[0].text)
-        if self.highlight_line_enable == 1:
-            self.highlight_line_enable = True
-        else:
-            self.highlight_line_enable = False
-        
-        # Color Settings
-        self.color_contentText = self._createQColorFromCommaSeparated(configDOM.xpath('/Configuration/Colors/ContentText')[0].text)
-        self.color_contentBackground = self._createQColorFromCommaSeparated(configDOM.xpath('/Configuration/Colors/ContentBackground')[0].text)
-        
-        self.color_highlightText = self._createQColorFromCommaSeparated(configDOM.xpath('/Configuration/Colors/HighlightText')[0].text)
-        self.color_highlightBackground = self._createQColorFromCommaSeparated(configDOM.xpath('/Configuration/Colors/HighlightBackground')[0].text)
-        
-        self.color_highlightLineText = self._createQColorFromCommaSeparated(configDOM.xpath('/Configuration/Colors/HighlightLineText')[0].text)
-        self.color_highlightLineBackground = self._createQColorFromCommaSeparated(configDOM.xpath('/Configuration/Colors/HighlightLineBackground')[0].text)
-        
-        # Font Settings
-        self.font_all = configDOM.xpath('/Configuration/Fonts/All')[0].text
-        
-        # Show Tutorial
-        b = configDOM.xpath('/Configuration/ShowTutorial')[0].text
-        if b == '1':
-            self.showTutorial = True
-        else:
-            self.showTutorial = False
         
     def saveToFile(self, filePath):
         print 'Saving config...'
@@ -216,6 +224,13 @@ class Configuration(object):
         fontRoot = etree.SubElement(root, 'Fonts')
         elem = etree.SubElement(fontRoot, 'All')
         elem.text = self.font_all
+        
+        # Zoom settings
+        zoomRoot = etree.SubElement(root, 'Zooms')
+        elem = etree.SubElement(zoomRoot, 'Content')
+        elem.text = str(self.zoom_content)
+        elem = etree.SubElement(zoomRoot, 'Navigation')
+        elem.text = str(self.zoom_navigation_ptsize)
         
         # Show Tutorial
         elem = etree.SubElement(root, 'ShowTutorial')

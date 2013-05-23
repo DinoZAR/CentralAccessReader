@@ -111,6 +111,9 @@ class MainWindow(QtGui.QMainWindow):
         self.configuration.loadFromFile(app_data_path('configuration.xml'))
         self.updateSettings()
         
+        # Set the zoom of the content view (separate from the bookmarks zoom)
+        self.ui.webView.setZoom(self.configuration.zoom_content)
+        
         # Used for refreshing the document later to make changes. Also store
         # the data for the document itself.
         self.lastDocumentFilePath = ''
@@ -123,6 +126,10 @@ class MainWindow(QtGui.QMainWindow):
             # Immediately turn the switch off
             self.configuration.showTutorial = False
             self.updateSettings()
+            
+    def closeEvent(self, event):
+        self.configuration.zoom_content = self.ui.webView.getZoom()
+        self.configuration.saveToFile(app_data_path('configuration.xml'))
         
     def connect_signals(self):
         '''
@@ -169,6 +176,12 @@ class MainWindow(QtGui.QMainWindow):
         # Update main window sliders to match
         self.ui.rateSlider.setValue(self.configuration.rate)
         self.ui.volumeSlider.setValue(int(self.configuration.volume))
+        
+        # Zoom settings
+        currentFont = self.ui.bookmarksTreeView.font()
+        currentFont.setPointSize(self.configuration.zoom_navigation_ptsize)
+        self.ui.bookmarksTreeView.setFont(currentFont)
+        self.ui.pagesTreeView.setFont(currentFont)
         
         # Finally, save it all to file
         self.configuration.saveToFile(app_data_path('configuration.xml'))
@@ -472,9 +485,8 @@ class MainWindow(QtGui.QMainWindow):
         currentFont = self.ui.bookmarksTreeView.font()
         
         # Make it a litter bigger
-        size = currentFont.pointSize()
-        size += 2
-        currentFont.setPointSize(size)
+        self.configuration.zoom_navigation_ptsize += 2
+        currentFont.setPointSize(self.configuration.zoom_navigation_ptsize)
         
         # Set the font
         self.ui.bookmarksTreeView.setFont(currentFont)
@@ -485,11 +497,10 @@ class MainWindow(QtGui.QMainWindow):
         currentFont = self.ui.bookmarksTreeView.font()
         
         # Make it a litter smaller
-        size = currentFont.pointSize()
-        size -= 2
-        if size < 4:
-            size = 4
-        currentFont.setPointSize(size)
+        self.configuration.zoom_navigation_ptsize -= 2
+        if self.configuration.zoom_navigation_ptsize < 4:
+            self.configuration.zoom_navigation_ptsize = 4
+        currentFont.setPointSize(self.configuration.zoom_navigation_ptsize)
         
         # Set the font
         self.ui.bookmarksTreeView.setFont(currentFont)

@@ -56,6 +56,14 @@ class NPAWebView(QWebView):
     def keyReleaseEvent(self, event):
         event.ignore()
         
+    def getZoom(self):
+        return self.myZoomFactor
+        
+    def setZoom(self, newZoom):
+        self.myZoomFactor = newZoom
+        self.setZoomFactor(newZoom)
+        self.update()
+        
     def zoomIn(self):
         '''
         Called by application to zoom the view in.
