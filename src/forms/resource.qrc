@@ -1,5 +1,10 @@
 <RCC>
   <qresource prefix="/icons">
+    <file>icons/application_exit.png</file>
+    <file>icons/document_open.png</file>
+    <file>icons/help_about.png</file>
+    <file>icons/help_contents.png</file>
+    <file>icons/spread.png</file>
     <file>icons/dialog_close.png</file>
     <file>icons/down.png</file>
     <file>icons/up.png</file>

@@ -145,34 +145,51 @@ class MainWindow(QtGui.QMainWindow):
         A method I made to connect all of my signals to the correct functions.
         '''
         # Toolbar buttons
-        self.ui.playButton.clicked.connect(self.playButton_clicked)
-        self.ui.pauseButton.clicked.connect(self.pauseButton_clicked)
-        self.ui.colorSettingsButton.clicked.connect(self.colorSettingsButton_clicked)
-        self.ui.speechSettingsButton.clicked.connect(self.speechSettingsButton_clicked)
-        self.ui.saveToMP3Button.clicked.connect(self.saveToMP3Button_clicked)
-        self.ui.zoomInButton.clicked.connect(self.zoomInButton_clicked)
-        self.ui.zoomOutButton.clicked.connect(self.zoomOutButton_clicked)
+        self.ui.playButton.clicked.connect(self.playSpeech)
+        self.ui.pauseButton.clicked.connect(self.stopSpeech)
+        self.ui.colorSettingsButton.clicked.connect(self.showColorSettings)
+        self.ui.speechSettingsButton.clicked.connect(self.showSpeechSettings)
+        self.ui.saveToMP3Button.clicked.connect(self.saveMP3Selection)
+        self.ui.zoomInButton.clicked.connect(self.zoomIn)
+        self.ui.zoomOutButton.clicked.connect(self.zoomOut)
         
-        # Main menu actions
+        # Main menu
+        # File
         self.ui.actionOpen_Docx.triggered.connect(self.showOpenDocxDialog)
+        self.ui.actionSave_All_to_MP3.triggered.connect(self.saveMP3All)
+        self.ui.actionSave_Selection_to_MP3.triggered.connect(self.saveMP3Selection)
         self.ui.actionQuit.triggered.connect(self.quit)
+        
+        # Functions
+        self.ui.actionPlay.triggered.connect(self.playSpeech)
+        self.ui.actionStop.triggered.connect(self.stopSpeech)
+        self.ui.actionZoom_In.triggered.connect(self.zoomIn)
+        self.ui.actionZoom_Out.triggered.connect(self.zoomOut)
+        self.ui.actionSearch.triggered.connect(self.toggleSearchBar)
+        
+        # Settings
+        self.ui.actionHighlights_Colors_and_Fonts.triggered.connect(self.showColorSettings)
+        self.ui.actionSpeech.triggered.connect(self.showSpeechSettings)
+        
+        # MathML
         self.ui.actionOpen_Pattern_Editor.triggered.connect(self.openPatternEditor)
         self.ui.actionShow_All_MathML.triggered.connect(self.showAllMathML)
+        
+        # Help
         self.ui.actionTutorial.triggered.connect(self.openTutorial)
         self.ui.actionAbout.triggered.connect(self.openAboutDialog)
         self.ui.actionReport_a_Bug.triggered.connect(self.openReportBugWindow)
         self.ui.actionTake_A_Survey.triggered.connect(self.openSurveyWindow)
         
         # Search bar
-        self.ui.actionSearch.triggered.connect(self.toggleSearchBar)
-        self.ui.searchUpButton.clicked.connect(self.searchUpButton_clicked)
-        self.ui.searchDownButton.clicked.connect(self.searchDownButton_clicked)
-        self.ui.searchTextBox.returnPressed.connect(self.searchTextBox_returnPressed)
-        self.ui.closeSearchButton.clicked.connect(self.closeSearchButton_clicked)
+        self.ui.searchUpButton.clicked.connect(self.searchBackwards)
+        self.ui.searchDownButton.clicked.connect(self.searchForwards)
+        self.ui.searchTextBox.returnPressed.connect(self.searchForwards)
+        self.ui.closeSearchButton.clicked.connect(self.closeSearchBar)
         
         # Sliders
-        self.ui.volumeSlider.valueChanged.connect(self.volumeSlider_valueChanged)
-        self.ui.rateSlider.valueChanged.connect(self.rateSlider_valueChanged)
+        self.ui.volumeSlider.valueChanged.connect(self.changeSpeechVolume)
+        self.ui.rateSlider.valueChanged.connect(self.changeSpeechRate)
         
         # Bookmark and page controls and widgets
         self.ui.bookmarksTreeView.clicked.connect(self.bookmarksTree_clicked)
@@ -212,7 +229,7 @@ class MainWindow(QtGui.QMainWindow):
             w.show()
         self.ui.searchTextBox.setFocus()
             
-    def playButton_clicked(self):
+    def playSpeech(self):
         
         # Stop whatever the speech thread may be saying
         self.stopPlayback.emit()
@@ -302,7 +319,7 @@ class MainWindow(QtGui.QMainWindow):
         self.lastElement = ['', -1, '', -1]
         self.setSettingsEnableState()
         
-    def pauseButton_clicked(self):
+    def stopSpeech(self):
         self.isFirst = False
         self.stopPlayback.emit()
         self.ttsPlaying = False
@@ -311,15 +328,15 @@ class MainWindow(QtGui.QMainWindow):
     def muteButton_clicked(self):
         pass
             
-    def rateSlider_valueChanged(self, value):
+    def changeSpeechRate(self, value):
         self.configuration.rate = value
         self.updateSettings()
 
-    def volumeSlider_valueChanged(self, value):
+    def changeSpeechVolume(self, value):
         self.configuration.volume = value
         self.updateSettings()
         
-    def colorSettingsButton_clicked(self):
+    def showColorSettings(self):
         dialog = ColorSettings(self)
         result = dialog.exec_()
         self.configuration.loadFromFile(app_data_path('configuration.xml'))
@@ -328,13 +345,17 @@ class MainWindow(QtGui.QMainWindow):
             self.refreshDocument()
         self.updateSettings()
         
-    def speechSettingsButton_clicked(self):
+    def showSpeechSettings(self):
         dialog = SpeechSettings(self)
         dialog.exec_()
         self.configuration.loadFromFile(app_data_path('configuration.xml'))
         self.updateSettings()
         
-    def saveToMP3Button_clicked(self):
+    def saveMP3All(self):
+        self.ui.webView.selectAll()
+        self.saveMP3Selection()
+        
+    def saveMP3Selection(self):
         # Generate a filename that is basically the original file but with the
         # .mp3 extension at the end
         defaultFileName = os.path.splitext(str(self.lastDocumentFilePath))[0] + '.mp3'
@@ -385,10 +406,10 @@ class MainWindow(QtGui.QMainWindow):
                 messageBox.setIcon(QtGui.QMessageBox.Information)
                 messageBox.exec_()
         
-    def zoomInButton_clicked(self):
+    def zoomIn(self):
         self.ui.webView.zoomIn()
     
-    def zoomOutButton_clicked(self):
+    def zoomOut(self):
         self.ui.webView.zoomOut()
             
     def openHTML(self):
@@ -477,7 +498,7 @@ class MainWindow(QtGui.QMainWindow):
         else:
             self.hideSearch()
             
-    def searchUpButton_clicked(self):
+    def searchBackwards(self):
         text = unicode(self.ui.searchTextBox.text())
         result = self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('SearchForText', [text, False])).toBool()
         if not result:
@@ -486,16 +507,7 @@ class MainWindow(QtGui.QMainWindow):
             message.setText('No other occurrences of "' + text + '" in document.')
             message.exec_()
     
-    def searchDownButton_clicked(self):
-        text = unicode(self.ui.searchTextBox.text())
-        result = self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('SearchForText', [text, True])).toBool()
-        if not result:
-            self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('ClearAllHighlights', []))
-            message = QtGui.QMessageBox()
-            message.setText('No other occurrences of "' + text + '" in document.')
-            message.exec_()
-    
-    def searchTextBox_returnPressed(self):
+    def searchForwards(self):
         text = unicode(self.ui.searchTextBox.text())
         result = self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('SearchForText', [text, True])).toBool()
         if not result:
@@ -504,7 +516,7 @@ class MainWindow(QtGui.QMainWindow):
             message.setText('No other occurrences of "' + text + '" in document.')
             message.exec_()
             
-    def closeSearchButton_clicked(self):
+    def closeSearchBar(self):
         self.hideSearch()
             
     def quit(self):
@@ -588,6 +600,15 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.saveToMP3Button.setEnabled(False)
             self.ui.playButton.setEnabled(False)
             
+            # Actions
+            self.ui.actionPlay.setEnabled(False)
+            self.ui.actionHighlights_Colors_and_Fonts.setEnabled(False)
+            self.ui.actionSpeech.setEnabled(False)
+            self.ui.actionSave_All_to_MP3.setEnabled(False)
+            self.ui.actionSave_Selection_to_MP3.setEnabled(False)
+            self.ui.actionOpen_Docx.setEnabled(False)
+            self.ui.actionTutorial.setEnabled(False)
+            
             # Search bar
             for w in self.searchWidgets:
                 w.setEnabled(False)
@@ -598,6 +619,15 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.speechSettingsButton.setEnabled(True)
             self.ui.saveToMP3Button.setEnabled(True)
             self.ui.playButton.setEnabled(True)
+            
+            # Actions
+            self.ui.actionPlay.setEnabled(True)
+            self.ui.actionHighlights_Colors_and_Fonts.setEnabled(True)
+            self.ui.actionSpeech.setEnabled(True)
+            self.ui.actionSave_All_to_MP3.setEnabled(True)
+            self.ui.actionSave_Selection_to_MP3.setEnabled(True)
+            self.ui.actionOpen_Docx.setEnabled(True)
+            self.ui.actionTutorial.setEnabled(True)
             
             # Search bar
             for w in self.searchWidgets:

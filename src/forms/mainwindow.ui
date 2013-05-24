@@ -211,7 +211,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="webViewLayout" stretch="0,0,1">
         <property name="spacing">
          <number>0</number>
@@ -236,9 +236,6 @@
               <height>50</height>
              </size>
             </property>
-            <property name="shortcut">
-             <string>Ctrl+R</string>
-            </property>
             <property name="flat">
              <bool>true</bool>
             </property>
@@ -261,9 +258,6 @@
               <width>50</width>
               <height>50</height>
              </size>
-            </property>
-            <property name="shortcut">
-             <string>Ctrl+S</string>
             </property>
             <property name="flat">
              <bool>true</bool>
@@ -354,9 +348,6 @@
               <height>50</height>
              </size>
             </property>
-            <property name="shortcut">
-             <string>Ctrl+=</string>
-            </property>
             <property name="flat">
              <bool>true</bool>
             </property>
@@ -385,9 +376,6 @@
               <width>50</width>
               <height>50</height>
              </size>
-            </property>
-            <property name="shortcut">
-             <string>Ctrl+-</string>
             </property>
             <property name="flat">
              <bool>true</bool>
@@ -602,44 +590,62 @@
      <height>21</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuMenu">
+   <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>&amp;File</string>
     </property>
     <addaction name="actionOpen_Docx"/>
+    <addaction name="separator"/>
+    <addaction name="actionSave_All_to_MP3"/>
+    <addaction name="actionSave_Selection_to_MP3"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuMathML">
     <property name="title">
-     <string>MathML</string>
+     <string>&amp;MathML</string>
     </property>
     <addaction name="actionOpen_Pattern_Editor"/>
     <addaction name="actionShow_All_MathML"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
-     <string>Help</string>
+     <string>&amp;Help</string>
     </property>
     <addaction name="actionTutorial"/>
     <addaction name="actionAbout"/>
+    <addaction name="separator"/>
     <addaction name="actionReport_a_Bug"/>
     <addaction name="actionTake_A_Survey"/>
    </widget>
    <widget class="QMenu" name="menuFunctions">
     <property name="title">
-     <string>Functions</string>
+     <string>F&amp;unctions</string>
     </property>
+    <addaction name="actionPlay"/>
+    <addaction name="actionStop"/>
+    <addaction name="separator"/>
+    <addaction name="actionZoom_In"/>
+    <addaction name="actionZoom_Out"/>
+    <addaction name="separator"/>
     <addaction name="actionSearch"/>
    </widget>
-   <addaction name="menuMenu"/>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>&amp;Settings</string>
+    </property>
+    <addaction name="actionHighlights_Colors_and_Fonts"/>
+    <addaction name="actionSpeech"/>
+   </widget>
+   <addaction name="menuFile"/>
    <addaction name="menuFunctions"/>
+   <addaction name="menuSettings"/>
    <addaction name="menuMathML"/>
    <addaction name="menuHelp"/>
   </widget>
   <action name="actionOpen_Docx">
    <property name="text">
-    <string>Open Word Document</string>
+    <string>&amp;Open Word Document</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -647,54 +653,161 @@
   </action>
   <action name="actionOpen_Pattern_Editor">
    <property name="text">
-    <string>Open Pattern Editor...</string>
+    <string>&amp;Open Pattern Editor...</string>
    </property>
   </action>
   <action name="actionShow_All_MathML">
    <property name="text">
-    <string>Show All MathML...</string>
+    <string>&amp;Show All MathML...</string>
    </property>
   </action>
   <action name="actionQuit">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icons/application_exit.png</normaloff>:/icons/icons/application_exit.png</iconset>
+   </property>
    <property name="text">
-    <string>Quit</string>
+    <string>&amp;Quit</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
    </property>
   </action>
   <action name="actionTutorial">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icons/help_contents.png</normaloff>:/icons/icons/help_contents.png</iconset>
+   </property>
    <property name="text">
-    <string>Tutorial</string>
+    <string>&amp;Tutorial</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+H</string>
    </property>
   </action>
   <action name="actionAbout">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icons/help_about.png</normaloff>:/icons/icons/help_about.png</iconset>
+   </property>
    <property name="text">
-    <string>About</string>
+    <string>&amp;About</string>
    </property>
   </action>
   <action name="actionReport_a_Bug">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icons/report_bug.png</normaloff>:/icons/icons/report_bug.png</iconset>
+   </property>
    <property name="text">
-    <string>Report a Bug</string>
+    <string>Report a &amp;Bug</string>
    </property>
   </action>
   <action name="actionTake_A_Survey">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icons/spread.png</normaloff>:/icons/icons/spread.png</iconset>
+   </property>
    <property name="text">
-    <string>Take A Survey</string>
+    <string>Take A &amp;Survey</string>
    </property>
   </action>
   <action name="actionSearch">
    <property name="text">
-    <string>Search</string>
+    <string>S&amp;earch</string>
    </property>
    <property name="toolTip">
     <string>Toggles the search bar on and off.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionPlay">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icons/play.png</normaloff>:/icons/icons/play.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Play</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionStop">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icons/stop.png</normaloff>:/icons/icons/stop.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Stop</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionSave_Selection_to_MP3">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icons/text_speak.png</normaloff>:/icons/icons/text_speak.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save &amp;Selection to MP3</string>
+   </property>
+  </action>
+  <action name="actionSave_All_to_MP3">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icons/text_speak.png</normaloff>:/icons/icons/text_speak.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save &amp;All to MP3</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="actionHighlights_Colors_and_Fonts">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icons/color_settings.png</normaloff>:/icons/icons/color_settings.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Highlights, Colors, and Fonts</string>
+   </property>
+  </action>
+  <action name="actionSpeech">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icons/system_config_services.png</normaloff>:/icons/icons/system_config_services.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Speech</string>
+   </property>
+  </action>
+  <action name="actionZoom_In">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icons/zoom_in_small.png</normaloff>:/icons/icons/zoom_in_small.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom In</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+=</string>
+   </property>
+  </action>
+  <action name="actionZoom_Out">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icons/zoom_out_small.png</normaloff>:/icons/icons/zoom_out_small.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom Out</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+-</string>
    </property>
   </action>
  </widget>
