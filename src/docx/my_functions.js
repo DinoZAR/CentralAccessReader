@@ -1,9 +1,13 @@
-var highlight; // The highlighter element that has the highlighted content.
-var highlightLine; // The highlighter element that has the whole line that will be highlighted
-var lastElement;
+var highlight = null; // The highlighter element that has the highlighted content.
+var highlightLine = null; // The highlighter element that has the whole line that will be highlighted
+var lastElement = null;
 var beginOffset;
 var lastHeadingElement;
 var startFromHeading = false;
+
+// ---------------------------------------------------------------------------
+// GENERAL FUNCTIONS
+// ---------------------------------------------------------------------------
 
 // Have tooltips pop up anytime there is an image with a tooltip
 $(function() {
@@ -33,12 +37,107 @@ function GotoPageAnchor(anchorName) {
 	$.scrollTo(element_to_scroll_to, {duration: 200});
 }
 
-function ScrollToHighlight() {
+// Scrolls the view to where the highlight is
+function ScrollToHighlight(isInstant) {
+	isInstant = typeof isInstant !== 'undefined' ? isInstant : false;
+	
+	var myDuration = 800;
+	if (isInstant) {
+		myDuration = 0;
+	}
 	if (highlightLine != null) {
-		$.scrollTo(highlightLine.parentNode, {duration: 1000, offset: {top: -120}});
+		$.scrollTo(highlightLine.parentNode, {duration: myDuration, offset: {top: -120}});
 	}
 	else {
-		$.scrollTo(highlight.parentNode, {duration: 1000, offset: {top: -120}});
+		$.scrollTo(highlight.parentNode, {duration: myDuration, offset: {top: -120}});
+	}
+}
+
+// Finds the next search term, highlights it, and moves the view to it, if any.
+// If after is true, it will find word after current. Otherwise, search for text before.
+// Returns true if it found something, false if it didn't
+function SearchForText(myText, after) {
+	console.debug('SearchForText()');
+	if (after) {
+		return SearchTextForward(myText);
+	}
+	else {
+		return SearchTextBackward(myText);
+	}
+}
+
+function SearchTextBackward(myText) {
+	var currentNode = null;
+	if (!(highlight === null)) {
+		currentNode = PreviousElement(highlight);
+	}
+	else {
+		currentNode = document.body.lastChild;
+	}
+	
+	while (true) {
+		if (currentNode.nodeType == 3) {
+			var lastIndex = -1;
+			var first = true;
+			var index = 1000;
+			currentSearch = currentNode.data.toLowerCase();
+			while (index >= 0) {
+				index = currentSearch.indexOf(myText);
+				if (index >= 0) {
+					if (first) {
+						lastIndex = index;
+						first = false;
+					}
+					else {
+						lastIndex += index + myText.length;
+					}
+					currentSearch = currentSearch.substring(index + myText.length);
+				}
+			}
+			if (lastIndex >= 0) {
+				// Get the highlight to surround what I found
+				var range = document.createRange();
+				range.setStart(currentNode, lastIndex);
+				range.setEnd(currentNode, lastIndex + myText.length);
+				SetHighlight(range, false);
+				ScrollToHighlight(true);
+				return true;
+			}
+		}
+		currentNode = PreviousElement(currentNode);
+		if (currentNode === null) {
+			return false;
+		}
+	}
+}
+
+function SearchTextForward(myText) {
+	// Determing the starting point
+	var currentNode = null;
+	if (!(highlight === null)) {
+		currentNode = NextElement(highlight);
+	}
+	else {
+		currentNode = document.body.firstChild;
+	}
+	
+	while (true) {
+		if (currentNode.nodeType == 3) {
+			var index = currentNode.data.toLowerCase().indexOf(myText);
+			if (index >= 0) {
+				// Get the highlight to surround what I found
+				var range = document.createRange();
+				range.setStart(currentNode, index);
+				range.setEnd(currentNode, index + myText.length);
+				SetHighlight(range, false);
+				ScrollToHighlight(true);
+				return true;
+			}
+		}
+		currentNode = NextElement(currentNode);
+		if (currentNode === null) {
+			return false;
+		}
 	}
 }
 
@@ -112,6 +211,7 @@ function GetSelectionHTML() {
 	return GetHTMLSource(range);
 }
 
+// Takes a Range object and extracts the HTML content
 function GetHTMLSource(range) {
     var clonedSelection = range.cloneContents();
 	div = document.createElement('div');
@@ -255,7 +355,6 @@ function HighlightWord(doLine, offset, length) {
 		childNum = GetChildIndex(highlightLine);
 	}
 	else {
-		console.debug("Highlight node: " + highlight.toString());
 		p = highlight.parentNode;
 		childNum = GetChildIndex(highlight);
 	}
@@ -265,13 +364,6 @@ function HighlightWord(doLine, offset, length) {
 	
 	// Get the text content of the child I want
 	var t = $(p).contents()[childNum];
-	console.debug("- p: " + p.toString());
-	console.debug("- childs: " + $(p).contents().length);
-	console.debug("- childNum: " + childNum.toString());
-	console.debug("- t: " + t.toString());
-	console.debug("- text content: " + t.textContent);
-	console.debug("- start offset: " + (offset + beginOffset).toString());
-	console.debug("- end offset: " + (offset + length + beginOffset).toString());
 	
 	// Create range and select that text correctly
 	var range = document.createRange();
@@ -497,6 +589,23 @@ function InsertAllChildNodes(parent, node) {
 	}
 }
 
+// Gets the previous element, whether that is a text element or a normal element.
+function PreviousElement(elem) {
+	var prev = elem.previousSibling;
+	if (prev == null) {
+		if (elem.parentNode == null) {
+			return null;
+		}
+		else {
+			elem = PreviousElement(elem.parentNode);
+			return elem;
+		}
+	}
+	else {
+		return DeepestChild(prev, true);
+	}
+}
+
 // Gets the next element, whether that is a text element or a normal element.
 function NextElement(elem) {
 	var next = elem.nextSibling;
@@ -514,13 +623,21 @@ function NextElement(elem) {
 	}
 }
 
-function DeepestChild(parent) {
+function DeepestChild(parent, isLast) {
+	isLast = typeof isLast !== 'undefined' ? isLast : false;
+	
 	if (parent.childNodes.length == 0) {
 		return parent;
 	}
 	else {
-		var child = parent.firstChild;
-		return DeepestChild(child);
+		if (isLast) {
+			var child = parent.lastChild;
+			return DeepestChild(child, true);
+		}
+		else {
+			var child = parent.firstChild;
+			return DeepestChild(child);
+		}
 	}
 }
 

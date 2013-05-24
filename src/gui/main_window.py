@@ -59,6 +59,15 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.webViewLayout.addWidget(self.ui.webView, 1)
         self.ui.webViewLayout.update()
         
+        # Get the search function widgets
+        self.searchWidgets = []
+        self.searchWidgets.append(self.ui.searchLabel)
+        self.searchWidgets.append(self.ui.searchUpButton)
+        self.searchWidgets.append(self.ui.searchDownButton)
+        self.searchWidgets.append(self.ui.searchTextBox)
+        self.searchWidgets.append(self.ui.closeSearchButton)
+        self.hideSearch()
+        
         # Connect all of my signals
         self.connect_signals()
         
@@ -154,6 +163,13 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.actionReport_a_Bug.triggered.connect(self.openReportBugWindow)
         self.ui.actionTake_A_Survey.triggered.connect(self.openSurveyWindow)
         
+        # Search bar
+        self.ui.actionSearch.triggered.connect(self.toggleSearchBar)
+        self.ui.searchUpButton.clicked.connect(self.searchUpButton_clicked)
+        self.ui.searchDownButton.clicked.connect(self.searchDownButton_clicked)
+        self.ui.searchTextBox.returnPressed.connect(self.searchTextBox_returnPressed)
+        self.ui.closeSearchButton.clicked.connect(self.closeSearchButton_clicked)
+        
         # Sliders
         self.ui.volumeSlider.valueChanged.connect(self.volumeSlider_valueChanged)
         self.ui.rateSlider.valueChanged.connect(self.rateSlider_valueChanged)
@@ -185,6 +201,16 @@ class MainWindow(QtGui.QMainWindow):
         
         # Finally, save it all to file
         self.configuration.saveToFile(app_data_path('configuration.xml'))
+        
+    def hideSearch(self):
+        for w in self.searchWidgets:
+            w.hide()
+        self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('ClearAllHighlights', []))
+    
+    def showSearch(self):
+        for w in self.searchWidgets:
+            w.show()
+        self.ui.searchTextBox.setFocus()
             
     def playButton_clicked(self):
         
@@ -444,6 +470,42 @@ class MainWindow(QtGui.QMainWindow):
         
     def openSurveyWindow(self):
         webbrowser.open_new(misc.SURVEY_URL)
+        
+    def toggleSearchBar(self):
+        if self.searchWidgets[0].isHidden():
+            self.showSearch()
+        else:
+            self.hideSearch()
+            
+    def searchUpButton_clicked(self):
+        text = unicode(self.ui.searchTextBox.text())
+        result = self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('SearchForText', [text, False])).toBool()
+        if not result:
+            self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('ClearAllHighlights', []))
+            message = QtGui.QMessageBox()
+            message.setText('No other occurrences of "' + text + '" in document.')
+            message.exec_()
+    
+    def searchDownButton_clicked(self):
+        text = unicode(self.ui.searchTextBox.text())
+        result = self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('SearchForText', [text, True])).toBool()
+        if not result:
+            self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('ClearAllHighlights', []))
+            message = QtGui.QMessageBox()
+            message.setText('No other occurrences of "' + text + '" in document.')
+            message.exec_()
+    
+    def searchTextBox_returnPressed(self):
+        text = unicode(self.ui.searchTextBox.text())
+        result = self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('SearchForText', [text, True])).toBool()
+        if not result:
+            self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('ClearAllHighlights', []))
+            message = QtGui.QMessageBox()
+            message.setText('No other occurrences of "' + text + '" in document.')
+            message.exec_()
+            
+    def closeSearchButton_clicked(self):
+        self.hideSearch()
             
     def quit(self):
         self.close()
@@ -525,6 +587,10 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.speechSettingsButton.setEnabled(False)
             self.ui.saveToMP3Button.setEnabled(False)
             self.ui.playButton.setEnabled(False)
+            
+            # Search bar
+            for w in self.searchWidgets:
+                w.setEnabled(False)
         else:
             self.ui.rateSlider.setEnabled(True)
             self.ui.volumeSlider.setEnabled(True)
@@ -532,3 +598,7 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.speechSettingsButton.setEnabled(True)
             self.ui.saveToMP3Button.setEnabled(True)
             self.ui.playButton.setEnabled(True)
+            
+            # Search bar
+            for w in self.searchWidgets:
+                w.setEnabled(True)

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1209</width>
-    <height>829</height>
+    <width>1123</width>
+    <height>726</height>
    </rect>
   </property>
   <property name="font">
@@ -33,7 +33,7 @@
    </size>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_4">
+   <layout class="QVBoxLayout" name="verticalLayout_5">
     <property name="spacing">
      <number>0</number>
     </property>
@@ -211,8 +211,11 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="layoutWidget">
-       <layout class="QVBoxLayout" name="webViewLayout" stretch="0,1">
+      <widget class="QWidget" name="">
+       <layout class="QVBoxLayout" name="webViewLayout" stretch="0,0,1">
+        <property name="spacing">
+         <number>0</number>
+        </property>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,0,0,0,1">
           <item>
@@ -493,6 +496,83 @@
          </layout>
         </item>
         <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="searchLabel">
+            <property name="text">
+             <string>Search</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="searchUpButton">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="resource.qrc">
+              <normaloff>:/icons/icons/up.png</normaloff>:/icons/icons/up.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>32</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="searchDownButton">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="resource.qrc">
+              <normaloff>:/icons/icons/down.png</normaloff>:/icons/icons/down.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>32</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="searchTextBox"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="closeSearchButton">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="resource.qrc">
+              <normaloff>:/icons/icons/dialog_close.png</normaloff>:/icons/icons/dialog_close.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>32</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
          <widget class="QWebView" name="webView">
           <property name="sizeIncrement">
            <size>
@@ -518,7 +598,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1209</width>
+     <width>1123</width>
      <height>21</height>
     </rect>
    </property>
@@ -546,7 +626,14 @@
     <addaction name="actionReport_a_Bug"/>
     <addaction name="actionTake_A_Survey"/>
    </widget>
+   <widget class="QMenu" name="menuFunctions">
+    <property name="title">
+     <string>Functions</string>
+    </property>
+    <addaction name="actionSearch"/>
+   </widget>
    <addaction name="menuMenu"/>
+   <addaction name="menuFunctions"/>
    <addaction name="menuMathML"/>
    <addaction name="menuHelp"/>
   </widget>
@@ -580,6 +667,9 @@
    <property name="text">
     <string>Tutorial</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+H</string>
+   </property>
   </action>
   <action name="actionAbout">
    <property name="text">
@@ -594,6 +684,17 @@
   <action name="actionTake_A_Survey">
    <property name="text">
     <string>Take A Survey</string>
+   </property>
+  </action>
+  <action name="actionSearch">
+   <property name="text">
+    <string>Search</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggles the search bar on and off.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
    </property>
   </action>
  </widget>

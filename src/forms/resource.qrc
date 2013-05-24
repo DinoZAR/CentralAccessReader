@@ -1,5 +1,8 @@
 <RCC>
   <qresource prefix="/icons">
+    <file>icons/dialog_close.png</file>
+    <file>icons/down.png</file>
+    <file>icons/up.png</file>
     <file>icons/report_bug.png</file>
     <file>icons/text_speak.png</file>
     <file>icons/color_settings.png</file>
