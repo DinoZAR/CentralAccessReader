@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/mainwindow.ui'
 #
-# Created: Fri May 24 14:42:34 2013
+# Created: Tue May 28 09:11:55 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -30,6 +30,7 @@ class Ui_MainWindow(object):
         font = QtGui.QFont()
         font.setPointSize(12)
         MainWindow.setFont(font)
+        MainWindow.setAcceptDrops(False)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8("../icons/cwuLogo.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/cwuLogo.png")), QtGui.QIcon.Normal, QtGui.QIcon.On)
