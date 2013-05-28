@@ -154,10 +154,14 @@ function GetSelectionRange() {
 		range = window.getSelection();
 		
 		if (range.anchorNode.compareDocumentPosition(range.focusNode) & Node.DOCUMENT_POSITION_PRECEDING) {
+			console.debug('Switched around anchor and focus node...');
+			console.debug('! Old range: ' + range.anchorNode.toString() + ' to ' + range.focusNode.toString());
 			var newRange = document.createRange();
 			newRange.setStart(range.focusNode, range.focusOffset);
 			newRange.setEnd(range.anchorNode, range.anchorOffset);
 			range = newRange;
+			
+			console.debug('! New range: ' + range.startContainer.toString() + ' to ' + range.endContainer.toString());
 		}
 		else {
 			if (range.anchorNode === range.focusNode) {
@@ -365,6 +369,11 @@ function HighlightWord(doLine, offset, length) {
 	// Get the text content of the child I want
 	var t = $(p).contents()[childNum];
 	
+	console.debug('- t: ' + t.data);
+	console.debug('- offset: ' + offset.toString());
+	console.debug('- beginOffset: ' + beginOffset.toString());
+	console.debug('- length: ' + length.toString());
+	
 	// Create range and select that text correctly
 	var range = document.createRange();
 	range.setStart(t, offset + beginOffset);
@@ -427,7 +436,7 @@ function GetNextWord(node, offset) {
 				range.setStart(node, node.data.length - 1);
 			}
 			range.setEnd(node, node.data.length);
-			needToGoToNext = false;
+			needToGoToNext = true;
 		}
 		else {
 			range.setStart(node, offset);

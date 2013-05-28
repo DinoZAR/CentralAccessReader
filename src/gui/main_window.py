@@ -149,7 +149,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.pauseButton.clicked.connect(self.stopSpeech)
         self.ui.colorSettingsButton.clicked.connect(self.showColorSettings)
         self.ui.speechSettingsButton.clicked.connect(self.showSpeechSettings)
-        self.ui.saveToMP3Button.clicked.connect(self.saveMP3Selection)
+        self.ui.saveToMP3Button.clicked.connect(self.saveMP3All)
         self.ui.zoomInButton.clicked.connect(self.zoomIn)
         self.ui.zoomOutButton.clicked.connect(self.zoomOut)
         

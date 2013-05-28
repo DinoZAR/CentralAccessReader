@@ -59,6 +59,14 @@ class Assigner(object):
         if element.text != None:
             myList.append([element.text, 'text'])
         
+        if element.tag == 'img':
+            if configuration.tag_image:
+                    myList.append(['Image. ' + element.get('alt') + '. End image.', 'image'])
+            else:
+                myList.append([element.get('alt'), 'image'])
+            if element.tail != None:
+                myList.append([element.tail, 'text'])
+        
         for child in element:
             testTag = child.tag.split('}')[-1]
             
@@ -80,6 +88,10 @@ class Assigner(object):
                     myList.append([child.get('alt'), 'image'])
                 if child.tail != None:
                     myList.append([child.tail, 'text'])
+                    
+            elif testTag == 'script':
+                # Don't do anything
+                pass
             
             else:
                 myList.extend(self._recursiveGetSpeech(child, configuration))
