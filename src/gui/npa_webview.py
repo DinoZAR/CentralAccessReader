@@ -6,19 +6,46 @@ Created on Apr 18, 2013
 from PyQt4.QtWebKit import QWebView, QWebPage
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QApplication
+import os
 
 class NPAWebView(QWebView):
     '''
     This subclass is meant to override some of the mouse behavior, most notably the zoom feature.
     '''
 
-    def __init__(self, parent=None):
+    def __init__(self, mainWindow, parent=None):
         '''
         Constructor
         '''
         QWebView.__init__(self, parent)
-        
+        self.mainWindow = mainWindow
+        self.setAcceptDrops(True)
         self.myZoomFactor = 1.0
+        
+    def dragEnterEvent(self, e):
+        print 'I\'m bringing something into CAR!'
+        if e.mimeData().hasUrls:
+            e.accept()
+        else:
+            e.ignore()
+            
+    def dragMoveEvent(self, event):
+        print 'Moving the drag-n-drop item!'
+        if event.mimeData().hasUrls:
+            event.setDropAction(Qt.CopyAction)
+            event.accept()
+        else:
+            event.ignore()
+            
+    def dropEvent(self, e):
+        print 'Dropping the cargo!'
+        if e.mimeData().hasUrls:
+            e.setDropAction(Qt.CopyAction)
+            e.accept()
+            url = unicode(e.mimeData().urls()[0].toLocalFile())
+            
+            if os.path.splitext(url)[1] == '.docx':
+                self.mainWindow.openDocx(url)
         
     def wheelEvent(self, event):
         modifiers = QApplication.keyboardModifiers()

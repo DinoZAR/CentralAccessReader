@@ -55,7 +55,7 @@ class MainWindow(QtGui.QMainWindow):
         # Replace the web view in my designer with my custom web view
         self.ui.webViewLayout.removeWidget(self.ui.webView)
         self.ui.webView.close()
-        self.ui.webView = NPAWebView(self.ui.centralwidget)
+        self.ui.webView = NPAWebView(mainWindow=self, parent=self.ui.centralwidget)
         self.ui.webViewLayout.addWidget(self.ui.webView, 1)
         self.ui.webViewLayout.update()
         
