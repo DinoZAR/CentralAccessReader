@@ -205,6 +205,11 @@ function GetSelectionRange() {
 		beginOffset = 0;
 		range.setEnd(document.body.lastChild, document.body.lastChild.length);
 	}
+	
+	// If I have a paragraph with no text, move the range to the next element
+	if ((range.startContainer.nodeName == 'P') && ($(range.startContainer).text() == '')) {
+		range.setStart(NextElement(range.startContainer), 0);
+	}
 	return range;
 }
 
