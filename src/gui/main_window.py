@@ -526,7 +526,7 @@ class MainWindow(QtGui.QMainWindow):
         
         from mathml.pattern_editor.gui.patterneditorwindow import PatternEditorWindow
 
-        patternFilePath = program_path('mathml/parser_pattern_database.txt')
+        patternFilePath = program_path('src/mathml/parser_pattern_database.txt')
         
         self.patternWindow = PatternEditorWindow(patternFilePath, '')
         self.patternWindow.changedPattern.connect(self.onChangedPatternEditor)

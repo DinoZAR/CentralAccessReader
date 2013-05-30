@@ -4,6 +4,21 @@ Created on Mar 2, 2013
 @author: Spencer Graffe
 '''
 import struct
+from lxml import etree
+
+MATHML_OPERATORS = ['+', 
+                    '-',
+                    '\u8722',
+                    '*', 
+                    '/', 
+                    '=', 
+                    '(', 
+                    ')',
+                    '[',
+                    ']',
+                    '{',
+                    '}', 
+                    '!']
 
 R_END = 0
 R_LINE = 1
@@ -29,6 +44,44 @@ R_ENCODING_DEF = 19
 # Future implementations (pretty experimental stuff that I found)
 R_TEX_INPUT = 0x66
 
+# Embellishments
+EMB_1DOT = 2
+EMB_2DOT = 3
+EMB_3DOT = 4
+EMB_1PRIME = 5
+EMB_2PRIME = 6
+EMB_BPRIME = 7
+EMB_TILDE = 8
+EMB_HAT = 9
+EMB_NOT = 10
+EMB_RARROW = 11
+EMB_LARROW = 12
+EMB_BARROW = 13
+EMB_R1ARROW = 14
+EMB_L1ARROW = 15
+EMB_MBAR = 16
+EMB_OBAR = 17
+EMB_3PRIME = 18
+EMB_FROWN = 19
+EMB_SMILE = 20
+EMB_X_BARS = 21
+EMB_UP_BAR = 22
+EMB_DOWN_BAR = 23
+EMB_4DOT = 24
+EMB_U_1DOT = 25
+EMB_U_2DOT = 26
+EMB_U_3DOT = 27
+EMB_U_4DOT = 28
+EMB_U_BAR = 29
+EMB_U_TILDE = 30
+EMB_U_FROWN = 31
+EMB_U_SMILE = 32
+EMB_U_RARROW = 33
+EMB_U_LARROW = 34
+EMB_U_BARROW = 35
+EMB_U_R1ARROW = 36
+EMB_U_L1ARROW = 37
+
 def createRecord(type, fileHandle):
     '''
     Based on the type (just a byte), it will create the record corresponding
@@ -49,8 +102,7 @@ def createRecord(type, fileHandle):
         print 'Error: Record type not implemented yet:', type
         return None
     elif type == R_EMBELL:
-        print 'Error: Record type not implemented yet:', type
-        return None
+        return EmbellishmentRecord(fileHandle)
     elif type == R_RULER:
         _handleRuler(fileHandle)
         return None
@@ -98,6 +150,36 @@ def createRecord(type, fileHandle):
         count = struct.unpack('<B', fileHandle.read(1))[0]
         fileHandle.read(count)
         return None
+    
+def convertRecords(i, records, parentStack):
+    while i < len(records):
+        if isinstance(records[i], LineRecord):
+            newElem = etree.SubElement(parentStack[-1], 'mrow')
+            parentStack.append(newElem)
+            convertRecords(0, records[i].childRecords, parentStack)
+            parentStack.pop()
+        if isinstance(records[i], CharRecord):
+            character = unichr(records[i].mtCode)
+            if len(records[i].embellishments) > 0:
+                pass
+            if character in MATHML_OPERATORS:
+                elem = etree.SubElement(parentStack[-1], 'mo')
+                elem.text = character
+            else:
+                elem = etree.SubElement(parentStack[-1], 'mi')
+                elem.text = character
+                
+        if isinstance(records[i], TemplateRecord):
+            import templates
+            data = templates.getMathMLFromTemplate(records[i], i, records)
+            while data[1] > 0:
+                parentStack[-1].remove(parentStack[-1][-1])
+                data = (data[0], data[1] - 1)
+            if len(data[0]) > 0:
+                for d in data[0]:
+                    parentStack[-1].append(d)
+            
+        i += 1
         
 # 
 # Functions that help skip over parts of the data I don't want 
@@ -235,6 +317,20 @@ class LineRecord(Record):
                 else:
                     if record != None:
                         self.childRecords.append(record)
+                        
+class EmbellishmentRecord(Record):
+    def __init__(self, f):
+        Record.__init__(self)
+        
+        print 'Embellishment!'
+        
+        self.options = struct.unpack('<B', f.read(1))[0]
+        
+        # Check for nudge
+        if self._checkFlag(self.options, Record.O_NUDGE):
+            _handleNudge(f)
+            
+        self.type = struct.unpack('<B', f.read(1))[0]
                     
 class CharRecord(Record):
     def __init__(self, f):
@@ -271,8 +367,17 @@ class CharRecord(Record):
             print '16-bit Position:', struct.unpack('<H', f.read(2))[0]
             
         # Check for embellishments
+        self.embellishments = []
         if self._checkFlag(self.options, Record.O_CHAR_EMBELL):
-            print 'Error: Can\'t handle embellishments!'
+            while True:
+                type = struct.unpack('<B', f.read(1))[0]
+                record = createRecord(type, f)
+                if isinstance(record, EndRecord):
+                    break
+                else:
+                    if record != None:
+                        self.embellishments.append(record)
+            
                          
 class TemplateRecord(Record):
     
@@ -302,6 +407,17 @@ class TemplateRecord(Record):
         # Get template-specific options
         self.templateOptions = struct.unpack('<B', f.read(1))[0]
         print 'Template Options:', self.templateOptions
+        
+        # Get all of the children for this template
+        self.childRecords = []
+        while True:
+            type = struct.unpack('<B', f.read(1))[0]
+            record = createRecord(type, f)
+            if isinstance(record, EndRecord):
+                break
+            else:
+                if record != None:
+                    self.childRecords.append(record)
         
 class ColorRecord(Record):
     

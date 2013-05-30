@@ -10,15 +10,6 @@ from records import *
 import templates
 from src.misc import program_path
 
-MTEF_XSLT_PATH = program_path('src/mathtype/MTEFToMathML.xsl')
-
-f = open(MTEF_XSLT_PATH, 'r')
-xslRoot = etree.parse(f)
-mtefTransform = etree.XSLT(xslRoot)
-f.close()
-
-MATHML_OPERATORS = ['+', '-', '*', '/', '(', ')']
-
 def parseMTEF(mtefString):
     '''
     Parses an MTEF data string and gets the MathType object for it or something.
@@ -59,30 +50,9 @@ def parseMTEF(mtefString):
     i = 0
     parentStack = []
     parentStack.append(mathmlRoot)
-    _convertRecords(i, records, parentStack)
+    convertRecords(i, records, parentStack)
     
     return mathmlRoot
-        
-def _convertRecords(i, records, parentStack):
-    while i < len(records):
-        if isinstance(records[i], LineRecord):
-            newElem = etree.SubElement(parentStack[-1], 'mrow')
-            parentStack.append(newElem)
-            _convertRecords(0, records[i].childRecords, parentStack)
-            parentStack.pop()
-        if isinstance(records[i], CharRecord):
-            character = unichr(records[i].mtCode)
-            if character in MATHML_OPERATORS:
-                elem = etree.SubElement(parentStack[-1], 'mo')
-                elem.text = character
-            else:
-                elem = etree.SubElement(parentStack[-1], 'mi')
-                elem.text = character
-        if isinstance(records[i], TemplateRecord):
-            i = templates.getMathMLFromTemplate(records[i], i, records)
-            i -= 1
-            
-        i += 1
 
 def parseWMF(wmfFile):
     '''
