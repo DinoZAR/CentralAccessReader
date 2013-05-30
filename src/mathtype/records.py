@@ -44,47 +44,60 @@ def createRecord(type, fileHandle):
         return TemplateRecord(fileHandle)
     elif type == R_PILE:
         print 'Error: Record type not implemented yet:', type
+        return None
     elif type == R_MATRIX:
         print 'Error: Record type not implemented yet:', type
+        return None
     elif type == R_EMBELL:
         print 'Error: Record type not implemented yet:', type
+        return None
     elif type == R_RULER:
         _handleRuler(fileHandle)
         return None
     elif type == R_FONT_STYLE_DEF:
         print 'Error: Record type not implemented yet:', type
+        return None
     elif type == R_SIZE:
         print 'Error: Record type not implemented yet:', type
+        return None
     elif type == R_FULL:
-        _handleFull(fileHandle)
+        FullRecord(fileHandle)
         return None
     elif type == R_SUB:
-        _handleSubscript(fileHandle)
+        SubscriptRecord(fileHandle)
         return None
     elif type == R_SUB2:
-        _handleSubscript2(fileHandle)
+        Subscript2Record(fileHandle)
+        return None
     elif type == R_SYM:
         print 'Error: Record type not implemented yet:', type
+        return None
     elif type == R_SUBSYM:
         print 'Error: Record type not implemented yet:', type
+        return None
     elif type == R_COLOR:
-        return ColorRecord(fileHandle)
+        ColorRecord(fileHandle)
+        return None
     elif type == R_COLOR_DEF:
-        return ColorDefinitionRecord(fileHandle)
+        ColorDefinitionRecord(fileHandle)
+        return None
     elif type == R_FONT_DEF:
-        return FontDefinitionRecord(fileHandle)
+        FontDefinitionRecord(fileHandle)
+        return None
     elif type == R_EQN_PREFS:
-        return EquationPreferencesRecord(fileHandle)
+        EquationPreferencesRecord(fileHandle)
+        return None
     elif type == R_ENCODING_DEF:
-        return EncodingDefinitionRecord(fileHandle)
-    
+        EncodingDefinitionRecord(fileHandle)
+        return None
     elif type == R_TEX_INPUT:
-        return TexInputRecord(fileHandle)
-    
+        TexInputRecord(fileHandle)
+        return None
     else:
         print 'Future implemented record! Skipping for now...'
         count = struct.unpack('<B', fileHandle.read(1))[0]
         fileHandle.read(count)
+        return None
         
 # 
 # Functions that help skip over parts of the data I don't want 
@@ -100,9 +113,6 @@ def _handleRuler(f):
     n_stops = struct.unpack('<H', f.read(2))[0]
     for i in range(n_stops):
         f.read(3)
-            
-def _handleFull(f):
-    print 'Full Size!'
     
 def _handleNudge(f): 
     '''
@@ -116,12 +126,6 @@ def _handleNudge(f):
     if (first2[0] == 128) and (first2[1] == 128):
         # Skip through the next 4 bytes
         f.read(4)
-            
-def _handleSubscript(f):
-    print 'Subscript Size!'
-    
-def _handleSubscript2(f):
-    print 'Subscript 2 Size!'
             
 # Utility Functions
 # ------------------------------------------------------------------------------
@@ -176,7 +180,21 @@ class Record():
         
     def _checkFlag(self, flags, flag):
         return (flags & flag) > 0
+
+class FullRecord(Record):
+    def __init__(self, f):
+        Record.__init__(self)
+        print 'Full!'
+
+class SubscriptRecord(Record):
+    def __init__(self, f):
+        Record.__init__(self)
+        print 'Subscript!'
         
+class Subscript2Record(Record):
+    def __init__(self, f):
+        Record.__init__(self)
+        print 'Subscript 2!'
         
 class EndRecord(Record):
     
@@ -215,7 +233,8 @@ class LineRecord(Record):
                 if isinstance(record, EndRecord):
                     break
                 else:
-                    self.childRecords.append(record)
+                    if record != None:
+                        self.childRecords.append(record)
                     
 class CharRecord(Record):
     def __init__(self, f):
@@ -240,7 +259,8 @@ class CharRecord(Record):
         
         # Check for MTCode
         if not self._checkFlag(self.options, Record.O_CHAR_ENC_NO_MTCODE):
-            print 'MTCode:', struct.unpack('<H', f.read(2))[0]
+            self.mtCode = struct.unpack('<H', f.read(2))[0]
+            print 'MTCode:', self.mtCode
         
         # Check for 8-bit font position
         if self._checkFlag(self.options, Record.O_CHAR_ENC_CHAR_8):
