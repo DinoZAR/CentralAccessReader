@@ -1,9 +1,12 @@
 var highlight = null; // The highlighter element that has the highlighted content.
 var highlightLine = null; // The highlighter element that has the whole line that will be highlighted
 var lastElement = null;
-var beginOffset;
-var lastHeadingElement;
+var beginOffset = 0;
+var lastHeadingElement = null;
 var startFromHeading = false;
+var lastSearchElement = null;
+var lastSearchOffset = 0;
+var startFromSearch = false;
 
 // ---------------------------------------------------------------------------
 // GENERAL FUNCTIONS
@@ -97,6 +100,9 @@ function SearchTextBackward(myText) {
 			if (lastIndex >= 0) {
 				// Get the highlight to surround what I found
 				var range = document.createRange();
+				lastSearchElement = currentNode;
+				lastSearchOffset = lastIndex;
+				startFromSearch = true;
 				range.setStart(currentNode, lastIndex);
 				range.setEnd(currentNode, lastIndex + myText.length);
 				SetHighlight(range, false);
@@ -127,6 +133,9 @@ function SearchTextForward(myText) {
 			if (index >= 0) {
 				// Get the highlight to surround what I found
 				var range = document.createRange();
+				lastSearchElement = DeepestChild(currentNode);
+				lastSearchOffset = index;
+				startFromSearch = true;
 				range.setStart(currentNode, index);
 				range.setEnd(currentNode, index + myText.length);
 				SetHighlight(range, false);
@@ -148,20 +157,17 @@ function SearchTextForward(myText) {
 // Returns a range that has the range of selection, whether that is the user or
 // automatic
 function GetSelectionRange() {
+	console.debug('GetSelectionRange()');
+
 	var range = window.getSelection();
 	if (!range.isCollapsed) {
-		console.debug("Got something!");
 		range = window.getSelection();
 		
 		if (range.anchorNode.compareDocumentPosition(range.focusNode) & Node.DOCUMENT_POSITION_PRECEDING) {
-			console.debug('Switched around anchor and focus node...');
-			console.debug('! Old range: ' + range.anchorNode.toString() + ' to ' + range.focusNode.toString());
 			var newRange = document.createRange();
 			newRange.setStart(range.focusNode, range.focusOffset);
 			newRange.setEnd(range.anchorNode, range.anchorOffset);
 			range = newRange;
-			
-			console.debug('! New range: ' + range.startContainer.toString() + ' to ' + range.endContainer.toString());
 		}
 		else {
 			if (range.anchorNode === range.focusNode) {
@@ -184,15 +190,30 @@ function GetSelectionRange() {
 				range = newRange;
 			}
 		}
+		
+		// If I have a paragraph with no text, move the range to the next element
+		if ((range.startContainer.nodeName == 'P') && ($(range.startContainer).text() == '')) {
+			range.setStart(NextElement(range.startContainer), 0);
+		}
 	}
 	else {
 		// Start from the heading, if applicable
 		if (startFromHeading == true) {
-			console.debug("Starting from heading...");
+			console.debug('Starting from heading...');
 			range = document.createRange();
 			range.selectNodeContents(DeepestChild(lastHeadingElement))
 			range.startOffset = 0;
 		}
+		// Start from highlight, if it was a search or something
+		// Just a little too buggy right now
+		//else if (startFromSearch == true) {
+		//	console.debug('Start from last search...');
+		//	ClearAllHighlights();
+		//	range = document.createRange();
+		//	console.debug('- The text from search: ' + lastSearchElement.data.toString());
+		//	console.debug('- Parent: ' + lastSearchElement.parentNode.nodeName);
+		//	range.setStart(lastSearchElement, lastSearchOffset);
+		//}
 		else {
 			// Get the first deepest child in the document and go from there
 			range = window.getSelection();
@@ -202,14 +223,17 @@ function GetSelectionRange() {
 			newRange.setEnd(range.anchorNode, range.anchorOffset);
 			range = newRange;
 		}
-		beginOffset = 0;
+		beginOffset = lastSearchOffset;
 		range.setEnd(document.body.lastChild, document.body.lastChild.length);
+		
+		console.debug('- Start node: ' + range.startContainer.toString());
+		console.debug('- Start offset: ' + range.startOffset.toString());
+		console.debug('- End node: ' + range.endContainer.toString());
+		console.debug('- End offset: ' + range.endOffset.toString());
+		
+		console.debug('- range: ' + range.toString());
 	}
 	
-	// If I have a paragraph with no text, move the range to the next element
-	if ((range.startContainer.nodeName == 'P') && ($(range.startContainer).text() == '')) {
-		range.setStart(NextElement(range.startContainer), 0);
-	}
 	return range;
 }
 
@@ -232,8 +256,16 @@ function GetHTMLSource(range) {
 function SetBeginning(doLine, elementType) {
 	console.debug("SetBeginning()");
 	var range = GetSelectionRange();
+	
+	// Reset heading states
 	startFromHeading = false;
 	lastHeadingElement = null;
+	
+	// Reset search states
+	startFromSearch = false;
+	lastSearchElement = null;
+	lastSearchOffset = 0;
+	
 	console.debug("- Selection content: " + GetHTMLSource(range));
 	
 	beginOffset = range.startOffset;
@@ -373,11 +405,6 @@ function HighlightWord(doLine, offset, length) {
 	
 	// Get the text content of the child I want
 	var t = $(p).contents()[childNum];
-	
-	console.debug('- t: ' + t.data);
-	console.debug('- offset: ' + offset.toString());
-	console.debug('- beginOffset: ' + beginOffset.toString());
-	console.debug('- length: ' + length.toString());
 	
 	// Create range and select that text correctly
 	var range = document.createRange();

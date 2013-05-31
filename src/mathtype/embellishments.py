@@ -49,25 +49,47 @@ def embellishElement(mathmlElem, embellishValue):
     mathml.text = '?'
     
     if embellishValue == EMB_1DOT:
-        pass
+        mathml = etree.Element('mover')
+        mathml.append(mathmlElem)
+        emb = etree.Element('mo')
+        emb.text = unichr(775)
+        mathml.append(emb)
+        
     elif embellishValue == EMB_2DOT:
-        pass
+        mathml = etree.Element('mover')
+        mathml.append(mathmlElem)
+        emb = etree.Element('mo')
+        emb.text = unichr(776)
+        mathml.append(emb)
+        
     elif embellishValue == EMB_3DOT:
-        pass
+        mathml = etree.Element('mover')
+        mathml.append(mathmlElem)
+        emb = etree.Element('mo')
+        emb.text = unichr(8411)
+        mathml.append(emb)
+    
     elif embellishValue == EMB_1PRIME:
-        mathml = etree.Element('msup')
+        mathml = etree.Element('mrow')
+        mathml.append(mathmlElem)
         emb = etree.SubElement(mathml, 'mo')
         emb.text = unichr(8242)
-        mathml.append(mathmlElem)
     
     elif embellishValue == EMB_2PRIME:
-        mathml = etree.Element('msup')
-        emb = etree.SubElement(mathml, 'mo')
-        emb.text = unichr(8243)
+        mathml = etree.Element('mrow')
         mathml.append(mathmlElem)
+        #emb = etree.SubElement(mathml, 'mo')
+        #emb.text = unichr(8243)
+        emb = etree.SubElement(mathml, 'mo')
+        emb.text = unichr(8242)
+        emb = etree.SubElement(mathml, 'mo')
+        emb.text = unichr(8242)
     
     elif embellishValue == EMB_BPRIME:
-        pass
+        mathml = etree.Element('mrow')
+        emb = etree.SubElement(mathml, 'mo')
+        emb.text = unichr(8245)
+        mathml.append(mathmlElem)
     
     elif embellishValue == EMB_TILDE:
         mathml = etree.Element('mover')
@@ -84,7 +106,11 @@ def embellishElement(mathmlElem, embellishValue):
         mathml.append(emb)
         
     elif embellishValue == EMB_NOT:
-        pass
+        mathml = etree.Element('mover')
+        mathml.append(mathmlElem)
+        emb = etree.Element('mo')
+        emb.text = unichr(172)
+        mathml.append(emb)
     
     elif embellishValue == EMB_RARROW:
         mathml = etree.Element('mover')
@@ -132,56 +158,123 @@ def embellishElement(mathmlElem, embellishValue):
         mathml.append(emb)
     
     elif embellishValue == EMB_3PRIME:
-        mathml = etree.Element('msup')
-        emb = etree.SubElement(mathml, 'mo')
-        emb.text = unichr(8244)
+        mathml = etree.Element('mrow')
         mathml.append(mathmlElem)
+        #emb = etree.SubElement(mathml, 'mo')
+        #emb.text = unichr(8244)
+        emb = etree.SubElement(mathml, 'mo')
+        emb.text = unichr(8242)
+        emb = etree.SubElement(mathml, 'mo')
+        emb.text = unichr(8242)
+        emb = etree.SubElement(mathml, 'mo')
+        emb.text = unichr(8242)
         
     elif embellishValue == EMB_FROWN:
-        pass
+        mathml = etree.Element('mover')
+        mathml.append(mathmlElem)
+        emb = etree.Element('mo')
+        emb.text = unichr(8994)
+        mathml.append(emb)
+        
     elif embellishValue == EMB_SMILE:
-        pass
+        mathml = etree.Element('mover')
+        mathml.append(mathmlElem)
+        emb = etree.Element('mo')
+        emb.text = unichr(8995)
+        mathml.append(emb)
+        
     elif embellishValue == EMB_X_BARS:
         pass
+    
     elif embellishValue == EMB_UP_BAR:
         pass
+    
     elif embellishValue == EMB_DOWN_BAR:
         pass
+    
     elif embellishValue == EMB_4DOT:
-        pass
-    elif embellishValue == EMB_U_1DOT:
-        pass
+        mathml = etree.Element('mover')
+        mathml.append(mathmlElem)
+        emb = etree.Element('mo')
+        emb.text = unichr(8412)
+        mathml.append(emb)
+    
+    if embellishValue == EMB_U_1DOT:
+        mathml = etree.Element('munder')
+        mathml.append(mathmlElem)
+        emb = etree.SubElement(mathml, 'mo')
+        emb.text = unichr(775)
+        
     elif embellishValue == EMB_U_2DOT:
-        pass
+        mathml = etree.Element('munder')
+        mathml.append(mathmlElem)
+        emb = etree.SubElement(mathml, 'mo')
+        emb.text = unichr(776)
+        
     elif embellishValue == EMB_U_3DOT:
-        pass
+        mathml = etree.Element('munder')
+        mathml.append(mathmlElem)
+        emb = etree.SubElement(mathml, 'mo')
+        emb.text = unichr(8411)
+        
     elif embellishValue == EMB_U_4DOT:
-        pass
+        mathml = etree.Element('munder')
+        mathml.append(mathmlElem)
+        emb = etree.SubElement(mathml, 'mo')
+        emb.text = unichr(8412)
+    
     elif embellishValue == EMB_U_BAR:
         mathml = etree.Element('munder')
-        emb = etree.SubElement(mathml, 'mo')
-        emb.text = '&#x332;'
         mathml.append(mathmlElem)
+        emb = etree.SubElement(mathml, 'mo')
+        emb.text = unichr(175)
         
     elif embellishValue == EMB_U_TILDE:
         mathml = etree.Element('munder')
+        mathml.append(mathmlElem)
         emb = etree.SubElement(mathml, 'mo')
         emb.text = '~'
-        mathml.append(mathmlElem)
         
     elif embellishValue == EMB_U_FROWN:
-        pass
+        mathml = etree.Element('munder')
+        mathml.append(mathmlElem)
+        emb = etree.SubElement(mathml, 'mo')
+        emb.text = unichr(8994)
+        
     elif embellishValue == EMB_U_SMILE:
-        pass
+        mathml = etree.Element('munder')
+        mathml.append(mathmlElem)
+        emb = etree.SubElement(mathml, 'mo')
+        emb.text = unichr(8995)
+        
     elif embellishValue == EMB_U_RARROW:
-        pass
+        mathml = etree.Element('munder')
+        mathml.append(mathmlElem)
+        emb = etree.SubElement(mathml, 'mo')
+        emb.text = unichr(8594)
+        
     elif embellishValue == EMB_U_LARROW:
-        pass
+        mathml = etree.Element('munder')
+        mathml.append(mathmlElem)
+        emb = etree.SubElement(mathml, 'mo')
+        emb.text = unichr(8592)
+        
     elif embellishValue == EMB_U_BARROW:
-        pass
+        mathml = etree.Element('munder')
+        mathml.append(mathmlElem)
+        emb = etree.SubElement(mathml, 'mo')
+        emb.text = unichr(10231)
+        
     elif embellishValue == EMB_U_R1ARROW:
-        pass
+        mathml = etree.Element('munder')
+        mathml.append(mathmlElem)
+        emb = etree.SubElement(mathml, 'mo')
+        emb.text = unichr(8641)
+        
     elif embellishValue == EMB_U_L1ARROW:
-        pass
+        mathml = etree.Element('munder')
+        mathml.append(mathmlElem)
+        emb = etree.SubElement(mathml, 'mo')
+        emb.text = unichr(8637)
     
     return mathml
