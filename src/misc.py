@@ -9,6 +9,7 @@ practically universally applicable.
 import sys
 import os
 import platform
+import subprocess
 from threading import Thread
 from PyQt4 import QtGui
 
@@ -98,6 +99,13 @@ def js_command(functionName, args):
     print 'JavaScript: ' + commandString
     
     return commandString
+
+def open_file_location(filePath):
+    '''
+    Creates the process to open a file browser with the file selected.
+    '''
+    if 'Windows' in platform.system():
+        subprocess.Popen(r'explorer /select,"' + os.path.abspath(filePath) + '"')
 
 def prepare_bug_report(traceback, configuration):
     '''
