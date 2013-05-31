@@ -83,7 +83,9 @@ openParen = mo("(") -> 'open,'
 closeParen = mo(")") -> ', closed, '
 
 lessThan = mo("&lt;") -> 'is less than'
-greaterThan = mo("&gt;") -> 'is greater than'
+greaterThan = mo("&gt;") -> 'is greater than'
+
+factorial = mo("!") -> 'factorial'
 
 endPeriod = mo(".") -> ''
 comma = mo(",") -> ','
@@ -116,8 +118,32 @@ x [variable] = mi("x") -> '"x"'
 y [variable] = mi("y") -> '"y"'
 z [variable] = mi("z") -> '"z"'
 
-A [variable] = mi("A") -> '"A"'
-N [variable] = mi("N") -> '"N"'
+A [variable] = mi("A") -> '"A"'
+B [variable] = mi("B") -> '"B"'
+C [variable] = mi("C") -> '"C"'
+D [variable] = mi("D") -> '"D"'
+E [variable] = mi("E") -> '"E"'
+F [variable] = mi("F") -> '"F"'
+G [variable] = mi("G") -> '"G"'
+H [variable] = mi("H") -> '"H"'
+I [variable] = mi("I") -> '"I"'
+J [variable] = mi("J") -> '"J"'
+K [variable] = mi("K") -> '"K"'
+L [variable] = mi("L") -> '"L"'
+M [variable] = mi("M") -> '"M"'
+N [variable] = mi("N") -> '"N"'
+O [variable] = mi("O") -> '"O"'
+P [variable] = mi("P") -> '"P"'
+Q [variable] = mi("Q") -> '"Q"'
+R [variable] = mi("R") -> '"R"'
+S [variable] = mi("S") -> '"S"'
+T [variable] = mi("T") -> '"T"'
+U [variable] = mi("U") -> '"U"'
+V [variable] = mi("V") -> '"V"'
+W [variable] = mi("W") -> '"W"'
+X [variable] = mi("X") -> '"X"'
+Y [variable] = mi("Y") -> '"Y"'
+Z [variable] = mi("Z") -> '"Z"'
 
 # Greek letters
 gamma [variable] = mi("&#x3B3;") -> 'gamma'
@@ -159,9 +185,9 @@ functionPrime = [variable] mi("'") mfenced(+) -> 'function {1} prime of {2}'
 integral = msub([integral] ?) -> '{1} sub {2} of'
 
 # ------------------------------------------------------------------------------
-# Over-Under
+# Under-Over
 # ------------------------------------------------------------------------------
-overunder = munderover(mrow(+) mrow(+) mrow(+)) -> 'the {1} starting from, {2}, to {3}, of'
+underover = munderover(? mrow(+) mrow(+)) -> 'the {1} starting from, {2}, to {3}, of'
 
 
 # ------------------------------------------------------------------------------
@@ -173,10 +199,11 @@ squareRoot = msqrt(+) -> 'the square root of {1}'
 # ------------------------------------------------------------------------------
 # Generic Fallbacks, Final Collectors
 # ------------------------------------------------------------------------------
-fenced = mfenced(+) -> '{1}'
+fenced = mfenced(+) -> 'open, {1}, closed,'
 
 subscript = msub(? ?) -> '{1} sub {2}'
-superscript = msup(? ?) -> '{1} to the {2} power'
+superscript = msup(? ?) -> '{1} to the {2} power'
+subsuperscript = msubsup(? ? ?) -> '{1} sub {2} to the {3} power'
 fraction = mfrac(? ?) -> '{1} over {2}'
 
 style = mstyle(+) -> '{1}'
