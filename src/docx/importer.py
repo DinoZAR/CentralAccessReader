@@ -11,6 +11,7 @@ import os
 import urllib
 from src.gui.bookmarks import BookmarkNode
 from src.misc import program_path, app_data_path, temp_path
+from src.mathtype.parser import parseWMF
 
 # The path to this particular module
 rootPath = 'src/docx'
@@ -31,6 +32,8 @@ pic_NS = '{http://schemas.openxmlformats.org/drawingml/2006/picture}'
 r_NS = '{http://schemas.openxmlformats.org/package/2006/relationships}'
 rel_NS = '{http://schemas.openxmlformats.org/officeDocument/2006/relationships}'
 a_NS = '{http://schemas.openxmlformats.org/drawingml/2006/main}'
+o_NS = '{urn:schemas-microsoft-com:office:office}'
+v_NS = '{urn:schemas-microsoft-com:vml}'
 
 # Heirarchical levels of each of the styles
 heirarchyStyles = {'Title' : 1,
@@ -82,15 +85,15 @@ class DocxDocument(object):
         self.importFolder = temp_path('import')
         
         # .docx is just a zip file
-        zip = zipfile.ZipFile(docxFilePath, 'r')
+        self.zip = zipfile.ZipFile(docxFilePath, 'r')
         
-        self.rels = self._getRels(zip)
-        self.styles = self._getStyles(zip)
+        self.rels = self._getRels(self.zip)
+        self.styles = self._getStyles(self.zip)
         self.paraStylesDict = self._getParaStylesDict(self.styles)
-        #self.numberingDict = self._getNumberingDict(zip)
+        #self.numberingDict = self._getNumberingDict(self.zip)
         
         # Open my main document file
-        document = zip.open('word/document.xml', 'r')
+        document = self.zip.open('word/document.xml', 'r')
         tree = etree.parse(document)
         document.close()
         root = tree.getroot()
@@ -106,7 +109,7 @@ class DocxDocument(object):
             elif p.tag == '{0}tbl'.format(w_NS):
                 self.paragraphData.append(self._parseTable(p))
                 
-        zip.close()
+        self.zip.close()
         
     def _getRels(self, zip):
         relFile = zip.open('word/_rels/document.xml.rels', 'r')
@@ -228,6 +231,32 @@ class DocxDocument(object):
         data = {'type' : 'math'}
         data['data'] = self._convertOMMLToMathML(elem)
         parentData['data'].append(data)
+        
+    def _parseObject(self, elem, parentData):
+        # Only do something to it if the object is MathType
+        query = elem.find('{0}OLEObject[@ProgID="Equation.DSMT4"]'.format(o_NS))
+        if query != None:
+            data = {'type' : 'math'}
+            
+            # Get the image data for it
+            query = elem.find('{0}shape/{0}imagedata'.format(v_NS))
+            id = query.attrib['{0}id'.format(rel_NS)]
+            
+            # See which filename it refers to and create a valid one
+            filename = ''
+            for rel in self.rels:
+                if rel.get('Id') == id:
+                    filename = os.path.split(rel.get('Target'))[1]
+                    break
+            
+            # Figure out the image type to run correct parser through
+            imageFile = self.zip.open('word/media/' + filename, 'r')
+            imageType = os.path.splitext(filename)[1].lower()
+            if imageType == '.wmf':
+                data['data'] = parseWMF(imageFile)
+                parentData['math'] = data
+                
+            imageFile.close()
     
     def _parseParagraphStyle(self, elem, parentData):
         query = elem.find('./{0}pStyle'.format(w_NS))
@@ -251,6 +280,9 @@ class DocxDocument(object):
             # Image or some drawing
             if child.tag == '{0}drawing'.format(w_NS):
                 self._parseImage(child, data)
+                
+            if child.tag == '{0}object'.format(w_NS):
+                self._parseObject(child, data)
                 
         parentData['data'].append(data)
                 
@@ -464,6 +496,14 @@ class DocxDocument(object):
                         imageTag.set('alt', image['altText'])
                         imageTag.set('title', image['altText'])
                     currTextNode = imageTag
+                    currTextNode.tail = ''
+                    onRoot = False
+                    
+                elif 'math' in c:
+                    mathSpan = etree.SubElement(pRoot, 'span')
+                    mathSpan.set('class', 'mathmlEquation')
+                    mathSpan.append(c['math']['data'])
+                    currTextNode = mathSpan
                     currTextNode.tail = ''
                     onRoot = False
             

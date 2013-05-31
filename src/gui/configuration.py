@@ -88,7 +88,7 @@ class Configuration(object):
         out += 'Font: ' + self.font_all + '\n'
         
         # Zoom
-        out += 'Zoom:/n'
+        out += 'Zoom:\n'
         out += 'Content: ' + str(self.zoom_content) + '\n'
         out += 'Navigation: ' + str(self.zoom_navigation_ptsize) + '\n'
         

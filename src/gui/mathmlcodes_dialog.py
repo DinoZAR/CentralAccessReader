@@ -5,11 +5,12 @@ Created on Feb 27, 2013
 '''
 import os
 import sys
+import urllib
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtWebKit import QWebView
 from lxml import etree, html
 from src.forms.mathmlcodesdialog_ui import Ui_MathMLCodesDialog
-from src.misc import temp_path
+from src.misc import temp_path, program_path
 
 class MathMLCodesDialog(QtGui.QDialog):
     '''
@@ -64,10 +65,7 @@ class MathMLItem(QtGui.QWidget):
         
         mathjaxScript = etree.Element('script')
         mathjaxScript.attrib['type'] = 'text/javascript'
-        if getattr(sys, 'frozen', None):
-            mathjaxScript.attrib['src'] = r'mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML.js'
-        else:
-            mathjaxScript.attrib['src'] = r'../mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML.js'
+        mathjaxScript.attrib['src'] = 'file:' + urllib.pathname2url(program_path('mathjax/MathJax.js')) + r'?config=TeX-AMS-MML_HTMLorMML.js'
         
         
         head.append(mathjaxScript)

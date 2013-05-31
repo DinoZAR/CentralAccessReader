@@ -58,6 +58,8 @@ def parseWMF(wmfFile):
     '''
     Parses the WMF file to find the embedded MathType data. Then, it will get
     the MathML interpreted from the MTEF data.
+    
+    The file should already be opened for binary reading.
     '''
     
     # Keep reading until I find the first instance of the AppsMFCC tag. This is

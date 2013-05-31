@@ -5,12 +5,14 @@ Created on Mar 2, 2013
 '''
 import struct
 from lxml import etree
+import embellishments
 
 MATHML_OPERATORS = ['+', 
                     '-',
-                    '\u8722',
+                    unichr(8722), # Math minus
                     '*', 
-                    '/', 
+                    '/',
+                    unichr(177), # Plus/minus
                     '=', 
                     '(', 
                     ')',
@@ -43,44 +45,6 @@ R_ENCODING_DEF = 19
 
 # Future implementations (pretty experimental stuff that I found)
 R_TEX_INPUT = 0x66
-
-# Embellishments
-EMB_1DOT = 2
-EMB_2DOT = 3
-EMB_3DOT = 4
-EMB_1PRIME = 5
-EMB_2PRIME = 6
-EMB_BPRIME = 7
-EMB_TILDE = 8
-EMB_HAT = 9
-EMB_NOT = 10
-EMB_RARROW = 11
-EMB_LARROW = 12
-EMB_BARROW = 13
-EMB_R1ARROW = 14
-EMB_L1ARROW = 15
-EMB_MBAR = 16
-EMB_OBAR = 17
-EMB_3PRIME = 18
-EMB_FROWN = 19
-EMB_SMILE = 20
-EMB_X_BARS = 21
-EMB_UP_BAR = 22
-EMB_DOWN_BAR = 23
-EMB_4DOT = 24
-EMB_U_1DOT = 25
-EMB_U_2DOT = 26
-EMB_U_3DOT = 27
-EMB_U_4DOT = 28
-EMB_U_BAR = 29
-EMB_U_TILDE = 30
-EMB_U_FROWN = 31
-EMB_U_SMILE = 32
-EMB_U_RARROW = 33
-EMB_U_LARROW = 34
-EMB_U_BARROW = 35
-EMB_U_R1ARROW = 36
-EMB_U_L1ARROW = 37
 
 def createRecord(type, fileHandle):
     '''
@@ -160,14 +124,22 @@ def convertRecords(i, records, parentStack):
             parentStack.pop()
         if isinstance(records[i], CharRecord):
             character = unichr(records[i].mtCode)
-            if len(records[i].embellishments) > 0:
-                pass
+            elem = None
             if character in MATHML_OPERATORS:
-                elem = etree.SubElement(parentStack[-1], 'mo')
+                elem = etree.Element('mo')
+                elem.text = character
+            elif _isNumber(character):
+                elem = etree.Element('mn')
                 elem.text = character
             else:
-                elem = etree.SubElement(parentStack[-1], 'mi')
+                elem = etree.Element('mi')
                 elem.text = character
+                
+            if len(records[i].embellishments) > 0:
+                for emb in records[i].embellishments:
+                    elem = embellishments.embellishElement(elem, emb.type)
+            
+            parentStack[-1].append(elem)
                 
         if isinstance(records[i], TemplateRecord):
             import templates
@@ -180,7 +152,17 @@ def convertRecords(i, records, parentStack):
                     parentStack[-1].append(d)
             
         i += 1
-        
+
+def _isNumber(character):
+    '''
+    Returns whether the character in question is a number or something that can
+    be treated as a number.
+    '''
+    if character.isdigit():
+        return True
+    else:
+        return False
+
 # 
 # Functions that help skip over parts of the data I don't want 
 # ------------------------------------------------------------------------------

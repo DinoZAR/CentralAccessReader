@@ -7,8 +7,7 @@ MathType.
 @author: Spencer Graffe
 '''
 from lxml import etree
-from records import *
-from parser import convertRecords
+from records import convertRecords
 
 # Template Constants
 TM_ANGLE = 0
@@ -152,17 +151,27 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records):
     elif templateRecord.selector == TM_SUM:
         data = BigOpBoxClass(templateRecord)
         mathml = etree.Element('munderover')
-        mathml.attrib['align'] = 'center'
+        #mathml.attrib['align'] = 'center'
         operator = etree.Element('mo')
         operator.text = data.operator
         mathml.append(operator)
-        mathml.append(data.lower)
         mathml.append(data.upper)
+        mathml.append(data.lower)
         mathmlElements.append(mathml)
         mathmlElements.append(data.mainSlot)
     
     elif templateRecord.selector == TM_PROD:
-        pass
+        data = BigOpBoxClass(templateRecord)
+        mathml = etree.Element('munderover')
+        #mathml.attrib['align'] = 'center'
+        operator = etree.Element('mo')
+        operator.text = data.operator
+        mathml.append(operator)
+        mathml.append(data.upper)
+        mathml.append(data.lower)
+        mathmlElements.append(mathml)
+        mathmlElements.append(data.mainSlot)
+        
     elif templateRecord.selector == TM_COPROD:
         pass
     elif templateRecord.selector == TM_UNION:
