@@ -4,6 +4,7 @@ Created on Mar 2, 2013
 @author: Spencer Graffe
 '''
 import struct
+import math
 from lxml import etree
 import embellishments
 
@@ -63,8 +64,7 @@ def createRecord(type, fileHandle):
         print 'Error: Record type not implemented yet:', type
         return None
     elif type == R_MATRIX:
-        print 'Error: Record type not implemented yet:', type
-        return None
+        return MatrixRecord(fileHandle)
     elif type == R_EMBELL:
         return EmbellishmentRecord(fileHandle)
     elif type == R_RULER:
@@ -122,6 +122,7 @@ def convertRecords(i, records, parentStack):
             parentStack.append(newElem)
             convertRecords(0, records[i].childRecords, parentStack)
             parentStack.pop()
+            
         if isinstance(records[i], CharRecord):
             character = unichr(records[i].mtCode)
             elem = None
@@ -150,6 +151,16 @@ def convertRecords(i, records, parentStack):
             if len(data[0]) > 0:
                 for d in data[0]:
                     parentStack[-1].append(d)
+        
+        if isinstance(records[i], MatrixRecord):
+            root = etree.SubElement(parentStack[-1], 'mtable')
+            for r in range(records[i].rows):
+                rowElem = etree.SubElement(root, 'mtr')
+                for c in range(records[i].columns):
+                    colElem = etree.SubElement(rowElem, 'mtd')
+                    parentStack.append(colElem)
+                    convertRecords(0, [records[i].childRecords[r * records[i].columns + c]], parentStack)
+                    parentStack.pop()
             
         i += 1
 
@@ -391,6 +402,48 @@ class TemplateRecord(Record):
         print 'Template Options:', self.templateOptions
         
         # Get all of the children for this template
+        self.childRecords = []
+        while True:
+            type = struct.unpack('<B', f.read(1))[0]
+            record = createRecord(type, f)
+            if isinstance(record, EndRecord):
+                break
+            else:
+                if record != None:
+                    self.childRecords.append(record)
+
+class MatrixRecord(Record):
+    
+    def __init__(self, f):
+        Record.__init__(self)
+        
+        print 'Matrix!'
+        
+        self.options = struct.unpack('<B', f.read(1))[0]
+        
+        # Check for nudge
+        if self._checkFlag(self.options, Record.O_NUDGE):
+            _handleNudge(f)
+        
+        self.valign = struct.unpack('<B', f.read(1))[0]
+        self.h_just = struct.unpack('<B', f.read(1))[0]
+        self.v_just = struct.unpack('<B', f.read(1))[0]
+        
+        self.rows = struct.unpack('<B', f.read(1))[0]
+        self.columns = struct.unpack('<B', f.read(1))[0]
+        
+        print 'Rows:', self.rows
+        print 'Columns:', self.columns
+        
+        # Get row partition line types (ignore for now)
+        for i in range(int(math.ceil(self.rows / 4.0))):
+            f.read(1)
+            
+        # Get column partition types (ignore for now)
+        for i in range(int(math.ceil(self.columns / 4.0))):
+            f.read(1)
+        
+        # Get my list of lines that are for each entry in the matrix
         self.childRecords = []
         while True:
             type = struct.unpack('<B', f.read(1))[0]
