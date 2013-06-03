@@ -70,26 +70,24 @@ def embellishElement(mathmlElem, embellishValue):
         mathml.append(emb)
     
     elif embellishValue == EMB_1PRIME:
-        mathml = etree.Element('mrow')
+        mathml = etree.Element('msup')
         mathml.append(mathmlElem)
         emb = etree.SubElement(mathml, 'mo')
         emb.text = unichr(8242)
     
     elif embellishValue == EMB_2PRIME:
-        mathml = etree.Element('mrow')
+        mathml = etree.Element('msup')
         mathml.append(mathmlElem)
-        #emb = etree.SubElement(mathml, 'mo')
-        #emb.text = unichr(8243)
         emb = etree.SubElement(mathml, 'mo')
-        emb.text = unichr(8242)
-        emb = etree.SubElement(mathml, 'mo')
-        emb.text = unichr(8242)
+        emb.text = unichr(8243)
     
     elif embellishValue == EMB_BPRIME:
-        mathml = etree.Element('mrow')
+        mathml = etree.Element('mmultiscripts')
+        mathml.append(mathmlElem)
+        mathml.append(etree.Element('mprescripts'))
+        mathml.append(etree.Element('none'))
         emb = etree.SubElement(mathml, 'mo')
         emb.text = unichr(8245)
-        mathml.append(mathmlElem)
     
     elif embellishValue == EMB_TILDE:
         mathml = etree.Element('mover')
@@ -106,11 +104,9 @@ def embellishElement(mathmlElem, embellishValue):
         mathml.append(emb)
         
     elif embellishValue == EMB_NOT:
-        mathml = etree.Element('mover')
+        mathml = etree.Element('menclose')
+        mathml.attrib['notation'] = 'updiagonalstrike'
         mathml.append(mathmlElem)
-        emb = etree.Element('mo')
-        emb.text = unichr(172)
-        mathml.append(emb)
     
     elif embellishValue == EMB_RARROW:
         mathml = etree.Element('mover')
@@ -148,7 +144,9 @@ def embellishElement(mathmlElem, embellishValue):
         mathml.append(emb)
         
     elif embellishValue == EMB_MBAR:
-        pass
+        mathml = etree.Element('menclose')
+        mathml.attrib['notation'] = 'horizontalstrike'
+        mathml.append(mathmlElem)
     
     elif embellishValue == EMB_OBAR:
         mathml = etree.Element('mover')
@@ -158,16 +156,10 @@ def embellishElement(mathmlElem, embellishValue):
         mathml.append(emb)
     
     elif embellishValue == EMB_3PRIME:
-        mathml = etree.Element('mrow')
+        mathml = etree.Element('msup')
         mathml.append(mathmlElem)
-        #emb = etree.SubElement(mathml, 'mo')
-        #emb.text = unichr(8244)
         emb = etree.SubElement(mathml, 'mo')
-        emb.text = unichr(8242)
-        emb = etree.SubElement(mathml, 'mo')
-        emb.text = unichr(8242)
-        emb = etree.SubElement(mathml, 'mo')
-        emb.text = unichr(8242)
+        emb.text = unichr(8244)
         
     elif embellishValue == EMB_FROWN:
         mathml = etree.Element('mover')
@@ -184,13 +176,19 @@ def embellishElement(mathmlElem, embellishValue):
         mathml.append(emb)
         
     elif embellishValue == EMB_X_BARS:
-        pass
+        mathml = etree.Element('menclose')
+        mathml.attrib['notation'] = 'updiagonalstrike downdiagonalstrike'
+        mathml.append(mathmlElem)
     
     elif embellishValue == EMB_UP_BAR:
-        pass
+        mathml = etree.Element('menclose')
+        mathml.attrib['notation'] = 'updiagonalstrike'
+        mathml.append(mathmlElem)
     
     elif embellishValue == EMB_DOWN_BAR:
-        pass
+        mathml = etree.Element('menclose')
+        mathml.attrib['notation'] = 'downdiagonalstrike'
+        mathml.append(mathmlElem)
     
     elif embellishValue == EMB_4DOT:
         mathml = etree.Element('mover')
