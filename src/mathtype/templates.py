@@ -111,10 +111,13 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records):
         
     elif templateRecord.selector == TM_FLOOR:
         pass
+    
     elif templateRecord.selector == TM_CEILING:
         pass
+    
     elif templateRecord.selector == TM_OBRACK:
         pass
+    
     elif templateRecord.selector == TM_INTERVAL:
         pass
     
@@ -141,17 +144,20 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records):
     
     elif templateRecord.selector == TM_UBAR:
         pass
+    
     elif templateRecord.selector == TM_OBAR:
         pass
+    
     elif templateRecord.selector == TM_ARROW:
         pass
+    
     elif templateRecord.selector == TM_INTEG:
         pass
     
     elif templateRecord.selector == TM_SUM:
         data = BigOpBoxClass(templateRecord)
         mathml = etree.Element('munderover')
-        #mathml.attrib['align'] = 'center'
+        mathml.attrib['align'] = 'center'
         operator = etree.Element('mo')
         operator.text = data.operator
         mathml.append(operator)
@@ -163,7 +169,7 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records):
     elif templateRecord.selector == TM_PROD:
         data = BigOpBoxClass(templateRecord)
         mathml = etree.Element('munderover')
-        #mathml.attrib['align'] = 'center'
+        mathml.attrib['align'] = 'center'
         operator = etree.Element('mo')
         operator.text = data.operator
         mathml.append(operator)
@@ -173,13 +179,44 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records):
         mathmlElements.append(data.mainSlot)
         
     elif templateRecord.selector == TM_COPROD:
-        pass
+        data = BigOpBoxClass(templateRecord)
+        mathml = etree.Element('munderover')
+        mathml.attrib['align'] = 'center'
+        operator = etree.Element('mo')
+        operator.text = data.operator
+        mathml.append(operator)
+        mathml.append(data.upper)
+        mathml.append(data.lower)
+        mathmlElements.append(mathml)
+        mathmlElements.append(data.mainSlot)
+    
     elif templateRecord.selector == TM_UNION:
-        pass
+        data = BigOpBoxClass(templateRecord)
+        mathml = etree.Element('munderover')
+        mathml.attrib['align'] = 'center'
+        operator = etree.Element('mo')
+        operator.text = data.operator
+        mathml.append(operator)
+        mathml.append(data.upper)
+        mathml.append(data.lower)
+        mathmlElements.append(mathml)
+        mathmlElements.append(data.mainSlot)
+    
     elif templateRecord.selector == TM_INTER:
-        pass
+        data = BigOpBoxClass(templateRecord)
+        mathml = etree.Element('munderover')
+        mathml.attrib['align'] = 'center'
+        operator = etree.Element('mo')
+        operator.text = data.operator
+        mathml.append(operator)
+        mathml.append(data.upper)
+        mathml.append(data.lower)
+        mathmlElements.append(mathml)
+        mathmlElements.append(data.mainSlot)
+    
     elif templateRecord.selector == TM_INTOP:
         pass
+    
     elif templateRecord.selector == TM_SUMOP:
         pass
     
@@ -193,8 +230,10 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records):
         
     elif templateRecord.selector == TM_HBRACE:
         pass
+    
     elif templateRecord.selector == TM_HBRACK:
         pass
+    
     elif templateRecord.selector == TM_LDIV:
         pass
     
@@ -234,18 +273,25 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records):
         
     elif templateRecord.selector == TM_DIRAC:
         pass
+    
     elif templateRecord.selector == TM_VEC:
         pass
+    
     elif templateRecord.selector == TM_TILDE:
         pass
+    
     elif templateRecord.selector == TM_HAT:
         pass
+    
     elif templateRecord.selector == TM_ARC:
         pass
+    
     elif templateRecord.selector == TM_JSTATUS:
         pass
+    
     elif templateRecord.selector == TM_STRIKE:
         pass
+    
     elif templateRecord.selector == TM_BOX:
         pass
     
