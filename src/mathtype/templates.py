@@ -182,8 +182,15 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records):
         pass
     elif templateRecord.selector == TM_SUMOP:
         pass
+    
     elif templateRecord.selector == TM_LIM:
-        pass
+        data = LimBoxClass(templateRecord)
+        mathml = etree.Element('munderover')
+        mathml.append(data.mainSlot)
+        mathml.append(data.lower)
+        mathml.append(data.upper)
+        mathmlElements.append(mathml)
+        
     elif templateRecord.selector == TM_HBRACE:
         pass
     elif templateRecord.selector == TM_HBRACK:
@@ -290,8 +297,18 @@ class LDivBoxClass():
         pass
 
 class LimBoxClass():
-    def __init__(self):
-        pass
+    def __init__(self, templateRecord):
+        self.mainSlot = etree.Element('mrow')
+        convertRecords(0, [templateRecord.childRecords[0]], [self.mainSlot])
+        self.mainSlot = self.mainSlot[0]
+        
+        self.lower = etree.Element('mrow')
+        convertRecords(0, [templateRecord.childRecords[1]], [self.lower])
+        self.lower = self.lower[0]
+        
+        self.upper = etree.Element('mrow')
+        convertRecords(0, [templateRecord.childRecords[2]], [self.upper])
+        self.upper = self.upper[0]
 
 TV_FENCE_L = 1
 TV_FENCE_R = 2

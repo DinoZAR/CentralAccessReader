@@ -110,6 +110,7 @@ def embellishElement(mathmlElem, embellishValue):
     
     elif embellishValue == EMB_RARROW:
         mathml = etree.Element('mover')
+        mathml.attrib['accent'] = 'true'
         mathml.append(mathmlElem)
         emb = etree.Element('mo')
         emb.text = unichr(8594)
@@ -117,6 +118,7 @@ def embellishElement(mathmlElem, embellishValue):
         
     elif embellishValue == EMB_LARROW:
         mathml = etree.Element('mover')
+        mathml.attrib['accent'] = 'true'
         mathml.append(mathmlElem)
         emb = etree.Element('mo')
         emb.text = unichr(8592)
@@ -124,13 +126,15 @@ def embellishElement(mathmlElem, embellishValue):
         
     elif embellishValue == EMB_BARROW:
         mathml = etree.Element('mover')
+        mathml.attrib['accent'] = 'true'
         mathml.append(mathmlElem)
         emb = etree.Element('mo')
-        emb.text = unichr(10231)
+        emb.text = unichr(8596)
         mathml.append(emb)
         
     elif embellishValue == EMB_R1ARROW:
         mathml = etree.Element('mover')
+        mathml.attrib['accent'] = 'true'
         mathml.append(mathmlElem)
         emb = etree.Element('mo')
         emb.text = unichr(8640)
@@ -138,6 +142,7 @@ def embellishElement(mathmlElem, embellishValue):
         
     elif embellishValue == EMB_L1ARROW:
         mathml = etree.Element('mover')
+        mathml.attrib['accent'] = 'true'
         mathml.append(mathmlElem)
         emb = etree.Element('mo')
         emb.text = unichr(8636)
