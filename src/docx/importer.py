@@ -536,6 +536,7 @@ class DocxDocument(object):
         # Check to see if it is a page number
         if 'pageNumber' in p:
             pRoot.set('id', 'page' + pRoot.text_content())
+            pRoot.set('class', 'pageNumber')
         
         # Return what I got
         return (pRoot, incrementAnchorId)

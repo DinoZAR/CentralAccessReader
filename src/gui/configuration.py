@@ -343,6 +343,14 @@ padding: 15px;
 font-size: 230%;
 }
 
+.pageNumber
+{
+border-style:solid;
+border-width: 1px 0px 0px 0px;
+padding: 5px 0px 0px 25px;
+font-size: 150%;
+}
+
 .ui-tooltip
 {
 background: ''' + self._createRGBStringFromQColor(self.color_contentBackground) + ''';
@@ -357,7 +365,6 @@ color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
 border-radius: 20px;
 box-shadow: 0 0 7px ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
 }
-
 
 #npaHighlightLine
 {
