@@ -3,10 +3,9 @@ Created on Apr 9, 2013
 
 @author: Spencer Graffe
 '''
-import time
 import thread
 import platform
-from src.misc import clean_XML_input
+import copy
 
 if platform.system() == 'Windows':
     import win32com.client
@@ -34,7 +33,6 @@ class SAPIDriver(object):
     CALLBACK_GEN = 1
     
     def __init__(self):
-        
         self.queue = []
         
         self.rate = 5   # Between -10 to 10
@@ -128,16 +126,26 @@ class SAPIDriver(object):
         self.advisor = win32com.client.WithEvents(self.voice, SAPIEventSink)
         self.advisor.setDriver(self)
         
-        for i in range(len(self.queue)):
+        # Make a copy of the queue, so that I don't run into race conditions
+        # later
+        queue_copy = copy.deepcopy(self.queue)
+        
+        for i in range(len(queue_copy)):
             # Make the voice say this asynchronously
-            self.queue[i][2] = self.voice.Speak(self.queue[i][0], 1)
+            self.queue[i][2] = self.voice.Speak(queue_copy[i][0], 1)
+            pythoncom.PumpWaitingMessages()
+            if not self.running:
+                break
         
         while self.running:
             pythoncom.PumpWaitingMessages()
         
         # Use this empty message to completely clear queue
         self.voice.Speak('', 3) # SPF_PURGEBEFORESPEAK
-        pythoncom.PumpWaitingMessages()
+        for c in self.delegator['onFinish']:
+            c[1]()
+        
+        self.queue = []
         
         return
         
@@ -146,7 +154,6 @@ class SAPIDriver(object):
         Kills everything so that TTS playback stops.
         '''
         self.running = False
-        self.queue = []
         
     def speakToWavFile(self, wavFilePath, outputList, progressCallback, checkStopFunction):
         '''
@@ -239,7 +246,6 @@ class SAPIDriver(object):
         
     
     def handle_onEndStream(self, stream, pos):
-        
         # Figure out what stream ended and remove it from my queue
         i = 0
         while i < len(self.queue):
