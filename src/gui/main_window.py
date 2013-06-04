@@ -127,6 +127,7 @@ class MainWindow(QtGui.QMainWindow):
         # the data for the document itself.
         self.lastDocumentFilePath = ''
         self.document = None
+        self.stopDocumentLoad = False
         
         # Show the tutorial if I user hasn't seen it yet
         if self.configuration.showTutorial:
@@ -431,41 +432,57 @@ class MainWindow(QtGui.QMainWindow):
             if len(filePath) > 0:
                 url = temp_path('import')
                 baseUrl = QUrl.fromLocalFile(url)
-                print 'Base url:', url
                 
+                # Function callback when user clicks on the cancel button
+                def myCancelCallback():
+                    self.stopDocumentLoad = True
+                    
                 # Show a progress dialog
                 self.progressDialog.setWindowModality(Qt.WindowModal)
                 self.progressDialog.setWindowTitle('Opening Word document...')
                 self.progressDialog.setLabelText('Reading ' + os.path.basename(str(filePath)) + '...')
                 self.progressDialog.setValue(0)
+                self.progressDialog.canceled.connect(myCancelCallback)
                 self.progressDialog.show()
                 QtGui.qApp.processEvents()
                     
-                # Run a separate thread for updating my stuff
+                # Run a separate thread for updating my GUI thread
                 t.start()
                 
-                self.document = DocxDocument(str(filePath))
-                docxHtml = self.document.getMainPage()
+                # Function for updating my progress bar
+                def myProgressCallback(percentage):
+                    self.progressDialog.setValue(percentage)
+                    
+                def myCheckCancel():
+                    return self.stopDocumentLoad
                 
-                # Clear the cache in the web view
-                QWebSettings.clearIconDatabase()
-                QWebSettings.clearMemoryCaches()
+                # Read in my Word document
+                self.document = DocxDocument(str(filePath), myProgressCallback, myCheckCancel)
                 
-                self.assigner.prepare(docxHtml)
-                self.ui.webView.setHtml(docxHtml, baseUrl)
+                if not self.stopDocumentLoad:
+                    docxHtml = self.document.getMainPage()
+                    
+                    # Clear the cache in the web view
+                    QWebSettings.clearIconDatabase()
+                    QWebSettings.clearMemoryCaches()
+                    
+                    # Set the content views and prepare assigner
+                    self.assigner.prepare(docxHtml)
+                    self.ui.webView.setHtml(docxHtml, baseUrl)
+                    
+                    # Get and set the bookmarks
+                    self.bookmarksModel = BookmarksTreeModel(self.document.getBookmarks())
+                    self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
+                    self.ui.bookmarksTreeView.expandAll()
+                    
+                    # Get and set the pages
+                    self.pagesModel = PagesTreeModel(self.document.getPages())
+                    self.ui.pagesTreeView.setModel(self.pagesModel)
+                    self.ui.pagesTreeView.expandAll()
+                    
+                    self.lastDocumentFilePath = filePath
                 
-                # Get and set the bookmarks
-                self.bookmarksModel = BookmarksTreeModel(self.document.getBookmarks())
-                self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
-                self.ui.bookmarksTreeView.expandAll()
-                
-                # Get and set the pages
-                self.pagesModel = PagesTreeModel(self.document.getPages())
-                self.ui.pagesTreeView.setModel(self.pagesModel)
-                self.ui.pagesTreeView.expandAll()
-                
-                self.lastDocumentFilePath = filePath
-                
+                # Stop progress bars and update threads
                 t.stop()
                 t.join()
                 self.progressDialog.hide()
@@ -477,6 +494,8 @@ class MainWindow(QtGui.QMainWindow):
             out = misc.prepare_bug_report(traceback.format_exc(), self.configuration)
             dialog = BugReporter(out)
             dialog.exec_()
+        
+        self.stopDocumentLoad = False
         
     def showOpenDocxDialog(self):
         filePath = QtGui.QFileDialog.getOpenFileName(self, 'Open Docx...',os.path.join(os.path.expanduser('~'), 'Documents'),'(*.docx)')

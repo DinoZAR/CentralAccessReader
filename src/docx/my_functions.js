@@ -225,13 +225,6 @@ function GetSelectionRange() {
 		}
 		beginOffset = lastSearchOffset;
 		range.setEnd(document.body.lastChild, document.body.lastChild.length);
-		
-		console.debug('- Start node: ' + range.startContainer.toString());
-		console.debug('- Start offset: ' + range.startOffset.toString());
-		console.debug('- End node: ' + range.endContainer.toString());
-		console.debug('- End offset: ' + range.endOffset.toString());
-		
-		console.debug('- range: ' + range.toString());
 	}
 	
 	return range;
@@ -265,8 +258,6 @@ function SetBeginning(doLine, elementType) {
 	startFromSearch = false;
 	lastSearchElement = null;
 	lastSearchOffset = 0;
-	
-	console.debug("- Selection content: " + GetHTMLSource(range));
 	
 	beginOffset = range.startOffset;
 	

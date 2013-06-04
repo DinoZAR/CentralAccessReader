@@ -73,9 +73,14 @@ class DocxDocument(object):
     Imports a .docx and transforms it to meet my needs. Although it has not been 
     implemented yet, it will eventually support streaming, especially if we are
     dealing with very large books.
+    
+    The progressCallback expects a function that will handle the following
+    arguments:
+    
+    progressCallback(percentageOutOf100)
     '''
     
-    def __init__(self, docxFilePath):
+    def __init__(self, docxFilePath, progressCallback=None, checkCancelFunction=None):
         '''
         Generates the document structure from the .docx file.
         '''
@@ -83,6 +88,9 @@ class DocxDocument(object):
         self.docxFilePath = docxFilePath
         
         self.importFolder = temp_path('import')
+        
+        if progressCallback:
+            progressCallback(0)
         
         # .docx is just a zip file
         self.zip = zipfile.ZipFile(docxFilePath, 'r')
@@ -101,7 +109,17 @@ class DocxDocument(object):
         # Parse every paragraph in this document into a form I can convert later
         paragraphs = root.findall('./{0}body/*'.format(w_NS))
         self.paragraphData = []
+        i = 0
         for p in paragraphs:
+            
+            if checkCancelFunction:
+                if checkCancelFunction():
+                    break
+            
+            if progressCallback:
+                progressCallback(int(float(i) / len(paragraphs) * 100))
+                
+            i += 1 
             if p.tag == '{0}p'.format(w_NS):
                 newPara = self._parseParagraph(p)
                 if len(newPara['data']) > 0:
