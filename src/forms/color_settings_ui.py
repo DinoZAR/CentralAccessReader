@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/color_settings.ui'
 #
-# Created: Tue May 07 08:55:32 2013
+# Created: Tue Jun 04 16:20:43 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_ColorSettings(object):
     def setupUi(self, ColorSettings):
         ColorSettings.setObjectName(_fromUtf8("ColorSettings"))
-        ColorSettings.resize(493, 316)
+        ColorSettings.resize(455, 301)
         font = QtGui.QFont()
         font.setPointSize(12)
         ColorSettings.setFont(font)

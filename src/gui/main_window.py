@@ -14,6 +14,7 @@ from lxml import etree
 from src.forms.mainwindow_ui import Ui_MainWindow
 from src.gui.color_settings import ColorSettings
 from src.gui.speech_settings import SpeechSettings
+from src.gui.search_settings import SearchSettings
 from src.gui.mathmlcodes_dialog import MathMLCodesDialog
 from src.gui.configuration import Configuration
 from src.gui.npa_webview import NPAWebView
@@ -65,8 +66,13 @@ class MainWindow(QtGui.QMainWindow):
         self.searchWidgets.append(self.ui.searchUpButton)
         self.searchWidgets.append(self.ui.searchDownButton)
         self.searchWidgets.append(self.ui.searchTextBox)
+        self.searchWidgets.append(self.ui.searchSettingsButton)
         self.searchWidgets.append(self.ui.closeSearchButton)
         self.hideSearch()
+        
+        # Set the search settings dialog so I can make it non-modal
+        self.searchSettings = SearchSettings()
+        self.searchSettings.setWindowFlags(self.searchSettings.windowFlags() | Qt.WindowStaysOnTopHint)
         
         # Connect all of my signals
         self.connect_signals()
@@ -186,6 +192,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.searchUpButton.clicked.connect(self.searchBackwards)
         self.ui.searchDownButton.clicked.connect(self.searchForwards)
         self.ui.searchTextBox.returnPressed.connect(self.searchForwards)
+        self.ui.searchSettingsButton.clicked.connect(self.openSearchSettings)
         self.ui.closeSearchButton.clicked.connect(self.closeSearchBar)
         
         # Sliders
@@ -527,6 +534,9 @@ class MainWindow(QtGui.QMainWindow):
             message = QtGui.QMessageBox()
             message.setText('No other occurrences of "' + text + '" in document.')
             message.exec_()
+            
+    def openSearchSettings(self):
+        self.searchSettings.show()
             
     def closeSearchBar(self):
         self.hideSearch()

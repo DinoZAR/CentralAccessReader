@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/mainwindow.ui'
 #
-# Created: Tue May 28 09:11:55 2013
+# Created: Tue Jun 04 16:20:43 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -261,6 +261,13 @@ class Ui_MainWindow(object):
         self.searchTextBox = QtGui.QLineEdit(self.layoutWidget1)
         self.searchTextBox.setObjectName(_fromUtf8("searchTextBox"))
         self.horizontalLayout_3.addWidget(self.searchTextBox)
+        self.searchSettingsButton = QtGui.QPushButton(self.layoutWidget1)
+        self.searchSettingsButton.setText(_fromUtf8(""))
+        self.searchSettingsButton.setIcon(icon5)
+        self.searchSettingsButton.setIconSize(QtCore.QSize(32, 32))
+        self.searchSettingsButton.setFlat(True)
+        self.searchSettingsButton.setObjectName(_fromUtf8("searchSettingsButton"))
+        self.horizontalLayout_3.addWidget(self.searchSettingsButton)
         self.closeSearchButton = QtGui.QPushButton(self.layoutWidget1)
         self.closeSearchButton.setText(_fromUtf8(""))
         icon12 = QtGui.QIcon()
