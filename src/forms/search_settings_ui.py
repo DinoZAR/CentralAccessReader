@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/search_settings.ui'
 #
-# Created: Tue Jun 04 16:23:44 2013
+# Created: Thu Jun 06 15:43:20 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_SearchSettings(object):
     def setupUi(self, SearchSettings):
         SearchSettings.setObjectName(_fromUtf8("SearchSettings"))
-        SearchSettings.resize(205, 142)
+        SearchSettings.resize(181, 148)
         font = QtGui.QFont()
         font.setPointSize(12)
         SearchSettings.setFont(font)
@@ -46,10 +46,12 @@ class Ui_SearchSettings(object):
         self.verticalLayout_2.addLayout(self.verticalLayout)
         spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem)
+        spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_2.addItem(spacerItem1)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem1)
+        spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem2)
         self.okButton = QtGui.QPushButton(SearchSettings)
         self.okButton.setObjectName(_fromUtf8("okButton"))
         self.horizontalLayout.addWidget(self.okButton)

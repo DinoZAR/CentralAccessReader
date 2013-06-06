@@ -6,6 +6,7 @@ Created on Apr 9, 2013
 import thread
 import platform
 import copy
+from PyQt4.QtCore import QMutex
 
 if platform.system() == 'Windows':
     import win32com.client
@@ -33,7 +34,8 @@ class SAPIDriver(object):
     CALLBACK_GEN = 1
     
     def __init__(self):
-        self.queue = []
+        self.queue = {}
+        self.queueLock = QMutex()
         
         self.rate = 5   # Between -10 to 10
         self.volume = 5 # Between 0 to 100
@@ -41,6 +43,8 @@ class SAPIDriver(object):
         
         # Used for callback functions
         self.delegator = {'onWord': [], 'onEndStream' : [], 'onFinish' : []}
+        
+        self.speechCounter = 0
         
         self.running = False
         
@@ -87,7 +91,10 @@ class SAPIDriver(object):
         return myList
         
     def add(self, text, label):
-        self.queue.append([text, label, 0])
+        self.queueLock.lock()
+        self.speechCounter += 1
+        self.queue[self.speechCounter] = [text, label, 0]
+        self.queueLock.unlock()
     
     def start(self):
         '''
@@ -126,13 +133,11 @@ class SAPIDriver(object):
         self.advisor = win32com.client.WithEvents(self.voice, SAPIEventSink)
         self.advisor.setDriver(self)
         
-        # Make a copy of the queue, so that I don't run into race conditions
-        # later
-        queue_copy = copy.deepcopy(self.queue)
-        
-        for i in range(len(queue_copy)):
+        for k in sorted(self.queue):
             # Make the voice say this asynchronously
-            self.queue[i][2] = self.voice.Speak(queue_copy[i][0], 1)
+            self.queueLock.lock()
+            self.queue[k][2] = self.voice.Speak(self.queue[k][0], 1)
+            self.queueLock.unlock()
             pythoncom.PumpWaitingMessages()
             if not self.running:
                 break
@@ -142,10 +147,13 @@ class SAPIDriver(object):
         
         # Use this empty message to completely clear queue
         self.voice.Speak('', 3) # SPF_PURGEBEFORESPEAK
+        self.speechCounter = 0
         for c in self.delegator['onFinish']:
             c[1]()
         
-        self.queue = []
+        self.queueLock.lock()
+        self.queue = {}
+        self.queueLock.unlock()
         
         return
         
@@ -233,11 +241,12 @@ class SAPIDriver(object):
         
         # Get the queue item associated with the stream
         i = 0
-        while i < len(self.queue):
-            if self.queue[i][2] == stream:
+        self.queueLock.lock()
+        for k in self.queue.keys():
+            if self.queue[k][2] == stream:
+                i = k
                 break
-            else:
-                i += 1
+        self.queueLock.unlock()
 #         word = self.queue[i][0][char:char+length]
         
         # Publish this to everyone in callbacks
@@ -248,25 +257,25 @@ class SAPIDriver(object):
     def handle_onEndStream(self, stream, pos):
         # Figure out what stream ended and remove it from my queue
         i = 0
-        while i < len(self.queue):
-            if self.queue[i][2] == stream:
+        self.queueLock.lock()
+        for k in self.queue.keys():
+            if self.queue[k][2] == stream:
                 
                 # Tell all of the people that a stream ended
                 for c in self.delegator['onEndStream']:
-                    c[1](stream, self.queue[i][1])
+                    c[1](stream, self.queue[k][1])
                     
-                self.queue.pop(i)
-                i = 0
-            else:
-                i += 1
+                del self.queue[k]
+                break
+        self.queueLock.unlock()
         
         # If I still have things in my queue, then keep running. Else
         # make everything stop
         if len(self.queue) == 0:
             self.running = False
-            
             # Tell everyone else that we stopped
             for c in self.delegator['onFinish']:
+                self.speechCounter = 0
                 c[1]()
     
     def disconnect(self, handle):

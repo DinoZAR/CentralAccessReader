@@ -66,13 +66,13 @@ class MainWindow(QtGui.QMainWindow):
         self.searchWidgets.append(self.ui.searchUpButton)
         self.searchWidgets.append(self.ui.searchDownButton)
         self.searchWidgets.append(self.ui.searchTextBox)
-        self.searchWidgets.append(self.ui.searchSettingsButton)
+        #self.searchWidgets.append(self.ui.searchSettingsButton)
         self.searchWidgets.append(self.ui.closeSearchButton)
         self.hideSearch()
         
         # Set the search settings dialog so I can make it non-modal
-        self.searchSettings = SearchSettings()
-        self.searchSettings.setWindowFlags(self.searchSettings.windowFlags() | Qt.WindowStaysOnTopHint)
+        #self.searchSettings = SearchSettings()
+        #self.searchSettings.setWindowFlags(self.searchSettings.windowFlags() | Qt.WindowStaysOnTopHint)
         
         # Connect all of my signals
         self.connect_signals()
@@ -192,7 +192,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.searchUpButton.clicked.connect(self.searchBackwards)
         self.ui.searchDownButton.clicked.connect(self.searchForwards)
         self.ui.searchTextBox.returnPressed.connect(self.searchForwards)
-        self.ui.searchSettingsButton.clicked.connect(self.openSearchSettings)
+        #self.ui.searchSettingsButton.clicked.connect(self.openSearchSettings)
         self.ui.closeSearchButton.clicked.connect(self.closeSearchBar)
         
         # Sliders
