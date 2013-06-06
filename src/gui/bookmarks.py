@@ -37,7 +37,7 @@ class BookmarkNode(object):
         return 0
     
     def __repr__(self):
-        myString =  '(' + self.name + ': ' + str(self.anchorId) + ')'
+        myString =  '(' + self.name + ': ' + self.anchorId + ')'
         return myString
 
 class BookmarksTreeModel(QAbstractItemModel):
@@ -66,7 +66,7 @@ class BookmarksTreeModel(QAbstractItemModel):
             return QVariant()
         node = index.internalPointer()
         if role == Qt.DisplayRole:
-            return QVariant(str(node.name))
+            return QVariant(unicode(node.name))
         else:
             return QVariant()
 
