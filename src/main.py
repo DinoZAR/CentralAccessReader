@@ -6,11 +6,12 @@ Created on Jan 21, 2013
 import sys
 import os
 from PyQt4.QtGui import QApplication
-from src.misc import program_path, app_data_path, temp_path
 
 # Because we have local stuff, we need to append this local directory
 # to the Python path
 sys.path.append(os.path.abspath('..'))
+
+from src.misc import program_path, app_data_path, temp_path
 
 from src.gui.main_window import MainWindow
 

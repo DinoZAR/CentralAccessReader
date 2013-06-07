@@ -4,7 +4,7 @@ Created on Feb 20, 2013
 @author: Spencer Graffe
 '''
 from PyQt4 import QtGui, QtCore
-from PyQt4.QtGui import QStandardItemModel, QStandardItem
+from PyQt4.QtGui import QStandardItemModel, QStandardItem, QFont
 from mathml.pattern_editor.forms.patterneditorwindow_ui import Ui_PatternEditorWindow
 from mathml.tts import MathTTS
 
@@ -18,6 +18,14 @@ class PatternEditorWindow(QtGui.QMainWindow):
         
         self.ui = Ui_PatternEditorWindow()
         self.ui.setupUi(self)
+        
+        # Make da fonts bigger
+        font = QFont()
+        font.setPointSize(12)
+        font.setFamily('Consolas')
+        font.setFixedPitch(True)
+        self.ui.databaseEditor.setFont(font)
+        self.ui.mathmlEditor.setFont(font)
         
         self.currentFile = databaseFile.strip()
         

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'W:\Documents\Special Projects\Graffe, Spencer\workspace2\another\src\mathml\pattern_editor\forms/patterneditorwindow.ui'
+# Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\mathml\pattern_editor\forms/patterneditorwindow.ui'
 #
-# Created: Thu Apr 25 15:25:51 2013
+# Created: Thu Jun 06 17:07:40 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,6 +27,9 @@ class Ui_PatternEditorWindow(object):
     def setupUi(self, PatternEditorWindow):
         PatternEditorWindow.setObjectName(_fromUtf8("PatternEditorWindow"))
         PatternEditorWindow.resize(996, 544)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        PatternEditorWindow.setFont(font)
         self.centralwidget = QtGui.QWidget(PatternEditorWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout_4 = QtGui.QVBoxLayout(self.centralwidget)
@@ -59,6 +62,14 @@ class Ui_PatternEditorWindow(object):
         self.databaseLabel.setObjectName(_fromUtf8("databaseLabel"))
         self.verticalLayout_3.addWidget(self.databaseLabel)
         self.databaseEditor = Qsci.QsciScintilla(self.layoutWidget)
+        font = QtGui.QFont()
+        font.setFamily(_fromUtf8("MS Shell Dlg 2"))
+        font.setBold(False)
+        font.setItalic(False)
+        font.setUnderline(False)
+        font.setWeight(50)
+        font.setStrikeOut(False)
+        self.databaseEditor.setFont(font)
         self.databaseEditor.setToolTip(_fromUtf8(""))
         self.databaseEditor.setWhatsThis(_fromUtf8(""))
         self.databaseEditor.setObjectName(_fromUtf8("databaseEditor"))
@@ -72,6 +83,14 @@ class Ui_PatternEditorWindow(object):
         self.label_4.setObjectName(_fromUtf8("label_4"))
         self.verticalLayout.addWidget(self.label_4)
         self.mathmlEditor = Qsci.QsciScintilla(self.layoutWidget1)
+        font = QtGui.QFont()
+        font.setFamily(_fromUtf8("MS Shell Dlg 2"))
+        font.setBold(False)
+        font.setItalic(False)
+        font.setUnderline(False)
+        font.setWeight(50)
+        font.setStrikeOut(False)
+        self.mathmlEditor.setFont(font)
         self.mathmlEditor.setToolTip(_fromUtf8(""))
         self.mathmlEditor.setWhatsThis(_fromUtf8(""))
         self.mathmlEditor.setObjectName(_fromUtf8("mathmlEditor"))
@@ -106,7 +125,7 @@ class Ui_PatternEditorWindow(object):
         self.verticalLayout_4.setStretch(1, 1)
         PatternEditorWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(PatternEditorWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 996, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 996, 27))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))

@@ -77,7 +77,9 @@ minus = mo("-") -> 'minus'
 minus = mo("&#x2212;") -> 'minus'
 equals = mo("=") -> 'equals'
 closedIntegral [integral] = mo("&#x222E;") -> 'closed integral'
-sum = mo("&#x2211;") -> 'sum'
+sum = mo("&#x2211;") -> 'sum'
+
+rightarrow = mo("&#8594;") -> 'right arrow'
 
 openParen = mo("(") -> 'open,'
 closeParen = mo(")") -> ', closed, '
@@ -85,7 +87,7 @@ closeParen = mo(")") -> ', closed, '
 lessThan = mo("&lt;") -> 'is less than'
 greaterThan = mo("&gt;") -> 'is greater than'
 
-factorial = mo("!") -> 'factorial'
+factorial = mo("!") -> 'factorial'
 
 endPeriod = mo(".") -> ''
 comma = mo(",") -> ','
@@ -151,8 +153,12 @@ pi [variable] = mi("&#x3C0;") -> 'pi'
 sigma [variable] = mi("&#x3C3;") -> 'sigma'
 mu [variable] = mi("&#x3BC;") -> 'mu'
 
-# Other symbols
+# Other symbols
 infinity = mi("&#8734;") -> 'infinity'
+infinity = mn("&#8734;") -> 'infinity'
+
+# Trigonometry
+arcsine = a r c s i n -> 'arc sine'
 
 # Numbers
 zero = mn("0") -> 'zero'
@@ -187,8 +193,7 @@ integral = msub([integral] ?) -> '{1} sub {2} of'
 # ------------------------------------------------------------------------------
 # Under-Over
 # ------------------------------------------------------------------------------
-underover = munderover(? mrow(+) mrow(+)) -> 'the {1} starting from, {2}, to {3}, of'
-
+underover = munderover(? ? ?) -> 'the {1} starting from, {2}, to {3}, of'
 
 # ------------------------------------------------------------------------------
 # Parenthetical Expressions

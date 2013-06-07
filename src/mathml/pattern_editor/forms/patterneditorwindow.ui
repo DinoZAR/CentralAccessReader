@@ -10,6 +10,11 @@
     <height>544</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <pointsize>12</pointsize>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>MathML Pattern Editor</string>
   </property>
@@ -68,6 +73,16 @@
          </item>
          <item>
           <widget class="QsciScintilla" name="databaseEditor">
+           <property name="font">
+            <font>
+             <family>MS Shell Dlg 2</family>
+             <weight>50</weight>
+             <italic>false</italic>
+             <bold>false</bold>
+             <underline>false</underline>
+             <strikeout>false</strikeout>
+            </font>
+           </property>
            <property name="toolTip">
             <string/>
            </property>
@@ -89,6 +104,16 @@
          </item>
          <item>
           <widget class="QsciScintilla" name="mathmlEditor">
+           <property name="font">
+            <font>
+             <family>MS Shell Dlg 2</family>
+             <weight>50</weight>
+             <italic>false</italic>
+             <bold>false</bold>
+             <underline>false</underline>
+             <strikeout>false</strikeout>
+            </font>
+           </property>
            <property name="toolTip">
             <string/>
            </property>
@@ -168,7 +193,7 @@
      <x>0</x>
      <y>0</y>
      <width>996</width>
-     <height>21</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

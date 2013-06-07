@@ -14,14 +14,18 @@ MATHML_OPERATORS = ['+',
                     '*', 
                     '/',
                     unichr(177), # Plus/minus
-                    '=', 
+                    '=',
                     '(', 
                     ')',
                     '[',
                     ']',
                     '{',
                     '}', 
-                    '!']
+                    '!',
+                    unichr(8594)]
+
+# Don't include actual digits here
+MATHML_NUMBERS = [unichr(8734)]
 
 R_END = 0
 R_LINE = 1
@@ -171,6 +175,10 @@ def _isNumber(character):
     '''
     if character.isdigit():
         return True
+    
+    # Infinity
+    elif character in MATHML_NUMBERS:
+	return True
     else:
         return False
 
