@@ -87,7 +87,6 @@ class Pattern(ParseElement):
 			newNode.type = ReplaceTree.CATEGORY
 			newNode.value = expression.values
 			newNode.children = []
-			
 		else:
 			if expression.value == '?':
 				newNode.type = ReplaceTree.ANY
@@ -95,6 +94,10 @@ class Pattern(ParseElement):
 				newNode.children = []
 			elif expression.value == '+':
 				newNode.type = ReplaceTree.ANY_PLUS
+				newNode.value = expression.value
+				newNode.children = []
+			elif expression.value == '#':
+				newNode.type = ReplaceTree.ANY_NUMBER_PLUS
 				newNode.value = expression.value
 				newNode.children = []
 			else:
@@ -130,7 +133,7 @@ class Expression(ParseElement):
 		Returns whether this expression refers to a literal or not
 		'''
 		if len(self.children) > 0:
-			if (self.children[0] != '?') or (self.children[0] != '+'):
+			if (self.children[0] != '?') or (self.children[0] != '+') or (self.children[0] != '#'):
 				return True
 			else:
 				return False

@@ -107,7 +107,7 @@ def open_file_location(filePath):
     if 'Windows' in platform.system():
         subprocess.Popen(r'explorer /select,"' + os.path.abspath(filePath) + '"')
 
-def prepare_bug_report(traceback, configuration):
+def prepare_bug_report(traceback, configuration, detailMessage=None):
     '''
     Returns a string representing the bug report that should be sent.
     '''
@@ -128,6 +128,12 @@ def prepare_bug_report(traceback, configuration):
     
     # Settings
     out += configuration.getBugReportString()
+    
+    # Details
+    if detailMessage != None:
+        out += '\nDetails:\n'
+        out += '--------------\n'
+        out += detailMessage
     
     return out
 

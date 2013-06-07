@@ -38,86 +38,6 @@ def run(mathMLDom, patternTree, stageSink=None):
             
     
     return myTree
-     
-#def _searchAndReplace(replaceTree, pattern, output):
-#    
-#    # Replacement Algorithm:
-#    #
-#    # First, it will search for the pattern and mark the children that need
-#    # to be removed or replaced by a root node. It finds successful matches by
-#    # sequentially searching through the children and checking the type of node 
-#    # to the pattern.
-#    #
-#    # Then, if it finds a match, it will make a pass through the tree to delete
-#    # nodes marked for deletion and to replace the node marked for replacement.
-#    #
-#    # This cycle will continue until there are no more matches.
-#    
-#    # Do the first stage, which is finding and replacing matches in the main
-#    # tree.
-#    import matcher
-#    
-#    foundMatches = matcher.matchAndPrepare(replaceTree, pattern, output)
-#    if foundMatches:
-#        _replaceAndRemove(replaceTree)
-#    
-#    
-#    # The second stage is searching through the expressions of every speech
-#    # object in that tree and checking to see if there are MathML nodes. If
-#    # there are, then perform same match and replace procedure on them. In the
-#    # end, there should be no MathML nodes in the expressions of any speech
-#    # object.
-#    
-#    # If the root is still MathML, then iterate through it and find speech
-#    # objects it can mess with. Otherwise, deal with it like any other speech
-#    # object
-#    expressionMatch = False
-#    if replaceTree.type == ReplaceTree.MATHML:
-#        iter = DepthFirstIterator(replaceTree)
-#        while iter.hasNext():
-#            currNode = iter.next()
-#            if currNode[0].type == ReplaceTree.SPEECH:
-#                expressionMatch = _searchAndReplaceExpressions((currNode[0].expressions, currNode[1]), pattern, output) or expressionMatch
-#    else:
-#        expressionMatch = _searchAndReplaceExpressions((replaceTree.expressions, 0), pattern, output)
-#    
-#    return foundMatches or expressionMatch
-
-
-#def _searchAndReplaceExpressions(tupleExpressionsLevel, pattern, output):
-#    import matcher
-#    
-#    expressions = tupleExpressionsLevel[0]
-#    level = tupleExpressionsLevel[1]
-#    
-#    foundMatch = False
-#    
-#    if len(expressions) > 0:
-#        for i in range(len(expressions)):
-#                
-#            if isinstance(expressions[i], ReplaceTree):
-#                
-#                if expressions[i].type == ReplaceTree.MATHML:
-#                     
-#                    _searchAndReplace(expressions[i], pattern, output) 
-#                       
-#                    #match = matcher.matchAndPrepare(expressions[i], pattern, output)
-#                    #foundMatch = foundMatch or match
-#                    #if match:
-#                    #   _replaceAndRemove(expressions[i])
-#                    #    _searchAndReplaceExpressions((), pattern, output)
-#                            
-#                elif expressions[i].type == ReplaceTree.SPEECH:
-#                    expressions[i].parent = None
-#                    _searchAndReplaceExpressions((expressions[i].expressions, 0), pattern, output)
-#                
-#            else:
-#                # This is a list of expressions
-#                _searchAndReplaceExpressions((expressions[i], 0), pattern, output)
-#    
-#    return foundMatch
-#    
-
 
 
 def _searchAndReplace(replaceTree, pattern, output):
@@ -142,12 +62,10 @@ def _searchAndReplace(replaceTree, pattern, output):
                 foundInExpressions = _searchAndReplaceExpressions(currNode[0], pattern, output)
                 foundMatches = foundMatches or foundInExpressions
                                     
-    
     # Else, treat it like a speech object
     else:
         foundInExpressions = _searchAndReplaceExpressions(replaceTree, pattern, output)
         foundMatches = foundMatches or foundInExpressions
-                            
     
     return foundMatches
 
@@ -194,10 +112,29 @@ def _replaceAndRemove(replaceTreeRoot):
                 for i in range(len(parent.children)):
                     if parent.children[i].mark == ReplaceTree.REPLACE:
                         newNode = ReplaceTree()
+                        
                         newNode.type = ReplaceTree.SPEECH
                         newNode.parent = parent.children[i].parent
                         newNode.value = parent.children[i].replaceVariable
                         newNode.expressions = parent.children[i].expressions
+                        
+                        # Check if I have a numbered multiexpression.
+                        # In that case, use a counter and append a number before
+                        # each expression.
+#                         if parent.children[i].isAnyNumber:
+#                             count = 1
+#                             newNode.expressions = []
+#                             for ex in parent.children[i].expressions:
+#                                 # Create numbered speech first
+#                                 countNode = ReplaceTree()
+#                                 countNode.type = ReplaceTree.SPEECH
+#                                 countNode.value = 'countNumber'
+#                                 countNode.speechReplace = 'countNumber'
+#                                 countNode.output = str(count) + ','
+#                                 newNode.expressions.append(countNode)
+#                                 newNode.expressions.append(ex)
+#                                 
+#                         else:
                         
                         # Clear whatever mark is on those expressions
                         for j in range(len(newNode.expressions)):
@@ -337,7 +274,8 @@ class ReplaceTree():
     SPEECH = 3
     ANY = 4
     ANY_PLUS = 5
-    CATEGORY = 6
+    ANY_NUMBER_PLUS = 6
+    CATEGORY = 7
     
     # Marker Constants
     REMOVE = 4
@@ -350,10 +288,11 @@ class ReplaceTree():
         self.parent = None
         self.children = []
         self.mark = ReplaceTree.NONE      # Marker used during replacement process
-        self.expressions = []           # Expressions given in search replacement
+        self.expressions = []             # Expressions given in search replacement
         self.replaceVariable = ''         # Variable that is used to create SPEECH object
         self.output = ''                  # Also used in creating SPEECH object
         self.categories = []              # Categories assigned to it in creating SPEECH object
+        self.isAnyNumber = False          # Says if this tree is inside a ANY_NUMBER_PLUS tree
         
         # DepthFirstSearch variables
         self.isCurrParent = False            
@@ -387,6 +326,8 @@ class ReplaceTree():
         if patternNode.type == ReplaceTree.ANY:
             return True
         elif patternNode.type == ReplaceTree.ANY_PLUS:
+            return True
+        elif patternNode.type == ReplaceTree.ANY_NUMBER_PLUS:
             return True
         elif patternNode.type == ReplaceTree.CATEGORY:
             # In this case, I have to search through the categories and see if
@@ -431,6 +372,8 @@ class ReplaceTree():
             return 'Any'
         elif self.type == ReplaceTree.ANY_PLUS:
             return 'Any or Multiple'
+        elif self.type == ReplaceTree.ANY_NUMBER_PLUS:
+            return 'Any Numbered or Multiple Numbered'
         elif self.type == ReplaceTree.CATEGORY:
             return 'Category'
         else:

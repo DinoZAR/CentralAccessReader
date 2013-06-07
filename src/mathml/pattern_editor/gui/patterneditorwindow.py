@@ -19,7 +19,7 @@ class PatternEditorWindow(QtGui.QMainWindow):
         self.ui = Ui_PatternEditorWindow()
         self.ui.setupUi(self)
         
-        # Make da fonts bigger
+        # Make the fonts bigger
         font = QFont()
         font.setPointSize(12)
         font.setFamily('Consolas')

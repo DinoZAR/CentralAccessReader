@@ -63,6 +63,8 @@ def matchAndPrepare(tree, pattern, output):
                     treeIterator = _accumToNextSibling(treeIterator, patternAccum, currNode)[1]
                 elif currExpr[0].type == ReplaceTree.ANY_PLUS:
                     treeIterator = _accumToParent(treeIterator, patternAccum, variableAccum, currNode)[1]
+                elif currExpr[0].type == ReplaceTree.ANY_NUMBER_PLUS:
+                    treeIterator = _accumToParent(treeIterator, patternAccum, variableAccum, currNode)[1]
                 elif currExpr[0].type == ReplaceTree.CATEGORY:
                     variableAccum.append(copy.copy(currNode[0]))
             else:
@@ -77,6 +79,9 @@ def matchAndPrepare(tree, pattern, output):
                     variableAccum.append(currNode[0])
                     treeIterator = _accumToNextSibling(treeIterator, patternAccum, currNode)[1]
                 elif currExpr[0].type == ReplaceTree.ANY_PLUS:
+                    treeIterator = _accumToParent(treeIterator, patternAccum, variableAccum, currNode)[1]
+                elif currExpr[0].type == ReplaceTree.ANY_NUMBER_PLUS:
+                    currNode[0].isAnyNumber = True
                     treeIterator = _accumToParent(treeIterator, patternAccum, variableAccum, currNode)[1]
                 elif currExpr[0].type == ReplaceTree.CATEGORY:
                     variableAccum.append(currNode[0])
@@ -104,10 +109,10 @@ def matchAndPrepare(tree, pattern, output):
                 pAccum[i].replaceVariable = pattern.value
                 pAccum[i].categories = pattern.categories
                 pAccum[i].output = output
+            # Mark rest for removal
             else:
                 pAccum[i].mark = ReplaceTree.REMOVE
                 
-    
     # Return whether we found matches or not
     return len(matchesList) > 0
 
@@ -151,6 +156,7 @@ def _accumToParent(iterator, pAccum, vAccum, node):
     # Add current node to accumulator and variables before I forget
     pAccum.append(node[0])
     
+    # My variable accumulator
     myVAccum = []
     myVAccum.append(node[0])
     

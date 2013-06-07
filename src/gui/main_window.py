@@ -22,6 +22,7 @@ from src.gui.bookmarks import BookmarksTreeModel, BookmarkNode
 from src.gui.pages import PagesTreeModel, PageNode
 from src.gui.about import AboutDialog
 from src.gui.bug_reporter import BugReporter
+from src.mathtype.parser import MathTypeParseError
 from src.mathml.tts import MathTTS
 from src.mathml import pattern_editor
 from src.speech.assigner import Assigner
@@ -483,6 +484,14 @@ class MainWindow(QtGui.QMainWindow):
                 t.stop()
                 t.join()
                 self.progressDialog.hide()
+                
+        except MathTypeParseError as ex:
+            t.stop()
+            t.join()
+            self.progressDialog.hide()
+            out = misc.prepare_bug_report(traceback.format_exc(), self.configuration, detailMessage=ex.message)
+            dialog = BugReporter(out)
+            dialog.exec_()
         
         except Exception as e:
             t.stop()

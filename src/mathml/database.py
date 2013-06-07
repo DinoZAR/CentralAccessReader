@@ -22,6 +22,7 @@ tokens = [
 		'OUTPUTS',
 		'ANYEXPR',
 		'MULTIEXPR',
+		'MULTINUMBEREDEXPR',
 		'LEFTPAREN',
 		'RIGHTPAREN',
 		'LEFTBRACKET',
@@ -31,7 +32,7 @@ tokens = [
 		'WS'
 		]
 
-t_ignore_COMMENT = r'\#.*'
+t_ignore_COMMENT = r'//.*'
 
 t_ID = r'[a-zA-Z_]+'
 t_STRING = r'\'.*\''
@@ -42,6 +43,7 @@ t_OUTPUTS = r'->'
 
 t_ANYEXPR = r'\?'
 t_MULTIEXPR = r'\+'
+t_MULTINUMBEREDEXPR = r'\#'
 
 t_LEFTPAREN = r'\('
 t_RIGHTPAREN = r'\)'
@@ -119,6 +121,7 @@ def p_expression(p):
 			   | LITERAL
 			   | ANYEXPR
 			   | MULTIEXPR
+			   | MULTINUMBEREDEXPR
 	'''
 	if type(p[1]) is MathML:
 		p[0] = p[1]

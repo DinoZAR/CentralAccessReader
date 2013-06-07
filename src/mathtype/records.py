@@ -22,7 +22,16 @@ MATHML_OPERATORS = ['+',
                     '{',
                     '}', 
                     '!',
-                    unichr(8594)]
+                    unichr(8594),
+                    unichr(8756), # 3 dot therefore
+                    unichr(8757), # 3 dot because
+                    unichr(8717), # such that
+                    unichr(8707), # exists
+                    unichr(8704), # for all
+                    unichr(172), # not
+                    unichr(8743), # logical and
+                    unichr(8744) # logical or
+]
 
 # Don't include actual digits here
 MATHML_NUMBERS = [unichr(8734)]
@@ -55,7 +64,7 @@ def createRecord(type, fileHandle):
     '''
     Based on the type (just a byte), it will create the record corresponding
     to it.
-    '''
+    ''' 
     if type == R_END:
         return EndRecord(fileHandle)
     elif type == R_LINE:
@@ -192,7 +201,7 @@ def _handleRuler(f):
     cleanly skip over it.
     '''
     print 'Ruler!'
-    f.read(1)
+    #f.read(1)
     n_stops = struct.unpack('<H', f.read(2))[0]
     for i in range(n_stops):
         f.read(3)
@@ -297,14 +306,17 @@ class LineRecord(Record):
         
         # Check for nudge. If so, get the nudge
         if self._checkFlag(options, Record.O_NUDGE):
+            print '- Nudge!'
             _handleNudge(f)
             
         # Check for line spacing
         if self._checkFlag(options, Record.O_LINE_LSPACE):
+            print '- Line Spacing!'
             f.read(2)   # Skip it
             
         # Check for ruler
         if self._checkFlag(options, Record.O_LP_RULER):
+            print '- Ruler in line!'
             _handleRuler(f)
           
         # The rest are objects in the line record, which should be added to
