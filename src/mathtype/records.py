@@ -11,8 +11,10 @@ import embellishments
 MATHML_OPERATORS = ['+', 
                     '-',
                     unichr(8722), # Math minus
-                    '*', 
+                    '*',
+                    unichr(215),  # times that looks like an "x"
                     '/',
+                    unichr(247),  # divided by symbol
                     unichr(177), # Plus/minus
                     '=',
                     '(', 
@@ -30,7 +32,16 @@ MATHML_OPERATORS = ['+',
                     unichr(8704), # for all
                     unichr(172), # not
                     unichr(8743), # logical and
-                    unichr(8744) # logical or
+                    unichr(8744), # logical or
+                    unichr(8745), # intersection
+                    unichr(8746), # union
+                    unichr(8712), # membership
+                    unichr(8713), # not in membership
+                    unichr(8834), # proper subset open right
+                    unichr(8835), # proper subset open left
+                    unichr(8838), # subset open right
+                    unichr(8839), # subset open left
+                    unichr(8836) # not a subset
 ]
 
 # Don't include actual digits here

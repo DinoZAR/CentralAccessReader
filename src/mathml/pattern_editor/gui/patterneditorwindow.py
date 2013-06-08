@@ -68,7 +68,7 @@ class PatternEditorWindow(QtGui.QMainWindow):
         stuff = self.mathTTS.parse(unicode(self.ui.mathmlEditor.text()), stageSink=self.stageTrees)
         
         # Output what the text was
-        self.ui.outputText.setText(stuff)
+        self.ui.outputText.setPlainText(stuff)
         
         # Turn my stages into a tree model with extra happy!
         self.updateStagesModel()

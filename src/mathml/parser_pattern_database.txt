@@ -29,13 +29,17 @@
 plus = mo("+") -> 'plus'
 plusMinus = mo("&#xB1;") -> 'plus minus'
 minus = mo("-") -> 'minus'
-minus = mo("&#x2212;") -> 'minus'
+minus = mo("&#x2212;") -> 'minus'
+times = mo("*") -> 'times'
+times = mo("&#215;") -> 'times'
+divide = mo("&#247;") -> 'divided by'
 equals = mo("=") -> 'equals'
 closedIntegral [integral] = mo("&#x222E;") -> 'closed integral'
 
 // Arrows
-rightarrow = mo("&#8594;") -> 'right arrow'
-
+rightarrow = mo("&#8594;") -> 'approaches'
+
+// Parentheses
 openParen = mo("(") -> 'open,'
 closeParen = mo(")") -> ', closed, '
 
@@ -45,6 +49,21 @@ greaterThan = mo("&gt;") -> 'is greater than'
 therefore = mo("&#8756;") -> 'therefore,'
 because = mo("&#8757;") -> 'because,'
 suchThat = mo("&#8717;") -> 'such that,'
+exists = mo("&#8707;") -> 'there exists'
+forAll = mo("&#8704;") -> 'for all'
+not = mo("&#172;") -> 'not'
+and = mo("&#8743;") -> 'and'
+or = mo("&#8744;") -> 'or'
+union = mo("&#8746;") -> 'union'
+intersection = mo("&#8745;") -> 'intersection'
+isMember = mo("&#8712;") -> 'is a member of'
+isNotMember = mo("&#8713;") -> 'is not a member of'
+properSubsetRight = mo("&#8834;") -> 'is a proper subset of'
+properSubsetLeft = mo("&#8835;") -> 'is a proper subset of'
+subsetRight = mo("&#8838;") -> 'is a subset of'
+subsetLeft = mo("&#8839;") -> 'is a subset of'
+notSubset = mo("&#8836;") -> 'is not a subset of'
+emptySet = mi("&#8709;") -> 'the empty set'
 
 factorial = mo("!") -> 'factorial'
 
@@ -151,6 +170,7 @@ Xi [variable] = mi("&#926;") -> 'xi'
 Omicron [variable] = mi("&#927;") -> 'omicron'
 Pi [variable] = mi("&#928;") -> 'pi'
 BigPi = mo("&#8719;") -> 'big pi'
+FlippedBigPi = mo("&#8720;") -> 'flipped big pi'
 Rho [variable] = mi("&#929;") -> 'rho'
 Sigma [variable] = mi("&#931;") -> 'sigma'
 BigSigma = mo("&#8721;") -> 'sigma'
@@ -159,29 +179,36 @@ Upsilon [variable] = mi("&#933;") -> 'upsilon'
 Phi [variable] = mi("&#934;") -> 'phi'
 Chi [variable] = mi("&#935;") -> 'chi'
 Psi [variable] = mi("&#936;") -> 'psi'
-Omega [variable] = mi("&#937;") -> 'omega'
+Omega [variable] = mi("&#937;") -> 'omega'
+
+// Numbers
+zero = mn("0") -> 'zero'
+one = mn("1") -> 'one'
+two = mn("2") -> 'two'
+three = mn("3") -> 'three'
+four = mn("4") -> 'four'
+five = mn("5") -> 'five'
+six = mn("6") -> 'six'
+seven = mn("7") -> 'seven'
+eight = mn("8") -> 'eight'
+nine = mn("9") -> 'nine'
+ten = mn("10") -> 'ten'
+
+// Ellipses
+ellipsis = mi("&#8230;") -> 'ellipsis'
+ellipsis = mi("&#8943;") -> 'ellipsis'
+verticalEllipsis = mi("&#8942;") -> 'vertical ellipsis'
+diagonalEllipsis = mi("&#8945;") -> 'diagonal ellipsis'
 
 // Other symbols
 infinity = mi("&#8734;") -> 'infinity'
 infinity = mn("&#8734;") -> 'infinity'
 
 // Trigonometry
-sine = s i n -> 'sine'
-cosine = c o s -> 'cosine'
 arcsine = a r c s i n -> 'arc sine'
-
-// Numbers
-zero = mn("0") -> 'zero'
-one = mn("1") -> 'one'
-two = mn("2") -> 'two'
-three = mn("3") -> 'three'
-four = mn("4") -> 'four'
-five = mn("5") -> 'five'
-six = mn("6") -> 'six'
-seven = mn("7") -> 'seven'
-eight = mn("8") -> 'eight'
-nine = mn("9") -> 'nine'
-ten = mn("10") -> 'ten'
+inverseSine = s i msup(n mrow(minus one)) -> 'inverse sine'
+sine = s i n -> 'sine'
+cosine = c o s -> 'cosine'
 
 // Powers
 squared = msup(? mrow(two)) -> '{1} squared'
@@ -203,10 +230,13 @@ integral = msub([integral] ?) -> '{1} sub {2} of'
 // ------------------------------------------------------------------------------
 // Under-Over
 // ------------------------------------------------------------------------------
-sum = munderover(BigSigma ? ?) -> 'the sum starting from {2} to {3},'
-product = munderover(BigPi mrow() mrow()) -> 'the product of,'
-product = munderover(BigPi ? ?) -> 'the product starting from {2} to {3},'
+sum = munderover(BigSigma ? ?) -> 'the sum starting from {2} to {3}, of'
+product = munderover(BigPi mrow() mrow()) -> 'the product of, of'
+product = munderover(BigPi ? ?) -> 'the product starting from {2} to {3}, of'
+coproduct = munderover(FlippedBigPi ? ?) -> 'the coproduct starting from {2} to {3}, of'
+
 limit = munderover(mrow(l i m) mrow(? ? ?) ?) -> 'the limit as {4} approaches {6} of'
+limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4} of'
 
 underover = munderover(? ? ?) -> 'the {1} starting from, {2}, to {3}, of'
 
@@ -219,14 +249,16 @@ squareRoot = msqrt(+) -> 'the square root of {1}'
 // Matrices
 // ------------------------------------------------------------------------------
 tableColumn = mtd(+) -> '{1},'
-tableRow = mtr(#) -> 'row {1}'
-matrix = mfenced(mrow(mtable(+))) -> 'matrix {1}'
-
+tableRow = mtr(#) -> 'row, {1}'
+matrix = mfenced(mrow(mtable(+))) -> 'matrix {1}'
 
 // ------------------------------------------------------------------------------
 // Generic Fallbacks, Final Collectors
 // ------------------------------------------------------------------------------
-fenced = mfenced(+) -> 'open, {1}, closed,'
+fenced = mfenced(+) -> 'open, {1}, closed,'
+
+under = munder(? ?) -> '{1} {2}'
+over = mover(? ?) -> '{1} {2}'
 
 subscript = msub(? ?) -> '{1} sub {2}'
 superscript = msup(? ?) -> '{1} to the {2} power'
