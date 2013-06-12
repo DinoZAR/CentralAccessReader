@@ -255,7 +255,7 @@ matrix = mfenced(mrow(mtable(+))) -> 'matrix {1}'
 // ------------------------------------------------------------------------------
 // Generic Fallbacks, Final Collectors
 // ------------------------------------------------------------------------------
-fenced = mfenced(+) -> 'open, {1}, closed,'
+fenced = mfenced(+) -> 'open, {1}, closedparenthesis,'
 
 under = munder(? ?) -> '{1} {2}'
 over = mover(? ?) -> '{1} {2}'
