@@ -9,10 +9,17 @@ class DepthFirstIterator(object):
     
     def __init__(self, treeRoot, level=0):
         self._fringe = []
-        self._fringe.append((treeRoot, level))
+        self._fringe.append(_FringeRecord(treeRoot, level, None))
+        
+        # Data to keep track of parent relationships
         self._last = None
+        self._parents = []
         
     def next(self):
+        '''
+        Progresses the iterator forward, giving the following about it:
+        (patternTreeNode, level)
+        '''
         
         data = self._fringe.pop()
         self._last = data
@@ -24,23 +31,57 @@ class DepthFirstIterator(object):
         if len(myTree.children) > 0:
             for i in range(len(myTree.children)):
                 index = len(myTree.children) - 1 - i
-                self._fringe.append((myTree.children[index], level + 1))
+                self._fringe.append(_FringeRecord(myTree.children[index], level + 1, data))
                 
-        return data
+        return (data.node, data.level)
+    
+    def peek(self):
+        '''
+        Returns what next() would return, except that it does not progress the
+        iterator. It returns the following:
+        (patternTreeNode, level)
+        
+        It returns None if nothing is there.
+        '''
+        if len(self._fringe) > 0:
+            stuff = self._fringe[-1]
+            return (stuff.node, stuff.level)
+        else:
+            return None
     
     def jumpToParent(self):
         '''
         Moves the iterator up to the parent of the node that it returned last
         from next()
         '''
-        level = self._last[1]
-        while self._last[1] >= level:
-            level = self._fringe.pop()[1]
-        self._fringe.append(self._last)
-        self._last = None
+        # In order to do this, I have to somehow reconstruct the fringe and
+        # states to make it look like I was starting from the parent I am
+        # reporting next.
+        
+        
+        parent = self._last.parentRecord
+        if parent != None:
+            grandparent = parent.parentRecord
+            self._fringe.append(parent)
+        
+#         level = self._last[1]
+#         while level >= self._last[1]:
+#             if len(self._fringe) > 0:
+#                 level = self._fringe.pop()[1]
+#             else:
+#                 break
+#         self._fringe.append(self._last)
+        
                 
     def hasNext(self):
         return len(self._fringe) > 0
+    
+class _FringeRecord(object):
+    def __init__(self, node, level, parentRecord, childNumber):
+        self.node = node
+        self.level = level
+        self.parentRecord = parentRecord
+        self.childNumber = childNumber
 
 class PatternTree(object):
     '''
@@ -114,8 +155,7 @@ class PatternTree(object):
         
         elif self.type == PatternTree.TEXT:
             if other.type == PatternTree.TEXT:
-                regex = re.compile(self.value)
-                if regex.match(other.value) != None:
+                if self.value == other.value:
                     return True
                 else:
                     return False
@@ -162,6 +202,12 @@ class PatternTree(object):
             
         if len(self.output) > 0:
             out += ' -> ' + self.output
+            
+        if self.isMarkedReplace():
+            out += ' <Replace>'
+            
+        if self.isMarkedRemove():
+            out += ' <Remove>'
         
         if len(self.children) > 0:
             out += ' {'

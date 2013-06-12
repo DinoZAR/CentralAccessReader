@@ -88,7 +88,13 @@ class MainWindow(QtGui.QMainWindow):
         self.webInspector.setPage(self.ui.webView.page())
         
         # Set the math TTS using the internal pattern database
-        self.mathTTS = MathTTS(program_path('src/mathml/parser_pattern_database.txt'))
+        try:
+            self.mathTTS = MathTTS(program_path('src/mathml/parser_pattern_database.txt'))
+        except TypeError:
+            self.mathTTS = None
+            message = QtGui.QMessageBox()
+            message.setText('The math parser is not working right now. Don\'t read anything math-related for now.')
+            message.exec_()
         
         # TTS states
         self.ttsPlaying = False

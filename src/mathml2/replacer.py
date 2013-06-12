@@ -59,9 +59,8 @@ def _searchAndReplace(tree, variableValue, output):
                     parent.children.pop(i)
                     parent.children.insert(i, newNode)
                     
-            # Restart iterator at parent
-            iter.next()
-            iter.jumpToParent()
+            # Restart iterator
+            iter = DepthFirstIterator(tree)
         
         elif node.isMarkedRemove():
             
@@ -76,5 +75,4 @@ def _searchAndReplace(tree, variableValue, output):
                     break
             
             # Start iterator over from parent
-            iter.next()
-            iter.jumpToParent()
+            iter = DepthFirstIterator(tree)

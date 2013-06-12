@@ -128,10 +128,7 @@ def p_expression(p):
 	'''
 	p[0] = {'expression' : p[1]}
 	if isinstance(p[0]['expression'], basestring):
-		if p[0]['expression'][-1] == '"':
-			p[0]['expression'] = {'type' : 'literal', 'value' : p[0]['expression'][1:-1]}
-		else:
-			p[0]['expression'] = {'type' : 'literal', 'value' : p[0]['expression']}
+		p[0]['expression'] = {'type' : 'literal', 'value' : p[0]['expression']}
 	#print 'Expression:', p[0]
 	
 def p_variable(p):
@@ -259,7 +256,7 @@ def _convertExpressions(tree, expressions):
 			else:
 				newChild = PatternTree()
 				newChild.type = PatternTree.TEXT
-				newChild.value = ex['value']
+				newChild.value = ex['value'][1:-1]   # Remove the single quotes
 				childList.append(newChild)
 				
 	tree.children = childList
