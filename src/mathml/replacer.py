@@ -200,7 +200,7 @@ class DepthFirstIterator():
     '''
     
     def __init__(self, treeRoot, level=0, rootResume=False):
-        self.fringe = []        # Stack that I'm using to add new elements into
+        self._fringe = []        # Stack that I'm using to add new elements into
         
         if rootResume:
             # Append the elements required from parent so that it appears that
@@ -211,11 +211,11 @@ class DepthFirstIterator():
             # future siblings of self, its parent's future siblings, and so on.
             treeRoot.isCurrParent = True
             if treeRoot.parent != None:
-                self.fringe.extend(self._reconstructAncestor(treeRoot.parent, level - 1))
-                self.fringe.reverse()
+                self._fringe.extend(self._reconstructAncestor(treeRoot.parent, level - 1))
+                self._fringe.reverse()
         
-        # Add the root to my fringe. Also keep track of depth of node
-        self.fringe.append((treeRoot, level))
+        # Add the root to my _fringe. Also keep track of depth of node
+        self._fringe.append((treeRoot, level))
     
     def _reconstructAncestor(self, node, level):
         myList = []
@@ -247,20 +247,20 @@ class DepthFirstIterator():
         
     def next(self):
         
-        data = self.fringe.pop()
+        data = self._fringe.pop()
         myTree = data[0]
         level = data[1]
         
-        # Add that tree's children to the fringe, reverse order
+        # Add that tree's children to the _fringe, reverse order
         if len(myTree.children) > 0:
             for i in range(len(myTree.children)):
                 index = len(myTree.children) - 1 - i
-                self.fringe.append((myTree.children[index], level + 1))
+                self._fringe.append((myTree.children[index], level + 1))
                 
         return data
                 
     def hasNext(self):
-        return len(self.fringe) > 0
+        return len(self._fringe) > 0
 
 class ReplaceTree():
     '''

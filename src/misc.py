@@ -53,8 +53,6 @@ def temp_path(resourceFile):
     return newPath
     
 def clean_XML_input(input):  
-      
-    print 'Input:', [input]
     
     if input:  
               
@@ -95,8 +93,6 @@ def js_command(functionName, args):
     
     # Add closing parenthesis
     commandString += ')'
-    
-    print 'JavaScript: ' + commandString
     
     return commandString
 

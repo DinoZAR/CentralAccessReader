@@ -27,7 +27,7 @@ MathML must somehow be fed into the parser, from which then it outputs the corre
 
 There must be a datatype that can successfully compare a MathML tree and a pattern tree in the same manner. From now on, this will be called a *PatternTree*.
 
-For each node in a *PatternTree*, it can be one of 3 things:
+For each node in a *PatternTree*, it can be one of many things:
 
 * Variable, referring to a previously matched pattern
 * Category, referring to a category of matched patterns
@@ -64,7 +64,7 @@ If a pattern matches and element successfully, the match is stored in the follow
 
 * If pattern element is a Variable, it is stored as ('variable', [element])
 * If pattern element is a Category, it is stored as ('category', [element])
-* If pattern element is a XML, nothing happens
+* If pattern element is a XML, it is stored as ('xml', [element])
 * If pattern element is a Text, nothing happens
 * If pattern element is a Collector, multiple things can happen:
 

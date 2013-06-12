@@ -262,7 +262,6 @@ class Configuration(object):
         '''
         Writes out the CSS file that has my configurations in it.
         '''
-        print 'Writing CSS file...', filePath
         
         # If text highlighting is disabled, I will give it a completely clear
         # background to imitate that it is off.
