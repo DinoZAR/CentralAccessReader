@@ -101,8 +101,7 @@ def createRecord(type, fileHandle):
     elif type == R_TMPL:
         return TemplateRecord(fileHandle)
     elif type == R_PILE:
-        print 'Error: Record type not implemented yet:', type
-        return None
+        return PileRecord(fileHandle)
     elif type == R_MATRIX:
         return MatrixRecord(fileHandle)
     elif type == R_EMBELL:
@@ -111,10 +110,10 @@ def createRecord(type, fileHandle):
         _handleRuler(fileHandle)
         return None
     elif type == R_FONT_STYLE_DEF:
-        print 'Error: Record type not implemented yet:', type
+        FontStyleDefinitionRecord(fileHandle)
         return None
     elif type == R_SIZE:
-        print 'Error: Record type not implemented yet:', type
+        SizeRecord(fileHandle)
         return None
     elif type == R_FULL:
         FullRecord(fileHandle)
@@ -126,10 +125,10 @@ def createRecord(type, fileHandle):
         Subscript2Record(fileHandle)
         return None
     elif type == R_SYM:
-        print 'Error: Record type not implemented yet:', type
+        print 'Symbol!'
         return None
     elif type == R_SUBSYM:
-        print 'Error: Record type not implemented yet:', type
+        print 'Sub Symbol!'
         return None
     elif type == R_COLOR:
         ColorRecord(fileHandle)
@@ -157,7 +156,14 @@ def createRecord(type, fileHandle):
     
 def convertRecords(i, records, parentStack):
     while i < len(records):
+        
         if isinstance(records[i], LineRecord):
+            newElem = etree.SubElement(parentStack[-1], 'mrow')
+            parentStack.append(newElem)
+            convertRecords(0, records[i].childRecords, parentStack)
+            parentStack.pop()
+            
+        if isinstance(records[i], PileRecord):
             newElem = etree.SubElement(parentStack[-1], 'mrow')
             parentStack.append(newElem)
             convertRecords(0, records[i].childRecords, parentStack)
@@ -214,7 +220,7 @@ def _isNumber(character):
     
     # Infinity
     elif character in MATHML_NUMBERS:
-	return True
+        return True
     else:
         return False
 
@@ -321,6 +327,38 @@ class EndRecord(Record):
         Record.__init__(self)
         print 'End!'
         
+class PileRecord(Record):
+    
+    def __init__(self, f):
+        Record.__init__(self)
+        
+        print 'Pile!'
+        
+        # Get the options
+        options = struct.unpack('<B', f.read(1))[0]
+        
+        # Check for nudge. If so, get the nudge
+        if self._checkFlag(options, Record.O_NUDGE):
+            print '- Nudge!'
+            _handleNudge(f)
+            
+        self.halign = struct.unpack('<B', f.read(1))[0]
+        self.valign = struct.unpack('<B', f.read(1))[0]
+        
+        # Check for ruler
+        if self._checkFlag(options, Record.O_LP_RULER):
+            print '- Ruler in line!'
+            _handleRuler(f)
+            
+        # Get object list as child records
+        while True:
+            type = struct.unpack('<B', f.read(1))[0]
+            record = createRecord(type, f)
+            if isinstance(record, EndRecord):
+                break
+            else:
+                if record != None:
+                    self.childRecords.append(record)
 class LineRecord(Record):
     
     def __init__(self, f):
@@ -371,13 +409,23 @@ class EmbellishmentRecord(Record):
             _handleNudge(f)
             
         self.type = struct.unpack('<B', f.read(1))[0]
+        
+class FontStyleDefinitionRecord(Record):
+    def __init__(self, f):
+        
+        # Get the font index. It is an unsigned integer, so it gets to be
+        # treated weirdly
+        val = struct.unpack('<B', f.read(1))[0]
+        if val < 255:
+            self.fontIndex = val
+        else:
+            self.fontIndex = struct.unpack('<H', f.read(2))[0]
                     
 class CharRecord(Record):
     
     # A dictionary that has a lookup table to replace any character code that
     # is just too weird.
     # It is in the following format:
-    #
     # {typefaceNumber : {mtCode : unicode, ...}, ...}
     WEIRDNESS = {22 : {63726 : 8968,   # left ceiling
                        63737 : 8969,   # right ceiling
@@ -386,8 +434,18 @@ class CharRecord(Record):
                        60423 : 124,    # single bar
                        60424 : 124,    # single bar
                        60425 : 8214,   # double bar
-                       60426 : 8214    # double bar
-                       }}
+                       60426 : 8214,   # double bar
+                       60429 : 9140,   # over spanning bracket
+                       60428 : 9141    # under spanning bracket
+                       },
+                 
+                 11 : {60945 : 8750,   # contour integral
+                       60946 : 8751,   # double contour integral
+                       60947 : 8752,   # triple contour integral
+                       60928 : 8755,   # counter-clockwise loop integral
+                       60929 : 8754    # clockwise loop integral
+                       }
+                 }
     
     def __init__(self, f):
         Record.__init__(self)
@@ -486,6 +544,16 @@ class TemplateRecord(Record):
             else:
                 if record != None:
                     self.childRecords.append(record)
+                    
+class SizeRecord(Record):
+    
+    def __init__(self, f):
+        Record.__init__(self)
+        
+        print 'Size!'
+        
+        # Skip over it all
+        f.read(2)
 
 class MatrixRecord(Record):
     
@@ -573,7 +641,11 @@ class FontDefinitionRecord(Record):
         
         print 'Font Definition!'
         
-        self.encodingIndex = struct.unpack('<B', f.read(1))[0]
+        val = struct.unpack('<B', f.read(1))[0]
+        if val < 255:
+            self.encodingIndex = val
+        else:
+            self.encodingIndex = struct.unpack('<H', f.read(2))[0]
         self.fontName = getNullTermString(f)
         
         print 'Encoding Index:', self.encodingIndex

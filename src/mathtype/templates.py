@@ -168,10 +168,46 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records):
         mathmlElements.append(mathml)
     
     elif templateRecord.selector == TM_UBAR:
-        pass
+        data = BarBoxClass(templateRecord)
+        mathml = etree.Element('munder')
+        mathml.set('accentunder', 'true')
+        if _testVariation(templateRecord.variation, TV_BAR_DOUBLE):
+            elem = etree.SubElement(mathml, 'munder')
+            elem.set('accentunder', 'true')
+            elem.append(data.mainSlot)
+            el = etree.SubElement(elem, 'mo')
+            el.set('stretchy', 'true')
+            el.text = unichr(175)
+            el = etree.SubElement(mathml, 'mo')
+            el.set('stretchy', 'true')
+            el.text = unichr(175)
+        else:
+            mathml.append(data.mainSlot)
+            elem = etree.SubElement(mathml, 'mo')
+            elem.set('stretchy', 'true')
+            elem.text = unichr(175)
+        mathmlElements.append(mathml)
     
     elif templateRecord.selector == TM_OBAR:
-        pass
+        data = BarBoxClass(templateRecord)
+        mathml = etree.Element('mover')
+        mathml.set('accent', 'true')
+        if _testVariation(templateRecord.variation, TV_BAR_DOUBLE):
+            elem = etree.SubElement(mathml, 'mover')
+            elem.set('accent', 'true')
+            elem.append(data.mainSlot)
+            el = etree.SubElement(elem, 'mo')
+            el.set('stretchy', 'true')
+            el.text = unichr(175)
+            el = etree.SubElement(mathml, 'mo')
+            el.set('stretchy', 'true')
+            el.text = unichr(175)
+        else:
+            mathml.append(data.mainSlot)
+            elem = etree.SubElement(mathml, 'mo')
+            elem.set('stretchy', 'true')
+            elem.text = unichr(175)
+        mathmlElements.append(mathml)
     
     elif templateRecord.selector == TM_ARROW:
         data = ArrowBoxClass(templateRecord)
@@ -272,10 +308,28 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records):
         mathmlElements.append(data.mainSlot)
     
     elif templateRecord.selector == TM_INTOP:
-        pass
+        data = BigOpBoxClass(templateRecord)
+        mathml = etree.Element('munderover')
+        mathml.attrib['align'] = 'center'
+        operator = etree.Element('mo')
+        operator.text = data.operator
+        mathml.append(operator)
+        mathml.append(data.upper)
+        mathml.append(data.lower)
+        mathmlElements.append(mathml)
+        mathmlElements.append(data.mainSlot)
     
     elif templateRecord.selector == TM_SUMOP:
-        pass
+        data = BigOpBoxClass(templateRecord)
+        mathml = etree.Element('munderover')
+        mathml.attrib['align'] = 'center'
+        operator = etree.Element('mo')
+        operator.text = data.operator
+        mathml.append(operator)
+        mathml.append(data.upper)
+        mathml.append(data.lower)
+        mathmlElements.append(mathml)
+        mathmlElements.append(data.mainSlot)
     
     elif templateRecord.selector == TM_LIM:
         data = LimBoxClass(templateRecord)
@@ -286,13 +340,66 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records):
         mathmlElements.append(mathml)
         
     elif templateRecord.selector == TM_HBRACE:
-        pass
+        data = HFenceBoxClass(templateRecord)
+        top = False
+        mathml = None
+        elem = None
+        if _testVariation(templateRecord.variation, TV_HB_TOP):
+            top = True
+        
+        if top:
+            mathml = etree.Element('mover')
+            elem = etree.SubElement(mathml, 'mover')
+        else:
+            mathml = etree.Element('munder')
+            elem = etree.SubElement(mathml, 'munder')
+        
+        elem.append(data.mainSlot)
+        el = etree.SubElement(elem, 'mo')
+        el.set('stretchy', 'true')
+        el.text = unichr(data.braceChar)
+        
+        mathml.append(data.smallSlot)
+        mathmlElements.append(mathml)
     
     elif templateRecord.selector == TM_HBRACK:
-        pass
+        data = HFenceBoxClass(templateRecord)
+        top = False
+        mathml = None
+        elem = None
+        if _testVariation(templateRecord.variation, TV_HB_TOP):
+            top = True
+        
+        if top:
+            mathml = etree.Element('mover')
+            elem = etree.SubElement(mathml, 'mover')
+        else:
+            mathml = etree.Element('munder')
+            elem = etree.SubElement(mathml, 'munder')
+        
+        elem.append(data.mainSlot)
+        el = etree.SubElement(elem, 'mo')
+        el.set('stretchy', 'true')
+        el.text = unichr(data.braceChar)
+        
+        mathml.append(data.smallSlot)
+        mathmlElements.append(mathml)
     
     elif templateRecord.selector == TM_LDIV:
-        pass
+        data = LDivBoxClass(templateRecord)
+        mathml = etree.Element('mtable')
+        topRow = etree.SubElement(mathml, 'mtr')
+        quot = etree.SubElement(topRow, 'mtd')
+        quot.set('columnalign', 'right')
+        quot.append(data.quotient)
+        bottomRow = etree.SubElement(mathml, 'mtr')
+        col = etree.SubElement(bottomRow, 'mtd')
+        col.set('columnalign', 'right')
+        div = etree.SubElement(col, 'menclose')
+        div.set('notation', 'longdiv')
+        div.append(data.dividend)
+        mathmlElements.append(mathml)
+        
     
     elif templateRecord.selector == TM_SUB:
         data = ScrBoxClass(templateRecord)
@@ -329,22 +436,99 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records):
         mathmlElements.append(mathml)
         
     elif templateRecord.selector == TM_DIRAC:
-        pass
+        data = DiracBoxClass(templateRecord)
+        mathml = etree.Element('mrow')
+        
+        if _testVariation(templateRecord.variation, TV_DI_LEFT):
+            elem = etree.SubElement(mathml, 'mo')
+            elem.text = data.leftBracket
+            
+        mathml.append(data.left)
+        elem = etree.SubElement(mathml, 'mo')
+        elem.text = data.verticalBar.text
+        mathml.append(data.right)
+        
+        if _testVariation(templateRecord.variation, TV_DI_RIGHT):
+            elem = etree.SubElement(mathml, 'mo')
+            elem.text = data.rightBracket
+            
+        mathmlElements.append(mathml)
     
     elif templateRecord.selector == TM_VEC:
-        pass
-    
+        data = HatBoxClass(templateRecord)
+        mathml = None
+        under = False
+        if _testVariation(templateRecord.variation, TV_VE_UNDER):
+            mathml = etree.Element('munder')
+            mathml.set('accentunder', 'true')
+            under = True
+        else:
+            mathml = etree.Element('mover')
+            mathml.set('accent', 'true')
+        mathml.append(data.mainSlot)
+        
+        elem = etree.SubElement(mathml, 'mo')
+        
+        # Harpoon (always facing right)
+        if _testVariation(templateRecord.variation, TV_VE_HARPOON):
+            if under:
+                elem.text = unichr(8641)
+            else:
+                elem.text = unichr(8640)
+        
+        # Left
+        elif not _testVariation(templateRecord.variation, TV_VE_LEFT) and _testVariation(templateRecord.variation, TV_VE_RIGHT):
+            elem.text = unichr(8594)
+            
+        # Right
+        elif _testVariation(templateRecord.variation, TV_VE_LEFT) and not _testVariation(templateRecord.variation, TV_VE_RIGHT):
+            elem.text = unichr(8592)
+        
+        # Both
+        else:
+            elem.text = unichr(8596)
+            
+        mathmlElements.append(mathml)
+            
     elif templateRecord.selector == TM_TILDE:
-        pass
+        data = HatBoxClass(templateRecord)
+        mathml = etree.Element('mover')
+        mathml.set('accent', 'true')
+        mathml.append(data.mainSlot)
+        elem = etree.SubElement(mathml, 'mo')
+        elem.set('stretchy', 'true')
+        elem.text = unichr(732)
+        mathmlElements.append(mathml)
     
     elif templateRecord.selector == TM_HAT:
-        pass
+        data = HatBoxClass(templateRecord)
+        mathml = etree.Element('mover')
+        mathml.set('accent', 'true')
+        mathml.append(data.mainSlot)
+        elem = etree.SubElement(mathml, 'mo')
+        elem.set('stretchy', 'true')
+        elem.text = unichr(94)
+        mathmlElements.append(mathml)
     
     elif templateRecord.selector == TM_ARC:
-        pass
+        data = HatBoxClass(templateRecord)
+        mathml = etree.Element('mover')
+        mathml.set('accent', 'true')
+        mathml.append(data.mainSlot)
+        elem = etree.SubElement(mathml, 'mo')
+        elem.set('stretchy', 'true')
+        elem.text = unichr(8994)
+        mathmlElements.append(mathml)
     
     elif templateRecord.selector == TM_JSTATUS:
-        pass
+        data = HatBoxClass(templateRecord)
+        mathml = etree.Element('mover')
+        mathml.set('accent', 'true')
+        mathml.append(data.mainSlot)
+        elem = etree.SubElement(mathml, 'mo')
+        elem.set('stretchy', 'true')
+        elem.text = unichr(65081)
+        mathmlElements.append(mathml)
     
     elif templateRecord.selector == TM_STRIKE:
         data = StrikeBoxClass(templateRecord)
@@ -439,9 +623,42 @@ class BigOpBoxClass():
         
         self.operator = unichr(templateRecord.childRecords[3].mtCode)
 
+TV_DI_LEFT = 1
+TV_DI_RIGHT = 2
 class DiracBoxClass():
-    def __init__(self):
-        pass
+    def __init__(self, templateRecord):
+        self.left = etree.Element('mrow')
+        convertRecords(0, [templateRecord.childRecords[0]], [self.left])
+        self.left = self.left[0]
+        
+        i = 1
+        
+        self.right = etree.Element('mrow')
+        convertRecords(0, [templateRecord.childRecords[i]], [self.right])
+        self.right = self.right[0]
+        
+        i += 1
+        
+        self.leftBracket = '['
+        if _testVariation(templateRecord.variation, TV_DI_LEFT):
+            self.leftBracket = etree.Element('mrow')
+            convertRecords(0, [templateRecord.childRecords[i]], [self.leftBracket])
+            self.leftBracket = self.leftBracket[0].text
+            
+            i += 1
+        
+        
+        self.verticalBar = etree.Element('mrow')
+        convertRecords(0, [templateRecord.childRecords[i]], [self.verticalBar])
+        self.verticalBar = self.verticalBar[0]
+        
+        i += 1
+        
+        self.rightBracket = ']'
+        if _testVariation(templateRecord.variation, TV_DI_RIGHT):
+            self.rightBracket = etree.Element('mrow')
+            convertRecords(0, [templateRecord.childRecords[i]], [self.rightBracket])
+            self.rightBracket = self.rightBracket[0].text
 
 class FracBoxClass():
     def __init__(self, templateRecord):
@@ -451,15 +668,47 @@ class FracBoxClass():
         
         self.denominator = etree.Element('mrow')
         convertRecords(0, [templateRecord.childRecords[1]], [self.denominator])
-        self.denominator = self.denominator[0] 
+        self.denominator = self.denominator[0]
 
+TV_BAR_DOUBLE = 1
+class BarBoxClass():
+    def __init__(self, templateRecord):
+        self.mainSlot = etree.Element('mrow')
+        convertRecords(0, [templateRecord.childRecords[0]], [self.mainSlot])
+        self.mainSlot = self.mainSlot[0]
+
+TV_VE_LEFT = 1
+TV_VE_RIGHT = 2
+TV_VE_UNDER = 4
+TV_VE_HARPOON = 8
+class HatBoxClass():
+    def __init__(self, templateRecord):
+        self.mainSlot = etree.Element('mrow')
+        convertRecords(0, [templateRecord.childRecords[0]], [self.mainSlot])
+        self.mainSlot = self.mainSlot[0]
+
+TV_HB_TOP = 1
 class HFenceBoxClass():
-    def __init__(self):
-        pass
+    def __init__(self, templateRecord):
+        self.mainSlot = etree.Element('mrow')
+        convertRecords(0, [templateRecord.childRecords[0]], [self.mainSlot])
+        self.mainSlot = self.mainSlot[0]
+        
+        self.smallSlot = etree.Element('mrow')
+        convertRecords(0, [templateRecord.childRecords[1]], [self.smallSlot])
+        self.smallSlot = self.smallSlot[0]
+        
+        self.braceChar = templateRecord.childRecords[2].mtCode
 
 class LDivBoxClass():
-    def __init__(self):
-        pass
+    def __init__(self, templateRecord):
+        self.dividend = etree.Element('mrow')
+        convertRecords(0, [templateRecord.childRecords[0]], [self.dividend])
+        self.dividend = self.dividend[0]
+        
+        self.quotient = etree.Element('mrow')
+        convertRecords(0, [templateRecord.childRecords[1]], [self.quotient])
+        self.quotient = self.quotient[0]
 
 class LimBoxClass():
     def __init__(self, templateRecord):

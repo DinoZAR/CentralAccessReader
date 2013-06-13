@@ -6,9 +6,9 @@ Created on Mar 2, 2013
 import os
 import struct
 import StringIO
+import traceback
 from lxml import etree
 from records import *
-import templates
 from src.misc import temp_path
 
 def parseMTEF(mtefString):
@@ -105,11 +105,10 @@ def parseWMF(wmfFile):
         saveFile.write(wmfString.read())
         saveFile.close()
             
-        raise MathTypeParseError(savePath, ex)
+        raise MathTypeParseError(savePath, traceback.format_exc())
             
 class MathTypeParseError(Exception):
-    def __init__(self, savePath, originalException):
-        self.originalException = originalException
+    def __init__(self, savePath, traceback):
         self.savePath = savePath
         self.message = 'Couldn\'t parse MathType: Saved to ' + self.savePath + '\n'
-        self.message += 'Original Exception:\n' + self.originalException.__class__.__name__ + ': ' + str(self.originalException)
+        self.message += '\nTraceback:\n' + traceback
