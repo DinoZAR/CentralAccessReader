@@ -22,7 +22,11 @@ class Assigner(object):
         Constructor
         '''
         self._maths = {}
-        self.mathTTS = MathTTS(program_path('src/mathml/parser_pattern_database.txt'))
+        try:
+            self.mathTTS = MathTTS(program_path('src/mathml/parser_pattern_database.txt'))
+        except Exception:
+            self.mathTTS = None
+            pass
         
         
     def prepare(self, content):

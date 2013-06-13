@@ -40,7 +40,10 @@ class PatternEditorWindow(QtGui.QMainWindow):
                 print 'Database file doesn\'t exist! Resetting to nothing...'
                 self.currentFile = ''
         
-        self.mathTTS = MathTTS(databaseFile)
+        try:
+            self.mathTTS = MathTTS(databaseFile)
+        except Exception:
+            self.mathTTS = None
         
         self.stagesModel = QStandardItemModel()
         self.stageTrees = []
@@ -182,7 +185,14 @@ class PatternEditorWindow(QtGui.QMainWindow):
             f.close()
             
             self.changedPattern.emit(self.currentFile)
-            self.mathTTS.setPatternDatabase(self.currentFile)
+            
+            if self.mathTTS == None:
+                try:
+                    self.mathTTS = MathTTS(self.currentFile)
+                except Exception:
+                    pass
+            else:
+                self.mathTTS.setPatternDatabase(self.currentFile)
         
     def actionSaveAs_triggered(self):
         print 'Save As was triggered!'
