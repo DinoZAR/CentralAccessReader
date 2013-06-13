@@ -75,6 +75,8 @@ volumeIntegral [integral] = mo("&#60947;") -> 'volume integral'
 // Arrows
 bothArrow = mo("&#8596;") -> 'arrow pointing both left and right'
 bothArrow = mo("&#10231;") -> 'arrow pointing both left and right'
+diagBothArrowLR = mi("&#60165;") -> 'diagonal arrow pointing both bottom left and top right'
+diagBothArrowRL = mi("&#60166;") -> 'diagonal arrow pointing both top left and bottom right'
 diagBotLeftArrow = mi("&#8601;") -> 'diagonal arrow pointing from top right to bottom left'
 diagBotRightArrow = mi("&#8600;") -> 'diagonal arrow pointing from top left to bottom right'
 diagTopRightArrow = mi("&#8599;") -> 'diagonal arrow pointing from bottom left to top right'
@@ -87,8 +89,13 @@ doubleUpArrow = mi("&#8657;") -> 'double-arrow pointing up'
 doubleUpDownArrow = mi("&#8661;") -> 'double-arrow pointing both up and down'
 downArrow = mi("&#8595;") -> 'arrow pointing down'
 downLeftArrow = mi("&#8629;") -> 'arrow pointing down then left'
-dualArrows = mi("&#8644;") -> 'right-pointing arrow above left-pointing arrow'
-dualHarpoons = mi("&#8652;") -> 'right-pointing harpoon above left-pointing harpoon'
+dualArrows = mi("&#8644;") -> 'right-pointing arrow atop a left-pointing arrow'
+dualArrows = mo("&#8644;") -> 'right-pointing arrow atop a left-pointing arrow'
+dualArrowsBigTop = mi("&#60161;") -> 'right-pointing arrow atop a small left-pointing arrow'
+dualArrowsSmallTop = mi("&#60162;") -> 'small right-pointing arrow atop a left-pointing arrow'
+dualHarpoons = mi("&#8652;") -> 'right-pointing harpoon above a left-pointing harpoon'
+dualHarpoonsBigTop = mi("&#60163;") -> 'right-pointing harpoon above a small left-pointing harpoon'
+dualHarpoonsSmallTop = mi("&#60164;") -> 'small right-pointing harpoon above a left-pointing harpoon'
 leftArrow = mo("&#8592;") -> 'withdraws'
 leftHarpoon = mo("&#8636;") -> 'left-pointing harpoon'
 leftHarpoon = mo("&#8637;") -> 'left-pointing harpoon'
@@ -96,6 +103,7 @@ rightArrow = mo("&#8594;") -> 'approaches'
 rightArrowBar = mi("&#8614;") -> 'right-pointing arrow originating from a vertical bar'
 rightHarpoon = mo("&#8640;") -> 'right-pointing harpoon'
 rightHarpoon = mo("&#8641;") -> 'right-pointing harpoon'
+
 upArrow = mi("&#8593;") -> 'arrow pointing up'
 upDownArrow = mi("&#8597;") -> 'arrow point both up and down'
 
@@ -104,15 +112,18 @@ upDownArrow = mi("&#8597;") -> 'arrow point both up and down'
 closeBrace = mo("}") -> 'close brace'
 closeBracket = mo("]") -> ', close bracket'
 closeParen = mo(")") -> ', close parentheses'
+doubleVerticalBars = mo("&#8214;") -> 'double vertical bars'
 leftAngleBracket = mi("&#9001;") -> 'left-pointing angle bracket'
 leftAngleBracket = mo("&#9001;") -> 'left-pointing angle bracket'
 leftSquareBracket = mi("&#12314;") -> 'left square bracket'
+leftSquareBracket = mo("&#12314;") -> 'left square bracket'
 openBrace = mo("{") -> 'open brace'
 openBracket = mo("[") -> 'open bracket'
 openParen = mo("(") -> 'open parentheses'
 rightAngleBracket = mi("&#9002;") -> 'right-pointing angle bracket'
 rightAngleBracket = mo("&#9002;") -> 'right-pointing angle bracket'
 rightSquareBracket = mi("&#12315;") -> 'right square bracket'
+rightSquareBracket = mo("&#12315;") -> 'right square bracket'
 verticalBar = mi("|") -> 'vertical bar'
 verticalBar = mi("|") -> 'vertical bar'
 
@@ -348,6 +359,7 @@ verticalEllipsis = mi("&#8942;") -> 'vertical ellipsis'
 
 
 // Strikes and Slashes
+Strike = menclose(?) -> 'strike {1} end-strike'
 
 
 // Other symbols
@@ -432,10 +444,6 @@ product = munderover(BigPi ?) -> 'the product starting at {2}, of'
 product = munderover(BigPi ? ?) -> 'the product from {2} to {3}, of'
 sum = munderover(SigmaBig ? ?) -> 'the summation from {2} to {3}, of'
 
-
-
-
-
 
 // ------------------------------------------------------------------------------
 // Parenthetical Expressions
@@ -447,6 +455,7 @@ squareRoot = msqrt(+) -> 'the square root of {1}'
 // Matrices
 // ------------------------------------------------------------------------------
 matrix = mfenced(mrow(mtable(+))) -> 'matrix {1}'
+matrix = mrow(mtable(+)) -> 'matrix {1}'
 tableColumn = mtd(+) -> '{1},'
 tableRow = mtr(#) -> 'row, {1}'
 
