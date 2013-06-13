@@ -408,7 +408,7 @@ openInterval = openParen ? comma ? closeParen -> 'Open interval {2},{4}'
 
 
 // Syntax Quirks
-doubleDagger = dagger dagger -> 'double dagger'
+//doubleDagger = dagger dagger -> 'double dagger'
 
 
 // ------------------------------------------------------------------------------
@@ -439,10 +439,16 @@ integralOU = munderover(definiteIntegral ? ?) -> 'the definite integral from {2}
 integralOU = munderover(contourIntegral ?) -> 'the contour integral from {2} of'
 integralOU = munderover(areaIntegral ?) -> 'the area integral from {2} of'
 integralOU = munderover(volumeIntegral ?) -> 'the volume integral from {2} of'
+intersectionSyn = munderover(intersection mrow(+) mrow(+)) -> 'intersection sub {2} super {3} of'
+intersectionSyn = munderover(intersection mrow(+)) -> 'intersection sub {2} of'
+intersectionSyn = munderover(intersection) -> 'intersection of'
 product = munderover(BigPi mrow() mrow()) -> 'the product of'
 product = munderover(BigPi ?) -> 'the product starting at {2}, of'
 product = munderover(BigPi ? ?) -> 'the product from {2} to {3}, of'
 sum = munderover(SigmaBig ? ?) -> 'the summation from {2} to {3}, of'
+unionSyn = munderover(union mrow(+) mrow(+)) -> 'union sub {2} super {3} of'
+unionSyn = munderover(union mrow(+)) -> 'union sub {2} of'
+unionSyn = munderover(union) -> 'union of'
 
 
 // ------------------------------------------------------------------------------
@@ -454,8 +460,8 @@ squareRoot = msqrt(+) -> 'the square root of {1}'
 // ------------------------------------------------------------------------------
 // Matrices
 // ------------------------------------------------------------------------------
-matrix = mfenced(mrow(mtable(+))) -> 'matrix {1}'
 matrix = mrow(mtable(+)) -> 'matrix {1}'
+matrixPar = mfenced(mrow(mtable(+))) -> 'matrix {1}'
 tableColumn = mtd(+) -> '{1},'
 tableRow = mtr(#) -> 'row, {1}'
 
