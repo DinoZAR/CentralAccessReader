@@ -30,6 +30,8 @@ class Assigner(object):
         Caches certain aspects of the content so that it can properly assign
         the content (like in the case of MathJax)
         '''
+        self._maths = {}
+        
         contentDom = html.fromstring(content)
         
         # Find every <math> tag and store its corresponding data into my math

@@ -90,7 +90,6 @@ for p in database['patterns']:
          
     else:
         print 'No matches...'
-         
      
     print '--------------------------'
      

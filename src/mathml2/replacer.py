@@ -17,10 +17,9 @@ def replaceAndRemove(tree, variableValue, output):
     
     # Do all of the expressions for the variable objects
     iter = DepthFirstIterator(tree)
-    
+     
     while iter.hasNext():
         elem = iter.next()[0]
-        
         if elem.isVariable():
             replaceAndRemove(elem, variableValue, output)
             

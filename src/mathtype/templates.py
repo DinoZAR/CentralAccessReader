@@ -107,19 +107,44 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records):
         mathmlElements.append(mathml)
         
     elif templateRecord.selector == TM_DBAR:
-        pass
+        data = ParBoxClass(templateRecord, defaultLeft=unichr(8214), defaultRight=unichr(8214))
+        mathml = etree.Element('mfenced')
+        mathml.attrib['open'] = data.leftFence
+        mathml.attrib['close'] = data.rightFence
+        mathml.append(data.mainSlot)
+        mathmlElements.append(mathml)
         
     elif templateRecord.selector == TM_FLOOR:
-        pass
+        data = ParBoxClass(templateRecord, defaultLeft=unichr(8970), defaultRight=unichr(8971))
+        mathml = etree.Element('mfenced')
+        mathml.attrib['open'] = data.leftFence
+        mathml.attrib['close'] = data.rightFence
+        mathml.append(data.mainSlot)
+        mathmlElements.append(mathml)
     
     elif templateRecord.selector == TM_CEILING:
-        pass
+        data = ParBoxClass(templateRecord, defaultLeft=unichr(8968), defaultRight=unichr(8969))
+        mathml = etree.Element('mfenced')
+        mathml.attrib['open'] = data.leftFence
+        mathml.attrib['close'] = data.rightFence
+        mathml.append(data.mainSlot)
+        mathmlElements.append(mathml)
     
     elif templateRecord.selector == TM_OBRACK:
-        pass
+        data = ParBoxClass(templateRecord, defaultLeft=unichr(9001), defaultRight=unichr(9002))
+        mathml = etree.Element('mfenced')
+        mathml.attrib['open'] = data.leftFence
+        mathml.attrib['close'] = data.rightFence
+        mathml.append(data.mainSlot)
+        mathmlElements.append(mathml)
     
     elif templateRecord.selector == TM_INTERVAL:
-        pass
+        data = ParBoxClass(templateRecord, defaultLeft='[', defaultRight=']')
+        mathml = etree.Element('mfenced')
+        mathml.attrib['open'] = data.leftFence
+        mathml.attrib['close'] = data.rightFence
+        mathml.append(data.mainSlot)
+        mathmlElements.append(mathml)
     
     elif templateRecord.selector == TM_ROOT:
         data = RootBoxClass(templateRecord)
@@ -149,10 +174,42 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records):
         pass
     
     elif templateRecord.selector == TM_ARROW:
-        pass
+        data = ArrowBoxClass(templateRecord)
+        
+        if _testVariation(templateRecord.variation, TV_AR_TOP) and not _testVariation(templateRecord.variation, TV_AR_BOTTOM):
+            mathml = etree.Element('mover')
+            mathml.append(data.arrow)
+            mathml.append(data.slot1)
+            mathmlElements.append(mathml)
+            
+        if not _testVariation(templateRecord.variation, TV_AR_TOP) and _testVariation(templateRecord.variation, TV_AR_BOTTOM):
+            mathml = etree.Element('munder')
+            
+            if _testVariation(templateRecord.variation, TV_AR_DOUBLE):
+                pass
+            
+            mathml.append(data.arrow)
+            mathml.append(data.slot2)
+            mathmlElements.append(mathml)
+        
+        elif _testVariation(templateRecord.variation, TV_AR_TOP) and _testVariation(templateRecord.variation, TV_AR_BOTTOM):
+            mathml = etree.Element('munderover')
+            mathml.append(data.arrow)
+            mathml.append(data.slot1)
+            mathml.append(data.slot2)
+            mathmlElements.append(mathml)
     
     elif templateRecord.selector == TM_INTEG:
-        pass
+        data = BigOpBoxClass(templateRecord)
+        mathml = etree.Element('munderover')
+        mathml.attrib['align'] = 'center'
+        operator = etree.Element('mo')
+        operator.text = data.operator
+        mathml.append(operator)
+        mathml.append(data.upper)
+        mathml.append(data.lower)
+        mathmlElements.append(mathml)
+        mathmlElements.append(data.mainSlot)
     
     elif templateRecord.selector == TM_SUM:
         data = BigOpBoxClass(templateRecord)
@@ -290,19 +347,81 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records):
         pass
     
     elif templateRecord.selector == TM_STRIKE:
-        pass
-    
+        data = StrikeBoxClass(templateRecord)
+        mathml = etree.Element('menclose')
+        mathml.append(data.mainSlot)
+        mathml.set('notation', '')
+        if _testVariation(templateRecord.variation, TV_ST_HORIZ):
+            mathml.set('notation', 'horizontalstrike')
+        if _testVariation(templateRecord.variation, TV_ST_UP):
+            orig = mathml.get('notation')
+            mathml.set('notation', orig + ' updiagonalstrike')
+        if _testVariation(templateRecord.variation, TV_ST_DOWN):
+            orig = mathml.get('notation')
+            mathml.set('notation', orig + ' downdiagonalstrike')
+        mathml.set('notation', mathml.get('notation').strip())
+        mathmlElements.append(mathml)
+            
     elif templateRecord.selector == TM_BOX:
-        pass
+        data = BoxBoxClass(templateRecord)
+        # If all sides are present, treat this equation a little differently
+        if (_testVariation(templateRecord.variation, TV_BX_LEFT) and 
+            _testVariation(templateRecord.variation, TV_BX_RIGHT) and
+            _testVariation(templateRecord.variation, TV_BX_TOP) and
+            _testVariation(templateRecord.variation, TV_BX_BOTTOM)):
+            mathml = etree.Element('mtable')
+            mathml.set('frame', 'solid')
+            mathml.append(data.mainSlot)
+            mathmlElements.append(mathml)
+        else:
+            mathml = etree.Element('menclose')
+            
+            if _testVariation(templateRecord.variation, TV_BX_TOP) and _testVariation(templateRecord.variation, TV_BX_LEFT):
+                mathml.set('notation', 'top left')
+            elif _testVariation(templateRecord.variation, TV_BX_TOP) and _testVariation(templateRecord.variation, TV_BX_RIGHT):
+                mathml.set('notation', 'actuarial')
+            elif _testVariation(templateRecord.variation, TV_BX_BOTTOM) and _testVariation(templateRecord.variation, TV_BX_LEFT):
+                mathml.set('notation', 'bottom left')
+            elif _testVariation(templateRecord.variation, TV_BX_BOTTOM) and _testVariation(templateRecord.variation, TV_BX_RIGHT):
+                mathml.set('notation', 'bottom right') 
+            
+            mathml.append(data.mainSlot)
+            mathmlElements.append(mathml)
     
     return (mathmlElements, removePrevious)
 
 def _testVariation(variationBits, variationConstant):
     return (variationBits & variationConstant) > 0
 
-class ArroBoxClass():
-    def __init__(self):
-        pass
+TV_AR_SINGLE = 0
+TV_AR_DOUBLE = 1
+TV_AR_HARPOON = 2
+TV_AR_TOP = 4
+TV_AR_BOTTOM = 8
+TV_AR_LEFT = 16
+TV_AR_RIGHT = 32
+TV_AR_LOS = 16
+TV_AR_SOL = 32
+class ArrowBoxClass():
+    def __init__(self, templateRecord):
+        self.slot1 = etree.Element('mrow')
+        convertRecords(0, [templateRecord.childRecords[0]], [self.slot1])
+        self.slot1 = self.slot1[0]
+        
+        #i = 1
+        
+#         if _testVariation(templateRecord.variation, TV_AR_TOP) and _testVariation(templateRecord.variation, TV_AR_BOTTOM):
+#             self.slot2 = etree.Element('mrow')
+#             convertRecords(0, [templateRecord.childRecords[i]], [self.slot2])
+#             self.slot2 = self.slot2[0]
+#             i += 1
+        self.slot2 = etree.Element('mrow')
+        convertRecords(0, [templateRecord.childRecords[1]], [self.slot2])
+        self.slot2 = self.slot2[0]
+        
+        self.arrow = etree.Element('mrow')
+        convertRecords(0, [templateRecord.childRecords[2]], [self.arrow])
+        self.arrow = self.arrow[0]
 
 class BigOpBoxClass():
     def __init__(self, templateRecord):
@@ -397,7 +516,23 @@ class ScrBoxClass():
         self.superscript = etree.Element('mrow')
         convertRecords(0, [templateRecord.childRecords[1]], [self.superscript])
         self.superscript = self.superscript[0]
-        
-class SlashBoxClass():
-    def __init__(self):
-        pass
+
+TV_ST_HORIZ = 1
+TV_ST_UP = 2
+TV_ST_DOWN = 4
+class StrikeBoxClass():
+    def __init__(self, templateRecord):
+        self.mainSlot = etree.Element('mrow')
+        convertRecords(0, [templateRecord.childRecords[0]], [self.mainSlot])
+        self.mainSlot = self.mainSlot[0]
+
+TV_BX_ROUND = 1
+TV_BX_LEFT = 2
+TV_BX_RIGHT = 4
+TV_BX_TOP = 8
+TV_BX_BOTTOM = 16
+class BoxBoxClass():
+    def __init__(self, templateRecord):
+        self.mainSlot = etree.Element('mrow')
+        convertRecords(0, [templateRecord.childRecords[0]], [self.mainSlot])
+        self.mainSlot = self.mainSlot[0]

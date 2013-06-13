@@ -9,7 +9,7 @@ class DepthFirstIterator(object):
     
     def __init__(self, treeRoot, level=0):
         self._fringe = []
-        self._fringe.append(_FringeRecord(treeRoot, level, None))
+        self._fringe.append(_FringeRecord(treeRoot, level, None, 0))
         
         # Data to keep track of parent relationships
         self._last = None
@@ -24,14 +24,14 @@ class DepthFirstIterator(object):
         data = self._fringe.pop()
         self._last = data
         
-        myTree = data[0]
-        level = data[1]
+        myTree = data.node
+        level = data.level
         
         # Add that tree's children to the _fringe, reverse order
         if len(myTree.children) > 0:
             for i in range(len(myTree.children)):
                 index = len(myTree.children) - 1 - i
-                self._fringe.append(_FringeRecord(myTree.children[index], level + 1, data))
+                self._fringe.append(_FringeRecord(myTree.children[index], level + 1, data, index))
                 
         return (data.node, data.level)
     
@@ -57,11 +57,16 @@ class DepthFirstIterator(object):
         # In order to do this, I have to somehow reconstruct the fringe and
         # states to make it look like I was starting from the parent I am
         # reporting next.
-        
-        
         parent = self._last.parentRecord
         if parent != None:
             grandparent = parent.parentRecord
+            
+            if grandparent != None:
+                for i in range(len(grandparent.node.children)):
+                    index = len(grandparent.node.children) - 1 - i
+                    if index >= parent.childNumber:
+                        self._fringe.append(_FringeRecord(grandparent.node.children[index], grandparent.level + 1, grandparent, index))
+            
             self._fringe.append(parent)
         
 #         level = self._last[1]
@@ -183,7 +188,7 @@ class PatternTree(object):
     def _createIndent(self, num):
         out = ''
         for i in range(num):
-            out += '   '
+            out += '     '
         return out
     
     def dump(self, indent=0):
@@ -213,6 +218,15 @@ class PatternTree(object):
             out += ' {'
             for c in self.children:
                 out += '\n' + c.dump(indent + 1)
+            out += '\n' + self._createIndent(indent) + '}'
+            
+        if len(self.expressions) > 0:
+            out += '\n' + self._createIndent(indent) + 'Expressions: {'
+            for ex in self.expressions:
+                out += '\n' + self._createIndent(indent) + str(ex[0])
+                for e in ex[1]:
+                    out += '\n' + self._createIndent(indent) + '________________________'
+                    out += '\n' + e.dump(indent)
             out += '\n' + self._createIndent(indent) + '}'
         
         return out

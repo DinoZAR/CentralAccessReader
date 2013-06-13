@@ -22,9 +22,25 @@ MATHML_OPERATORS = ['+',
                     '[',
                     ']',
                     '{',
-                    '}', 
+                    '}',
+                    unichr(8214), # double bar
+                    unichr(8970), # left floor
+                    unichr(8971), # right floor
+                    unichr(8968), # left ceiling
+                    unichr(8969), # right ceiling
+                    unichr(9001), # left angle bracket
+                    unichr(9002), # right angle bracket
+                    unichr(12314), # left double-stroke bracket
+                    unichr(12315), # right double-stroke bracket
                     '!',
-                    unichr(8594),
+                    unichr(8594), # right arrow
+                    unichr(8592), # left arrow
+                    unichr(8596), # double-sided arrow
+                    unichr(8636), # left arrow barb up
+                    unichr(8637), # left arrow barb down
+                    unichr(8640), # right arrow barb up
+                    unichr(8641), # right arrow barb down
+                    unichr(8644), # top right arrow, bottom left arrow
                     unichr(8756), # 3 dot therefore
                     unichr(8757), # 3 dot because
                     unichr(8717), # such that
@@ -357,6 +373,22 @@ class EmbellishmentRecord(Record):
         self.type = struct.unpack('<B', f.read(1))[0]
                     
 class CharRecord(Record):
+    
+    # A dictionary that has a lookup table to replace any character code that
+    # is just too weird.
+    # It is in the following format:
+    #
+    # {typefaceNumber : {mtCode : unicode, ...}, ...}
+    WEIRDNESS = {22 : {63726 : 8968,   # left ceiling
+                       63737 : 8969,   # right ceiling
+                       63728 : 8970,   # left floor
+                       63739 : 8971,   # right floor
+                       60423 : 124,    # single bar
+                       60424 : 124,    # single bar
+                       60425 : 8214,   # double bar
+                       60426 : 8214    # double bar
+                       }}
+    
     def __init__(self, f):
         Record.__init__(self)
         
@@ -381,6 +413,9 @@ class CharRecord(Record):
         if not self._checkFlag(self.options, Record.O_CHAR_ENC_NO_MTCODE):
             self.mtCode = struct.unpack('<H', f.read(2))[0]
             print 'MTCode:', self.mtCode
+            
+        # Clean it up if the code and typeface are from a weird place
+        self._cleanup()
         
         # Check for 8-bit font position
         if self._checkFlag(self.options, Record.O_CHAR_ENC_CHAR_8):
@@ -401,7 +436,16 @@ class CharRecord(Record):
                 else:
                     if record != None:
                         self.embellishments.append(record)
-            
+        
+    def _cleanup(self):
+        '''
+        Searches through its database of weirdness and tries to fix up the
+        character code.
+        '''
+        if self.typeface in self.WEIRDNESS:
+            codes = self.WEIRDNESS[self.typeface]
+            if self.mtCode in codes:
+                self.mtCode = codes[self.mtCode]
                          
 class TemplateRecord(Record):
     

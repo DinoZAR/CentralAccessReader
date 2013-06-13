@@ -45,7 +45,7 @@ def markMatches(tree, pattern):
             # Search for the first instance of the pattern. Once I got
             # something, go accumulate the stuff
             
-            if currNode[0].isMatch(currExpr[0]):
+            if currExpr[0].isMatch(currNode[0]):
                 gotRoot = True
                 relativeDepth = currNode[1] - currExpr[1]
                 nodeAccum.append(currNode[0])
@@ -59,7 +59,7 @@ def markMatches(tree, pattern):
                 
         else:
             
-            if currNode[0].isMatch(currExpr[0]) and ((currNode[1] - currExpr[1]) == relativeDepth):
+            if currExpr[0].isMatch(currNode[0]) and ((currNode[1] - currExpr[1]) == relativeDepth):
                 nodeAccum.append(currNode[0])
                 _accumulateVariable(treeIterator, currExpr, currNode, nodeAccum, expressionAccum)
                 
@@ -95,9 +95,9 @@ def _accumulateVariable(treeIterator, expression, node, nodeAccum, expressionAcc
             expressionAccum.append(('?', copy.copy(node)))
             _accumulateToNextSibling(treeIterator, expression, nodeAccum)
         elif expression[0].value == '+':
-            _accumulateToParent(treeIterator, expression[0].value, nodeAccum, expressionAccum)
+            _accumulateToParent(treeIterator, expression[0].value, node, nodeAccum, expressionAccum)
         elif expression[0].value == '#':
-            _accumulateToParent(treeIterator, expression[0].value, nodeAccum, expressionAccum)
+            _accumulateToParent(treeIterator, expression[0].value, node, nodeAccum, expressionAccum)
 
 def _accumulateToNextSibling(iterator, node, nodeAccum):
     # Add the first one for removal purposes, and then progress iterator until
@@ -121,9 +121,12 @@ def _accumulateToParent(iterator, value, node, nodeAccum, expressionAccum):
     parentLevel = node[1] - 1
     while iterator.hasNext():
         _accumulateToNextSibling(iterator, sibling, nodeAccum)
-        if iterator.peek()[1] > parentLevel:
-            sibling = iterator.next()
-            exprs.append(sibling[0])
+        if iterator.peek() != None:
+            if iterator.peek()[1] > parentLevel:
+                sibling = iterator.next()
+                exprs.append(sibling[0])
+            else:
+                break
         else:
             break
     

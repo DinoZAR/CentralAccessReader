@@ -107,11 +107,9 @@ def parseWMF(wmfFile):
             
         raise MathTypeParseError(savePath, ex)
             
-        
 class MathTypeParseError(Exception):
     def __init__(self, savePath, originalException):
         self.originalException = originalException
         self.savePath = savePath
         self.message = 'Couldn\'t parse MathType: Saved to ' + self.savePath + '\n'
         self.message += 'Original Exception:\n' + self.originalException.__class__.__name__ + ': ' + str(self.originalException)
-        
