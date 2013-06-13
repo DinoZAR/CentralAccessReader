@@ -27,25 +27,114 @@
 // Unicodes and MathML codes for operators
 
 plus = mo("+") -> 'plus'
-plusMinus = mo("&#xB1;") -> 'plus minus'
+plusMinus = mo("&#xB1;") -> 'plus or minus'
 minus = mo("-") -> 'minus'
 minus = mo("&#x2212;") -> 'minus'
+minusPlus = mi("&#8723;") -> 'minus or plus'
 times = mo("*") -> 'times'
 times = mo("&#215;") -> 'times'
-divide = mo("&#247;") -> 'divided by'
-equals = mo("=") -> 'equals'
+times = mi("&#8727;") -> 'times'
+times = mi("&#8901;") -> 'times'
+divide = mo("&#247;") -> 'divided by'
+divide = mo("/") -> 'divided by'
+equals = mo("=") -> 'equals'
+identical = mi("&#8801;") -> 'is identical to'
 closedIntegral [integral] = mo("&#x222E;") -> 'closed integral'
+lessThanOrEqual = mi("&#8804;") -> ' is less than or equal to'
+greaterThanOrEqual = mi("&#8805;") -> 'is greater than or equal to'
+approxEqual = mi("&#8776;") -> 'is approximately equal to'
+notEqual = mi("&#8800;") -> 'is not equal to'
+muchLessThan = mi("&#8810;") -> 'is much less than'
+muchGreaterThan = mi("&#8811;") -> 'is much greater than'
+circlePlus = mi("&#8853;") -> 'circle plus'
+circleCross = mi("&#8855;") -> 'circle cross'
+circleDot = mi("&#8857;") -> 'circle dot'
+at = mi("@") -> 'at'
+dollarSign = mi("$") -> 'dollar sign'
+percent = mi("%") -> 'percent'
+equivalent = mi("&#8764;") -> 'is equivalent to'
+approxEqual = mi("&#8771;") -> 'is approximately equal to'
+approxEqual = mi("&#8773;") -> 'is approximately equal to'
+tilde = mo("&#732;") -> 'tilde'
+composition = mi("&#8728;") -> 'composition of'
+dagger = mi("&#8224;") -> 'dagger'
+summation = mi("&#8721;") -> 'summation'
+product = mi("&#8719;") -> 'product'
+coproduct = mi("&#8720;") -> 'coproduct'
+integral = mi("&#8747;") -> 'integral of'
+diamond = mi("&#8900;") -> 'diamond'
+
 
 // Arrows
-rightarrow = mo("&#8594;") -> 'approaches'
+rightArrow = mo("&#8594;") -> 'approaches'
+leftArrow = mo("&#8592;") -> 'withdraws'
+bothArrow = mo("&#8596;") -> 'arrow pointing both left and right'
+rightHarpoon = mo("&#8640;") -> 'right-pointing harpoon'
+leftHarpoon = mo("&#8636;") -> 'left-pointing harpoon'
+upDownArrow = mi("&#8597;") -> 'arrow point both up and down'
+upArrow = mi("&#8593;") -> 'arrow pointing up'
+downArrow = mi("&#8595;") -> 'arrow pointing down'
+doubleLeftRightArrow = mi("&#8660;") -> 'double-arrow pointing both left and right'
+doubleRightArrow = mi("&#8658;") -> 'double-arrow pointing right'
+doubleLeftArrow = mi("&#8656;") -> 'double-arrow pointing left'
+doubleUpDownArrow = mi("&#8661;") -> 'double-arrow pointing both up and down'
+doubleUpArrow = mi("&#8657;") -> 'double-arrow pointing up'
+doubleDownArrow = mi("&#8659;") -> 'double-arrow pointing down'
+diagTopRightArrow = mi("&#8599;") -> 'diagonal arrow pointing from bottom left to top right'
+diagBotLeftArrow = mi("&#8601;") -> 'diagonal arrow pointing from top right to bottom left'
+diagBotRightArrow = mi("&#8600;") -> 'diagonal arrow pointing from top left to bottom right'
+diagTopLeftArrow = mi("&#8598;") -> 'diagonal arrow pointing from bottom right to top left'
+dualArrows = mi("&#8644;") -> 'right-pointing arrow above left-pointing arrow'
+dualHarpoons = mi("&#8652;") -> 'right-pointing harpoon above left-pointing harpoon'
+rightArrowBar = mi("&#8614;") -> 'right-pointing arrow originating from a vertical bar'
+downLeftArrow = mi("&#8629;") -> 'arrow pointing down then left'
 
-// Parentheses
+
+// Parentheses, Brackets, Braces, and Bars
 openParen = mo("(") -> 'open,'
-closeParen = mo(")") -> ', closed, '
+closeParen = mo(")") -> ', closed, '
+openBracket = mo("[") -> 'open bracket'
+closeBracket = mo("]") -> ', closed bracket'
+verticalBar = mi("|") -> 'vertical bar'
+openBrace = mo("{") -> 'open brace'
+closeBrace = mo("}") -> 'close brace'
+leftAngleBracket = mi("&#9001;") -> 'left-pointing angle bracket'
+rightAngleBracket = mi("&#9002;") -> 'right-pointing angle bracket'
+leftSquareBracket = mi("&#12314;") -> 'left square bracket'
+rightSquareBracket = mi("&#12315;") -> 'right square bracket'
+
+// Primes and Dots
+prime = mo("&#8242;") -> 'prime'
+doublePrime = mo("&#8243;") -> 'double prime'
+triplePrime = mo("&#8244;") -> 'triple prime'
+backPrime = mo("&#8245;") -> 'back prime'
+Dot = mo("&#775;") -> 'dot'
+DoubleDot = mo("&#776;") -> 'double dot'
+TripleDot = mo("&#8411;") -> 'triple dot'
+QuadDot = mo("&#8412;") -> 'quad dot'
+bullet = mi("&#8226;") -> 'bullet'
+
+// Geometric Symbols
+angle = mi("&#8736;") -> 'angle'
+angle = mi("&#8737;") -> 'measured angle'
+angle = mi("&#8738;") -> 'spherical angle'
+arc = mo("&#8994;") -> 'arc'
+arc = mo("&#8995;") -> 'arc'
+bar = mo("&#175;") -> 'bar'
+circle = mi("&#9675;") -> 'circle'
+degree = mi("&#176;") -> 'degrees'
+parallel = mi("&#8741;") -> 'parallel'
+parallelogram = mi("&#9649;") -> 'parallelogram'
+parallelogram = mi("&#9645;") -> 'parallelogram'
+perpendicular = mi("&#8869;") -> 'perpendicular'
+square = mi("&#9633;") -> 'square'
+triangle = mi("&#9651;") -> 'triangle'
 
 // Logic
-lessThan = mo("&lt;") -> 'is less than'
+lessThan = mo("&lt;") -> 'is less than'
+lessThan = mi("&lt;") -> 'is less than'
 greaterThan = mo("&gt;") -> 'is greater than'
+greaterThan = mi("&gt;") -> 'is greater than'
 therefore = mo("&#8756;") -> 'therefore,'
 because = mo("&#8757;") -> 'because,'
 suchThat = mo("&#8717;") -> 'such that,'
@@ -64,11 +153,21 @@ subsetRight = mo("&#8838;") -> 'is a subset of'
 subsetLeft = mo("&#8839;") -> 'is a subset of'
 notSubset = mo("&#8836;") -> 'is not a subset of'
 emptySet = mi("&#8709;") -> 'the empty set'
+proportional = mi("&#8733;") -> 'proportional to'
+precedes = mi("&#8826;") -> 'precedes'
+succeeds = mi("&#8827;") -> 'succeeds'
+normalSubgroup = mi("&#8882;") -> 'is normal subgroup of'
+containsNormalSubgroup = mi("&#8883;") -> 'contains as normal subgroup'
+deltaEqual = mi("&#8796;") -> 'delta equal to'
+estimates = mi("&#8793;") -> 'estimates'
+approachesLimit = mi("&#8784;") -> 'approaches the limit of'
 
 factorial = mo("!") -> 'factorial'
 
-endPeriod = mo(".") -> ''
-comma = mo(",") -> ','
+endPeriod = mo(".") -> ''
+point = mi(".") -> 'point'
+comma = mo(",") -> ','
+comma = mi(",") -> ','
 
 // Letters
 a [variable] = mi("a") -> '"a"'
@@ -129,8 +228,9 @@ Z [variable] = mi("Z") -> '"Z"'
 alpha [variable] = mi("&#945;") -> 'alpha'
 beta [variable] = mi("&#946;") -> 'beta'
 gamma [variable] = mi("&#947;") -> 'gamma'
+del [variable] = mi("&#8711;") -> 'del'
 delta [variable] = mi("&#948;") -> 'delta'
-delta [variable] = mi("&#8706;") -> 'delta'
+delta [variable] = mi("&#8706;") -> 'partial differential'
 epsilon [variable] = mi("&#949;") -> 'epsilon'
 zeta [variable] = mi("&#950;") -> 'zeta'
 eta [variable] = mi("&#951;") -> 'eta'
@@ -181,6 +281,20 @@ Chi [variable] = mi("&#935;") -> 'chi'
 Psi [variable] = mi("&#936;") -> 'psi'
 Omega [variable] = mi("&#937;") -> 'omega'
 
+//Rarely used symbols
+weierstrassEll = mi("&#8472;") -> 'Weierstrass ellipsis'
+frakturI = mi("&#8465;") -> 'Fraktur capital I'
+frakturR = mi("&#8476;") -> 'Fraktur capital R'
+ahlef = mi("&#8501;") -> 'ahlef'
+bbcapR = mi("&#8477;") -> 'blackboard capital R'
+bbcapZ = mi("&#8484;") -> 'blackboard capital Z'
+bbcapC = mi("&#8450;") -> 'blackboard capital C'
+bbcapQ = mi("&#8474;") -> 'blackboard capital Q'
+bbcapN = mi("&#8469;") -> 'blackboard capital N'
+planckConsOverTwoPi = mi("&#8463;") -> 'Planck constant over two pi'
+smallLamExtraStroke = mi("&#411;") -> 'Small lambda with extra stroke'
+scriptI = mi("&#8467;") -> 'Script I'
+
 // Numbers
 zero = mn("0") -> 'zero'
 one = mn("1") -> 'one'
@@ -198,7 +312,8 @@ ten = mn("10") -> 'ten'
 ellipsis = mi("&#8230;") -> 'ellipsis'
 ellipsis = mi("&#8943;") -> 'ellipsis'
 verticalEllipsis = mi("&#8942;") -> 'vertical ellipsis'
-diagonalEllipsis = mi("&#8945;") -> 'diagonal ellipsis'
+diagonalBotLeftEllipsis = mi("&#8944;") -> 'diagonal bottom left top right ellipsis'
+diagonalTopLeftEllipsis = mi("&#8945;") -> 'diagonal top right bottom left ellipsis'
 
 // Other symbols
 infinity = mi("&#8734;") -> 'infinity'
@@ -210,22 +325,50 @@ inverseSine = s i msup(n mrow(minus one)) -> 'inverse sine'
 sine = s i n -> 'sine'
 cosine = c o s -> 'cosine'
 
-// Powers
+// Powers and Primes
 squared = msup(? mrow(two)) -> '{1} squared'
 squared = msup(? two) -> '{1} squared'
 cubed = msup(? mrow(three)) -> '{1} cubed'
-cubed = msup(? three) -> '{1} cubed'
+cubed = msup(? three) -> '{1} cubed'
+supPrime = msup(? prime) -> '{1} prime'
+supDubPrime = msup(? doublePrime) -> '{1} double prime'
+supTriPrime = msup(? triplePrime) -> '{1} triple prime'
 
 function = [variable] mrow(openParen [variable] closeParen) -> 'function {1} of {3}'
 function = [variable] openParen [variable] closeParen -> 'function {1} of {3}'
 function = [variable] mfenced(+) -> 'function {1} of {2}'
 
 functionPrime = [variable] mi("'") mfenced(+) -> 'function {1} prime of {2}'
+
+// Intervals
+openInterval = openParen ? comma ? closeParen -> 'Open interval {2},{4}'
+closedInterval = openBracket ? comma ? closeBracket -> 'Closed interval {2},{4}'
+
+// Absolute values
+absoluteValue = verticalBar ? verticalBar -> 'the absolute value of {2}'
+absoluteValue = verticalBar ? ? verticalBar -> 'the absolute value of {2}{3}'
+absoluteValue = verticalBar ? ? ? verticalBar -> 'the absolute value of {2}{3}{4}'
+absoluteValue = verticalBar ? ? ? ? verticalBar -> 'the absolute value of {2}{3}{4}{5}'
+absoluteValue = verticalBar ? ? ? ? ? verticalBar -> 'the absolute value of {2}{3}{4}{5}{6}'
+absoluteValue = verticalBar ? ? ? ? ? ? verticalBar -> 'the absolute value of {2}{3}{4}{5}{6}{7}'
+absoluteValue = verticalBar ? ? ? ? ? ? ? verticalBar -> 'the absolute value of {2}{3}{4}{5}{6}{7}{8}'
+absoluteValue = verticalBar ? ? ? ? ? ? ? ? verticalBar -> 'the absolute value of {2}{3}{4}{5}{6}{7}{8}{9}'
+
 
 // ------------------------------------------------------------------------------
 // Fraction-based
 // ------------------------------------------------------------------------------
-integral = msub([integral] ?) -> '{1} sub {2} of'
+integral = msub([integral] ?) -> '{1} sub {2} of'
+
+// ------------------------------------------------------------------------------
+// Conditions for arrows based on over or under
+// ------------------------------------------------------------------------------
+underRightArrow = mover(? rightArrow) -> '{1} under right-pointing arrow'
+overRightArrow = munder(? rightArrow) -> '{1} over right-pointing arrow'
+underLeftArrow = mover(? leftArrow) -> '{1} under left-pointing arrow'
+overLeftArrow = munder(? leftArrow) -> '{1} over left-pointing arrow'
+underBothArrow = mover(? bothArrow) -> '{1} under arrow pointing both left and right'
+overBothArrow = munder(? bothArrow) -> '{1} over arrow pointing both left and right'
 
 // ------------------------------------------------------------------------------
 // Under-Over
@@ -250,15 +393,15 @@ squareRoot = msqrt(+) -> 'the square root of {1}'
 // ------------------------------------------------------------------------------
 tableColumn = mtd(+) -> '{1},'
 tableRow = mtr(#) -> 'row, {1}'
-matrix = mfenced(mrow(mtable(+))) -> 'matrix {1}'
+matrix = mfenced(mrow(mtable(+))) -> 'matrix {1}'
 
 // ------------------------------------------------------------------------------
 // Generic Fallbacks, Final Collectors
 // ------------------------------------------------------------------------------
 fenced = mfenced(+) -> 'open, {1}, closedparenthesis,'
 
-under = munder(? ?) -> '{1} {2}'
-over = mover(? ?) -> '{1} {2}'
+under = munder(? ?) -> '{1} over {2}'
+over = mover(? ?) -> '{1} under {2}'
 
 subscript = msub(? ?) -> '{1} sub {2}'
 superscript = msup(? ?) -> '{1} to the {2} power'

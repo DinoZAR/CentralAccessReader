@@ -90,7 +90,7 @@ class MainWindow(QtGui.QMainWindow):
         # Set the math TTS using the internal pattern database
         try:
             self.mathTTS = MathTTS(program_path('src/mathml/parser_pattern_database.txt'))
-        except TypeError:
+        except Exception:
             self.mathTTS = None
             message = QtGui.QMessageBox()
             message.setText('The math parser is not working right now. Don\'t read anything math-related for now.')
