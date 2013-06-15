@@ -27,6 +27,8 @@ tokens = [
 		'RIGHTPAREN',
 		'LEFTBRACKET',
 		'RIGHTBRACKET',
+		'LEFTCARET',
+		'RIGHTCARET',
 		'COMMA',
 		'NEWLINE',
 		'WS'
@@ -51,6 +53,9 @@ t_RIGHTPAREN = r'\)'
 t_LEFTBRACKET = r'\['
 t_RIGHTBRACKET = r'\]'
 
+t_LEFTCARET = r'<'
+t_RIGHTCARET = r'>'
+
 t_COMMA = r','
 	
 def t_NEWLINE(t):
@@ -63,13 +68,13 @@ def t_error(t):
 	raise TypeError("Unknown text '%s'" % (t.value,))
 
 # Create my lexer now after all of these definitions
-lexer = lex.lex()
+lexer = lex.lex(debug=False)
 
 # ------------------------
 # Parser things
 # ------------------------
 
-def p_program(p):
+def p_database(p):
 	'''
 	database : patterns
 	'''
@@ -94,10 +99,10 @@ def p_pattern(p):
 	'''
 	if len(p) == 7:
 		p[0] = {'variable' : p[1], 'categories' : p[2], 'expressions' : p[4], 'output' : p[6], 'number' : p.lineno(2)}
-		#print 'Pattern:', p[0]
+		print 'Pattern:', p[0]
 	else:
 		p[0] = {'variable' : p[1], 'expressions' : p[3], 'output' : p[5], 'number' : p.lineno(2)}
-		#print 'Pattern:', p[0]
+		print 'Pattern:', p[0]
 	
 def p_expressions(p):
 	'''
@@ -167,15 +172,35 @@ def p_categValue(p):
 	
 def p_xml(p):
 	'''
-	xml : ID LEFTPAREN expressions RIGHTPAREN
+	xml : ID LEFTCARET attributes RIGHTCARET LEFTPAREN expressions RIGHTPAREN
+	       | ID LEFTPAREN expressions RIGHTPAREN
 	       | ID LEFTPAREN RIGHTPAREN
 	'''
-	if len(p) == 5:
-		p[0] = {'type' : 'xml', 'value' : p[1], 'children' : p[3]}
-		#print 'XML:', p[0]
+	
+	if len(p) == 8:
+		p[0] = {'type' : 'xml', 'value' : p[1], 'children' : p[6], 'attributes' : p[3]}
+	elif len(p) == 5:
+		p[0] = {'type' : 'xml', 'value' : p[1], 'children' : p[3], 'attributes' : []}
 	else:
-		p[0] = {'type' : 'xml', 'value' : p[1], 'children' : []}
-		#print 'XML:', p[0]
+		p[0] = {'type' : 'xml', 'value' : p[1], 'children' : [], 'attributes' : []}
+		
+def p_attributes(p):
+	'''
+	attributes : attribute COMMA attributes
+				| attribute
+	'''
+	if len(p) == 4:
+		myList = [p[1]]
+		myList.extend(p[3])
+		p[0] = myList
+	else:
+		p[0] = [p[1]]
+		
+def p_attribute(p):
+	'''
+	attribute : ID ASSIGNS LITERAL
+	'''
+	p[0] = {'name' : p[1], 'value' : p[3].replace('"', '')}
 	
 def p_output(p):
 	'''
@@ -201,14 +226,12 @@ def parse(inputString):
 	tree = parser.parse(inputString, lexer=lexer)
 	return tree
 
-
 def convertToPatternTree(databasePattern):
 	'''
 	Converts a pattern in a database into a PatternTree 
 	'''
 	expressions = databasePattern['expressions']
-	myTree = PatternTree()
-	myTree.value = databasePattern['variable']['value']
+	myTree = PatternTree(databasePattern['variable']['value'])
 	myTree.type = PatternTree.VARIABLE
 	if 'categories' in databasePattern:
 		myTree.categories = databasePattern['categories']['value']
@@ -227,7 +250,7 @@ def _convertExpressions(tree, expressions):
 		if ex['type'] == 'variable':
 			newChild = PatternTree()
 			newChild.type = PatternTree.VARIABLE
-			newChild.value = ex['value']
+			newChild.name = ex['value']
 			childList.append(newChild)
 			
 		elif ex['type'] == 'categories':
@@ -239,23 +262,27 @@ def _convertExpressions(tree, expressions):
 		elif ex['type'] == 'xml':
 			newChild = PatternTree()
 			newChild.type = PatternTree.XML
-			newChild.value = ex['value']
+			newChild.name = ex['value']
+			newChild.attributes = {}
+			if len(ex['attributes']) > 0:
+				for attr in ex['attributes']:
+					newChild.attributes[attr['name']] = attr['value']
 			_convertExpressions(newChild, ex['children'])
 			childList.append(newChild)
 		
 		# For this one, differentiate between a regular expression for a literal
 		# or a collector token, such as a +, ?, or #
 		elif ex['type'] == 'literal':
-			if ex['value'] in PatternTree.COLLECTOR_TOKENS:
+			if ex['value'] in PatternTree.WILDCARD:
 				newChild = PatternTree()
-				newChild.type = PatternTree.COLLECTOR
-				newChild.value = ex['value']
+				newChild.type = PatternTree.WILDCARD
+				newChild.name = ex['value']
 				childList.append(newChild)
 				
 			else:
 				newChild = PatternTree()
 				newChild.type = PatternTree.TEXT
-				newChild.value = ex['value'][1:-1]   # Remove the single quotes
+				newChild.name = ex['value'][1:-1]   # Remove the single quotes
 				childList.append(newChild)
 				
 	tree.children = childList

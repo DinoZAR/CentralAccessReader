@@ -5,9 +5,9 @@ _tabversion = '3.2'
 
 _lr_method = 'LALR'
 
-_lr_signature = '\xd0\xdcZ8\x83\x87xju\xf6`\x9f\x93\xbc\xc3\xfc'
+_lr_signature = '\xb1r\x00y\xe3\xf0\xfa\xc3\x9cp\x83Z\x89\xa1\x17\xa0'
     
-_lr_action_items = {'RIGHTBRACKET':([22,23,24,36,],[29,-19,-20,-18,]),'MULTIEXPR':([8,11,12,13,14,15,16,17,18,20,21,28,29,34,38,],[17,17,-11,-9,-15,-13,-12,-14,-10,17,-16,17,-17,-22,-21,]),'ASSIGNS':([3,4,7,29,],[8,-16,11,-17,]),'MULTINUMBEREDEXPR':([8,11,12,13,14,15,16,17,18,20,21,28,29,34,38,],[14,14,-11,-9,-15,-13,-12,-14,-10,14,-16,14,-17,-22,-21,]),'ANYEXPR':([8,11,12,13,14,15,16,17,18,20,21,28,29,34,38,],[15,15,-11,-9,-15,-13,-12,-14,-10,15,-16,15,-17,-22,-21,]),'OUTPUTS':([12,13,14,15,16,17,18,19,20,21,25,27,29,34,38,],[-11,-9,-15,-13,-12,-14,-10,26,-8,-16,31,-7,-17,-22,-21,]),'LEFTPAREN':([21,],[28,]),'LITERAL':([8,11,12,13,14,15,16,17,18,20,21,28,29,34,38,],[16,16,-11,-9,-15,-13,-12,-14,-10,16,-16,16,-17,-22,-21,]),'RIGHTPAREN':([12,13,14,15,16,17,18,20,21,27,28,29,34,35,38,],[-11,-9,-15,-13,-12,-14,-10,-8,-16,-7,34,-17,-22,38,-21,]),'LEFTBRACKET':([3,4,8,11,12,13,14,15,16,17,18,20,21,28,29,34,38,],[9,-16,9,9,-11,-9,-15,-13,-12,-14,-10,9,-16,9,-17,-22,-21,]),'COMMA':([23,24,],[30,-20,]),'STRING':([26,31,],[32,32,]),'ID':([0,2,5,8,9,11,12,13,14,15,16,17,18,20,21,28,29,30,32,33,34,37,38,],[4,4,4,21,24,21,-11,-9,-15,-13,-12,-14,-10,21,-16,21,-17,24,-23,-6,-22,-5,-21,]),'$end':([1,2,5,6,10,32,33,37,],[0,-2,-4,-1,-3,-23,-6,-5,]),}
+_lr_action_items = {'RIGHTBRACKET':([20,21,22,38,],[28,-18,-19,-17,]),'MULTIEXPR':([7,10,11,12,13,14,15,17,18,19,23,26,28,33,40,46,49,],[11,-8,-13,-14,-12,-11,-9,11,-15,-10,11,11,-16,-22,-21,11,-20,]),'ASSIGNS':([4,5,9,28,37,],[7,-15,23,-16,43,]),'MULTINUMBEREDEXPR':([7,10,11,12,13,14,15,17,18,19,23,26,28,33,40,46,49,],[12,-8,-13,-14,-12,-11,-9,12,-15,-10,12,12,-16,-22,-21,12,-20,]),'ANYEXPR':([7,10,11,12,13,14,15,17,18,19,23,26,28,33,40,46,49,],[13,-8,-13,-14,-12,-11,-9,13,-15,-10,13,13,-16,-22,-21,13,-20,]),'OUTPUTS':([10,11,12,13,14,15,16,17,18,19,25,28,30,33,40,49,],[-8,-13,-14,-12,-11,-9,24,-7,-15,-10,-6,-16,39,-22,-21,-20,]),'LEFTPAREN':([18,42,],[26,46,]),'LEFTCARET':([18,],[27,]),'LITERAL':([7,10,11,12,13,14,15,17,18,19,23,26,28,33,40,43,46,49,],[14,-8,-13,-14,-12,-11,-9,14,-15,-10,14,14,-16,-22,-21,47,14,-20,]),'RIGHTPAREN':([10,11,12,13,14,15,17,18,19,25,26,28,33,34,40,48,49,],[-8,-13,-14,-12,-11,-9,-7,-15,-10,-6,33,-16,-22,40,-21,49,-20,]),'LEFTBRACKET':([4,5,7,10,11,12,13,14,15,17,18,19,23,26,28,33,40,46,49,],[8,-15,8,-8,-13,-14,-12,-11,-9,8,-15,-10,8,8,-16,-22,-21,8,-20,]),'RIGHTCARET':([35,36,45,47,],[-24,42,-23,-25,]),'COMMA':([21,22,35,47,],[29,-19,41,-25,]),'STRING':([24,39,],[31,31,]),'ID':([0,2,7,8,10,11,12,13,14,15,17,18,19,23,26,27,28,29,31,32,33,40,41,44,46,49,],[5,5,18,22,-8,-13,-14,-12,-11,-9,18,-15,-10,18,18,37,-16,22,-26,-5,-22,-21,37,-4,18,-20,]),'$end':([1,2,3,6,31,32,44,],[0,-3,-1,-2,-26,-5,-4,]),}
 
 _lr_action = { }
 for _k, _v in _lr_action_items.items():
@@ -16,7 +16,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'category':([3,8,11,20,28,],[7,12,12,12,12,]),'mathml':([8,11,20,28,],[13,13,13,13,]),'database':([0,],[1,]),'pattern':([0,2,5,],[2,5,5,]),'categValues':([9,30,],[22,36,]),'categValue':([9,30,],[23,23,]),'patterns':([2,5,],[6,10,]),'variable':([0,2,5,8,11,20,28,],[3,3,3,18,18,18,18,]),'output':([26,31,],[33,37,]),'expressions':([8,11,20,28,],[19,25,27,35,]),'expression':([8,11,20,28,],[20,20,20,20,]),}
+_lr_goto_items = {'xml':([7,17,23,26,46,],[10,10,10,10,10,]),'database':([0,],[1,]),'pattern':([0,2,],[2,2,]),'attribute':([27,41,],[35,35,]),'categValues':([8,29,],[20,38,]),'categValue':([8,29,],[21,21,]),'patterns':([0,2,],[3,6,]),'attributes':([27,41,],[36,45,]),'variable':([0,2,7,17,23,26,46,],[4,4,15,15,15,15,15,]),'output':([24,39,],[32,44,]),'expressions':([7,17,23,26,46,],[16,25,30,34,48,]),'expression':([7,17,23,26,46,],[17,17,17,17,17,]),'categories':([4,7,17,23,26,46,],[9,19,19,19,19,19,]),}
 
 _lr_goto = { }
 for _k, _v in _lr_goto_items.items():
@@ -26,27 +26,30 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> database","S'",1,None,None,None),
-  ('database -> pattern patterns','database',2,'p_program','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml\\database.py',74),
-  ('database -> pattern','database',1,'p_program','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml\\database.py',75),
-  ('patterns -> pattern patterns','patterns',2,'p_patterns','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml\\database.py',85),
-  ('patterns -> pattern','patterns',1,'p_patterns','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml\\database.py',86),
-  ('pattern -> variable category ASSIGNS expressions OUTPUTS output','pattern',6,'p_pattern','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml\\database.py',96),
-  ('pattern -> variable ASSIGNS expressions OUTPUTS output','pattern',5,'p_pattern','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml\\database.py',97),
-  ('expressions -> expression expressions','expressions',2,'p_expressions','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml\\database.py',107),
-  ('expressions -> expression','expressions',1,'p_expressions','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml\\database.py',108),
-  ('expression -> mathml','expression',1,'p_expression','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml\\database.py',118),
-  ('expression -> variable','expression',1,'p_expression','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml\\database.py',119),
-  ('expression -> category','expression',1,'p_expression','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml\\database.py',120),
-  ('expression -> LITERAL','expression',1,'p_expression','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml\\database.py',121),
-  ('expression -> ANYEXPR','expression',1,'p_expression','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml\\database.py',122),
-  ('expression -> MULTIEXPR','expression',1,'p_expression','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml\\database.py',123),
-  ('expression -> MULTINUMBEREDEXPR','expression',1,'p_expression','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml\\database.py',124),
-  ('variable -> ID','variable',1,'p_variable','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml\\database.py',137),
-  ('category -> LEFTBRACKET categValues RIGHTBRACKET','category',3,'p_category','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml\\database.py',144),
-  ('categValues -> categValue COMMA categValues','categValues',3,'p_categValues','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml\\database.py',150),
-  ('categValues -> categValue','categValues',1,'p_categValues','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml\\database.py',151),
-  ('categValue -> ID','categValue',1,'p_categValue','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml\\database.py',163),
-  ('mathml -> ID LEFTPAREN expressions RIGHTPAREN','mathml',4,'p_mathml','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml\\database.py',169),
-  ('mathml -> ID LEFTPAREN RIGHTPAREN','mathml',3,'p_mathml','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml\\database.py',170),
-  ('output -> STRING','output',1,'p_output','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml\\database.py',180),
+  ('database -> patterns','database',1,'p_database','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml3\\database.py',79),
+  ('patterns -> pattern patterns','patterns',2,'p_patterns','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml3\\database.py',85),
+  ('patterns -> pattern','patterns',1,'p_patterns','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml3\\database.py',86),
+  ('pattern -> variable categories ASSIGNS expressions OUTPUTS output','pattern',6,'p_pattern','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml3\\database.py',97),
+  ('pattern -> variable ASSIGNS expressions OUTPUTS output','pattern',5,'p_pattern','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml3\\database.py',98),
+  ('expressions -> expression expressions','expressions',2,'p_expressions','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml3\\database.py',109),
+  ('expressions -> expression','expressions',1,'p_expressions','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml3\\database.py',110),
+  ('expression -> xml','expression',1,'p_expression','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml3\\database.py',125),
+  ('expression -> variable','expression',1,'p_expression','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml3\\database.py',126),
+  ('expression -> categories','expression',1,'p_expression','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml3\\database.py',127),
+  ('expression -> LITERAL','expression',1,'p_expression','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml3\\database.py',128),
+  ('expression -> ANYEXPR','expression',1,'p_expression','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml3\\database.py',129),
+  ('expression -> MULTIEXPR','expression',1,'p_expression','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml3\\database.py',130),
+  ('expression -> MULTINUMBEREDEXPR','expression',1,'p_expression','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml3\\database.py',131),
+  ('variable -> ID','variable',1,'p_variable','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml3\\database.py',140),
+  ('categories -> LEFTBRACKET categValues RIGHTBRACKET','categories',3,'p_categories','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml3\\database.py',147),
+  ('categValues -> categValue COMMA categValues','categValues',3,'p_categValues','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml3\\database.py',154),
+  ('categValues -> categValue','categValues',1,'p_categValues','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml3\\database.py',155),
+  ('categValue -> ID','categValue',1,'p_categValue','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml3\\database.py',168),
+  ('xml -> ID LEFTCARET attributes RIGHTCARET LEFTPAREN expressions RIGHTPAREN','xml',7,'p_xml','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml3\\database.py',175),
+  ('xml -> ID LEFTPAREN expressions RIGHTPAREN','xml',4,'p_xml','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml3\\database.py',176),
+  ('xml -> ID LEFTPAREN RIGHTPAREN','xml',3,'p_xml','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml3\\database.py',177),
+  ('attributes -> attribute COMMA attributes','attributes',3,'p_attributes','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml3\\database.py',189),
+  ('attributes -> attribute','attributes',1,'p_attributes','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml3\\database.py',190),
+  ('attribute -> ID ASSIGNS LITERAL','attribute',3,'p_attribute','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml3\\database.py',201),
+  ('output -> STRING','output',1,'p_output','W:\\Nifty Prose Articulator\\workspace2\\another\\src\\mathml3\\database.py',207),
 ]
