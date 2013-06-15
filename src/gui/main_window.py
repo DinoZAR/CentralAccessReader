@@ -88,6 +88,7 @@ class MainWindow(QtGui.QMainWindow):
         self.webInspector.setPage(self.ui.webView.page())
         
         # Set the math TTS using the internal pattern database
+#         self.mathTTS = MathTTS(program_path('src/mathml/parser_pattern_database.txt'))
         try:
             self.mathTTS = MathTTS(program_path('src/mathml/parser_pattern_database.txt'))
         except Exception:
