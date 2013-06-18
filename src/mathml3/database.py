@@ -243,46 +243,34 @@ def convertToPatternTree(databasePattern):
 			
 def _convertExpressions(tree, expressions):
 	
-	childList = []
 	for i in expressions:
 		ex = i['expression']    # This is a little indirect, but hey
 		
 		if ex['type'] == 'variable':
-			newChild = PatternTree()
+			newChild = PatternTree(ex['value'], tree)
 			newChild.type = PatternTree.VARIABLE
-			newChild.name = ex['value']
-			childList.append(newChild)
 			
 		elif ex['type'] == 'categories':
-			newChild = PatternTree()
+			newChild = PatternTree('<categories>', tree)
 			newChild.type = PatternTree.CATEGORY
 			newChild.categories = ex['value']
-			childList.append(newChild)
 			
 		elif ex['type'] == 'xml':
-			newChild = PatternTree()
+			newChild = PatternTree(ex['value'], tree)
 			newChild.type = PatternTree.XML
-			newChild.name = ex['value']
 			newChild.attributes = {}
 			if len(ex['attributes']) > 0:
 				for attr in ex['attributes']:
 					newChild.attributes[attr['name']] = attr['value']
 			_convertExpressions(newChild, ex['children'])
-			childList.append(newChild)
 		
 		# For this one, differentiate between a regular expression for a literal
 		# or a collector token, such as a +, ?, or #
 		elif ex['type'] == 'literal':
-			if ex['value'] in PatternTree.WILDCARD:
-				newChild = PatternTree()
+			if ex['value'] in PatternTree.WILDCARD_TOKENS:
+				newChild = PatternTree(ex['value'], tree)
 				newChild.type = PatternTree.WILDCARD
-				newChild.name = ex['value']
-				childList.append(newChild)
 				
 			else:
-				newChild = PatternTree()
+				newChild = PatternTree(ex['value'][1:-1], tree)
 				newChild.type = PatternTree.TEXT
-				newChild.name = ex['value'][1:-1]   # Remove the single quotes
-				childList.append(newChild)
-				
-	tree.children = childList
