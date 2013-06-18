@@ -61,13 +61,13 @@ plusMinus = mo("&#xB1;") -> 'plus or minus'
 product = mi("&#8719;") -> 'product'
 product = mo("&#8719;") -> 'product'
 summation = mi("&#8721;") -> 'summation'
+three = mn("3") -> 'three'
 tilde = mo("&#732;") -> 'tilde'
 tilde = mo("~") -> 'tilde'
 times = mo("*") -> 'times'
 times = mo("&#215;") -> 'times'
 times = mi("&#8727;") -> 'times'
 times = mi("&#8901;") -> 'times'
-
 
 //Integrals
 areaIntegral [integral] = mo("&#60946;") -> 'area integral'
@@ -484,7 +484,9 @@ productBigPi = munderover(BigPi) -> 'the product of'
 productSyn = munderover(product mrow(+) mrow(+)) -> 'the product from {2} to {3} of'
 productSyn = munderover(product mrow(+)) -> 'the product from {2} of'
 productSyn = munderover(product) -> 'the product of'
-sum = munderover(SigmaBig ? ?) -> 'the summation from {2} to {3}, of'
+sum = munderover(SigmaBig mrow(+) mrow(+)) -> 'the sum from {2} to {3}, of'
+sum = munderover(SigmaBig mrow(+)) -> 'the sum from {2} of'
+sum = munderover(SigmaBig) -> 'the sum of'
 unionSynThree = munderover(union mrow(+) mrow(+)) -> '{3} above union sub {2} of'
 unionSynTwo = munderover(union mrow(+)) -> 'union sub {2} of'
 unionSyn = munderover(union) -> 'union of'
@@ -493,6 +495,8 @@ unionSyn = munderover(union) -> 'union of'
 // ------------------------------------------------------------------------------
 // Parenthetical Expressions
 // ------------------------------------------------------------------------------
+cuberoot = mroot(mrow(+) mrow(three)) -> 'the cube root of {1}'
+rootPowers = mroot(mrow(+) mrow(+)) -> 'the {2} root of {1}'
 squareRoot = msqrt(+) -> 'the square root of {1}'
 
 
