@@ -129,6 +129,9 @@ class DocxDocument(object):
                 
         self.zip.close()
         
+        # Finally, create the HTML for the thing
+        self._createHTML()
+        
     def _getRels(self, zip):
         relFile = zip.open('word/_rels/document.xml.rels', 'r')
         myRels = etree.parse(relFile)
@@ -568,9 +571,12 @@ class DocxDocument(object):
         zip.close()
             
     def getMainPage(self):
+        return self._html
+        
+    
+    def _createHTML(self):
         '''
-        Returns the HTML of the main landing page. This page will have the
-        scripts for highlighting as well as content streaming (when available).
+        Generates the HTML for the page.
         '''
         # Start with the basics
         html = HTML.Element('html')
@@ -586,7 +592,7 @@ class DocxDocument(object):
         # Write out the images to the import folder
         self._saveImages()
         
-        return HTML.tostring(html)
+        self._html = HTML.tostring(html)
     
     def getPages(self):
         '''
