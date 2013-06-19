@@ -23,49 +23,56 @@ mathmlFile.close()
 
 myTree = convertDOMToPatternTree(mathml)
 
+print 'Tree:'
 print myTree
 
 databaseFile = open(databasePath, 'r')
 database = parse(databaseFile.read())
 databaseFile.close()
 
+# pattern = PatternTree('food')
+# w = PatternTree('beans', pattern)
+# num = PatternTree('30', w)
+# num.type = PatternTree.TEXT
+# 
+# print
+# print 'Pattern:'
+# print pattern
+# 
+# current = myTree
+# while True:
+#     if current == None:
+#         break
+#     data = pattern.isMatch(current)
+#     print data
+#     current = current.getNext()
 
-# myTree = domToPatternTree(mathml)
-#    
-# print 'My MathML tree!'
-# print myTree
-# print '------------------------------------------------------'
-#    
-# databaseFile = open(databasePath, 'r')
-# database = parse(databaseFile.read())
-# databaseFile.close()
-#             
-# print 'Patterns!'
+             
+print 'Patterns!'
 for p in database['patterns']:
     #print p['number'], ':', p['variable']['value'], 'Output:', p['output']
-    
     pattern = convertToPatternTree(p)
     print '--------------------------'
     print 'Pattern:'
     print pattern
-    
-    print
-    print 'Before:'
-    print myTree
-    
+     
+#     print
+#     print 'Before:'
+#     print myTree
+     
     transform(myTree, pattern)
     
     print
     print 'After:'
     print myTree
-    
+     
 print
 print
 print'!===============================================!'
 print 'Final:'
 print
 print myTree
-
+ 
 print
 print
 print '************************************************'
