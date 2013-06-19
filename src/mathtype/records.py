@@ -205,7 +205,7 @@ def convertRecords(i, records, parentStack):
                 for c in range(records[i].columns):
                     colElem = etree.SubElement(rowElem, 'mtd')
                     parentStack.append(colElem)
-                    convertRecords(0, [records[i].childRecords[r * records[i].columns + c]], parentStack)
+                    convertRecords(0, [records[i].childRecords[(r * records[i].columns) + c]], parentStack)
                     parentStack.pop()
             
         i += 1
@@ -586,11 +586,13 @@ class MatrixRecord(Record):
         print 'Columns:', self.columns
         
         # Get row partition line types (ignore for now)
-        for i in range(int(math.ceil(self.rows / 4.0))):
+        f.read(1)
+        for i in range(int(math.floor(self.rows / 4.0))):
             f.read(1)
             
         # Get column partition types (ignore for now)
-        for i in range(int(math.ceil(self.columns / 4.0))):
+        f.read(1)
+        for i in range(int(math.floor(self.columns / 4.0))):
             f.read(1)
         
         # Get my list of lines that are for each entry in the matrix
