@@ -60,7 +60,7 @@ MATHML_OPERATORS = ['+',
                     unichr(8836) # not a subset
 ]
 
-# Don't include actual digits here
+# Don't include actual numeral digits [0-9] here
 MATHML_NUMBERS = [unichr(8734)]
 
 R_END = 0
@@ -382,6 +382,7 @@ class LineRecord(Record):
         # Check for ruler
         if self._checkFlag(options, Record.O_LP_RULER):
             print '- Ruler in line!'
+            f.read(1)
             _handleRuler(f)
           
         # The rest are objects in the line record, which should be added to
@@ -420,6 +421,9 @@ class FontStyleDefinitionRecord(Record):
             self.fontIndex = val
         else:
             self.fontIndex = struct.unpack('<H', f.read(2))[0]
+            
+        # Also get the character style bits
+        self.characterStyle = struct.unpack('<B', f.read(1))[0]
                     
 class CharRecord(Record):
     
@@ -462,7 +466,8 @@ class CharRecord(Record):
         
         # Get typeface (signed integer)
         val = struct.unpack('<b', f.read(1))[0]
-        if (val >= -128) and (val < 127):
+        print 'Initial typeface:', val
+        if (val >= -128) and (val <= 127):
             self.typeface = val + 128
         else:
             self.typeface = struct.unpack('<h', f.read(2))[0] + 32768
