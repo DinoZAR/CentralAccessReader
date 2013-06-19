@@ -23,7 +23,7 @@ class Assigner(object):
         '''
         self._maths = {}
         try:
-            self.mathTTS = MathTTS(program_path('src/math_patterns/general_database.txt'))
+            self.mathTTS = MathTTS(program_path('src/math_patterns/general.txt'))
         except Exception:
             self.mathTTS = None
             pass
