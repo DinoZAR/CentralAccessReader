@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\Spen-ZAR\workspace\NiftyProseArticulator\src\forms/mathmlcodesdialog.ui'
+# Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/mathmlcodesdialog.ui'
 #
-# Created: Wed Feb 27 07:57:50 2013
-#      by: PyQt4 UI code generator 4.9.6
+# Created: Wed Jun 19 14:48:16 2013
+#      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_MathMLCodesDialog(object):
     def setupUi(self, MathMLCodesDialog):
         MathMLCodesDialog.setObjectName(_fromUtf8("MathMLCodesDialog"))
-        MathMLCodesDialog.resize(672, 392)
+        MathMLCodesDialog.resize(521, 258)
         self.verticalLayout_2 = QtGui.QVBoxLayout(MathMLCodesDialog)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.splitter = QtGui.QSplitter(MathMLCodesDialog)
@@ -35,15 +35,15 @@ class Ui_MathMLCodesDialog(object):
         self.splitter.setObjectName(_fromUtf8("splitter"))
         self.mathmlCodesList = QtGui.QListWidget(self.splitter)
         self.mathmlCodesList.setObjectName(_fromUtf8("mathmlCodesList"))
-        self.widget = QtGui.QWidget(self.splitter)
-        self.widget.setObjectName(_fromUtf8("widget"))
-        self.verticalLayout = QtGui.QVBoxLayout(self.widget)
+        self.layoutWidget = QtGui.QWidget(self.splitter)
+        self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
+        self.verticalLayout = QtGui.QVBoxLayout(self.layoutWidget)
         self.verticalLayout.setMargin(0)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.label = QtGui.QLabel(self.widget)
+        self.label = QtGui.QLabel(self.layoutWidget)
         self.label.setObjectName(_fromUtf8("label"))
         self.verticalLayout.addWidget(self.label)
-        self.mathmlOutput = QtGui.QTextEdit(self.widget)
+        self.mathmlOutput = QtGui.QTextEdit(self.layoutWidget)
         self.mathmlOutput.setReadOnly(True)
         self.mathmlOutput.setObjectName(_fromUtf8("mathmlOutput"))
         self.verticalLayout.addWidget(self.mathmlOutput)

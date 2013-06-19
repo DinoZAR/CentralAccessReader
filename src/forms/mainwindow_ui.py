@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/mainwindow.ui'
 #
-# Created: Thu Jun 06 15:43:20 2013
+# Created: Wed Jun 19 15:13:27 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -385,18 +385,25 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "Central Access Reader", None))
         self.label_3.setText(_translate("MainWindow", "Navigation:", None))
+        self.bookmarkZoomInButton.setToolTip(_translate("MainWindow", "Zoom In", None))
+        self.bookmarkZoomOutButton.setToolTip(_translate("MainWindow", "Zoom Out", None))
+        self.expandBookmarksButton.setToolTip(_translate("MainWindow", "Expand Bookmarks", None))
         self.expandBookmarksButton.setText(_translate("MainWindow", "Expand", None))
+        self.collapseBookmarksButton.setToolTip(_translate("MainWindow", "Collapse Bookmarks", None))
         self.collapseBookmarksButton.setText(_translate("MainWindow", "Collapse", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.bookmarksTab), _translate("MainWindow", "Bookmarks", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.pagesTab), _translate("MainWindow", "Pages", None))
-        self.playButton.setToolTip(_translate("MainWindow", "Play button", None))
-        self.pauseButton.setToolTip(_translate("MainWindow", "Stop button", None))
-        self.zoomInButton.setToolTip(_translate("MainWindow", "Settings button", None))
-        self.zoomOutButton.setToolTip(_translate("MainWindow", "Settings button", None))
+        self.playButton.setToolTip(_translate("MainWindow", "Read (Ctrl+R)", None))
+        self.pauseButton.setToolTip(_translate("MainWindow", "Stop (Ctrl+S)", None))
+        self.speechSettingsButton.setToolTip(_translate("MainWindow", "Speech Settings", None))
+        self.colorSettingsButton.setToolTip(_translate("MainWindow", "Highlighting, Colors, and Fonts Settings", None))
+        self.saveToMP3Button.setToolTip(_translate("MainWindow", "Save All To MP3 (Ctrl+Shift+S)", None))
+        self.zoomInButton.setToolTip(_translate("MainWindow", "Zoom In (Ctrl+=)", None))
+        self.zoomOutButton.setToolTip(_translate("MainWindow", "Zoom Out (Ctrl+-)", None))
         self.label_2.setText(_translate("MainWindow", "Volume:", None))
         self.label.setText(_translate("MainWindow", "Rate:", None))
-        self.rateSlider.setToolTip(_translate("MainWindow", "Words per minute slider", None))
-        self.volumeSlider.setToolTip(_translate("MainWindow", "Volume slider", None))
+        self.rateSlider.setToolTip(_translate("MainWindow", "Rate", None))
+        self.volumeSlider.setToolTip(_translate("MainWindow", "Volume", None))
         self.searchLabel.setText(_translate("MainWindow", "Search", None))
         self.menuFile.setTitle(_translate("MainWindow", "&File", None))
         self.menuMathML.setTitle(_translate("MainWindow", "&MathML", None))
@@ -417,7 +424,7 @@ class Ui_MainWindow(object):
         self.actionSearch.setText(_translate("MainWindow", "S&earch", None))
         self.actionSearch.setToolTip(_translate("MainWindow", "Toggles the search bar on and off.", None))
         self.actionSearch.setShortcut(_translate("MainWindow", "Ctrl+F", None))
-        self.actionPlay.setText(_translate("MainWindow", "&Play", None))
+        self.actionPlay.setText(_translate("MainWindow", "&Read", None))
         self.actionPlay.setShortcut(_translate("MainWindow", "Ctrl+R", None))
         self.actionStop.setText(_translate("MainWindow", "&Stop", None))
         self.actionStop.setShortcut(_translate("MainWindow", "Ctrl+S", None))

@@ -70,6 +70,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="bookmarkZoomInButton">
+            <property name="toolTip">
+             <string>Zoom In</string>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -90,6 +93,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="bookmarkZoomOutButton">
+            <property name="toolTip">
+             <string>Zoom Out</string>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -110,6 +116,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="expandBookmarksButton">
+            <property name="toolTip">
+             <string>Expand Bookmarks</string>
+            </property>
             <property name="text">
              <string>Expand</string>
             </property>
@@ -126,6 +135,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="collapseBookmarksButton">
+            <property name="toolTip">
+             <string>Collapse Bookmarks</string>
+            </property>
             <property name="text">
              <string>Collapse</string>
             </property>
@@ -224,7 +236,7 @@
           <item>
            <widget class="QPushButton" name="playButton">
             <property name="toolTip">
-             <string>Play button</string>
+             <string>Read (Ctrl+R)</string>
             </property>
             <property name="text">
              <string/>
@@ -247,7 +259,7 @@
           <item>
            <widget class="QPushButton" name="pauseButton">
             <property name="toolTip">
-             <string>Stop button</string>
+             <string>Stop (Ctrl+S)</string>
             </property>
             <property name="text">
              <string/>
@@ -269,6 +281,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="speechSettingsButton">
+            <property name="toolTip">
+             <string>Speech Settings</string>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -289,6 +304,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="colorSettingsButton">
+            <property name="toolTip">
+             <string>Highlighting, Colors, and Fonts Settings</string>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -309,6 +327,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="saveToMP3Button">
+            <property name="toolTip">
+             <string>Save All To MP3 (Ctrl+Shift+S)</string>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -336,7 +357,7 @@
              </font>
             </property>
             <property name="toolTip">
-             <string>Settings button</string>
+             <string>Zoom In (Ctrl+=)</string>
             </property>
             <property name="text">
              <string/>
@@ -365,7 +386,7 @@
              </font>
             </property>
             <property name="toolTip">
-             <string>Settings button</string>
+             <string>Zoom Out (Ctrl+-)</string>
             </property>
             <property name="text">
              <string/>
@@ -419,7 +440,7 @@
                </size>
               </property>
               <property name="toolTip">
-               <string>Words per minute slider</string>
+               <string>Rate</string>
               </property>
               <property name="minimum">
                <number>0</number>
@@ -450,7 +471,7 @@
                </size>
               </property>
               <property name="toolTip">
-               <string>Volume slider</string>
+               <string>Volume</string>
               </property>
               <property name="maximum">
                <number>100</number>
@@ -732,7 +753,7 @@
      <normaloff>:/icons/icons/play.png</normaloff>:/icons/icons/play.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Play</string>
+    <string>&amp;Read</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
