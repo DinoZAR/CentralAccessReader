@@ -36,111 +36,6 @@ class PatternTree(object):
         self.categories = []
         self.output = ''
         
-    def accumulate(self, startNode, mark=False):
-        '''
-        Accumulates nodes into an expression list that become a part of this
-        pattern. If it can't because it is not a match, it should return None.
-
-        If there is a match, then it should return an Accumulation object.
-        '''
-        accum = None
-        expressions = []
-        
-        if self.type == PatternTree.VARIABLE:
-            if self.isMatch(startNode) == startNode.type:
-                expressions.append(startNode)
-#                 accum = Accumulation(self)
-#                 accum.newNext = startNode.getNext(includeChildren=False)
-#                 expressions.append(Accumulation(startNode))
- 
-        elif self.type == PatternTree.CATEGORY:
-            if self.isMatch(startNode):
-                expressions.append(startNode)
-#                 accum = Accumulation(self)
-#                 accum.newNext = startNode.getNext(includeChildren=False)
-#                 expressions.append(Accumulation(startNode))
- 
-        elif self.type == PatternTree.XML:
-            if self.isMatch(startNode):
-                expressions.append(startNode)
-#                 curr = startNode.getFirstChild()
-#                 #expressions.append(startNode)
-#                 
-#                 if len(self.children) > 0:
-#                     for c in self.children:
-#                         data = c.accumulate(curr, mark)
-#                         if data == None:
-#                             return None
-#                         else:
-#                             accum = Accumulation(self)
-#                             accum.newNext = data.newNext
-#                              
-#                             # Check to see if type is not an XML or Text. If so,
-#                             # add it to my additional list of expressions
-#                             if data.expressions[0] != PatternTree.XML and data.expressions[0] != PatternTree.TEXT:
-#                                 expressions.append(Accumulation(curr))
-#                                  
-#                             curr = data.newNext
-#                              
-#                 else:
-#                     accum.newNext = startNode.getNext(includeChildren=False)
- 
-        elif self.type == PatternTree.TEXT:
-            if self.isMatch(startNode):
-                expressions.append(startNode)
-#                 accum = Accumulation(self)
-#                 accum.newNext = startNode.getNext()
-#                 #expressions.append(startNode)
- 
-        elif self.type == PatternTree.WILDCARD:
-            
-            if self.name == '?':
-                expressions.append(startNode)
-# #                 accum = Accumulation(self)
-# #                 accum.newNext = startNode.getNext()
-# #                 expressions.append(Accumulation(startNode))
-#                  
-#             elif self.name == '+' or self.name == '#':
-#                 accum = Accumulation(self)
-#                 expressions.append(Accumulation(startNode))
-#                 if self.next != None:
-#                     # Keep accumulating until we match next expression
-#                     curr = startNode
-#                     gotOne = False
-#                     while True:
-#                         curr = curr.next
-#                         if curr == None:
-#                             # This isn't a match because the other pattern
-#                             # didn't get matched yet
-#                             return None
-#                         if self.next.isMatch(curr):
-#                             # If I didn't get at least one, then this is not a
-#                             # match
-#                             if not gotOne:
-#                                 return None
-#                             accum.newNext = curr.previous
-#                             break
-#                         else:
-#                             gotOne = True
-#                              
-#                         expressions.append(Accumulation(startNode))
-#                              
-#                 else:
-#                     # Keep accumulating until we run out
-#                     curr = startNode
-#                     while True:
-#                         curr = curr.next
-#                         if curr == None:
-#                             break
-         
-#         for i in range(len(expressions)):
-#             expressions[i].marked = True
-         
-#         if accum != None:
-#             accum.expressions = (self.type, expressions)
-
-        return accum
-          
     def isExpression(self):
         if self.type == PatternTree.VARIABLE:
             return True
@@ -161,11 +56,24 @@ class PatternTree(object):
         
         The next node will always be the next sibling of other.
         '''
+        
+        # See if the parent is a Variable. If it is, only allow matches for XML,
+        # since those nodes will need to be reparsed later
+        parentIsVariable = False
+        if self.parent != None:
+            if self.parent.type == PatternTree.VARIABLE:
+                parentIsVariable = True
+        
+        # Do the test for whatever type this is
         if self.type == PatternTree.VARIABLE:
+            if parentIsVariable:
+                return (False, [])
             if self.type == other.type:
                 return (True, other.next)
 
         elif self.type == PatternTree.CATEGORY:
+            if parentIsVariable:
+                return (False, [])
             if self.name in other.categories:
                 return (True, other.next)
 
@@ -207,12 +115,15 @@ class PatternTree(object):
                         return (True, other.next)
 
         elif self.type == PatternTree.TEXT:
+            if parentIsVariable:
+                return (False, [])
             if self.type == other.type:
                 if self.name == other.name:
                     return (True, other.next)
 
         elif self.type == PatternTree.WILDCARD:
-            
+            if parentIsVariable:
+                return (False, [])
             if self.name == '?':
                 return (True, other.next)
             
@@ -597,7 +508,7 @@ def convertDOMToPatternTree(elem, parent=None):
     # If there is text in the node, add it as the first child
     if elem.text != None:
         if len(elem.text.strip()) > 0:
-            textNode = PatternTree(elem.text.strip(), myTree)
+            textNode = PatternTree(unicode(elem.text.strip()), myTree)
             textNode.type = PatternTree.TEXT
 
     # Convert all children            

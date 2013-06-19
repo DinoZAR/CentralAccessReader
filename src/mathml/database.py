@@ -10,6 +10,9 @@ Author: Spencer Graffe
 import ply.lex as lex
 import ply.yacc as yacc
 from pattern_tree import PatternTree
+import HTMLParser
+
+htmlParser = HTMLParser.HTMLParser()
 
 # LEXER
 
@@ -275,5 +278,5 @@ def _convertExpressions(tree, expressions):
 				newChild.type = PatternTree.WILDCARD
 				
 			else:
-				newChild = PatternTree(ex['value'][1:-1], tree)
+				newChild = PatternTree(htmlParser.unescape(ex['value'][1:-1]), tree)
 				newChild.type = PatternTree.TEXT

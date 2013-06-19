@@ -9,15 +9,19 @@ def transform(tree, pattern):
     
     returnNode = tree
     start = tree
-
+    
     while start != None:
+        
         
         if _testMatch(start, pattern):
             print 'Got a match!'
+            alreadyVisited = True
             start = _transformNode(start, pattern)
             if start.parent == None:
                 # Update reference tree reference to the new, replaced node
                 returnNode = start
+        else:
+            alreadyVisited = False
             
         start = start.getNext()
         
@@ -81,7 +85,7 @@ def _transformNode(start, pattern):
         
     start.disconnect()
         
-    for n in nodes: 
+    for n in nodes:
         newNode.addChild(n)
         
     return newNode
