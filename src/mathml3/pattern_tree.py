@@ -26,20 +26,16 @@ class PatternTree(object):
 
         # Update other nodes correctly if a parent was said
         if parent != None:
-            if len(parent.children) > 0:
-                self.previous = parent.children[-1]
-                parent.children[-1].next = self
-            parent.children.append(self)
+            parent.addChild(self)
                 
         # Data specific to the pattern
         self.type = nodeType
         self.name = name
-        self.attributes = None
+        self.expressions = []
+        self.attributes = {}
         self.categories = []
-        self.expressions = None    # Reserve this only for Variable types
         self.output = ''
-        self.marked = False
-
+        
     def accumulate(self, startNode, mark=False):
         '''
         Accumulates nodes into an expression list that become a part of this
@@ -52,132 +48,262 @@ class PatternTree(object):
         
         if self.type == PatternTree.VARIABLE:
             if self.isMatch(startNode) == startNode.type:
-                accum = Accumulation(self)
-                accum.newNext = startNode.getNext(includeChildren=False)
                 expressions.append(startNode)
+#                 accum = Accumulation(self)
+#                 accum.newNext = startNode.getNext(includeChildren=False)
+#                 expressions.append(Accumulation(startNode))
  
         elif self.type == PatternTree.CATEGORY:
             if self.isMatch(startNode):
-                accum = Accumulation(self)
-                accum.newNext = startNode.getNext(includeChildren=False)
                 expressions.append(startNode)
+#                 accum = Accumulation(self)
+#                 accum.newNext = startNode.getNext(includeChildren=False)
+#                 expressions.append(Accumulation(startNode))
  
         elif self.type == PatternTree.XML:
             if self.isMatch(startNode):
-                curr = startNode.getFirstChild()
-                #expressions.append(startNode)
-                
-                if len(self.children) > 0:
-                    for c in self.children:
-                        data = c.accumulate(curr, mark)
-                        if data == None:
-                            return None
-                        else:
-                            accum = Accumulation(self)
-                            accum.newNext = data.newNext
-                            
-                            # Check to see if type is not an XML or Text. If so,
-                            # add it to my additional list of expressions
-                            if data.expressions[0] != PatternTree.XML and data.expressions[0] != PatternTree.TEXT:
-                                expressions.append(curr)
-                                
-                            curr = data.newNext
-                            
-                else:
-                    accum.newNext = startNode.getNext(includeChildren=False)
+                expressions.append(startNode)
+#                 curr = startNode.getFirstChild()
+#                 #expressions.append(startNode)
+#                 
+#                 if len(self.children) > 0:
+#                     for c in self.children:
+#                         data = c.accumulate(curr, mark)
+#                         if data == None:
+#                             return None
+#                         else:
+#                             accum = Accumulation(self)
+#                             accum.newNext = data.newNext
+#                              
+#                             # Check to see if type is not an XML or Text. If so,
+#                             # add it to my additional list of expressions
+#                             if data.expressions[0] != PatternTree.XML and data.expressions[0] != PatternTree.TEXT:
+#                                 expressions.append(Accumulation(curr))
+#                                  
+#                             curr = data.newNext
+#                              
+#                 else:
+#                     accum.newNext = startNode.getNext(includeChildren=False)
  
         elif self.type == PatternTree.TEXT:
             if self.isMatch(startNode):
-                accum = Accumulation(self)
-                accum.newNext = startNode.getNext()
-                #expressions.append(startNode)
+                expressions.append(startNode)
+#                 accum = Accumulation(self)
+#                 accum.newNext = startNode.getNext()
+#                 #expressions.append(startNode)
  
         elif self.type == PatternTree.WILDCARD:
             
             if self.name == '?':
-                accum = Accumulation(self)
-                accum.newNext = startNode.getNext()
                 expressions.append(startNode)
-                
-            elif self.name == '+' or self.name == '#':
-                accum = Accumulation(self)
-                expressions.append(startNode)
-                if self.next != None:
-                    # Keep accumulating until we match next expression
-                    curr = startNode
-                    gotOne = False
-                    while True:
-                        curr = curr.next
-                        if curr == None:
-                            # This isn't a match because the other pattern
-                            # didn't get matched yet
-                            return None
-                        if self.next.isMatch(curr):
-                            # If I didn't get at least one, then this is not a
-                            # match
-                            if not gotOne:
-                                return None
-                            accum.newNext = curr.previous
-                            break
-                        else:
-                            gotOne = True
-                            
-                        expressions.append(startNode)
-                            
-                else:
-                    # Keep accumulating until we run out
-                    curr = startNode
-                    while True:
-                        curr = curr.next
-                        if curr == None:
-                            break
-        
-        for i in range(len(expressions)):
-            removal = expressions[i]
-            expressions[i] = copy.deepcopy(expressions[i])
-            if mark:
-                expressions[i].marked = True
-                expressions[i].disconnect()
-                removal.disconnect()
-        
-        if accum != None:
-            accum.expressions = (self.type, expressions)
+# #                 accum = Accumulation(self)
+# #                 accum.newNext = startNode.getNext()
+# #                 expressions.append(Accumulation(startNode))
+#                  
+#             elif self.name == '+' or self.name == '#':
+#                 accum = Accumulation(self)
+#                 expressions.append(Accumulation(startNode))
+#                 if self.next != None:
+#                     # Keep accumulating until we match next expression
+#                     curr = startNode
+#                     gotOne = False
+#                     while True:
+#                         curr = curr.next
+#                         if curr == None:
+#                             # This isn't a match because the other pattern
+#                             # didn't get matched yet
+#                             return None
+#                         if self.next.isMatch(curr):
+#                             # If I didn't get at least one, then this is not a
+#                             # match
+#                             if not gotOne:
+#                                 return None
+#                             accum.newNext = curr.previous
+#                             break
+#                         else:
+#                             gotOne = True
+#                              
+#                         expressions.append(Accumulation(startNode))
+#                              
+#                 else:
+#                     # Keep accumulating until we run out
+#                     curr = startNode
+#                     while True:
+#                         curr = curr.next
+#                         if curr == None:
+#                             break
+         
+#         for i in range(len(expressions)):
+#             expressions[i].marked = True
+         
+#         if accum != None:
+#             accum.expressions = (self.type, expressions)
 
         return accum
-
+          
+    def isExpression(self):
+        if self.type == PatternTree.VARIABLE:
+            return True
+        elif self.type == PatternTree.CATEGORY:
+            return True
+        elif self.type == PatternTree.XML:
+            return False
+        elif self.type == PatternTree.TEXT:
+            return True
+        elif self.type == PatternTree.WILDCARD:
+            return True
+    
     def isMatch(self, other):
+        '''
+        Checks to see if this node, the pattern, matches other. If there is a
+        match, it will return the next node to look for in the other pattern.
+        Otherwise, it will return None.
+        
+        The next node will always be the next sibling of other.
+        '''
         if self.type == PatternTree.VARIABLE:
             if self.type == other.type:
-                return True
+                return (True, other.next)
 
         elif self.type == PatternTree.CATEGORY:
             if self.name in other.categories:
-                return True
+                return (True, other.next)
 
         elif self.type == PatternTree.XML:
             if self.type == other.type:
                 if self.name == other.name:
+                    
+                    # Check the attributes, if any. This is a subset match, not
+                    # a whole match
                     if len(self.attributes) > 0:
                         for k in self.attributes.keys():
                             if k in other.attributes:
                                 if self.attributes[k] != other.attributes[k]:
-                                    return False
+                                    return (False, None) 
                             else:
-                                return False
-                        return True
+                                return (False, None)
+                    
+                    # Check all of the children and make sure they're good
+                    if len(self.children) > 0:
+                        currOther = other.getFirstChild()
+                        currSelf = self.getFirstChild()
+                        while True:
+                            if currOther == None:
+                                return (False, None)
+                            data = currSelf.isMatch(currOther)
+                            if not data[0]:
+                                return (False, None)
+                            currOther = data[1]
+                            currSelf = currSelf.next
+                            if currSelf == None:
+                                
+                                # If I have more stuff in other, then not match
+                                if currOther != None:
+                                    return (False, None)
+                                else:
+                                    return (True, other.next)
+                        
                     else:
-                        return True
+                        return (True, other.next)
 
         elif self.type == PatternTree.TEXT:
             if self.type == other.type:
                 if self.name == other.name:
-                    return True
+                    return (True, other.next)
 
         elif self.type == PatternTree.WILDCARD:
-            return True
+            
+            if self.name == '?':
+                return (True, other.next)
+            
+            # Keep going until the pattern after this matches. If there is no
+            # pattern after this, then it is all of them. However, there must be
+            # at least 1 node.
+            elif self.name == '+' or self.name == '#':
+                if other == None:
+                    return (False, None)
+                curr = other.next
+                while True:
+                    if curr == None:
+                        return (True, curr)
+                    if self.next != None:
+                        if self.next.isMatch(curr):
+                            return (True, curr.previous)
+                    curr = curr.next
+                        
+        return (False, None)
 
-        return False
-
+    def gather(self, other):
+        '''
+        Mutates the other so that it turns into a single expression representing
+        itself. It may steal the other's siblings to collect the expressions
+        necessary.
+        '''
+        if self.type == PatternTree.VARIABLE:
+            # The other should stay the same, so leave it alone
+            return (other.next, [other])
+        
+        elif self.type == PatternTree.CATEGORY:
+            # The other should stay the same, so leave it alone
+            return (other.next, [other])
+        
+        elif self.type == PatternTree.XML:
+            
+            # Gather the stuff inside it
+            curr = other.getFirstChild()
+            nodes = []
+            for c in self.children:
+                data = c.gather(curr)
+                nodes.extend(data[1])
+                curr = data[0]
+            
+            return (other.next, nodes)
+        
+        elif self.type == PatternTree.TEXT:
+            # The other should stay the same, so leave it alone
+            return (other.next, [other])
+        
+        elif self.type == PatternTree.WILDCARD:
+            
+            if self.name == '?':
+                # Create a ? node in its place and put the replaced node
+                # under it
+                newNode = PatternTree('?')
+                newNode.type = PatternTree.WILDCARD
+                
+                other.parent.insertBefore(newNode, other)
+                newNode.addChild(other) # This will effectively move it
+                
+                return (newNode.next, [newNode])
+            
+            elif self.name == '+' or self.name == '#':
+                # Create a + or # node in its place, but this time, steal
+                # siblings after other until the next pattern matches or until
+                # all of them are taken
+                newNode = PatternTree(self.name)
+                self.copyData(newNode)
+                
+                other.parent.insertBefore(newNode, other)
+                newNode.addChild(other) # This will effectively move it
+                
+                # Progressively take siblings after it and put it under itself
+                current = newNode.next
+                while True:
+                    
+                    if current == None:
+                        break
+                    
+                    if self.next != None:
+                        data = self.next.isMatch(current)
+                        if data[0]:
+                            break
+                        
+                    # Move it into the new node
+                    newNode.addChild(current)
+                    current = newNode.next
+                        
+                return (newNode.next, [newNode])
+    
     def getChildren(self):
         return self.children
 
@@ -186,10 +312,86 @@ class PatternTree(object):
             return self.children[0]
         else:
             return None
-
+        
+    def getExpressions(self):
+        '''
+        Gets a list of expressions that are from this tree. Depending on what
+        kind of node it is, it will provide different expressions that count
+        for it.
+        
+        Because some of the expressions may include itself, the nodes are not
+        disconnected from their parents.
+        '''
+        if self.type == PatternTree.VARIABLE:
+            return [self]
+        
+        elif self.type == PatternTree.CATEGORY:
+            return [] # It doesn't make sense to have anything here
+        
+        elif self.type == PatternTree.XML:
+            exprs = []
+            for c in self.children:
+                exprs.extend(c.getExpressions())
+            return exprs
+        
+        elif self.type == PatternTree.TEXT:
+            return [self]
+        
+        elif self.type == PatternTree.WILDCARD:
+            return [self]
+        
+    def addChild(self, newNode):
+        '''
+        Adds a child to the tree. If the child was under a different parent, it
+        will be removed from there and be moved under this node.
+        '''
+        self.insertChild(newNode, len(self.children))
+            
+    def insertChild(self, newNode, index = 0):
+        '''
+        Inserts a child into the tree. By default, it inserts it at the
+        beginning.
+        '''
+        
+        # Check if it is already in there. If it is, raise an error
+        if newNode in self.children:
+            raise ValueError('Child already exists in parent.')
+        
+        # Disconnect it to make sure it has renounced its previous life.
+        # I have to do this so that I don't make copies and have ambiguous
+        # parent references.
+        newNode.disconnect()
+        
+        newNode.parent = self
+        
+        self.children.insert(index, newNode)
+        if len(self.children) > 1:
+            if index == 0:
+                newNode.next = self.children[1]
+                self.children[1].previous = newNode
+            elif index == (len(self.children) - 1):
+                newNode.previous = self.children[-2]
+                self.children[-2].next = newNode
+            else:
+                newNode.previous = self.children[index - 1]
+                newNode.next = self.children[index + 1]
+                self.children[index - 1].next = newNode
+                self.children[index + 1].previous = newNode
+                
+    def insertBefore(self, newNode, beforeNode):
+        '''
+        Inserts the new node before the child reference called beforeNode
+        '''
+        try:
+            index = self.children.index(beforeNode)
+        except Exception:
+            raise ValueError('Before node does not exist.')
+        
+        self.insertChild(newNode, index)
+        
     def getNext(self, includeChildren=True):
         '''
-        Gets the next element after this in depth-first order. This means it
+        Gets the next node after this in depth-first order. This means it
         will return the first child of this first, unless includeChildren is
         False.
         '''
@@ -207,7 +409,7 @@ class PatternTree(object):
     
     def getOutput(self):
         '''
-        Gets the speech output from this element.
+        Gets the speech output from this node.
         '''
         out = ''
         
@@ -230,23 +432,35 @@ class PatternTree(object):
                 if c.find(r'{') != -1:
                     # Must generate speech from child object number refers to
                     num = int(c.replace('{', '').replace('}', '').strip()) - 1
-                    type = self.expressions[num][0]
-                    for ex in self.expressions[num][1]:
-                        out += ' ' + ex.getOutput()
+                    out += self.children[num].getOutput()
                 else:
-                    out += ' ' + c
+                    out += c
             
         elif self.type == PatternTree.CATEGORY:
-            out += ' [ERROR]'
+            for c in self.children:
+                out += c.getOutput()
             
         elif self.type == PatternTree.XML:
-            out += ' [ERROR]'
+            out += '[ERROR]'
             
         elif self.type == PatternTree.TEXT:
-            out += ' ' + self.name
+            out += self.name
             
         elif self.type == PatternTree.WILDCARD:
-            out += ' [ERROR]'
+            
+            if self.name == '?':
+                out += self.getFirstChild().getOutput()
+            
+            elif self.name == '+':
+                for c in self.children:
+                    out += c.getOutput() + ' '
+                out = out[:-1]
+                
+            elif self.name == '#':
+                # Make output numbered
+                for i in range(len(self.children)):
+                    out += ', ' + str(i + 1) + ', ' + self.children[i].getOutput() + ' '
+                out = out[:-1]
         
         else:
             raise TypeError('PatternTree type not recognized: ' + str(self.type))
@@ -260,11 +474,14 @@ class PatternTree(object):
         '''
         Essentially, it removes itself from existence from its parents and
         siblings. It will make connections around itself so that tree isn't
-        broken. It will keep its children references.
+        broken. It will keep its children references, though.
         '''
         # Shun yourself away from parent
         if self.parent != None:
-            self.parent.children.remove(self)
+            try:
+                self.parent.children.remove(self)
+            except ValueError:
+                pass
             self.parent = None
 
         # Make siblings previous and next of this connect (will work for
@@ -277,6 +494,18 @@ class PatternTree(object):
         self.previous = None
         self.next = None
         
+    def copyData(self, other):
+        '''
+        Copies all of the attributes of this node to the other node, mutating it
+        to look like this node. The major difference is that the other node
+        keeps its parent/children/sibling relationships.
+        '''
+        other.type = self.type
+        other.name = self.name
+        other.attributes = self.attributes
+        other.categories = self.categories
+        other.output = self.output
+    
     def _getTypeString(self):
         if self.type == PatternTree.VARIABLE:
             return 'Variable'
@@ -337,16 +566,19 @@ class PatternTree(object):
 
     def __str__(self):
         return self.dump()
+    
+    def __repr__(self):
+        return str(id(self)) + ': ' + self.dump()
 
 class Accumulation(object):
     '''
     Small object that holds the attributes of an accumulation for a specific
-    element.
+    node.
     '''
     def __init__(self, pattern):
         self.pattern = pattern         # A reference to the PatternTree we are accumulating to
-        self.expressions = []       # A list of expressions that are for that type
-        self.newNext = None         # A reference to the PatternTree after it
+        self.expressions = []          # A list of expressions of Accumulation objects
+        self.newNext = None            # A reference to the PatternTree after it
 
 def convertDOMToPatternTree(elem, parent=None):
     

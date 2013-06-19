@@ -1,3 +1,4 @@
+import copy
 from pattern_tree import PatternTree
 
 def transform(tree, pattern):
@@ -5,21 +6,30 @@ def transform(tree, pattern):
     Transforms the tree with the pattern, converting all matched nodes to
     Variable objects representing that match.
     '''
+    
+    returnNode = tree
     start = tree
 
     while start != None:
         
         if _testMatch(start, pattern):
-            _matchTransform(start, pattern)
+            print 'Got a match!'
+            start = _transformNode(start, pattern)
+            if start.parent == None:
+                # Update reference tree reference to the new, replaced node
+                returnNode = start
             
-        # If it has expressions in it, go and transform those too
-        if start.expressions != None:
-            for i in range(len(start.expressions)):
-                for j in range(len(start.expressions[i][1])):
-                    if start.expressions[i][1][j].type == PatternTree.XML or start.expressions[i][1][j].type == PatternTree.TEXT:
-                        transform(start.expressions[i][1][j], pattern)
-
         start = start.getNext()
+        
+        # If it has expressions in it, go and transform those too
+#         if start.expressions != None:
+#             for i in range(len(start.expressions)):
+#                 for j in range(len(start.expressions[i][1])):
+#                     if start.expressions[i][1][j].type == PatternTree.XML or start.expressions[i][1][j].type == PatternTree.TEXT:
+#                         transform(start.expressions[i][1][j], pattern)
+
+    return returnNode
+
 
 def _testMatch(startNode, pattern):
     '''
@@ -28,49 +38,50 @@ def _testMatch(startNode, pattern):
     curr = startNode
     
     for pat in pattern.getChildren():
+        
+        # If there are no more nodes and we still have more things in pattern,
+        # then it is not a match
         if curr == None:
             return False
-        data = pat.accumulate(curr)
-        if data == None:
+        
+        # Test the node and get the next element from the node
+        data = pat.isMatch(curr)
+        if not data[0]:
             return False
         else:
-            curr = data.newNext
+            curr = data[1]
 
     return True
     
-def _matchTransform(start, pattern):
+def _transformNode(start, pattern):
     '''
     Transforms the start node into a Variable that conveys the pattern. The
     other elements that were a part of the match are serialized as an expression
     list that is put into the new Variable
     '''
     curr = start
-    expressions = []
-    for pat in pattern.getChildren():
-        data = pat.accumulate(curr, mark=True)
-        curr = data.newNext
-        expressions.append(data.expressions)
-
-    # Morph the start node into a Variable node, keeping all
-    # parent/sibling connections
-    start.type = PatternTree.VARIABLE
-    start.name = pattern.name
-    start.categories = pattern.categories
-    start.children = []
-    start.expressions = expressions
-    start.output = pattern.output
-    start.attributes = None
-
-    # Delete the nodes after it that were a part of the match
-    # All of these have been marked, so it's just a matter of going through
-    # and deleting them
-    while True:
-        node = start.getNext()
-        if node == None:
-            break
-        if node.isMarked():
-            node.disconnect()
-        else:
-            break
+    nodes = []
     
-    return True
+    for pat in pattern.getChildren():
+        data = pat.gather(curr)
+        nodes.extend(data[1])
+        curr = data[0]
+
+    # Create Variable node
+    newNode = PatternTree(pattern.name)
+    newNode.type = PatternTree.VARIABLE
+    newNode.categories = pattern.categories
+    newNode.output = pattern.output
+    newNode.attributes = None
+    newNode.children = []
+    
+    # Move the new children under the new node
+    if start.parent != None:
+        start.parent.insertBefore(newNode, start)
+        
+    start.disconnect()
+        
+    for n in nodes: 
+        newNode.addChild(n)
+        
+    return newNode
