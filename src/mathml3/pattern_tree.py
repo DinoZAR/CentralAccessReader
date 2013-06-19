@@ -220,9 +220,9 @@ class PatternTree(object):
             # pattern after this, then it is all of them. However, there must be
             # at least 1 node.
             elif self.name == '+' or self.name == '#':
-                curr = other.next
-                if curr == None:
+                if other == None:
                     return (False, None)
+                curr = other.next
                 while True:
                     if curr == None:
                         return (True, curr)
@@ -241,18 +241,27 @@ class PatternTree(object):
         '''
         if self.type == PatternTree.VARIABLE:
             # The other should stay the same, so leave it alone
-            return other.next
+            return (other.next, [other])
         
         elif self.type == PatternTree.CATEGORY:
             # The other should stay the same, so leave it alone
-            return other.next
+            return (other.next, [other])
         
         elif self.type == PatternTree.XML:
-            return other.next
+            
+            # Gather the stuff inside it
+            curr = other.getFirstChild()
+            nodes = []
+            for c in self.children:
+                data = c.gather(curr)
+                nodes.extend(data[1])
+                curr = data[0]
+            
+            return (other.next, nodes)
         
         elif self.type == PatternTree.TEXT:
             # The other should stay the same, so leave it alone
-            return other.next
+            return (other.next, [other])
         
         elif self.type == PatternTree.WILDCARD:
             
@@ -265,7 +274,7 @@ class PatternTree(object):
                 other.parent.insertBefore(newNode, other)
                 newNode.addChild(other) # This will effectively move it
                 
-                return newNode.next
+                return (newNode.next, [newNode])
             
             elif self.name == '+' or self.name == '#':
                 # Create a + or # node in its place, but this time, steal
@@ -291,10 +300,9 @@ class PatternTree(object):
                         
                     # Move it into the new node
                     newNode.addChild(current)
-                        
                     current = newNode.next
                         
-                return newNode.next
+                return (newNode.next, [newNode])
     
     def getChildren(self):
         return self.children
@@ -315,15 +323,22 @@ class PatternTree(object):
         disconnected from their parents.
         '''
         if self.type == PatternTree.VARIABLE:
-            expr
+            return [self]
+        
         elif self.type == PatternTree.CATEGORY:
-            pass
+            return [] # It doesn't make sense to have anything here
+        
         elif self.type == PatternTree.XML:
-            pass
+            exprs = []
+            for c in self.children:
+                exprs.extend(c.getExpressions())
+            return exprs
+        
         elif self.type == PatternTree.TEXT:
-            pass
+            return [self]
+        
         elif self.type == PatternTree.WILDCARD:
-            pass
+            return [self]
         
     def addChild(self, newNode):
         '''
@@ -417,23 +432,35 @@ class PatternTree(object):
                 if c.find(r'{') != -1:
                     # Must generate speech from child object number refers to
                     num = int(c.replace('{', '').replace('}', '').strip()) - 1
-                    type = self.expressions[num][0]
-                    for ex in self.expressions[num][1]:
-                        out += ' ' + ex.getOutput()
+                    out += self.children[num].getOutput()
                 else:
-                    out += ' ' + c
+                    out += c
             
         elif self.type == PatternTree.CATEGORY:
-            out += ' [ERROR]'
+            for c in self.children:
+                out += c.getOutput()
             
         elif self.type == PatternTree.XML:
-            out += ' [ERROR]'
+            out += '[ERROR]'
             
         elif self.type == PatternTree.TEXT:
-            out += ' ' + self.name
+            out += self.name
             
         elif self.type == PatternTree.WILDCARD:
-            out += ' [ERROR]'
+            
+            if self.name == '?':
+                out += self.getFirstChild().getOutput()
+            
+            elif self.name == '+':
+                for c in self.children:
+                    out += c.getOutput() + ' '
+                out = out[:-1]
+                
+            elif self.name == '#':
+                # Make output numbered
+                for i in range(len(self.children)):
+                    out += ', ' + str(i + 1) + ', ' + self.children[i].getOutput() + ' '
+                out = out[:-1]
         
         else:
             raise TypeError('PatternTree type not recognized: ' + str(self.type))

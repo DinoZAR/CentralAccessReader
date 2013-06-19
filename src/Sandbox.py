@@ -47,10 +47,8 @@ databaseFile.close()
 #     print data
 #     current = current.getNext()
 
-             
 print 'Patterns!'
 for p in database['patterns']:
-    #print p['number'], ':', p['variable']['value'], 'Output:', p['output']
     pattern = convertToPatternTree(p)
     print '--------------------------'
     print 'Pattern:'
@@ -60,7 +58,7 @@ for p in database['patterns']:
 #     print 'Before:'
 #     print myTree
      
-    transform(myTree, pattern)
+    myTree = transform(myTree, pattern)
     
     print
     print 'After:'

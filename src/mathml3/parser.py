@@ -6,14 +6,21 @@ def transform(tree, pattern):
     Transforms the tree with the pattern, converting all matched nodes to
     Variable objects representing that match.
     '''
+    
+    returnNode = tree
     start = tree
 
     while start != None:
         
         if _testMatch(start, pattern):
             print 'Got a match!'
-            _transformNode(start, pattern)
+            start = _transformNode(start, pattern)
+            if start.parent == None:
+                # Update reference tree reference to the new, replaced node
+                returnNode = start
             
+        start = start.getNext()
+        
         # If it has expressions in it, go and transform those too
 #         if start.expressions != None:
 #             for i in range(len(start.expressions)):
@@ -21,7 +28,8 @@ def transform(tree, pattern):
 #                     if start.expressions[i][1][j].type == PatternTree.XML or start.expressions[i][1][j].type == PatternTree.TEXT:
 #                         transform(start.expressions[i][1][j], pattern)
 
-        start = start.getNext()
+    return returnNode
+
 
 def _testMatch(startNode, pattern):
     '''
@@ -55,10 +63,9 @@ def _transformNode(start, pattern):
     nodes = []
     
     for pat in pattern.getChildren():
-        next = pat.gather(curr)
-        nodes.append(curr)
-        curr.disconnect()
-        curr = next
+        data = pat.gather(curr)
+        nodes.extend(data[1])
+        curr = data[0]
 
     # Create Variable node
     newNode = PatternTree(pattern.name)
@@ -68,13 +75,13 @@ def _transformNode(start, pattern):
     newNode.attributes = None
     newNode.children = []
     
-    # Serialize my expressions found in the nodes
-    expressions = []
-    for n in nodes:
-        expressions.extend(n.getExpressions())
-    
-    # Move the new children under the mutated node
-    for ex in expressions:
-        c = copy.deepcopy(ex) 
-        c.disconnect()
-        start.addChild(c)
+    # Move the new children under the new node
+    if start.parent != None:
+        start.parent.insertBefore(newNode, start)
+        
+    start.disconnect()
+        
+    for n in nodes: 
+        newNode.addChild(n)
+        
+    return newNode
