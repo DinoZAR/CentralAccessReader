@@ -621,8 +621,23 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.bookmarksTreeView.collapseAll()
         
     def refreshDocument(self):
-        if len(self.lastDocumentFilePath) > 0:
-            self.openDocx(self.lastDocumentFilePath)
+        
+        if self.document != None:
+            url = temp_path('import')
+            baseUrl = QUrl.fromLocalFile(url)
+            
+            docxHtml = self.document.getMainPage()
+                        
+            # Clear the cache in the web view
+            QWebSettings.clearIconDatabase()
+            QWebSettings.clearMemoryCaches()
+                        
+            # Set the content views and prepare assigner
+            self.assigner.prepare(docxHtml)
+            self.ui.webView.setHtml(docxHtml, baseUrl)
+        
+#         if len(self.lastDocumentFilePath) > 0:
+#             self.openDocx(self.lastDocumentFilePath)
             
     def setSettingsEnableState(self):
         '''
