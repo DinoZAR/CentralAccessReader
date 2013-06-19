@@ -28,8 +28,7 @@ from src.mathml import pattern_editor
 from src.speech.assigner import Assigner
 from src.speech.worker import SpeechWorker
 from src.docx.importer import DocxDocument
-from src.misc import app_data_path, temp_path, program_path, js_command, UpdateQtThread
-from src import misc
+from src.misc import app_data_path, temp_path, program_path, js_command, UpdateQtThread, open_file_location, prepare_bug_report, REPORT_BUG_URL, SURVEY_URL
 
 class MainWindow(QtGui.QMainWindow):
     loc = 0
@@ -90,7 +89,7 @@ class MainWindow(QtGui.QMainWindow):
         # Set the math TTS using the internal pattern database
 #         self.mathTTS = MathTTS(program_path('src/mathml/parser_pattern_database.txt'))
         try:
-            self.mathTTS = MathTTS(program_path('src/mathml/parser_pattern_database.txt'))
+            self.mathTTS = MathTTS(program_path('src/math_patterns/general.txt'))
         except Exception:
             self.mathTTS = None
             message = QtGui.QMessageBox()
@@ -413,7 +412,7 @@ class MainWindow(QtGui.QMainWindow):
                 messageBox.setIcon(QtGui.QMessageBox.Information)
                 messageBox.exec_()
                 
-                misc.open_file_location(fileName)
+                open_file_location(fileName)
         
     def zoomIn(self):
         self.ui.webView.zoomIn()
@@ -496,7 +495,7 @@ class MainWindow(QtGui.QMainWindow):
             t.stop()
             t.join()
             self.progressDialog.hide()
-            out = misc.prepare_bug_report(traceback.format_exc(), self.configuration, detailMessage=ex.message)
+            out = prepare_bug_report(traceback.format_exc(), self.configuration, detailMessage=ex.message)
             dialog = BugReporter(out)
             dialog.exec_()
         
@@ -504,7 +503,7 @@ class MainWindow(QtGui.QMainWindow):
             t.stop()
             t.join()
             self.progressDialog.hide()
-            out = misc.prepare_bug_report(traceback.format_exc(), self.configuration)
+            out = prepare_bug_report(traceback.format_exc(), self.configuration)
             dialog = BugReporter(out)
             dialog.exec_()
         
@@ -522,10 +521,10 @@ class MainWindow(QtGui.QMainWindow):
         dialog.exec_()
         
     def openReportBugWindow(self):
-        webbrowser.open_new(misc.REPORT_BUG_URL)
+        webbrowser.open_new(REPORT_BUG_URL)
         
     def openSurveyWindow(self):
-        webbrowser.open_new(misc.SURVEY_URL)
+        webbrowser.open_new(SURVEY_URL)
         
     def toggleSearchBar(self):
         if self.searchWidgets[0].isHidden():
@@ -564,7 +563,7 @@ class MainWindow(QtGui.QMainWindow):
         
         from mathml.pattern_editor.gui.patterneditorwindow import PatternEditorWindow
 
-        patternFilePath = program_path('src/mathml/parser_pattern_database.txt')
+        patternFilePath = program_path('src/math_patterns/general.txt')
         
         self.patternWindow = PatternEditorWindow(patternFilePath, '')
         self.patternWindow.changedPattern.connect(self.onChangedPatternEditor)

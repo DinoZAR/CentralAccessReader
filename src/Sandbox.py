@@ -7,9 +7,9 @@ print 'Starting!'
 
 from lxml import etree
  
-from src.mathml3.pattern_tree import convertDOMToPatternTree, PatternTree
-from src.mathml3.database import parse, convertToPatternTree
-from src.mathml3.parser import transform
+from src.mathml.pattern_tree import convertDOMToPatternTree, PatternTree
+from src.mathml.database import parse, convertToPatternTree
+from src.mathml.parser import transform
 from src.misc import program_path
  
 mathmlPath = 'C:\\Users\\GraffeS\\Desktop\\mathml.xml'
