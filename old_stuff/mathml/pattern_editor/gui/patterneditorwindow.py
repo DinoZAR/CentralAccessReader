@@ -3,7 +3,6 @@ Created on Feb 20, 2013
 
 @author: Spencer Graffe
 '''
-import traceback
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtGui import QStandardItemModel, QStandardItem, QFont
 from mathml.pattern_editor.forms.patterneditorwindow_ui import Ui_PatternEditorWindow
@@ -46,9 +45,9 @@ class PatternEditorWindow(QtGui.QMainWindow):
         except Exception:
             self.mathTTS = None
         
-#         self.stagesModel = QStandardItemModel()
-#         self.stageTrees = []
-#         self.updateStagesModel()
+        self.stagesModel = QStandardItemModel()
+        self.stageTrees = []
+        self.updateStagesModel()
         
         self.ui.mathmlEditor.setText(unicode(lastMathML))
         
@@ -56,8 +55,8 @@ class PatternEditorWindow(QtGui.QMainWindow):
         
     def connect_signals(self):
         self.ui.speakButton.clicked.connect(self.speakButton_clicked)
-#         self.ui.expandAllButton.clicked.connect(self.expandButton_clicked)
-#         self.ui.collapseAllButton.clicked.connect(self.collapseButton_clicked)
+        self.ui.expandAllButton.clicked.connect(self.expandButton_clicked)
+        self.ui.collapseAllButton.clicked.connect(self.collapseButton_clicked)
         
         self.ui.actionNew.triggered.connect(self.actionNew_triggered)
         self.ui.actionOpen.triggered.connect(self.actionOpen_triggered)
@@ -69,87 +68,77 @@ class PatternEditorWindow(QtGui.QMainWindow):
     def speakButton_clicked(self):
         print 'Speak button pressed!'
         self.stageTrees = []
+        stuff = self.mathTTS.parse(unicode(self.ui.mathmlEditor.text()), stageSink=self.stageTrees)
         
-        # Clear console
-        self.ui.consoleTextBox.clear()
+        # Output what the text was
+        self.ui.outputText.setPlainText(stuff)
         
-        try:
-            stuff = self.mathTTS.parse(unicode(self.ui.mathmlEditor.text()), stageSink=self.stageTrees)
+        # Turn my stages into a tree model with extra happy!
+        self.updateStagesModel()
         
-            # Output what the text was
-            self.ui.outputText.setPlainText(stuff)
+    def expandButton_clicked(self):
+        self.ui.stagesTreeView.expandAll()
+    
+    def collapseButton_clicked(self):
+        self.ui.stagesTreeView.collapseAll()
+        
+    def updateStagesModel(self):
+        '''
+        Used to update the tree model for the Stages tree
+        '''
+        self.stagesModel.clear()
+        parent = self.stagesModel.invisibleRootItem();
+        
+        i = 0
+        for stage in self.stageTrees:
+            i += 1
+            stageItem = QStandardItem(stage.replaceVariable)
+            stageItem.setEditable(False)
             
-            self.ui.consoleTextBox.appendPlainText('Success!')
+            item = QStandardItem(self._buildTreeStringLabel(stage))
+            item.setEditable(False)
+            self._addChildrenToParent(stage, item)
             
-        except Exception as ex:
-            stuff = traceback.format_exc()
-            self.ui.consoleTextBox.appendPlainText('Failed...\n')
-            self.ui.consoleTextBox.appendPlainText(stuff)
+            stageItem.appendRow(item)
+            parent.appendRow(stageItem)
             
+        self.ui.stagesTreeView.setModel(self.stagesModel)
         
-#     def expandButton_clicked(self):
-#         self.ui.stagesTreeView.expandAll()
-#     
-#     def collapseButton_clicked(self):
-#         self.ui.stagesTreeView.collapseAll()
-#         
-#     def updateStagesModel(self):
-#         '''
-#         Used to update the tree model for the Stages tree
-#         '''
-#         self.stagesModel.clear()
-#         parent = self.stagesModel.invisibleRootItem();
-#         
-#         i = 0
-#         for stage in self.stageTrees:
-#             i += 1
-#             stageItem = QStandardItem(stage.replaceVariable)
-#             stageItem.setEditable(False)
-#             
-#             item = QStandardItem(self._buildTreeStringLabel(stage))
-#             item.setEditable(False)
-#             self._addChildrenToParent(stage, item)
-#             
-#             stageItem.appendRow(item)
-#             parent.appendRow(stageItem)
-#             
-#         self.ui.stagesTreeView.setModel(self.stagesModel)
-#         
-#     def _addChildrenToParent(self, replaceParentNode, standardItemParent):
-#         if len(replaceParentNode.expressions) > 0:
-#             for e in replaceParentNode.expressions:
-#                 if isinstance(e, list):
-#                     listItem = QStandardItem('+')
-#                     listItem.setEditable(False)
-#                     for e2 in e:
-#                         item = QStandardItem(self._buildTreeStringLabel(e2))
-#                         item.setEditable(False)
-#                         self._addChildrenToParent(e2, item)
-#                         listItem.appendRow(item)
-#                     standardItemParent.appendRow(listItem)
-#                     
-#                 else:
-#                     item = QStandardItem(self._buildTreeStringLabel(e))
-#                     item.setEditable(False)
-#                     self._addChildrenToParent(e, item)
-#                     standardItemParent.appendRow(item)
-#                 
-#         if len(replaceParentNode.children) > 0:
-#             for c in replaceParentNode.children:
-#                 item = QStandardItem(self._buildTreeStringLabel(c))
-#                 item.setEditable(False)
-#                 self._addChildrenToParent(c, item)
-#                 standardItemParent.appendRow(item)
+    def _addChildrenToParent(self, replaceParentNode, standardItemParent):
+        if len(replaceParentNode.expressions) > 0:
+            for e in replaceParentNode.expressions:
+                if isinstance(e, list):
+                    listItem = QStandardItem('+')
+                    listItem.setEditable(False)
+                    for e2 in e:
+                        item = QStandardItem(self._buildTreeStringLabel(e2))
+                        item.setEditable(False)
+                        self._addChildrenToParent(e2, item)
+                        listItem.appendRow(item)
+                    standardItemParent.appendRow(listItem)
+                    
+                else:
+                    item = QStandardItem(self._buildTreeStringLabel(e))
+                    item.setEditable(False)
+                    self._addChildrenToParent(e, item)
+                    standardItemParent.appendRow(item)
                 
-#     def _buildTreeStringLabel(self, replaceTree):
-#         '''
-#         Builds the label for the stages tree based on the replace tree given
-#         '''
-#         myString = replaceTree.value + '   (' + replaceTree._getTypeString() + ')'
-#         if replaceTree.parent != None:
-#             myString += '    -> Parent: '
-#             myString += replaceTree.parent.value + ' (' + replaceTree.parent._getTypeString() + ')'
-#         return myString
+        if len(replaceParentNode.children) > 0:
+            for c in replaceParentNode.children:
+                item = QStandardItem(self._buildTreeStringLabel(c))
+                item.setEditable(False)
+                self._addChildrenToParent(c, item)
+                standardItemParent.appendRow(item)
+                
+    def _buildTreeStringLabel(self, replaceTree):
+        '''
+        Builds the label for the stages tree based on the replace tree given
+        '''
+        myString = replaceTree.value + '   (' + replaceTree._getTypeString() + ')'
+        if replaceTree.parent != None:
+            myString += '    -> Parent: '
+            myString += replaceTree.parent.value + ' (' + replaceTree.parent._getTypeString() + ')'
+        return myString
         
     def actionNew_triggered(self):
         print 'New was triggered!'
