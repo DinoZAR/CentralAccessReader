@@ -59,17 +59,17 @@ function ScrollToHighlight(isInstant) {
 // Finds the next search term, highlights it, and moves the view to it, if any.
 // If after is true, it will find word after current. Otherwise, search for text before.
 // Returns true if it found something, false if it didn't
-function SearchForText(myText, after) {
+function SearchForText(myText, after, wrap, wholeWord, matchCase) {
 	console.debug('SearchForText()');
 	if (after) {
-		return SearchTextForward(myText);
+		return SearchTextForward(myText, wrap, wholeWord, matchCase, false);
 	}
 	else {
-		return SearchTextBackward(myText);
+		return SearchTextBackward(myText, wrap, wholeWord, matchCase, false);
 	}
 }
 
-function SearchTextBackward(myText) {
+function SearchTextBackward(myText, wrap, wholeWord, matchCase, alreadyWrapped) {
 	var currentNode = null;
 	if (!(highlight === null)) {
 		currentNode = PreviousElement(highlight);
@@ -83,9 +83,25 @@ function SearchTextBackward(myText) {
 			var lastIndex = -1;
 			var first = true;
 			var index = 1000;
-			currentSearch = currentNode.data.toLowerCase();
+			currentSearch = '';
+			if (matchCase == true) {
+				currentSearch = currentNode.data;
+			}
+			else {
+				currentSearch = currentNode.data.toLowerCase();
+			}
+			
+			// Create the regular expression I need based on settings
+			re = '';
+			if (matchCase == true) {
+				re = new RegExp('\\b' + myText + '\\b', 'g');
+			}
+			else {
+				re = new RegExp('\\b' + myText.toLowerCase() + '\\b', 'g');
+			}
+			
 			while (index >= 0) {
-				index = currentSearch.indexOf(myText);
+				index = currentSearch.search(re);
 				if (index >= 0) {
 					if (first) {
 						lastIndex = index;
@@ -112,12 +128,17 @@ function SearchTextBackward(myText) {
 		}
 		currentNode = PreviousElement(currentNode);
 		if (currentNode === null) {
+			// If I got a word wrap, start over from the back
+			if ((wrap == true) && (alreadyWrapped == false)) {
+				ClearAllHighlights();
+				return SearchTextBackward(myText, wrap, wholeWord, matchCase, true);
+			}
 			return false;
 		}
 	}
 }
 
-function SearchTextForward(myText) {
+function SearchTextForward(myText, wrap, wholeWord, matchCase, alreadyWrapped) {
 	// Determing the starting point
 	var currentNode = null;
 	if (!(highlight === null)) {
@@ -127,9 +148,24 @@ function SearchTextForward(myText) {
 		currentNode = document.body.firstChild;
 	}
 	
+	// Create the regular expression I need based on settings
+	re = '';
+	if (matchCase == true) {
+		re = new RegExp('\\b' + myText + '\\b', 'g');
+	}
+	else {
+		re = new RegExp('\\b' + myText.toLowerCase() + '\\b', 'g');
+	}
+	
 	while (true) {
 		if (currentNode.nodeType == 3) {
-			var index = currentNode.data.toLowerCase().indexOf(myText);
+			var index = -1;
+			if (matchCase == true) {
+				index = currentNode.data.search(re);
+			}
+			else {
+				index = currentNode.data.toLowerCase().search(re);
+			}
 			if (index >= 0) {
 				// Get the highlight to surround what I found
 				var range = document.createRange();
@@ -145,6 +181,11 @@ function SearchTextForward(myText) {
 		}
 		currentNode = NextElement(currentNode);
 		if (currentNode === null) {
+			// If I have a wrap search, go back to the beginning and try again
+			if ((wrap == true) && (alreadyWrapped == false)) {
+				ClearAllHighlights();
+				return SearchTextForward(myText, wrap, wholeWord, matchCase, true);
+			}
 			return false;
 		}
 	}

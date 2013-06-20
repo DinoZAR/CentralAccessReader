@@ -563,6 +563,26 @@
            <widget class="QLineEdit" name="searchTextBox"/>
           </item>
           <item>
+           <widget class="QPushButton" name="searchSettingsButton">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="resource.qrc">
+              <normaloff>:/icons/icons/gear.png</normaloff>:/icons/icons/gear.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>32</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="closeSearchButton">
             <property name="text">
              <string/>

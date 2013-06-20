@@ -471,10 +471,11 @@ limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4} of'
 
 // Products and Unions
 
-sum = munderover(SigmaBig mrow(+) mrow(+)) -> 'the sum from {2} to {3}, of'
-sum = munderover(SigmaBig mrow(+)) -> 'the sum from {2} of'
+sum = munderover(SigmaBig ? ?) -> 'the sum from {2} to {3}, of'
+sum = munderover(SigmaBig ?) -> 'the sum from {2} of'
 sum = munderover(SigmaBig) -> 'the sum of'
-
+underover = munderover(? ? ?) -> 'the {1} from {2} to {3}, of'
+underover = munderover(? ?) -> 'the {1} from {2} of'
 
 // ------------------------------------------------------------------------------
 // Parenthetical Expressions
@@ -488,14 +489,16 @@ squareRoot = msqrt(+) -> 'the square root of {1}'
 // Matrices
 // ------------------------------------------------------------------------------
 matrix = mrow(mtable(#)) -> 'matrix {1}'
+matrix = mtable(#) -> 'matrix {1}'
 matrixPar = mfenced(mrow(mtable(+))) -> 'matrix {1}'
 tableColumn = mtd(+) -> '{1},'
-tableRow = mtr(#) -> 'row, {1}'
+tableRow = mtr(+) -> 'row, {1}'
 
 
 // ------------------------------------------------------------------------------
 // Generic Fallbacks, Final Collectors
-// ------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
+
 fenced = mfenced(+) -> 'open parenthesis, {1}, closed parenthesis,'
 
 under = munder(? ?) -> '{1} over {2}'

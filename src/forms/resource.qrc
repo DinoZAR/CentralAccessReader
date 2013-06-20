@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/icons">
+    <file>icons/gear.png</file>
     <file>icons/application_exit.png</file>
     <file>icons/document_open.png</file>
     <file>icons/help_about.png</file>

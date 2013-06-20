@@ -22,21 +22,21 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QCheckBox" name="checkBox">
+      <widget class="QCheckBox" name="wrapCheckBox">
        <property name="text">
         <string>Wrap Search</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="checkBox_2">
+      <widget class="QCheckBox" name="wholeWordCheckBox">
        <property name="text">
         <string>Whole Word</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="checkBox_3">
+      <widget class="QCheckBox" name="matchCaseCheckBox">
        <property name="text">
         <string>Match Case</string>
        </property>

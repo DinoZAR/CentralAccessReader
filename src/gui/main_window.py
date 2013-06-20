@@ -66,13 +66,13 @@ class MainWindow(QtGui.QMainWindow):
         self.searchWidgets.append(self.ui.searchUpButton)
         self.searchWidgets.append(self.ui.searchDownButton)
         self.searchWidgets.append(self.ui.searchTextBox)
-        #self.searchWidgets.append(self.ui.searchSettingsButton)
+        self.searchWidgets.append(self.ui.searchSettingsButton)
         self.searchWidgets.append(self.ui.closeSearchButton)
         self.hideSearch()
         
         # Set the search settings dialog so I can make it non-modal
-        #self.searchSettings = SearchSettings()
-        #self.searchSettings.setWindowFlags(self.searchSettings.windowFlags() | Qt.WindowStaysOnTopHint)
+        self.searchSettings = SearchSettings()
+        self.searchSettings.setWindowFlags(self.searchSettings.windowFlags() | Qt.WindowStaysOnTopHint)
         
         # Connect all of my signals
         self.connect_signals()
@@ -132,6 +132,9 @@ class MainWindow(QtGui.QMainWindow):
         self.configuration = Configuration()
         self.configuration.loadFromFile(app_data_path('configuration.xml'))
         self.updateSettings()
+        
+        # Set the search settings to use the configuration
+        self.searchSettings.setConfig(self.configuration)
         
         # Set the zoom of the content view (separate from the bookmarks zoom)
         self.ui.webView.setZoom(self.configuration.zoom_content)
@@ -199,7 +202,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.searchUpButton.clicked.connect(self.searchBackwards)
         self.ui.searchDownButton.clicked.connect(self.searchForwards)
         self.ui.searchTextBox.returnPressed.connect(self.searchForwards)
-        #self.ui.searchSettingsButton.clicked.connect(self.openSearchSettings)
+        self.ui.searchSettingsButton.clicked.connect(self.openSearchSettings)
         self.ui.closeSearchButton.clicked.connect(self.closeSearchBar)
         
         # Sliders
@@ -238,12 +241,15 @@ class MainWindow(QtGui.QMainWindow):
         for w in self.searchWidgets:
             w.hide()
         self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('ClearAllHighlights', []))
-        self.ui.searchTextBox.clear()
     
     def showSearch(self):
         for w in self.searchWidgets:
             w.show()
         self.ui.searchTextBox.setFocus()
+        self.ui.searchTextBox.selectAll()
+        
+    def openSearchSettings(self):
+        self.searchSettings.show()
             
     def playSpeech(self):
         
@@ -534,7 +540,8 @@ class MainWindow(QtGui.QMainWindow):
             
     def searchBackwards(self):
         text = unicode(self.ui.searchTextBox.text())
-        result = self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('SearchForText', [text, False])).toBool()
+        args = [text, False, self.configuration.search_wrap, self.configuration.search_whole_word, self.configuration.search_match_case]
+        result = self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('SearchForText', args)).toBool()
         if not result:
             self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('ClearAllHighlights', []))
             message = QtGui.QMessageBox()
@@ -543,15 +550,13 @@ class MainWindow(QtGui.QMainWindow):
     
     def searchForwards(self):
         text = unicode(self.ui.searchTextBox.text())
-        result = self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('SearchForText', [text, True])).toBool()
+        args = [text, True, self.configuration.search_wrap, self.configuration.search_whole_word, self.configuration.search_match_case]
+        result = self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('SearchForText', args)).toBool()
         if not result:
             self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('ClearAllHighlights', []))
             message = QtGui.QMessageBox()
             message.setText('No other occurrences of "' + text + '" in document.')
             message.exec_()
-            
-    def openSearchSettings(self):
-        self.searchSettings.show()
             
     def closeSearchBar(self):
         self.hideSearch()

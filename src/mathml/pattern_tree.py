@@ -69,7 +69,10 @@ class PatternTree(object):
             if parentIsVariable:
                 return (False, [])
             if self.type == other.type:
-                return (True, other.next)
+                if self.name == other.name:
+                    return (True, other.next)
+                else:
+                    return (False, other.next)
 
         elif self.type == PatternTree.CATEGORY:
             if parentIsVariable:
