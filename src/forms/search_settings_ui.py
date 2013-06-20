@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/search_settings.ui'
 #
-# Created: Thu Jun 06 15:43:20 2013
+# Created: Thu Jun 20 09:27:08 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -34,15 +34,15 @@ class Ui_SearchSettings(object):
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.verticalLayout = QtGui.QVBoxLayout()
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.checkBox = QtGui.QCheckBox(SearchSettings)
-        self.checkBox.setObjectName(_fromUtf8("checkBox"))
-        self.verticalLayout.addWidget(self.checkBox)
-        self.checkBox_2 = QtGui.QCheckBox(SearchSettings)
-        self.checkBox_2.setObjectName(_fromUtf8("checkBox_2"))
-        self.verticalLayout.addWidget(self.checkBox_2)
-        self.checkBox_3 = QtGui.QCheckBox(SearchSettings)
-        self.checkBox_3.setObjectName(_fromUtf8("checkBox_3"))
-        self.verticalLayout.addWidget(self.checkBox_3)
+        self.wrapCheckBox = QtGui.QCheckBox(SearchSettings)
+        self.wrapCheckBox.setObjectName(_fromUtf8("wrapCheckBox"))
+        self.verticalLayout.addWidget(self.wrapCheckBox)
+        self.wholeWordCheckBox = QtGui.QCheckBox(SearchSettings)
+        self.wholeWordCheckBox.setObjectName(_fromUtf8("wholeWordCheckBox"))
+        self.verticalLayout.addWidget(self.wholeWordCheckBox)
+        self.matchCaseCheckBox = QtGui.QCheckBox(SearchSettings)
+        self.matchCaseCheckBox.setObjectName(_fromUtf8("matchCaseCheckBox"))
+        self.verticalLayout.addWidget(self.matchCaseCheckBox)
         self.verticalLayout_2.addLayout(self.verticalLayout)
         spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem)
@@ -62,8 +62,8 @@ class Ui_SearchSettings(object):
 
     def retranslateUi(self, SearchSettings):
         SearchSettings.setWindowTitle(_translate("SearchSettings", "Search Settings", None))
-        self.checkBox.setText(_translate("SearchSettings", "Wrap Search", None))
-        self.checkBox_2.setText(_translate("SearchSettings", "Whole Word", None))
-        self.checkBox_3.setText(_translate("SearchSettings", "Match Case", None))
+        self.wrapCheckBox.setText(_translate("SearchSettings", "Wrap Search", None))
+        self.wholeWordCheckBox.setText(_translate("SearchSettings", "Whole Word", None))
+        self.matchCaseCheckBox.setText(_translate("SearchSettings", "Match Case", None))
         self.okButton.setText(_translate("SearchSettings", "OK", None))
 

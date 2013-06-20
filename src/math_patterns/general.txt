@@ -510,9 +510,10 @@ squareRoot = msqrt(+) -> 'the square root of {1}'
 // Matrices
 // ------------------------------------------------------------------------------
 matrix = mrow(mtable(#)) -> 'matrix {1}'
+matrix = mtable(#) -> 'matrix {1}'
 matrixPar = mfenced(mrow(mtable(+))) -> 'matrix {1}'
 tableColumn = mtd(+) -> '{1},'
-tableRow = mtr(#) -> 'row, {1}'
+tableRow = mtr(+) -> 'row, {1}'
 
 
 // ------------------------------------------------------------------------------
