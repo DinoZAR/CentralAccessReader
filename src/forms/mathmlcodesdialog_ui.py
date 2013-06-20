@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/mathmlcodesdialog.ui'
 #
-# Created: Wed Jun 19 14:48:16 2013
+# Created: Thu Jun 20 14:06:34 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_MathMLCodesDialog(object):
     def setupUi(self, MathMLCodesDialog):
         MathMLCodesDialog.setObjectName(_fromUtf8("MathMLCodesDialog"))
-        MathMLCodesDialog.resize(521, 258)
+        MathMLCodesDialog.resize(626, 538)
         self.verticalLayout_2 = QtGui.QVBoxLayout(MathMLCodesDialog)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.splitter = QtGui.QSplitter(MathMLCodesDialog)
