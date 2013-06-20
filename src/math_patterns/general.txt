@@ -26,7 +26,6 @@
 
 // Unicodes and MathML codes for operators
 
-
 ampersand = mi("&amp;") -> 'ampersand'
 approxEqual = mi("&#8771;") -> 'is approximately equal to'
 approxEqual = mi("&#8773;") -> 'is approximately equal to'
@@ -85,7 +84,6 @@ integralCW [integral] = mo("&#8754;") -> 'integral with a clockwise circle of'
 volumeIntegral [integral] = mo("&#8752;") -> 'volume integral of'
 volumeIntegral [integral] = mo("&#60947;") -> 'volume integral of'
 
-
 // Arrows
 bothArrow [arrow] = mo("&#8596;") -> 'arrow pointing both left and right'
 bothArrow [arrow] = mo("&#10231;") -> 'arrow pointing both left and right'
@@ -117,10 +115,8 @@ rightArrow [arrow] = mo("&#8594;") -> 'right-pointing arrow'
 rightArrowBar [arrow] = mi("&#8614;") -> 'right-pointing arrow originating from a vertical bar'
 rightHarpoon [arrow] = mo("&#8640;") -> 'right-pointing harpoon'
 rightHarpoon [arrow] = mo("&#8641;") -> 'right-pointing harpoon'
-
 upArrow [arrow] = mi("&#8593;") -> 'arrow pointing up'
 upDownArrow [arrow] = mi("&#8597;") -> 'arrow point both up and down'
-
 
 // Parentheses, Brackets, Braces, and Bars
 closeBrace = mo("}") -> 'close brace'
@@ -145,7 +141,6 @@ rightSquareBracket = mo("&#12315;") -> 'right square bracket'
 verticalBar = mi("|") -> 'vertical bar'
 verticalBar = mo("|") -> 'vertical bar'
 
-
 // Primes and Dots
 backPrime = mo("&#8245;") -> 'back prime'
 bullet = mi("&#8226;") -> 'bullet'
@@ -156,7 +151,6 @@ prime = mo("&#8242;") -> 'prime'
 quadDot = mo("&#8412;") -> 'quad dot'
 tripleDot = mo("&#8411;") -> 'triple dot'
 triplePrime = mo("&#8244;") -> 'triple prime'
-
 
 // Geometric Symbols
 angle = mi("&#8736;") -> 'angle'
@@ -219,7 +213,6 @@ suchThat = mo("&#8717;") -> 'such that,'
 therefore = mo("&#8756;") -> 'therefore,'
 union [integral] = mo("&#8746;") -> 'union'
 
-
 // Periods And Spaces
 comma = mo(",") -> ','
 comma = mi(",") -> ','
@@ -230,7 +223,6 @@ space = mi("&#61186;") -> ' '
 space = mi("&#61188;") -> ' '
 space = mi("&#61189;") -> ' '
 space = mi("&#61192;") -> ' '
-
 
 // Letters
 a [variable] = mi("a") -> '"a"'
@@ -286,7 +278,6 @@ W [variable] = mi("W") -> '"capital W"'
 X [variable] = mi("X") -> '"capital X"'
 Y [variable] = mi("Y") -> '"capital Y"'
 Z [variable] = mi("Z") -> '"capital Z"'
-
 
 // Greek letters
 alpha [variable] = mi("&#945;") -> 'alpha'
@@ -349,7 +340,6 @@ UpsilonHook [vaiable] = mi("&#978;") -> 'upsilon with hook'
 Xi [variable] = mi("&#926;") -> 'xi'
 Zeta [variable] = mi("&#918;") -> 'zeta'
 
-
 //Rarely used symbols
 ahlef = mi("&#8501;") -> 'ahlef'
 bbcapC = mi("&#8450;") -> 'blackboard capital C'
@@ -370,7 +360,6 @@ scriptI = mi("&#8467;") -> 'Script I'
 smallLamExtraStroke = mi("&#411;") -> 'Small lambda with extra stroke'
 weierstrassEll = mi("&#8472;") -> 'Weierstrass ellipsis'
 
-
 // Numbers
 zero = mn("0") -> 'zero'
 one = mn("1") -> 'one'
@@ -384,7 +373,6 @@ eight = mn("8") -> 'eight'
 nine = mn("9") -> 'nine'
 ten = mn("10") -> 'ten'
 
-
 // Ellipses
 diagonalBotLeftEllipsis = mi("&#8944;") -> 'diagonal bottom left top right ellipsis'
 diagonalTopLeftEllipsis = mi("&#8945;") -> 'diagonal top left bottom right ellipsis'
@@ -392,15 +380,12 @@ ellipsis = mi("&#8230;") -> 'ellipsis'
 ellipsis = mi("&#8943;") -> 'ellipsis'
 verticalEllipsis = mi("&#8942;") -> 'vertical ellipsis'
 
-
 // Strikes and Slashes
 Strike = menclose(+) -> 'strike {1} end-strike'
-
 
 // Other symbols
 infinity = mi("&#8734;") -> 'infinity'
 infinity = mn("&#8734;") -> 'infinity'
-
 
 // Trigonometry
 //arcsine = a r c s i n -> 'arc sine'
@@ -408,17 +393,16 @@ infinity = mn("&#8734;") -> 'infinity'
 //cosine = c o s -> 'cosine'
 //inverseSine = s i msup(n mrow(minus one)) -> 'inverse sine'
 //sine = s i n -> 'sine'
-
 
 // Powers and Primes
 cubed = msup(? mrow(three)) -> '{1} cubed'
 cubed = msup(? three) -> '{1} cubed'
+degrees = msup(? mrow(composition)) -> '{1} degrees'
 squared = msup(? mrow(two)) -> '{1} squared'
 squared = msup(? two) -> '{1} squared'
 supDubPrime = msup(? doublePrime) -> '{1} double prime'
 supPrime = msup(? prime) -> '{1} prime'
 supTriPrime = msup(? triplePrime) -> '{1} triple prime'
-
 
 //Functions
 function = [variable] mrow(openParen [variable] closeParen) -> 'function {1} of {3}'
@@ -426,19 +410,15 @@ function = [variable] openParen [variable] closeParen -> 'function {1} of {3}'
 function = [variable] mfenced(+) -> 'function {1} of {2}'
 functionPrime = [variable] mi("'") mfenced(+) -> 'function {1} prime of {2}'
 
-
 // Intervals
 closedInterval = openBracket ? comma ? closeBracket -> 'Closed interval {2},{4}'
 openInterval = openParen ? comma ? closeParen -> 'Open interval {2},{4}'
 
-
 // Absolute values - !Broken!
-
 
 // Syntax Quirks
 doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'
 doubleBarSyn = munder(munder(mrow(+) bar) bar) -> '{1} over double bar'
-
 
 // ------------------------------------------------------------------------------
 // Fraction-based
@@ -453,16 +433,16 @@ overBothArrow = munder(? [arrow]) -> '{1} over {2}'
 underBothArrow = mover(? [arrow]) -> '{1} under {2}'
 overUnderArrowB = munderover([arrow] mrow(+) mrow(+)) -> '{2} above {1} sub {3}'
 
+
 // ------------------------------------------------------------------------------
 // Under-Over, Integrals, Products, and Summations
 // ------------------------------------------------------------------------------
 backPrimes = mmultiscripts(? ? ? ?) -> '{4} {1}'
 
 // Integrals
-
-integralOU = munderover([integral] mrow(+) mrow(+)) -> 'the definite integral from {2} to {3} of'
-integralOU = munderover([integral] mrow(+)) -> 'the integral over {2} of'
-integralOU = munderover([integral]) -> 'the integral of'
+integralOU = munderover([integral] mrow(+) mrow(+)) -> 'the {1} from {2} to {3} of'
+integralOU = munderover([integral] mrow(+) mrow()) -> 'the {1} over {2} of'
+integralOU = munderover([integral] mrow() mrow()) -> 'the {1} of'
 
 // Intersections and Limits
 
@@ -472,10 +452,11 @@ limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4} of'
 // Products and Unions
 
 sum = munderover(SigmaBig ? ?) -> 'the sum from {2} to {3}, of'
-sum = munderover(SigmaBig ?) -> 'the sum from {2} of'
-sum = munderover(SigmaBig) -> 'the sum of'
+sum = munderover(SigmaBig ? mrow()) -> 'the sum from {2} of'
+sum = munderover(SigmaBig mrow() mrow())-> 'the sum of'
 underover = munderover(? ? ?) -> 'the {1} from {2} to {3}, of'
 underover = munderover(? ?) -> 'the {1} from {2} of'
+
 
 // ------------------------------------------------------------------------------
 // Parenthetical Expressions
