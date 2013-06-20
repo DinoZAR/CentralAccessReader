@@ -155,27 +155,31 @@ class PatternTree(object):
         '''
         if self.type == PatternTree.VARIABLE:
             # The other should stay the same, so leave it alone
-            return (other.next, [other])
+            return (other.next, [other], [])
         
         elif self.type == PatternTree.CATEGORY:
             # The other should stay the same, so leave it alone
-            return (other.next, [other])
+            return (other.next, [other], [])
         
         elif self.type == PatternTree.XML:
             
             # Gather the stuff inside it
             curr = other.getFirstChild()
             nodes = []
+            removes = []
             for c in self.children:
                 data = c.gather(curr)
                 nodes.extend(data[1])
+                removes.extend(data[2])
                 curr = data[0]
             
-            return (other.next, nodes)
+            removes.extend([other])
+            
+            return (other.next, nodes, removes)
         
         elif self.type == PatternTree.TEXT:
             # The other should stay the same, so leave it alone
-            return (other.next, [other])
+            return (other.next, [other], [])
         
         elif self.type == PatternTree.WILDCARD:
             
@@ -188,7 +192,7 @@ class PatternTree(object):
                 other.parent.insertBefore(newNode, other)
                 newNode.addChild(other) # This will effectively move it
                 
-                return (newNode.next, [newNode])
+                return (newNode.next, [newNode], [])
             
             elif self.name == '+' or self.name == '#':
                 # Create a + or # node in its place, but this time, steal
@@ -216,7 +220,7 @@ class PatternTree(object):
                     newNode.addChild(current)
                     current = newNode.next
                         
-                return (newNode.next, [newNode])
+                return (newNode.next, [newNode], [])
     
     def getChildren(self):
         return self.children

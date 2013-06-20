@@ -25,13 +25,6 @@ def transform(tree, pattern):
             
         start = start.getNext()
         
-        # If it has expressions in it, go and transform those too
-#         if start.expressions != None:
-#             for i in range(len(start.expressions)):
-#                 for j in range(len(start.expressions[i][1])):
-#                     if start.expressions[i][1][j].type == PatternTree.XML or start.expressions[i][1][j].type == PatternTree.TEXT:
-#                         transform(start.expressions[i][1][j], pattern)
-
     return returnNode
 
 
@@ -65,10 +58,12 @@ def _transformNode(start, pattern):
     '''
     curr = start
     nodes = []
+    removes = []
     
     for pat in pattern.getChildren():
         data = pat.gather(curr)
         nodes.extend(data[1])
+        removes.extend(data[2])
         curr = data[0]
 
     # Create Variable node
@@ -82,10 +77,12 @@ def _transformNode(start, pattern):
     # Move the new children under the new node
     if start.parent != None:
         start.parent.insertBefore(newNode, start)
-        
     start.disconnect()
-        
     for n in nodes:
         newNode.addChild(n)
+        
+    # Remove the other nodes that were left over
+    for r in removes:
+        r.disconnect()
         
     return newNode
