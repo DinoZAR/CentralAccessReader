@@ -28,7 +28,7 @@ from src.mathml import pattern_editor
 from src.speech.assigner import Assigner
 from src.speech.worker import SpeechWorker
 from src.docx.importer import DocxDocument
-from src.misc import app_data_path, temp_path, program_path, js_command, UpdateQtThread, open_file_location, prepare_bug_report, REPORT_BUG_URL, SURVEY_URL
+from src import misc
 
 class MainWindow(QtGui.QMainWindow):
     loc = 0
@@ -40,9 +40,11 @@ class MainWindow(QtGui.QMainWindow):
     stopPlayback = QtCore.pyqtSignal()
     addToQueue = QtCore.pyqtSignal(str, str)
     
+    # TTS setting signals
     changeVolume = QtCore.pyqtSignal(float)
     changeRate = QtCore.pyqtSignal(int)
     changeVoice = QtCore.pyqtSignal(str)
+    changeMathDatabase = QtCore.pyqtSignal(str)
     
     # JavaScript mutex
     javascriptMutex = QMutex()
@@ -86,10 +88,10 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.webView.settings().setAttribute(QWebSettings.DeveloperExtrasEnabled, True)
         self.webInspector.setPage(self.ui.webView.page())
         
-        # Set the math TTS using the internal pattern database
-#         self.mathTTS = MathTTS(program_path('src/mathml/parser_pattern_database.txt'))
+        # Set the math TTS using the general pattern database
         try:
-            self.mathTTS = MathTTS(program_path('src/math_patterns/general.txt'))
+            dList = misc.pattern_databases()
+            self.mathTTS = MathTTS(dList['General'])
         except Exception:
             self.mathTTS = None
             message = QtGui.QMessageBox()
@@ -122,6 +124,7 @@ class MainWindow(QtGui.QMainWindow):
         self.changeVolume.connect(self.speechThread.setVolume)
         self.changeRate.connect(self.speechThread.setRate)
         self.changeVoice.connect(self.speechThread.setVoice)
+        self.changeMathDatabase.connect(self.assigner.setMathDatabase)
         
         self.speechThread.start()
         
@@ -130,7 +133,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # Load the configuration file
         self.configuration = Configuration()
-        self.configuration.loadFromFile(app_data_path('configuration.xml'))
+        self.configuration.loadFromFile(misc.app_data_path('configuration.xml'))
         self.updateSettings()
         
         # Set the search settings to use the configuration
@@ -155,7 +158,7 @@ class MainWindow(QtGui.QMainWindow):
             
     def closeEvent(self, event):
         self.configuration.zoom_content = self.ui.webView.getZoom()
-        self.configuration.saveToFile(app_data_path('configuration.xml'))
+        self.configuration.saveToFile(misc.app_data_path('configuration.xml'))
         
     def connect_signals(self):
         '''
@@ -224,6 +227,9 @@ class MainWindow(QtGui.QMainWindow):
         self.changeRate.emit(self.configuration.rate)
         self.changeVoice.emit(self.configuration.voice)
         
+        # Update the math database to use
+        self.changeMathDatabase.emit(self.configuration.math_database)
+        
         # Update main window sliders to match
         self.ui.rateSlider.setValue(self.configuration.rate)
         self.ui.volumeSlider.setValue(int(self.configuration.volume))
@@ -235,12 +241,12 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.pagesTreeView.setFont(currentFont)
         
         # Finally, save it all to file
-        self.configuration.saveToFile(app_data_path('configuration.xml'))
+        self.configuration.saveToFile(misc.app_data_path('configuration.xml'))
         
     def hideSearch(self):
         for w in self.searchWidgets:
             w.hide()
-        self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('ClearAllHighlights', []))
+        self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('ClearAllHighlights', []))
     
     def showSearch(self):
         for w in self.searchWidgets:
@@ -263,7 +269,7 @@ class MainWindow(QtGui.QMainWindow):
         # Get list of string output for feeding into my speech
         outputList = []
         self.javascriptMutex.lock()
-        selectedHTML = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('GetSelectionHTML', [])).toString())
+        selectedHTML = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetSelectionHTML', [])).toString())
         self.javascriptMutex.unlock()
         outputList = self.assigner.getSpeech(selectedHTML, self.configuration)
         
@@ -272,7 +278,7 @@ class MainWindow(QtGui.QMainWindow):
             self.addToQueue.emit(o[0], o[1])
         
         self.javascriptMutex.lock()
-        self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('SetBeginning', [self.configuration.highlight_line_enable, outputList[0][1]]))
+        self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SetBeginning', [self.configuration.highlight_line_enable, outputList[0][1]]))
         self.javascriptMutex.unlock()
         
         self.isFirst = True
@@ -289,17 +295,17 @@ class MainWindow(QtGui.QMainWindow):
         if label == 'text':
             if (self.lastElement[3] != stream) and (self.lastElement[3] >= 0):
                 self.javascriptMutex.lock()
-                self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
+                self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
                 self.javascriptMutex.unlock()
             self.javascriptMutex.lock()
-            self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightWord', [self.configuration.highlight_line_enable, offset, length]))
+            self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightWord', [self.configuration.highlight_line_enable, offset, length]))
             self.javascriptMutex.unlock()
             self.isFirst = False
         elif label == 'math':
             if not self.isFirst:
                 if label != self.lastElement[2] or stream != self.lastElement[3] and (self.lastElement[3] >= 0):
                     self.javascriptMutex.lock()
-                    self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
+                    self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
                     self.javascriptMutex.unlock()
             else:
                 self.isFirst = False
@@ -307,7 +313,7 @@ class MainWindow(QtGui.QMainWindow):
             if not self.isFirst:
                 if label != self.lastElement[2] or stream != self.lastElement[3] and (self.lastElement[3] >= 0):
                     self.javascriptMutex.lock()
-                    self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
+                    self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
                     self.javascriptMutex.unlock()
             else:
                 self.isFirst = False
@@ -342,16 +348,16 @@ class MainWindow(QtGui.QMainWindow):
             
     def changeSpeechRate(self, value):
         self.configuration.rate = value
-        self.updateSettings()
+        self.changeRate.emit(self.configuration.rate)
 
     def changeSpeechVolume(self, value):
         self.configuration.volume = value
-        self.updateSettings()
+        self.changeVolume.emit(self.configuration.volume)
         
     def showColorSettings(self):
         dialog = ColorSettings(self)
         result = dialog.exec_()
-        self.configuration.loadFromFile(app_data_path('configuration.xml'))
+        self.configuration.loadFromFile(misc.app_data_path('configuration.xml'))
         if result == ColorSettings.RESULT_NEED_REFRESH:
             print 'Color settings needing refresh...'
             self.refreshDocument()
@@ -360,7 +366,7 @@ class MainWindow(QtGui.QMainWindow):
     def showSpeechSettings(self):
         dialog = SpeechSettings(self)
         dialog.exec_()
-        self.configuration.loadFromFile(app_data_path('configuration.xml'))
+        self.configuration.loadFromFile(misc.app_data_path('configuration.xml')) 
         self.updateSettings()
         
     def saveMP3All(self):
@@ -386,7 +392,7 @@ class MainWindow(QtGui.QMainWindow):
             
             # Get my speech output list
             outputList = []
-            selectedHTML = self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('GetSelectionHTML', [])).toString()
+            selectedHTML = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetSelectionHTML', [])).toString()
             outputList = self.assigner.getSpeech(unicode(selectedHTML), self.configuration)
                 
             
@@ -418,7 +424,7 @@ class MainWindow(QtGui.QMainWindow):
                 messageBox.setIcon(QtGui.QMessageBox.Information)
                 messageBox.exec_()
                 
-                open_file_location(fileName)
+                misc.open_file_location(fileName)
         
     def zoomIn(self):
         self.ui.webView.zoomIn()
@@ -437,10 +443,10 @@ class MainWindow(QtGui.QMainWindow):
         
     def openDocx(self, filePath):
         
-        t = UpdateQtThread()
+        t = misc.UpdateQtThread()
         try:
             if len(filePath) > 0:
-                url = temp_path('import')
+                url = misc.temp_path('import')
                 baseUrl = QUrl.fromLocalFile(url)
                 
                 # Function callback when user clicks on the cancel button
@@ -501,7 +507,7 @@ class MainWindow(QtGui.QMainWindow):
             t.stop()
             t.join()
             self.progressDialog.hide()
-            out = prepare_bug_report(traceback.format_exc(), self.configuration, detailMessage=ex.message)
+            out = misc.prepare_bug_report(traceback.format_exc(), self.configuration, detailMessage=ex.message)
             dialog = BugReporter(out)
             dialog.exec_()
         
@@ -509,7 +515,7 @@ class MainWindow(QtGui.QMainWindow):
             t.stop()
             t.join()
             self.progressDialog.hide()
-            out = prepare_bug_report(traceback.format_exc(), self.configuration)
+            out = misc.prepare_bug_report(traceback.format_exc(), self.configuration)
             dialog = BugReporter(out)
             dialog.exec_()
         
@@ -520,17 +526,17 @@ class MainWindow(QtGui.QMainWindow):
         self.openDocx(filePath)
             
     def openTutorial(self):
-        self.openDocx(program_path('Tutorial.docx'))
+        self.openDocx(misc.program_path('Tutorial.docx'))
             
     def openAboutDialog(self):
         dialog = AboutDialog()
         dialog.exec_()
         
     def openReportBugWindow(self):
-        webbrowser.open_new(REPORT_BUG_URL)
+        webbrowser.open_new(misc.REPORT_BUG_URL)
         
     def openSurveyWindow(self):
-        webbrowser.open_new(SURVEY_URL)
+        webbrowser.open_new(misc.SURVEY_URL)
         
     def toggleSearchBar(self):
         if self.searchWidgets[0].isHidden():
@@ -541,9 +547,9 @@ class MainWindow(QtGui.QMainWindow):
     def searchBackwards(self):
         text = unicode(self.ui.searchTextBox.text())
         args = [text, False, self.configuration.search_wrap, self.configuration.search_whole_word, self.configuration.search_match_case]
-        result = self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('SearchForText', args)).toBool()
+        result = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SearchForText', args)).toBool()
         if not result:
-            self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('ClearAllHighlights', []))
+            self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('ClearAllHighlights', []))
             message = QtGui.QMessageBox()
             message.setText('No other occurrences of "' + text + '" in document.')
             message.exec_()
@@ -551,9 +557,9 @@ class MainWindow(QtGui.QMainWindow):
     def searchForwards(self):
         text = unicode(self.ui.searchTextBox.text())
         args = [text, True, self.configuration.search_wrap, self.configuration.search_whole_word, self.configuration.search_match_case]
-        result = self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('SearchForText', args)).toBool()
+        result = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SearchForText', args)).toBool()
         if not result:
-            self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('ClearAllHighlights', []))
+            self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('ClearAllHighlights', []))
             message = QtGui.QMessageBox()
             message.setText('No other occurrences of "' + text + '" in document.')
             message.exec_()
@@ -568,7 +574,7 @@ class MainWindow(QtGui.QMainWindow):
         
         from mathml.pattern_editor.gui.patterneditorwindow import PatternEditorWindow
 
-        patternFilePath = program_path('src/math_patterns/general.txt')
+        patternFilePath = self.configuration.math_database
         
         self.patternWindow = PatternEditorWindow(patternFilePath, '')
         self.patternWindow.changedPattern.connect(self.onChangedPatternEditor)
@@ -584,13 +590,13 @@ class MainWindow(QtGui.QMainWindow):
     def bookmarksTree_clicked(self, index):
         node = index.internalPointer()
         self.javascriptMutex.lock()
-        self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('GotoPageAnchor', [node.anchorId]))
+        self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GotoPageAnchor', [node.anchorId]))
         self.javascriptMutex.unlock()
         
     def pagesTree_clicked(self, index):
         node = index.internalPointer()
         self.javascriptMutex.lock()
-        self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('GotoPageAnchor', [node.anchorId]))
+        self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GotoPageAnchor', [node.anchorId]))
         self.javascriptMutex.unlock()
         
     def bookmarkZoomInButton_clicked(self):
@@ -628,7 +634,7 @@ class MainWindow(QtGui.QMainWindow):
     def refreshDocument(self):
         
         if self.document != None:
-            url = temp_path('import')
+            url = misc.temp_path('import')
             baseUrl = QUrl.fromLocalFile(url)
             
             docxHtml = self.document.getMainPage()

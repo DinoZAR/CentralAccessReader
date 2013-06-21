@@ -5,7 +5,7 @@ Created on Apr 12, 2013
 '''
 from PyQt4.QtGui import QColor
 from lxml import etree
-from src.misc import app_data_path, temp_path
+from src.misc import app_data_path, temp_path, pattern_databases
 import os
 
 class Configuration(object):
@@ -31,8 +31,12 @@ class Configuration(object):
         self.rate = 50
         self.voice = ''
         
+        # Tagging
         self.tag_image = False
         self.tag_math = False
+        
+        # Math database
+        self.math_database = pattern_databases()['General']
         
         # Highlighter settings
         self.highlight_text_enable = True
@@ -75,6 +79,7 @@ class Configuration(object):
         out += '- Voice: ' + self.voice + '\n'
         out += '- Tag Images: ' + str(self.tag_image) + '\n'
         out += '- Tag Math: ' + str(self.tag_math) + '\n'
+        out += '- Math Database: ' + os.path.basename(self.math_database) + '\n'
         out += '\n'
         
         # Colors
@@ -136,6 +141,7 @@ class Configuration(object):
             else:
                 self.tag_math = False
             
+            self.math_database = configDOM.xpath('/Configuration/MathDatabase')[0].text
                 
             # Highlighter Settings
             self.highlight_text_enable = int(configDOM.xpath('/Configuration/EnableTextHighlight')[0].text)
@@ -222,6 +228,9 @@ class Configuration(object):
             elem.text = '1'
         else:
             elem.text = '0'
+            
+        elem = etree.SubElement(root, 'MathDatabase')
+        elem.text = self.math_database
         
         # Highlighter Settings
         elem = etree.SubElement(root, 'EnableTextHighlight')

@@ -18,6 +18,8 @@ _PROGRAM_ROOT = 'Central Access Reader'
 REPORT_BUG_URL = 'http://www.cwu.edu/central-access/report-bug-central-access-reader'
 SURVEY_URL = 'http://www.cwu.edu/central-access/central-access-reader-survey'
 
+MATHML_PATTERNS_FOLDER = 'src/math_patterns'
+
 def program_path(resourceFile):
     '''
     Returns the path to the program installation folder, whether it is in a
@@ -51,7 +53,20 @@ def temp_path(resourceFile):
         newPath = os.path.join(os.path.join(os.environ['TEMP'], _PROGRAM_ROOT), resourceFile)
     
     return newPath
+
+def pattern_databases():
+    '''
+    Returns a list of file paths of the databases that are in this program.
+    '''
+    fileList = {}
     
+    for f in os.listdir(program_path(MATHML_PATTERNS_FOLDER)):
+        p = os.path.join(program_path(MATHML_PATTERNS_FOLDER), f)
+        if os.path.isfile(p):
+            fileList[os.path.splitext(os.path.basename(p))[0]] = p
+            
+    return fileList
+
 def clean_XML_input(input):  
     
     if input:  

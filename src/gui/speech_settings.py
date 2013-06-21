@@ -7,7 +7,7 @@ from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
 from lxml import etree
 import copy
-from src.misc import app_data_path
+from src.misc import app_data_path, pattern_databases
 
 from src.forms.speech_settings_ui import Ui_SpeechSettings
 
@@ -28,12 +28,6 @@ class SpeechSettings(QtGui.QDialog):
         self.beforeConfiguration = copy.deepcopy(self.mainWindow.configuration)
         self.configuration = copy.deepcopy(self.mainWindow.configuration)
         
-        # Get a list of voices to add to combo box
-        voiceList = self.mainWindow.speechThread.getVoiceList()
-        for v in voiceList:
-            self.ui.comboBox.addItem(v[0], userData=v[1])
-        self.ui.comboBox.setCurrentIndex(0)
-        
         # Update the GUI to match the settings currently employed
         self.updateSettings()
             
@@ -48,25 +42,45 @@ class SpeechSettings(QtGui.QDialog):
         
         self.ui.rateSlider.valueChanged.connect(self.rateSlider_valueChanged)
         self.ui.volumeSlider.valueChanged.connect(self.volumeSlider_valueChanged)
-        self.ui.comboBox.currentIndexChanged.connect(self.comboBox_currentIndexChanged)
+        self.ui.voiceComboBox.currentIndexChanged.connect(self.voiceComboBox_currentIndexChanged)
         
         self.ui.imageTagCheckBox.stateChanged.connect(self.imageTagCheckBox_stateChanged)
         self.ui.mathTagCheckBox.stateChanged.connect(self.mathTagCheckBox_stateChanged)
+        self.ui.mathDatabaseComboBox.currentIndexChanged.connect(self.mathDatabaseComboBox_currentIndexChanged)
         
-    def updateSettings(self, controls=True):
-        # Update speech thread with my stuff
-        self.mainWindow.changeVolume.emit(self.configuration.volume)
-        self.mainWindow.changeRate.emit(self.configuration.rate)
-        self.mainWindow.changeVoice.emit(self.configuration.voice)
-        
-        if controls:
-            # Update main window sliders to match
-            self.ui.rateSlider.setValue(self.configuration.rate)
-            self.ui.volumeSlider.setValue(int(self.configuration.volume))
+    def updateSettings(self):
+        # Update main window sliders to match
+        self.ui.rateSlider.setValue(self.configuration.rate)
+        self.ui.volumeSlider.setValue(int(self.configuration.volume))
             
-            # Update checkboxes
-            self.ui.imageTagCheckBox.setChecked(self.configuration.tag_image)
-            self.ui.mathTagCheckBox.setChecked(self.configuration.tag_math)
+        # Update checkboxes
+        self.ui.imageTagCheckBox.setChecked(self.configuration.tag_image)
+        self.ui.mathTagCheckBox.setChecked(self.configuration.tag_math)
+        
+        # Get a list of voices to add to the voice combo box
+        voiceList = self.mainWindow.speechThread.getVoiceList()
+        self.ui.voiceComboBox.blockSignals(True)
+        for v in voiceList:
+            self.ui.voiceComboBox.addItem(v[0], userData=v[1])
+        
+        i = self.ui.voiceComboBox.findData(self.configuration.voice)
+        self.ui.voiceComboBox.setCurrentIndex(i)
+        self.ui.voiceComboBox.blockSignals(False)
+        
+        # Get a list of patterns to add to the math database combo box
+        databases = pattern_databases()
+        keys = sorted(databases.keys())
+        self.ui.mathDatabaseComboBox.blockSignals(True)
+        for k in keys:
+            self.ui.mathDatabaseComboBox.addItem(k, userData=databases[k])
+        
+        i = self.ui.mathDatabaseComboBox.findData(self.configuration.math_database)
+        self.ui.mathDatabaseComboBox.setCurrentIndex(i)
+        self.ui.mathDatabaseComboBox.blockSignals(False)
+            
+        # Update my math database combo box
+        i = self.ui.mathDatabaseComboBox.findData(self.configuration.math_database)
+        self.ui.mathDatabaseComboBox.setCurrentIndex(i)
             
     def applyButton_clicked(self):
         self.beforeConfiguration = copy.deepcopy(self.configuration)
@@ -79,15 +93,15 @@ class SpeechSettings(QtGui.QDialog):
         
     def rateSlider_valueChanged(self, value):
         self.configuration.rate = value
-        self.updateSettings(controls=False)
+        self.mainWindow.changeRate.emit(self.configuration.rate)
 
     def volumeSlider_valueChanged(self, value):
         self.configuration.volume = value
-        self.updateSettings(controls=False)
+        self.mainWindow.changeVolume.emit(self.configuration.volume)
         
-    def comboBox_currentIndexChanged(self, index):
-        self.configuration.voice = str(self.ui.comboBox.itemData(index).toString())
-        self.updateSettings(controls=False)
+    def voiceComboBox_currentIndexChanged(self, index):
+        self.configuration.voice = str(self.ui.voiceComboBox.itemData(index).toString())
+        self.mainWindow.changeVoice.emit(self.configuration.voice)
         
     def testButton_clicked(self):
         myText = self.ui.testSpeechText.toPlainText()
@@ -100,12 +114,12 @@ class SpeechSettings(QtGui.QDialog):
         else:
             self.configuration.tag_image = False
         
-        self.updateSettings(controls=False)
-        
     def mathTagCheckBox_stateChanged(self, state):
         if state == Qt.Checked:
             self.configuration.tag_math = True
         else:
             self.configuration.tag_math = False
-            
-        self.updateSettings(controls=False)
+        
+    def mathDatabaseComboBox_currentIndexChanged(self, index):
+        self.configuration.math_database = str(self.ui.mathDatabaseComboBox.itemData(index).toString())
+        self.mainWindow.changeMathDatabase.emit(self.configuration.math_database)

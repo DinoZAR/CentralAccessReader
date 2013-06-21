@@ -50,6 +50,9 @@ def parseMTEF(mtefString):
     parentStack = []
     parentStack.append(mathmlRoot)
     convertRecords(i, records, parentStack)
+    
+    # Do some post-processing
+    _combineNumbers(mathmlRoot)
         
     return mathmlRoot
 
@@ -106,6 +109,70 @@ def parseWMF(wmfFile):
         saveFile.close()
             
         raise MathTypeParseError(savePath, traceback.format_exc())
+    
+def _combineNumbers(mathml):
+    '''
+    Combines continuous digit elements into a single digit element. This is a
+    post-processing function.
+    '''
+    
+    if _isNumber(mathml):
+        # Keep grabbing nodes after this and putting them in here if they are
+        # also numbers
+        while True:
+            n = mathml.getnext()
+            if n == None:
+                break
+            
+            # If the next element is a number, combine its text content into
+            # my current node
+            if _isNumber(n):
+                mathml.text += n.text
+                if n.getparent() != None:
+                    n.getparent().remove(n)
+            else:
+                
+                # If there is a number that is inside of a superscript or
+                # subscript that is directly after this, then move this node
+                # under that sibling
+                if _isSuperscriptOrSubscript(n):
+                    if len(n) > 0:
+                        if _isNumber(n[0]):
+                            if mathml.getparent() != None:
+                                mathml.getparent().remove(mathml)
+                            n.insert(0, mathml)
+                            mathml = n
+                break
+    
+    # Check the children and make sure those are all good too
+    if len(mathml) > 0:
+        # The function will handle all of the siblings too
+        _combineNumbers(mathml[0])
+    
+    # Do it for this element's sibling
+    if mathml.getnext() != None:
+        _combineNumbers(mathml.getnext())
+
+def _isNumber(mathml):
+    testTag = mathml.tag.rsplit('}', 1)[-1].lower()
+    if testTag == 'mn':
+        try:
+            float(mathml.text)
+            return True
+        except ValueError:
+            return False
+    else:
+        return False
+    
+def _isSuperscriptOrSubscript(mathml):
+    testTag = mathml.tag.rsplit('}', 1)[-1].lower()
+    if testTag == 'msup':
+        return True
+    elif testTag == 'msub':
+        return True
+    
+    return False
+    
             
 class MathTypeParseError(Exception):
     def __init__(self, savePath, traceback):

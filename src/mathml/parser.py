@@ -12,7 +12,6 @@ def transform(tree, pattern):
     
     while start != None:
         
-        
         if _testMatch(start, pattern):
             print 'Got a match!'
             alreadyVisited = True
