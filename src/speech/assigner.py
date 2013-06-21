@@ -22,12 +22,7 @@ class Assigner(object):
         Constructor
         '''
         self._maths = {}
-        try:
-            self.mathTTS = MathTTS(program_path('src/math_patterns/general.txt'))
-        except Exception:
-            self.mathTTS = None
-            pass
-        
+        self.mathTTS = None
         
     def prepare(self, content):
         '''
@@ -56,6 +51,18 @@ class Assigner(object):
         '''
         htmlDom = html.fromstring(htmlContent)
         return self._recursiveGetSpeech(htmlDom, configuration)
+    
+    def setMathDatabase(self, filePath):
+        '''
+        Sets the math database it uses to parse the MathML to the one specified
+        by the file path.
+        '''
+        print ' --> ! Changing math to:', filePath
+        try:
+            self.mathTTS = MathTTS(filePath)
+        except Exception:
+            self.mathTTS = None
+            pass
         
     def _recursiveGetSpeech(self, element, configuration):
         

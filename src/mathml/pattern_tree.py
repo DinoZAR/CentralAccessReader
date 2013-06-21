@@ -58,10 +58,10 @@ class PatternTree(object):
         '''
         
         # See if the parent is a Variable. If it is, only allow matches for XML,
-        # since those nodes will need to be reparsed later
+        # since those nodes will need to be reparsed
         parentIsVariable = False
-        if self.parent != None:
-            if self.parent.type == PatternTree.VARIABLE:
+        if other.parent != None:
+            if other.parent.type == PatternTree.VARIABLE:
                 parentIsVariable = True
         
         # Do the test for whatever type this is
@@ -487,16 +487,6 @@ class PatternTree(object):
     
     def __repr__(self):
         return str(id(self)) + ': ' + self.dump()
-
-class Accumulation(object):
-    '''
-    Small object that holds the attributes of an accumulation for a specific
-    node.
-    '''
-    def __init__(self, pattern):
-        self.pattern = pattern         # A reference to the PatternTree we are accumulating to
-        self.expressions = []          # A list of expressions of Accumulation objects
-        self.newNext = None            # A reference to the PatternTree after it
 
 def convertDOMToPatternTree(elem, parent=None):
     

@@ -1,0 +1,454 @@
+// -----------------------------------------------------------------------------
+// LOGIC
+//
+
+ampersand = mi("&amp;") -> 'ampersand'
+approxEqual = mi("&#8771;") -> 'is approximately equal to'
+
+approxEqual = mi("&#8773;") -> 'is approximately equal to'
+
+approxEqual = mi("&#8776;") -> 'is approximately equal to'
+
+at = mi("@") -> 'at'
+
+caret = mo("&#710;") -> 'caret'
+
+caret = mo("^") -> 'caret'
+
+circleCross = mi("&#8855;") -> 'circle cross'
+
+circleDot = mi("&#8857;") -> 'circle dot'
+
+circlePlus = mi("&#8853;") -> 'circle plus'
+
+coproduct [integral] = mi("&#8720;") -> 'coproduct'
+
+coproduct [integral] = mo("&#8720;") -> 'coproduct'
+
+composition = mi("&#8728;") -> 'composition of'
+
+dagger = mi("&#8224;") -> 'dagger'
+
+diamond = mi("&#8900;") -> 'diamond'
+
+divide = mo("&#247;") -> 'divided by'
+
+divide = mo("/") -> 'divided by'
+
+dollarSign = mi("$") -> 'dollar sign'
+
+equals = mo("=") -> 'equals'
+
+equivalent = mi("&#8764;") -> 'is equivalent to'
+
+greaterThanOrEqual = mi("&#8805;") -> 'is greater than or equal to'
+
+identical = mi("&#8801;") -> 'is identical to'
+
+lessThanOrEqual = mi("&#8804;") -> ' is less than or equal to'
+
+minus = mo("-") -> 'minus'
+
+minus = mo("&#x2212;") -> 'minus'
+
+minusPlus = mi("&#8723;") -> 'minus or plus'
+
+muchLessThan = mi("&#8810;") -> 'is much less than'
+
+muchGreaterThan = mi("&#8811;") -> 'is much greater than'
+
+negative = mo("&#8722;") -> 'minus'
+
+notEqual = mi("&#8800;") -> 'is not equal to'
+
+percent = mi("%") -> 'percent'
+
+plus = mo("+") -> 'plus'
+plusMinus = mo("&#xB1;") -> 'plus or minus'
+product [integral] = mi("&#8719;") -> 'product'
+
+product [integral] = mo("&#8719;") -> 'product'
+
+summation = mi("&#8721;") -> 'summation'
+
+three = mn("3") -> 'three'
+
+tilde = mo("&#732;") -> 'tilde'
+
+tilde = mo("~") -> 'tilde'
+
+times = mo("*") -> 'times'
+
+times = mo("&#215;") -> 'times'
+
+times = mi("&#8727;") -> 'times'
+
+times = mi("&#8901;") -> 'times'
+
+times = mi("&#59791;") -> 'times'
+
+
+
+//Integrals
+
+areaIntegral [integral] = mo("&#60946;") -> 'area integral'
+
+areaIntegral [integral] = mo("&#8751;") -> 'area integral of'
+
+closedIntegral [integral] = mo("&#x222E;") -> 'closed integral'
+
+integral [integral] = mi("&#8747;") -> 'integral of'
+
+integral [integral] = mo("&#8747;") -> 'integral of'
+
+integralCCW [integral] = mo("&#8755;") -> 'integral with a counter-clockwise circle of'
+
+integralCon [integral] = mo("&#60945;") -> 'contour integral'
+
+integralCon [integral] = mo("&#8750;") -> 'contour integral'
+
+integralCW [integral] = mo("&#8754;") -> 'integral with a clockwise circle of'
+
+volumeIntegral [integral] = mo("&#8752;") -> 'volume integral of'
+
+volumeIntegral [integral] = mo("&#60947;") -> 'volume integral of'
+
+
+
+
+
+// Arrows
+
+bothArrow [arrow] = mo("&#8596;") -> 'arrow pointing both left and right'
+
+bothArrow [arrow] = mo("&#10231;") -> 'arrow pointing both left and right'
+
+diagBothArrowLR [arrow] = mi("&#60165;") -> 'diagonal arrow pointing both bottom left and top right'
+
+diagBothArrowRL [arrow] = mi("&#60166;") -> 'diagonal arrow pointing both top left and bottom right'
+
+diagBotLeftArrow [arrow] = mi("&#8601;") -> 'diagonal arrow pointing from top right to bottom left'
+
+diagBotRightArrow [arrow] = mi("&#8600;") -> 'diagonal arrow pointing from top left to bottom right'
+
+diagTopRightArrow [arrow] = mi("&#8599;") -> 'diagonal arrow pointing from bottom left to top right'
+
+diagTopLeftArrow [arrow] = mi("&#8598;") -> 'diagonal arrow pointing from bottom right to top left'
+
+doubleDownArrow [arrow] = mi("&#8659;") -> 'double-arrow pointing down'
+
+doubleLeftRightArrow [arrow] = mi("&#8660;") -> 'double-arrow pointing both left and right'
+
+doubleLeftArrow [arrow] = mi("&#8656;") -> 'double-arrow pointing left'
+
+doubleRightArrow [arrow] = mi("&#8658;") -> 'double-arrow pointing right'
+
+doubleUpArrow [arrow] = mi("&#8657;") -> 'double-arrow pointing up'
+
+doubleUpDownArrow [arrow] = mi("&#8661;") -> 'double-arrow pointing both up and down'
+
+downArrow [arrow] = mi("&#8595;") -> 'arrow pointing down'
+
+downLeftArrow [arrow] = mi("&#8629;") -> 'arrow pointing down then left'
+
+dualArrows [arrow] = mi("&#8644;") -> 'right-pointing arrow atop a left-pointing arrow'
+
+dualArrows [arrow] = mo("&#8644;") -> 'right-pointing arrow atop a left-pointing arrow'
+
+dualArrowsBigTop [arrow] = mi("&#60161;") -> 'right-pointing arrow atop a small left-pointing arrow'
+
+dualArrowsSmallTop [arrow] = mi("&#60162;") -> 'small right-pointing arrow atop a left-pointing arrow'
+
+dualHarpoons [arrow] = mi("&#8652;") -> 'right-pointing harpoon above a left-pointing harpoon'
+
+dualHarpoonsBigTop [arrow] = mi("&#60163;") -> 'right-pointing harpoon above a small left-pointing harpoon'
+
+dualHarpoonsSmallTop [arrow] = mi("&#60164;") -> 'small right-pointing harpoon above a left-pointing harpoon'
+
+leftArrow [arrow] = mo("&#8592;") -> 'left-pointing arrow'
+
+leftHarpoon [arrow] = mo("&#8636;") -> 'left-pointing harpoon'
+
+leftHarpoon [arrow] = mo("&#8637;") -> 'left-pointing harpoon'
+
+rightArrow [arrow] = mo("&#8594;") -> 'right-pointing arrow'
+
+rightArrowBar [arrow] = mi("&#8614;") -> 'right-pointing arrow originating from a vertical bar'
+
+rightHarpoon [arrow] = mo("&#8640;") -> 'right-pointing harpoon'
+
+rightHarpoon [arrow] = mo("&#8641;") -> 'right-pointing harpoon'
+upArrow [arrow] = mi("&#8593;") -> 'arrow pointing up'
+upDownArrow [arrow] = mi("&#8597;") -> 'arrow point both up and down'
+
+
+// Parentheses, Brackets, Braces, and Bars
+closeBrace = mo("}") -> 'close brace'
+closeBracket = mo("]") -> ', close bracket'
+closeParen = mo(")") -> ', close parentheses'
+doubleVerticalBars = mo("&#8214;") -> 'double vertical bars'
+horizontalBraceDown = mo("&#65079;") -> 'horizontal brace opening downward'
+horizontalBraceUp = mo("&#65080;") -> 'horizontal brace opening upward'
+horizontalBracketDown = mo("&#9140;") -> 'horizontal bracket opening downward'
+horizontalBracketUp = mo("&#9141;") -> 'horizontal bracket opening upward'
+leftAngleBracket = mi("&#9001;") -> 'left-pointing angle bracket'
+leftAngleBracket = mo("&#9001;") -> 'left-pointing angle bracket'
+leftSquareBracket = mi("&#12314;") -> 'left square bracket'
+leftSquareBracket = mo("&#12314;") -> 'left square bracket'
+openBrace = mo("{") -> 'open brace'
+openBracket = mo("[") -> 'open bracket'
+openParen = mo("(") -> 'open parentheses'
+rightAngleBracket = mi("&#9002;") -> 'right-pointing angle bracket'
+rightAngleBracket = mo("&#9002;") -> 'right-pointing angle bracket'
+rightSquareBracket = mi("&#12315;") -> 'right square bracket'
+rightSquareBracket = mo("&#12315;") -> 'right square bracket'
+verticalBar = mi("|") -> 'vertical bar'
+verticalBar = mo("|") -> 'vertical bar'
+
+
+// Primes and Dots
+backPrime = mo("&#8245;") -> 'back prime'
+bullet = mi("&#8226;") -> 'bullet'
+dot = mo("&#775;") -> 'dot'
+doubleDot = mo("&#776;") -> 'double dot'
+doublePrime = mo("&#8243;") -> 'double prime'
+prime = mo("&#8242;") -> 'prime'
+quadDot = mo("&#8412;") -> 'quad dot'
+tripleDot = mo("&#8411;") -> 'triple dot'
+triplePrime = mo("&#8244;") -> 'triple prime'
+
+
+// Geometric Symbols
+angle = mi("&#8736;") -> 'angle'
+angle = mi("&#8737;") -> 'measured angle'
+angle = mi("&#8738;") -> 'spherical angle'
+arc = mo("&#8994;") -> 'arc'
+arc = mo("&#8995;") -> 'arc'
+bar = mo("&#175;") -> 'bar'
+circle = mi("&#9675;") -> 'circle'
+degree = mi("&#176;") -> 'degrees'
+joint = mi("&#65081;") -> 'joint'
+parallel = mi("&#8741;") -> 'parallel to'
+parallelogram = mi("&#9649;") -> 'parallelogram'
+parallelogram = mi("&#9645;") -> 'parallelogram'
+perpendicular = mi("&#8869;") -> 'perpendicular to'
+square = mi("&#9633;") -> 'square'
+tortoiseShellBracket = mo("&#65081;") -> 'horizontal tortoise shell bracket opening downward'
+triangle = mi("&#9651;") -> 'triangle'
+
+
+// Logic
+and = mo("&#8743;") -> 'and'
+approachesLimit = mi("&#8784;") -> 'approaches the limit of'
+because = mo("&#8757;") -> 'because,'
+containsNormalSubgroup = mi("&#8883;") -> 'contains as normal subgroup'
+deltaEqual = mi("&#8796;") -> 'delta equal to'
+emptySet = mi("&#8709;") -> 'the empty set'
+estimates = mi("&#8793;") -> 'estimates'
+exists = mo("&#8707;") -> 'there exists'
+factorial = mo("!") -> 'factorial'
+forAll = mo("&#8704;") -> 'for all'
+greaterThan = mo("&gt;") -> 'is greater than'
+greaterThan = mi("&gt;") -> 'is greater than'
+intersection [integral] = mo("&#8745;") -> 'intersection'
+isElement = mo("&#8712;") -> 'is an element of'
+isNotElement = mo("&#8713;") -> 'is not an element of'
+lessThan = mo("&lt;") -> 'is less than'
+lessThan = mi("&lt;") -> 'is less than'
+multimapRight = mi("&#168;") -> 'right multimap'
+normalSubgroup = mi("&#8882;") -> 'is normal subgroup of'
+not = mo("&#172;") -> 'not'
+notSubset = mo("&#8836;") -> 'is not a subset of'
+or = mo("&#8744;") -> 'or'
+precedes = mi("&#8826;") -> 'precedes'
+properSubsetRight = mo("&#8834;") -> 'is a proper subset of'
+properSubsetLeft = mo("&#8835;") -> 'is a proper subset of'
+proportional = mi("&#8733;") -> 'proportional to'
+subsetRight = mo("&#8838;") -> 'is a subset of'
+subsetLeft = mo("&#8839;") -> 'is a subset of'
+succeeds = mi("&#8827;") -> 'succeeds'
+suchThat = mo("&#8717;") -> 'such that,'
+therefore = mo("&#8756;") -> 'therefore,'
+union [integral] = mo("&#8746;") -> 'union'
+
+
+// Periods And Spaces
+comma = mo(",") -> ','
+comma = mi(",") -> ','
+endPeriod = mo(".") -> ''
+point = mi(".") -> 'point'
+space = mi("&#61185;") -> ' '
+space = mi("&#61186;") -> ' '
+space = mi("&#61188;") -> ' '
+space = mi("&#61189;") -> ' '
+space = mi("&#61192;") -> ' '
+
+
+// Letters
+a [variable] = mi("a") -> '"a"'
+b [variable] = mi("b") -> '"b"'
+c [variable] = mi("c") -> '"c"'
+d [variable] = mi("d") -> '"d"'
+e [variable] = mi("e") -> '"e"'
+f [variable] = mi("f") -> '"f"'
+g [variable] = mi("g") -> '"g"'
+h [variable] = mi("h") -> '"h"'
+i [variable] = mi("i") -> '"i"'
+j [variable] = mi("j") -> '"j"'
+k [variable] = mi("k") -> '"k"'
+l [variable] = mi("l") -> '"l"'
+m [variable] = mi("m") -> '"m"'
+n [variable] = mi("n") -> '"n"'
+o [variable] = mi("o") -> '"o"'
+p [variable] = mi("p") -> '"p"'
+q [variable] = mi("q") -> '"q"'
+r [variable] = mi("r") -> '"r"'
+s [variable] = mi("s") -> '"s"'
+t [variable] = mi("t") -> '"t"'
+u [variable] = mi("u") -> '"u"'
+v [variable] = mi("v") -> '"v"'
+w [variable] = mi("w") -> '"w"'
+x [variable] = mi("x") -> '"x"'
+y [variable] = mi("y") -> '"y"'
+z [variable] = mi("z") -> '"z"'
+A [variable] = mi("A") -> '"capital A"'
+B [variable] = mi("B") -> '"capital B"'
+C [variable] = mi("C") -> '"capital C"'
+D [variable] = mi("D") -> '"capital D"'
+E [variable] = mi("E") -> '"capital E"'
+F [variable] = mi("F") -> '"capital F"'
+G [variable] = mi("G") -> '"capital G"'
+H [variable] = mi("H") -> '"capital H"'
+I [variable] = mi("I") -> '"capital I"'
+J [variable] = mi("J") -> '"capital J"'
+K [variable] = mi("K") -> '"capital K"'
+L [variable] = mi("L") -> '"capital L"'
+M [variable] = mi("M") -> '"capital M"
+N [variable] = mi("N") -> '"capital N"'
+O [variable] = mi("O") -> '"capital O"'
+P [variable] = mi("P") -> '"capital P"'
+Q [variable] = mi("Q") -> '"capital Q"'
+R [variable] = mi("R") -> '"capital R"'
+S [variable] = mi("S") -> '"capital S"'
+T [variable] = mi("T") -> '"capital T"'
+U [variable] = mi("U") -> '"capital U"'
+V [variable] = mi("V") -> '"capital V"'
+W [variable] = mi("W") -> '"capital W"'
+X [variable] = mi("X") -> '"capital X"'
+Y [variable] = mi("Y") -> '"capital Y"'
+Z [variable] = mi("Z") -> '"capital Z"'
+
+// Greek letters
+alpha [variable] = mi("&#945;") -> 'alpha'
+beta [variable] = mi("&#946;") -> 'beta'
+chi [variable] = mi("&#967;") -> 'chi'
+del [variable] = mi("&#8711;") -> 'del'
+delta [variable] = mi("&#948;") -> 'delta'
+delta [variable] = mi("&#8706;") -> 'partial differential'
+epsilon [variable] = mi("&#949;") -> 'epsilon'
+eta [variable] = mi("&#951;") -> 'eta'
+gamma [variable] = mi("&#947;") -> 'gamma'
+iota [variable] = mi("&#953;") -> 'iota'
+kappa [variable] = mi("&#954;") -> 'kappa'
+lambda [variable] = mi("&#955;") -> 'lambda'
+mu [variable] = mi("&#956;") -> 'mu'
+nu [variable] = mi("&#957;") -> 'nu'
+omega [variable] = mi("&#969;") -> 'omega'
+omicron [variable] = mi("&#959;") -> 'omicron'
+phi [variable] = mi("&#981;") -> 'phi'
+phi [variable] = mi("&#966;") -> 'phi'
+pi [variable] = mi("&#960;") -> 'pi'
+pi [variable] = mi("&#982;") -> 'pi'
+psi [variable] = mi("&#968;") -> 'psi'
+rho [variable] = mi("&#961;") -> 'rho'
+sigma [variable] = mi("&#962;") -> 'sigma'
+sigma [variable] = mi("&#963;") -> 'sigma'
+tau [variable] = mi("&#964;") -> 'tau'
+theta [variable] = mi("&#952;") -> 'theta'
+theta [variable] = mi("&#977;") -> 'theta'
+upsilon [variable] = mi("&#965;") -> 'upsilon'
+xi [variable] = mi("&#958;") -> 'xi'
+zeta [variable] = mi("&#950;") -> 'zeta'
+
+Alpha [variable] = mi("&#913;") -> 'alpha'
+Beta [variable] = mi("&#914;") -> 'beta'
+Chi [variable] = mi("&#935;") -> 'chi'
+Delta [variable] = mi("&#916;") -> 'delta'
+Epsilon [variable] = mi("&#917;") -> 'epsilon'
+Eta [variable] = mi("&#919;") -> 'eta'
+Gamma [variable] = mi("&#915;") -> 'gamma'
+Iota [variable] = mi("&#921;") -> 'iota'
+Kappa [variable] = mi("&#922;") -> 'kappa'
+Lambda [variable] = mi("&#923;") -> 'lambda'
+Mu [variable] = mi("&#924;") -> 'mu'
+Nu [variable] = mi("&#925;") -> 'nu'
+Omega [variable] = mi("&#937;") -> 'omega'
+Omicron [variable] = mi("&#927;") -> 'omicron'
+Phi [variable] = mi("&#934;") -> 'phi'
+Pi [variable] = mi("&#928;") -> 'pi'
+PiBig [variable] = mo("&#8719;") -> 'big pi'
+PiBigFlipped = mo("&#8720;") -> 'flipped big pi'
+Psi [variable] = mi("&#936;") -> 'psi'
+Rho [variable] = mi("&#929;") -> 'rho'
+Sigma [variable] = mi("&#931;") -> 'sigma'
+SigmaBig = mo("&#8721;") -> 'sigma'
+Tau [variable] = mi("&#932;") -> 'tau'
+Theta [variable] = mi("&#920;") -> 'theta'
+Upsilon [variable] = mi("&#933;") -> 'upsilon'
+UpsilonHook [vaiable] = mi("&#978;") -> 'upsilon with hook'
+Xi [variable] = mi("&#926;") -> 'xi'
+Zeta [variable] = mi("&#918;") -> 'zeta'
+
+
+//Rarely used symbols
+ahlef = mi("&#8501;") -> 'ahlef'
+bbcapC = mi("&#8450;") -> 'blackboard capital C'
+bbcapN = mi("&#8469;") -> 'blackboard capital N'
+bbcapQ = mi("&#8474;") -> 'blackboard capital Q'
+bbcapR = mi("&#8477;") -> 'blackboard capital R'
+bbcapZ = mi("&#8484;") -> 'blackboard capital Z'
+frakturI = mi("&#8465;") -> 'Fraktur capital I'
+frakturR = mi("&#8476;") -> 'Fraktur capital R'
+invertedOhm = mi("&#8487;") -> 'inverted Ohm sign'
+planckConsOverTwoPi = mi("&#8463;") -> 'Planck constant over two pi'
+scriptI = mi("&#8467;") -> 'Script I'
+smallLamExtraStroke = mi("&#411;") -> 'Small lambda with extra stroke'
+weierstrassEll = mi("&#8472;") -> 'Weierstrass ellipsis'
+
+
+// Numbers
+number = mn(?) -> '"{1}"'
+
+
+// Ellipses
+diagonalBotLeftEllipsis = mi("&#8944;") -> 'diagonal bottom left top right ellipsis'
+diagonalTopLeftEllipsis = mi("&#8945;") -> 'diagonal top left bottom right ellipsis'
+ellipsis = mi("&#8230;") -> 'ellipsis'
+ellipsis = mi("&#8943;") -> 'ellipsis'
+verticalEllipsis = mi("&#8942;") -> 'vertical ellipsis'
+
+
+// -----------------------------------------------------------------------------
+// Logic Patterns
+// -----------------------------------------------------------------------------
+
+
+// -----------------------------------------------------------------------------
+// Generic Fallbacks, Final Collectors
+// -----------------------------------------------------------------------------
+
+fenced = mfenced(+) -> 'open parenthesis, {1}, closed parenthesis,'
+under = munder(? ?) -> '{1} over {2}'
+over = mover(? ?) -> '{1} under {2}'
+fraction = mfrac(? ?) -> '{1} over {2}'
+
+subscript = msub(? ?) -> '{1} sub {2}'
+superscript = msup(? ?) -> '{1} to the {2} power'
+subsuperscript = msubsup(? ? ?) -> '{1} sub {2} to the {3} power'
+
+row = mrow(+) -> '{1}'
+row = mrow() -> ''
+style = mstyle(+) -> '{1}'
+
+// This is the final collapsing pattern
+final = math(+) -> '{1}'

@@ -358,6 +358,8 @@ weierstrassEll = mi("&#8472;") -> 'Weierstrass ellipsis'
 
 
 // Numbers
+two = mn("2") -> 'two'
+three = mn("3") -> 'three'
 number = mn(?) -> '"{1}"'
 
 
@@ -379,11 +381,11 @@ infinity = mn("&#8734;") -> 'infinity'
 
 
 // Trigonometry
-//arcsine = a r c s i n -> 'arc sine'
-//inverseCosine = c o msup(s mrow(minus one)) -> 'inverse cosine'
-//cosine = c o s -> 'cosine'
-//inverseSine = s i msup(n mrow(minus one)) -> 'inverse sine'
-//sine = s i n -> 'sine'
+arcsine = a r c s i n -> 'arc sine'
+inverseCosine = c o msup(s mrow(minus one)) -> 'inverse cosine'
+cosine = c o s -> 'cosine'
+inverseSine = s i msup(n mrow(minus one)) -> 'inverse sine'
+sine = s i n -> 'sine'
 
 
 // Powers and Primes
