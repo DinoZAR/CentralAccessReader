@@ -1,8 +1,18 @@
+import os
 
+SPEC_DIRECTORY = os.path.abspath('./Central Access Reader.spec')
+PATH_EXTENSION = os.path.abspath('./')
+
+if __name__ == '__main__':
+
+    print 'Saving spec to:', SPEC_DIRECTORY
+    print 'Path extension:', PATH_EXTENSION
+
+    outString = r'''
 # -*- mode: python -*-
 
 a = Analysis(['src/main.py'],
-             pathex=['W:\\Nifty Prose Articulator\\workspace2\\another'],
+             pathex=[''' + '\'' + PATH_EXTENSION.replace('\\', '\\\\') + '\'' + '''],
              hiddenimports=[],
              hookspath=None)
 			 
@@ -10,7 +20,7 @@ pyz = PYZ(a.pure)
 exe = EXE(pyz,
           a.scripts,
           exclude_binaries=1,
-          name=os.path.join('build\pyi.win32\Central Access Reader', 'Central Access Reader.exe'),
+          name=os.path.join('build\\pyi.win32\\Central Access Reader', 'Central Access Reader.exe'),
           debug=False,
           strip=None,
           upx=True,
@@ -25,3 +35,8 @@ coll = COLLECT(exe,
                name=os.path.join('dist', 'Central Access Reader'))
 app = BUNDLE(coll,
              name=os.path.join('dist', 'Central Access Reader.app'))
+'''
+
+    f = open(SPEC_DIRECTORY, 'w')
+    f.write(outString)
+    f.close()

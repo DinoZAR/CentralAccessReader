@@ -61,6 +61,30 @@ RequestExecutionLevel admin
 
 SetCompressor lzma
 
+; Check if the program is already installed. If so, go and uninstall it.
+Function .onInit
+	
+	ReadRegStr $R0 HKLM \
+	"${PRODUCT_UNINST_KEY}" \
+	"UninstallString"
+	StrCmp $R0 "" done
+	
+	MessageBox MB_YESNO|MB_ICONQUESTION \
+	"${PRODUCT_NAME} is present on your computer. Would you like to update it?$\n(It will run the uninstaller, then run the installer)" \
+	IDYES uninst
+	
+	uninst:
+		ClearErrors
+		ExecWait '$R0 _?=$INSTDIR'
+		
+		IfErrors no_remove_uninstaller done
+		
+		no_remove_uninstaller:
+		
+done:
+
+FunctionEnd
+
 ; MUI 1.67 compatible ------
 !include "MUI.nsh"
 
@@ -103,13 +127,13 @@ Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 '''
     if args.bit == 32:
         outString += r'''
-OutFile "NPA_Setup_32.exe"
+OutFile "CAR_Setup_32.exe"
 InstallDir "$PROGRAMFILES\Central Access Reader"
 '''
 
     elif args.bit == 64:
 	    outString += r'''
-OutFile "NPA_Setup_64.exe"
+OutFile "CAR_Setup_64.exe"
 InstallDir "$PROGRAMFILES64\Central Access Reader"
 '''
     

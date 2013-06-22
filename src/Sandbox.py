@@ -5,4 +5,8 @@ Created on Mar 3, 2013
 '''
 print 'Starting!'
 
+from src.misc import check_program_update
+
+print 'Have update?', check_program_update()
+
 print 'Done!'

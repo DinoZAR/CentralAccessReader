@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1123</width>
-    <height>726</height>
+    <width>1414</width>
+    <height>790</height>
    </rect>
   </property>
   <property name="font">
@@ -232,7 +232,7 @@
          <number>0</number>
         </property>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,0,0,0,1">
+         <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,0,0,0,1,0">
           <item>
            <widget class="QPushButton" name="playButton">
             <property name="toolTip">
@@ -505,6 +505,26 @@
             </property>
            </spacer>
           </item>
+          <item>
+           <widget class="QPushButton" name="getUpdateButton">
+            <property name="text">
+             <string>Update!</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resource.qrc">
+              <normaloff>:/icons/icons/messagebox_warning.png</normaloff>:/icons/icons/messagebox_warning.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>32</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="checkable">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
         <item>
@@ -630,7 +650,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1123</width>
+     <width>1414</width>
      <height>21</height>
     </rect>
    </property>
