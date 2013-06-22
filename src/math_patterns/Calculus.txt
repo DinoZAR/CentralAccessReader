@@ -476,34 +476,48 @@ unitVector = mover(mrow(x) caret) -> 'unit vector'
 vector = mover(x rightArrow) -> 'vector'
 
 
-// ------------------------------------------------------------------------------
-// Conditions for arrows based on over or under
-// ------------------------------------------------------------------------------
-overBothArrow = munder(? [arrow]) -> '{1} over {2}'
-underBothArrow = mover(? [arrow]) -> '{1} under {2}'
-overUnderArrowB = munderover([arrow] mrow(+) mrow(+)) -> '{2} above {1} sub {3}'
+// ------------------------------------------------------------------------------
+// Conditions for arrows based on over or under
+// ------------------------------------------------------------------------------
+overBothArrow = munder(? [arrow]) -> '{1} over {2}'
+underBothArrow = mover(? [arrow]) -> '{1} under {2}'
+overUnderArrowB = munderover(rightArrow mrow(+) mrow(+)) -> '{2} above {1} sub {3}'
+overUnderArrowB = munderover(leftArrow mrow(+) mrow(+)) -> '{2} above {1} sub {3}'
+overUnderArrowB = munderover(bothArrow mrow(+) mrow(+)) -> '{2} above {1} sub {3}'
+overUnderArrowB = munderover(rightHarpoon mrow(+) mrow(+)) -> '{2} above {1} sub {3}'
+
 
-// ------------------------------------------------------------------------------
-// Under-Over, Integrals, Products, and Summations
+// ------------------------------------------------------------------------------
+// Under-Over, Integrals, Products, and Summations
 // ------------------------------------------------------------------------------
 backPrimes = mmultiscripts(? ? ? ?) -> '{4} {1}'
 
-// Integrals
-
-integralOU = munderover([integral] mrow(+) mrow(+)) -> 'the definite integral from {2} to {3} of'
-integralOU = munderover([integral] mrow(+)) -> 'the integral over {2} of'
-integralOU = munderover([integral]) -> 'the integral of'
-
-// Intersections and Limits
+// Limits
 
 limit = munderover(mrow(l i m) mrow(? ? ?) ?) -> 'the limit as {4} approaches {6} of'
 limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4} of'
 
 // Products and Unions
 
-sum = munderover(SigmaBig mrow(+) mrow(+)) -> 'the sum from {2} to {3}, of'
-sum = munderover(SigmaBig mrow(+)) -> 'the sum from {2} of'
-sum = munderover(SigmaBig) -> 'the sum of'
+coproductSyn = munderover(coproduct mrow(+) mrow(+)) -> 'the coproduct from {2}, to {3}, of'
+coproductSyn = munderover(coproduct mrow(+) ?) -> 'the coproduct from {2}, of'
+coproductSyn = munderover(coproduct ? ?) -> 'the coproduct of'
+
+intersectionSyn = munderover(intersection mrow(+) mrow(+)) -> 'the intersection from {2}, to {3}, of'
+intersectionSyn = munderover(intersection mrow(+) ?) -> 'the intersection from {2}, of'
+intersectionSyn = munderover(intersection ? ?) -> 'the intersection of'
+
+productSyn = munderover(product mrow(+) mrow(+)) -> 'the product from {2}, to {3}, of'
+productSyn = munderover(product mrow(+) ?) -> 'the product from {2}, of'
+productSyn = munderover(product ? ?) -> 'the product of'
+
+sum = munderover(SigmaBig mrow(+) mrow(+)) -> 'the sum from {2}, to {3}, of'
+sum = munderover(SigmaBig mrow(+) ?) -> 'the sum from {2}, of'
+sum = munderover(SigmaBig ? ?) -> 'the sum of'
+
+unionSyn = munderover(union mrow(+) mrow(+)) -> 'the union from {2}, to {3}, of'
+unionSyn = munderover(union mrow(+) ?) -> 'the union from {2}, of'
+unionSyn = munderover(union ? ?) -> 'the union of'
 
 
 // ------------------------------------------------------------------------------
