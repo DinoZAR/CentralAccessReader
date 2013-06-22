@@ -394,12 +394,20 @@ verticalEllipsis = mi("&#8942;") -> 'vertical ellipsis'
 infinity = mi("&#8734;") -> 'infinity'
 infinity = mn("&#8734;") -> 'infinity'
 
-// Trigonometry
-//arcsine = a r c s i n -> 'arc sine'
-//inverseCosine = c o msup(s mrow(minus one)) -> 'inverse cosine'
-//cosine = c o s -> 'cosine'
-//inverseSine = s i msup(n mrow(minus one)) -> 'inverse sine'
-//sine = s i n -> 'sine'
+//---------------------------------------------------------------
+// Trigonometry-Specific
+//---------------------------------------------------------------
+arccos = a r c c o s -> 'arc cosine'
+arcsine = a r c s i n -> 'arc sine'
+arctan = a r c t a n -> 'arc tangent'
+inverseCosine = c o msup(s mrow(minus one)) -> 'inverse cosine'
+cosine = c o s -> 'cosine'
+cotangent = c o t -> 'cotangent'
+cosecant = c s c -> 'cosecant'
+inverseSine = s i msup(n mrow(minus one)) -> 'inverse sine'
+secant = s e c -> 'secant'
+sine = s i n -> 'sine'
+tangent = t a n -> 'tangent'
 
 // Powers and Primes
 cubed = msup(? mrow(three)) -> '{1} cubed'
@@ -425,7 +433,8 @@ openInterval = openParen ? comma ? closeParen -> 'Open interval {2},{4}'
 
 // Syntax Quirks
 doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'
-doubleBarSyn = munder(munder(mrow(+) bar) bar) -> '{1} over double bar'
+doubleBarSyn = munder(munder(mrow(+) bar) bar) -> '{1} over double bar'
+doubleDagger = dagger dagger -> 'double dagger'
 
 // ------------------------------------------------------------------------------
 // Fraction-based
