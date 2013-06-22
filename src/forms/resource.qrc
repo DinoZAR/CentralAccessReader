@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="/icons">
+    <file>icons/update-in-progress.gif</file>
+    <file>icons/messagebox_warning.png</file>
     <file>icons/gear.png</file>
     <file>icons/application_exit.png</file>
     <file>icons/document_open.png</file>

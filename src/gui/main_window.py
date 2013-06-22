@@ -22,12 +22,14 @@ from src.gui.bookmarks import BookmarksTreeModel, BookmarkNode
 from src.gui.pages import PagesTreeModel, PageNode
 from src.gui.about import AboutDialog
 from src.gui.bug_reporter import BugReporter
+from src.gui.update_in_progress import UpdateInstallProgressDialog
 from src.mathtype.parser import MathTypeParseError
 from src.mathml.tts import MathTTS
 from src.mathml import pattern_editor
 from src.speech.assigner import Assigner
 from src.speech.worker import SpeechWorker
 from src.docx.importer import DocxDocument
+from src.updater import GetUpdateThread, run_update_installer
 from src import misc
 
 class MainWindow(QtGui.QMainWindow):
@@ -45,6 +47,9 @@ class MainWindow(QtGui.QMainWindow):
     changeRate = QtCore.pyqtSignal(int)
     changeVoice = QtCore.pyqtSignal(str)
     changeMathDatabase = QtCore.pyqtSignal(str)
+    
+    # Program update notification
+    notifyProgramUpdate = QtCore.pyqtSignal()
     
     # JavaScript mutex
     javascriptMutex = QMutex()
@@ -71,6 +76,9 @@ class MainWindow(QtGui.QMainWindow):
         self.searchWidgets.append(self.ui.searchSettingsButton)
         self.searchWidgets.append(self.ui.closeSearchButton)
         self.hideSearch()
+        
+        # Hide the update button
+        self.ui.getUpdateButton.hide()
         
         # Set the search settings dialog so I can make it non-modal
         self.searchSettings = SearchSettings()
@@ -155,6 +163,13 @@ class MainWindow(QtGui.QMainWindow):
             # Immediately turn the switch off
             self.configuration.showTutorial = False
             self.updateSettings()
+        
+        # Run an update check thread
+        self.checkUpdateThread = GetUpdateThread(self.showUpdateButton)
+        self.checkUpdateThread.start()
+        
+        # Update in progress dialog
+        self.updateInstallProgressDialog = None
             
     def closeEvent(self, event):
         self.configuration.zoom_content = self.ui.webView.getZoom()
@@ -219,6 +234,9 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.bookmarkZoomOutButton.clicked.connect(self.bookmarkZoomOutButton_clicked)
         self.ui.expandBookmarksButton.clicked.connect(self.expandBookmarksButton_clicked)
         self.ui.collapseBookmarksButton.clicked.connect(self.collapseBookmarksButton_clicked)
+        
+        # Update button
+        self.ui.getUpdateButton.clicked.connect(self.runUpdate)
         
     def updateSettings(self):
         
@@ -394,7 +412,6 @@ class MainWindow(QtGui.QMainWindow):
             outputList = []
             selectedHTML = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetSelectionHTML', [])).toString()
             outputList = self.assigner.getSpeech(unicode(selectedHTML), self.configuration)
-                
             
             # Get the progress of the thing from the speech thread
             def myOnProgress(percent):
@@ -424,7 +441,7 @@ class MainWindow(QtGui.QMainWindow):
                 messageBox.setIcon(QtGui.QMessageBox.Information)
                 messageBox.exec_()
                 
-                misc.open_file_location(fileName)
+                misc.open_file_browser_to_location(fileName)
         
     def zoomIn(self):
         self.ui.webView.zoomIn()
@@ -649,6 +666,37 @@ class MainWindow(QtGui.QMainWindow):
         
 #         if len(self.lastDocumentFilePath) > 0:
 #             self.openDocx(self.lastDocumentFilePath)
+
+    def showUpdateButton(self):
+        '''
+        Shows the Update button if there is an update available. This should
+        only be done by the thread that checks for it.
+        '''
+        self.ui.getUpdateButton.show()
+        
+    def runUpdate(self):
+        '''
+        Runs the setup file to update this program, when one exists.
+        '''
+        question = QtGui.QMessageBox()
+        question.setIcon(QtGui.QMessageBox.Question)
+        question.setText('An update is available!')
+        question.setInformativeText('Would you like to install it?')
+        question.setStandardButtons(QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+        question.setDefaultButton(QtGui.QMessageBox.No)
+        
+        result = question.exec_()
+        
+        if result == QtGui.QMessageBox.Yes:
+            
+            # Show a progress dialog with something spinning here
+            self.updateInstallProgressDialog = UpdateInstallProgressDialog(self)
+            self.updateInstallProgressDialog.show()
+            
+            # Run the installer in here
+            run_update_installer()
+            
+            self.updateInstallProgressDialog.close()
             
     def setSettingsEnableState(self):
         '''

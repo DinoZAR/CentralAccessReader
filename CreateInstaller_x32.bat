@@ -7,6 +7,10 @@ set PATH=%PATH%;C:\Program Files (x86)\NSIS;C:\Python27
 echo Deleting previous distribution folder...
 RMDIR dist /S /Q
 
+:: Generating the spec for the PyInstaller
+echo Creating spec...
+python generate_spec.py
+
 :: Creating the executable
 echo Creating executable...
 python ../../pyinstaller-2.0/utils/Build.py "Central Access Reader.spec"
@@ -31,9 +35,9 @@ XCOPY jquery.scrollTo-1.4.3.1-min.js "dist\Central Access Reader\" /D /Y /Q
 
 :: Other Files
 
-:: Get the pattern database
-echo Copying the MathML pattern database...
-XCOPY src\mathml\parser_pattern_database.txt "dist\Central Access Reader\src\mathml\" /D /Y /Q
+:: Copy the pattern databases
+echo Copying the MathML pattern databases...
+XCOPY src\math_patterns "dist\Central Access Reader\src\math_patterns\" /S /D /Y /I /Q
 
 :: Grabbing the LAME encoder executable
 echo Copying LAME MP3 encoder...
@@ -66,9 +70,9 @@ makensis /V4 NSIS_installer_script.nsi
 
 :: Copy the setup file to the top of the Central Access Reader directory
 echo Moving setup file to top...
-move /Y NPA_Setup_32.exe ../../
+move /Y CAR_Setup_32.exe ../../
 
 echo ----------------------------------
 echo Done!
-echo Your file can be found as NPA_Setup_32.exe.
+echo Your file can be found as CAR_Setup_32.exe.
 echo ----------------------------------

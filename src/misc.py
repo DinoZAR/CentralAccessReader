@@ -111,7 +111,7 @@ def js_command(functionName, args):
     
     return commandString
 
-def open_file_location(filePath):
+def open_file_browser_to_location(filePath):
     '''
     Creates the process to open a file browser with the file selected.
     '''
