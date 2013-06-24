@@ -1,0 +1,180 @@
+//
+//    ___       ___       ___       ___       ___       ___       ___       ___   
+//   /\  \     /\  \     /\__\     /\  \     /\__\     /\__\     /\__\     /\  \  
+//  /::\  \   /::\  \   /:/  /    /::\  \   /:/ _/_   /:/  /    /:/ _/_   /::\  \ 
+// /:/\:\__\ /::\:\__\ /:/__/    /:/\:\__\ /:/_/\__\ /:/__/    /:/_/\__\ /\:\:\__\
+// \:\ \/__/ \/\::/  / \:\  \    \:\ \/__/ \:\/:/  / \:\  \    \:\/:/  / \:\:\/__/
+//  \:\__\     /:/  /   \:\__\    \:\__\    \::/  /   \:\__\    \::/  /   \::/  / 
+//   \/__/     \/__/     \/__/     \/__/     \/__/     \/__/     \/__/     \/__/  
+//                                                                          
+// --------------
+// Order Matters!
+// --------------
+//
+// The MathML parser is entirely sequential. Once it finds all cases of the
+// current pattern and combines the different pattern's elements into singular
+// entities, the pattern is no longer used in later matching. This means you
+// must order patterns correctly to produce results you expect.
+//
+// -----------------
+// Expected Ordering
+// -----------------
+//
+// In order for patterns to match correctly, you should have patterns grouped
+// and have those groups ordered in the following way: 
+//
+// 1. Symbol Code (like variables and Unicode)
+// 2. Fraction-Based (like derivatives)
+// 3. Over-Under (like sums and integrals)
+// 4. Parenthetical Expressions (like square roots or things in parenthesis)
+// 5. Generic Fallbacks (like fractions, superscripting, and subscripting)
+
+// ------------------------------------------------------------------------------
+// Symbol Code
+// ------------------------------------------------------------------------------
+
+import _codes.txt
+
+//---------------------------------------------------------------
+// Trigonometry-Specific
+//---------------------------------------------------------------
+arccos = a r c c o s -> 'arc cosine'
+arcsine = a r c s i n -> 'arc sine'
+arctan = a r c t a n -> 'arc tangent'
+inverseCosine = c o msup(s mrow(minus one)) -> 'inverse cosine'
+cosine = c o s -> 'cosine'
+cotangent = c o t -> 'cotangent'
+cosecant = c s c -> 'cosecant'
+inverseSine = s i msup(n mrow(minus one)) -> 'inverse sine'
+secant = s e c -> 'secant'
+sine = s i n -> 'sine'
+tangent = t a n -> 'tangent'
+
+
+// Powers and Primes
+cubed = msup(? mrow(three)) -> '{1} cubed'
+cubed = msup(? three) -> '{1} cubed'
+degress = msup(? mrow(composition)) -> '{1} degrees'
+squared = msup(? mrow(two)) -> '{1} squared'
+squared = msup(? two) -> '{1} squared'
+supDubPrime = msup(? doublePrime) -> '{1} double prime'
+supPrime = msup(? prime) -> '{1} prime'
+supTriPrime = msup(? triplePrime) -> '{1} triple prime'
+
+//Functions
+function = [variable] mrow(openParen [variable] closeParen) -> 'function {1} of {3}'
+function = [variable] openParen [variable] closeParen -> 'function {1} of {3}'
+function = [variable] mfenced(+) -> 'function {1} of {2}'
+functionPrime = [variable] mi("'") mfenced(+) -> 'function {1} prime of {2}'
+
+
+// Intervals
+closedInterval = openBracket ? comma ? closeBracket -> 'Closed interval {2},{4}'
+openInterval = openParen ? comma ? closeParen -> 'Open interval {2},{4}'
+
+
+// Absolute values - !Broken!
+
+
+// Syntax Quirks
+doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'
+doubleBarSyn = munder(munder(mrow(+) bar) bar) -> '{1} over double bar'
+
+
+// ------------------------------------------------------------------------------
+// Fraction-based
+// ------------------------------------------------------------------------------
+integral = msub([integral] ?) -> '{1} sub {2} of'
+
+// -----------------
+// Calculus-Specific
+// -----------------
+deriv = y comma -> 'derivative'
+nthDeriv = msup(y mrow(openParen n closeParen)) -> 'nth derivative'
+complexConj = z timesStar -> 'complex conjugate'
+timeDeriv = mover(y dot) -> 'time derivative'
+timeSecondDeriv = mover(y doubleDot) -> 'time second derivative'
+unitVector = mover(mrow(x) caret) -> 'unit vector'
+vector = mover(x rightArrow) -> 'vector'
+
+
+// ------------------------------------------------------------------------------
+// Conditions for arrows based on over or under
+// ------------------------------------------------------------------------------
+overBothArrow = munder(? [arrow]) -> '{1} over {2}'
+underBothArrow = mover(? [arrow]) -> '{1} under {2}'
+overUnderArrowB = munderover(rightArrow mrow(+) mrow(+)) -> '{2} above {1} sub {3}'
+overUnderArrowB = munderover(leftArrow mrow(+) mrow(+)) -> '{2} above {1} sub {3}'
+overUnderArrowB = munderover(bothArrow mrow(+) mrow(+)) -> '{2} above {1} sub {3}'
+overUnderArrowB = munderover(rightHarpoon mrow(+) mrow(+)) -> '{2} above {1} sub {3}'
+
+
+// ------------------------------------------------------------------------------
+// Under-Over, Integrals, Products, and Summations
+// ------------------------------------------------------------------------------
+backPrimes = mmultiscripts(? ? ? ?) -> '{4} {1}'
+
+// Limits
+
+limit = munderover(mrow(l i m) mrow(? ? ?) ?) -> 'the limit as {4} approaches {6} of'
+limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4} of'
+
+// Products and Unions
+
+coproductSyn = munderover(coproduct mrow(+) mrow(+)) -> 'the coproduct from {2}, to {3}, of'
+coproductSyn = munderover(coproduct mrow(+) ?) -> 'the coproduct from {2}, of'
+coproductSyn = munderover(coproduct ? ?) -> 'the coproduct of'
+
+intersectionSyn = munderover(intersection mrow(+) mrow(+)) -> 'the intersection from {2}, to {3}, of'
+intersectionSyn = munderover(intersection mrow(+) ?) -> 'the intersection from {2}, of'
+intersectionSyn = munderover(intersection ? ?) -> 'the intersection of'
+
+productSyn = munderover(product mrow(+) mrow(+)) -> 'the product from {2}, to {3}, of'
+productSyn = munderover(product mrow(+) ?) -> 'the product from {2}, of'
+productSyn = munderover(product ? ?) -> 'the product of'
+
+sum = munderover(SigmaBig mrow(+) mrow(+)) -> 'the sum from {2}, to {3}, of'
+sum = munderover(SigmaBig mrow(+) ?) -> 'the sum from {2}, of'
+sum = munderover(SigmaBig ? ?) -> 'the sum of'
+
+unionSyn = munderover(union mrow(+) mrow(+)) -> 'the union from {2}, to {3}, of'
+unionSyn = munderover(union mrow(+) ?) -> 'the union from {2}, of'
+unionSyn = munderover(union ? ?) -> 'the union of'
+
+
+// ------------------------------------------------------------------------------
+// Parenthetical Expressions
+// ------------------------------------------------------------------------------
+cuberoot = mroot(mrow(+) mrow(three)) -> 'the cube root of {1}'
+rootPowers = mroot(mrow(+) mrow(+)) -> 'the {2} root of {1}'
+squareRoot = msqrt(+) -> 'the square root of {1}'
+
+
+// ------------------------------------------------------------------------------
+// Matrices
+// ------------------------------------------------------------------------------
+matrix = mrow(mtable(#)) -> 'matrix {1}'
+matrixPar = mfenced(mrow(mtable(+))) -> 'matrix {1}'
+tableColumn = mtd(+) -> '{1},'
+tableRow = mtr(#) -> 'row, {1}'
+
+
+// ------------------------------------------------------------------------------
+// Generic Fallbacks, Final Collectors
+// ------------------------------------------------------------------------------
+fenced = mfenced(+) -> 'open parenthesis, {1}, closed parenthesis,'
+
+under = munder(? ?) -> '{1} over {2}'
+over = mover(? ?) -> '{1} under {2}'
+
+fraction = mfrac(? ?) -> '{1} over {2}'
+subscript = msub(? ?) -> '{1} sub {2}'
+superscript = msup(? ?) -> '{1} to the {2} power'
+subsuperscript = msubsup(? ? ?) -> '{1} sub {2} to the {3} power'
+
+row = mrow(+) -> '{1}'
+row = mrow() -> ''
+style = mstyle(+) -> '{1}'
+
+// This is the final collapsing pattern
+final = math(+) -> '{1}'
