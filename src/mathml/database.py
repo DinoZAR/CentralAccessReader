@@ -80,7 +80,7 @@ def t_error(t):
 	raise TypeError("Unknown text '%s'" % (t.value,))
 
 # Create my lexer now after all of these definitions
-lexer = lex.lex(debug=True)
+lexer = lex.lex(debug=False)
 
 # ------------------------
 # Parser things

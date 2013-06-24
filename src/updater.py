@@ -11,7 +11,7 @@ import os
 import subprocess
 from src import misc
 
-UPDATE_URL = 'file:////W://Nifty%20Prose%20Articulator/test_server/'
+UPDATE_URL = r'http://www.cwu.edu/~atrc/centralaccessreader/'
 
 # Get the correct setup file depending on architecture
 SETUP_FILE = ''
@@ -100,12 +100,14 @@ def check_program_update():
     print 'Getting version number here...'
     # Get the version here
     versionHere = get_version_number(VERSION_HERE)
+    print versionHere
     
     print 'Getting version number there...'
     # Get the version number there
     response = urllib2.urlopen(VERSION_THERE)
     stuff = response.read()
     versionThere = float(re.search(r'[0-9]+.[0-9]+', stuff).group(0))
+    print versionThere
     
     return versionThere > versionHere
 
@@ -122,5 +124,5 @@ def run_update_installer():
     '''
     if os.path.exists(SETUP_TEMP_FILE):
         if platform.system() == 'Windows':
-            result = subprocess.Popen('start /wait "' + SETUP_TEMP_FILE + '"')
+            result = subprocess.Popen(r'runas /user:administrator "' + SETUP_TEMP_FILE + r'"')
             print 'Done installing new update!'
