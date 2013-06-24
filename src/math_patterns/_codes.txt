@@ -65,11 +65,12 @@ divide = mo("/") -> 'divided by,'
 
 dollarSign = mi("$") -> 'dollar sign,'
 
-equals = mo("=") -> 'equals,'
+equals = mo("=") -> 'equals'
 
 equivalent = mi("&#8764;") -> 'is equivalent to,'
 
 greaterThanOrEqual = mi("&#8805;") -> 'is greater than or equal to,'
+
 lessThanOrEqual = mi("&#8804;") -> ' is less than or equal to,'
 
 minus = mo("-") -> 'minus,'
@@ -536,20 +537,15 @@ two = mn("2") -> 'two'
 
 three = mn("3") -> 'three'
 
-four = mn("4") -> 'four'
+//four = mn("4") -> 'four'
+//five = mn("5") -> 'five'
+//six = mn("6") -> 'six'
+//seven = mn("7") -> 'seven'
+//eight = mn("8") -> 'eight'
+//nine = mn("9") -> 'nine'
+//ten = mn("10") -> 'ten'
 
-five = mn("5") -> 'five'
-
-six = mn("6") -> 'six'
-
-seven = mn("7") -> 'seven'
-
-eight = mn("8") -> 'eight'
-
-nine = mn("9") -> 'nine'
-
-ten = mn("10") -> 'ten'
-
+number = mn(?) -> '"{1}"'
 
 
 // Ellipses

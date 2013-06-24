@@ -30,7 +30,7 @@
 // Symbol Code
 // ------------------------------------------------------------------------------
 
-import _TopHat.txt
+import _codes.txt
 
 // Unicodes and MathML codes for operators
 
