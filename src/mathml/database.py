@@ -9,12 +9,17 @@ Author: Spencer Graffe
 
 import ply.lex as lex
 import ply.yacc as yacc
+import os
 from pattern_tree import PatternTree
 import HTMLParser
 
 htmlParser = HTMLParser.HTMLParser()
 
 # LEXER
+
+reserved = {
+		'import' : 'IMPORT'
+		}
 
 tokens = [
 		'COMMENT',
@@ -35,11 +40,15 @@ tokens = [
 		'COMMA',
 		'NEWLINE',
 		'WS'
-		]
+		] + list(reserved.values())
 
 t_ignore_COMMENT = r'//.*'
 
-t_ID = r'[a-zA-Z_]+'
+def t_ID(t):
+	r'[a-zA-Z_\.]+'
+	t.type = reserved.get(t.value, 'ID')
+	return t
+	
 t_STRING = r'\'.*\''
 t_LITERAL = r'\"[^\"]*\"'
 
@@ -71,7 +80,7 @@ def t_error(t):
 	raise TypeError("Unknown text '%s'" % (t.value,))
 
 # Create my lexer now after all of these definitions
-lexer = lex.lex(debug=False)
+lexer = lex.lex(debug=True)
 
 # ------------------------
 # Parser things
@@ -86,7 +95,9 @@ def p_database(p):
 def p_patterns(p):
 	'''
 	patterns : pattern patterns
+			 | import patterns
 			 | pattern
+			 | import
 	'''
 	if len(p) == 3:
 		l = [p[1]]
@@ -95,16 +106,22 @@ def p_patterns(p):
 	else:
 		p[0] = [p[1]]
 
+def p_import(p):
+	'''
+	import : IMPORT ID
+	'''
+	p[0] = {'type' : 'import', 'value' : p[2]}
+
 def p_pattern(p):
 	'''
 	pattern : variable categories ASSIGNS expressions OUTPUTS output
 	        | variable ASSIGNS expressions OUTPUTS output
 	'''
 	if len(p) == 7:
-		p[0] = {'variable' : p[1], 'categories' : p[2], 'expressions' : p[4], 'output' : p[6], 'number' : p.lineno(2)}
+		p[0] = {'type' : 'pattern', 'variable' : p[1], 'categories' : p[2], 'expressions' : p[4], 'output' : p[6], 'number' : p.lineno(2)}
 		#print 'Pattern:', p[0]
 	else:
-		p[0] = {'variable' : p[1], 'expressions' : p[3], 'output' : p[5], 'number' : p.lineno(2)}
+		p[0] = {'type' : 'pattern', 'variable' : p[1], 'expressions' : p[3], 'output' : p[5], 'number' : p.lineno(2)}
 		#print 'Pattern:', p[0]
 	
 def p_expressions(p):
@@ -225,11 +242,36 @@ parser = yacc.yacc(debug=False)
 # User Functions : These are what other programmers should be using
 # ------------------------------------------------------------------------------
 
-def parse(inputString):
+def parse(inputString, filePath=None):
 	
 	# Give the lexer some input
 	lexer.input(inputString)
 	tree = parser.parse(inputString, lexer=lexer)
+	
+	# Get the imports for it
+	if filePath != None:
+		i = 0
+		patterns = tree['patterns']
+		while i < len(patterns):
+			
+			if patterns[i]['type'] == 'import':
+				path = os.path.join(os.path.dirname(filePath), patterns[i]['value'])
+				f = open(path, 'r')
+				contents = f.read()
+				f.close()
+				
+				lexer.input(contents)
+				t = parser.parse(contents, lexer=lexer)
+				
+				# Replace the import statement with my patterns
+				patterns.pop(i)
+				patterns[i:i] = t['patterns']
+				
+			else:
+				i += 1
+			
+		tree['imports'] = []
+	
 	return tree
 
 def convertToPatternTree(databasePattern):
@@ -251,16 +293,16 @@ def _convertExpressions(tree, expressions):
 	
 	for i in expressions:
 		ex = i['expression']    # This is a little indirect, but hey
-		
+			
 		if ex['type'] == 'variable':
 			newChild = PatternTree(ex['value'], tree)
 			newChild.type = PatternTree.VARIABLE
-			
+				
 		elif ex['type'] == 'categories':
 			newChild = PatternTree('<categories>', tree)
 			newChild.type = PatternTree.CATEGORY
 			newChild.categories = ex['value']
-			
+				
 		elif ex['type'] == 'xml':
 			newChild = PatternTree(ex['value'], tree)
 			newChild.type = PatternTree.XML
@@ -269,7 +311,7 @@ def _convertExpressions(tree, expressions):
 				for attr in ex['attributes']:
 					newChild.attributes[attr['name']] = attr['value']
 			_convertExpressions(newChild, ex['children'])
-		
+			
 		# For this one, differentiate between a regular expression for a literal
 		# or a collector token, such as a +, ?, or #
 		elif ex['type'] == 'literal':

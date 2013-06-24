@@ -19,7 +19,7 @@ class MathTTS():
         contents = databaseFile.read()
         databaseFile.close()
         
-        self.parserTree = database.parse(contents)
+        self.parserTree = database.parse(contents, initialDatabaseFile)
         
     def parse(self, mathmlString, stageSink=None):
         root = ET.fromstring(mathmlString)
@@ -38,4 +38,4 @@ class MathTTS():
         contents = databaseFile.read()
         databaseFile.close()
         
-        self.parserTree = database.parse(contents)
+        self.parserTree = database.parse(contents, filePath)

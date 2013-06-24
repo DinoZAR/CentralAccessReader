@@ -56,14 +56,17 @@ def temp_path(resourceFile):
 
 def pattern_databases():
     '''
-    Returns a list of file paths of the databases that are in this program.
+    Returns a list of file paths of the databases that are in this program. This
+    will omit the ones with an underscore at the beginning, since those are
+    meant to be used in other patterns, not in of themselves.
     '''
     fileList = {}
     
     for f in os.listdir(program_path(MATHML_PATTERNS_FOLDER)):
         p = os.path.join(program_path(MATHML_PATTERNS_FOLDER), f)
         if os.path.isfile(p):
-            fileList[os.path.splitext(os.path.basename(p))[0]] = p
+            if os.path.basename(p)[0] != '_':
+                fileList[os.path.splitext(os.path.basename(p))[0]] = p
             
     return fileList
 
