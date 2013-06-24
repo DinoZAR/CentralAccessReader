@@ -447,7 +447,8 @@ class CharRecord(Record):
                        60946 : 8751,   # double contour integral
                        60947 : 8752,   # triple contour integral
                        60928 : 8755,   # counter-clockwise loop integral
-                       60929 : 8754    # clockwise loop integral
+                       60929 : 8754,   # clockwise loop integral
+                       59791 : 183,    # dot operator
                        },
                  
                  41681 : {209 : 8913}   # double superset
