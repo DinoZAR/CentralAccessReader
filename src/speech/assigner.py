@@ -7,6 +7,7 @@ from lxml import etree, html
 from HTMLParser import HTMLParser
 from src.mathml.tts import MathTTS
 from src.misc import program_path
+import traceback
 
 # Namespace for XHTML
 html_NS = '{http://www.w3.org/1999/xhtml}'
@@ -59,8 +60,9 @@ class Assigner(object):
         '''
         print ' --> ! Changing math to:', filePath
         try:
-            self.mathTTS = MathTTS(filePath)
+            self.mathTTS = MathTTS(str(filePath))
         except Exception:
+            traceback.print_exc()
             self.mathTTS = None
             pass
         
