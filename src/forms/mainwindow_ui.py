@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/mainwindow.ui'
 #
-# Created: Fri Jun 21 11:25:58 2013
+# Created: Mon Jun 24 10:49:42 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -421,7 +421,7 @@ class Ui_MainWindow(object):
         self.label.setText(_translate("MainWindow", "Rate:", None))
         self.rateSlider.setToolTip(_translate("MainWindow", "Rate", None))
         self.volumeSlider.setToolTip(_translate("MainWindow", "Volume", None))
-        self.getUpdateButton.setText(_translate("MainWindow", "Update!", None))
+        self.getUpdateButton.setText(_translate("MainWindow", "Update Available!", None))
         self.searchLabel.setText(_translate("MainWindow", "Search", None))
         self.menuFile.setTitle(_translate("MainWindow", "&File", None))
         self.menuMathML.setTitle(_translate("MainWindow", "&MathML", None))

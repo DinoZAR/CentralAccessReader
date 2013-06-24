@@ -124,5 +124,38 @@ def run_update_installer():
     '''
     if os.path.exists(SETUP_TEMP_FILE):
         if platform.system() == 'Windows':
-            result = subprocess.Popen(r'runas /user:administrator "' + SETUP_TEMP_FILE + r'"')
+            
+            batch = '''
+@echo off
+            
+:: Get ADMIN Privs
+:-------------------------------------
+mkdir "%windir%\BatchGotAdmin"
+if '%errorlevel%' == '0' (
+  rmdir "%windir%\BatchGotAdmin" & goto gotAdmin 
+) else ( goto UACPrompt )
+
+:UACPrompt
+    echo Set UAC = CreateObject^("Shell.Application"^) > "%temp%\getadmin.vbs"
+    echo UAC.ShellExecute %0, "", "", "runas", 1 >> "%temp%\getadmin.vbs"
+
+    "%temp%\getadmin.vbs"
+    exit /B
+
+:gotAdmin
+    if exist "%temp%\getadmin.vbs" ( del "%temp%\getadmin.vbs" )
+    pushd "%CD%"      
+    CD /D "%~dp0"
+:-------------------------------------
+:: End Get ADMIN Privs
+'''
+            
+            batch += '"' + SETUP_TEMP_FILE + '"'
+            
+            # Save the batch to my temp
+            f = open(misc.temp_path('install_windows.bat'), 'w')
+            f.write(batch)
+            f.close()
+            
+            result = subprocess.Popen(misc.temp_path('install_windows.bat'))
             print 'Done installing new update!'

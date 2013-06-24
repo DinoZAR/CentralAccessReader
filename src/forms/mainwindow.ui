@@ -508,7 +508,7 @@
           <item>
            <widget class="QPushButton" name="getUpdateButton">
             <property name="text">
-             <string>Update!</string>
+             <string>Update Available!</string>
             </property>
             <property name="icon">
              <iconset resource="resource.qrc">
