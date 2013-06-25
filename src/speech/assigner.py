@@ -83,7 +83,10 @@ class Assigner(object):
             if configuration.tag_image:
                     myList.append(['Image. ' + altText + '. End image.', 'image'])
             else:
-                myList.append([altText, 'image'])
+                if len(altText.strip()) > 0:
+                    myList.append([altText, 'image'])
+                else:
+                    myList.append(['Image.', 'image'])
             if element.tail != None:
                 myList.append([element.tail, 'text'])
         
@@ -106,10 +109,14 @@ class Assigner(object):
                 altText = child.get('alt')
                 if altText == None:
                     altText = ' '
+                    
                 if configuration.tag_image:
                     myList.append(['Image. ' + altText + '. End image.', 'image'])
                 else:
-                    myList.append([altText, 'image'])
+                    if len(altText.strip()) > 0:
+                        myList.append([altText, 'image'])
+                    else:
+                        myList.append(['Image.', 'image'])
                 if child.tail != None:
                     myList.append([child.tail, 'text'])
                     
