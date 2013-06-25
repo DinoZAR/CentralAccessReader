@@ -265,7 +265,12 @@ function GetSelectionRange() {
 			range = newRange;
 		}
 		beginOffset = lastSearchOffset;
-		range.setEnd(document.body.lastChild, document.body.lastChild.length);
+		var lastElement = DeepestChild(document.body.lastChild, true);
+		
+		range.setEnd(lastElement, lastElement.length);
+		
+		console.debug('My last element: ' + lastElement.toString());
+		console.debug('My selection range: ' + range.toString());
 	}
 	
 	return range;
@@ -278,7 +283,7 @@ function GetSelectionHTML() {
 	return GetHTMLSource(range);
 }
 
-// Takes a Range object and extracts the HTML content
+// Takes a Range object and extracts the HTML content as text
 function GetHTMLSource(range) {
     var clonedSelection = range.cloneContents();
 	div = document.createElement('div');
