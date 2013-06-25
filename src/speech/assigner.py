@@ -75,10 +75,15 @@ class Assigner(object):
             myList.append([element.text, 'text'])
         
         if element.tag == 'img':
+            
+            altText = element.get('alt')
+            if altText == None:
+                altText = ' '
+            
             if configuration.tag_image:
-                    myList.append(['Image. ' + element.get('alt') + '. End image.', 'image'])
+                    myList.append(['Image. ' + altText + '. End image.', 'image'])
             else:
-                myList.append([element.get('alt'), 'image'])
+                myList.append([altText, 'image'])
             if element.tail != None:
                 myList.append([element.tail, 'text'])
         
@@ -97,10 +102,14 @@ class Assigner(object):
                     myList.extend(self._recursiveGetSpeech(child, configuration))
                         
             elif testTag == 'img':
+                
+                altText = child.get('alt')
+                if altText == None:
+                    altText = ' '
                 if configuration.tag_image:
-                    myList.append(['Image. ' + child.get('alt') + '. End image.', 'image'])
+                    myList.append(['Image. ' + altText + '. End image.', 'image'])
                 else:
-                    myList.append([child.get('alt'), 'image'])
+                    myList.append([altText, 'image'])
                 if child.tail != None:
                     myList.append([child.tail, 'text'])
                     
