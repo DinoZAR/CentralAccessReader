@@ -462,6 +462,13 @@ class CharRecord(Record):
                        60165 : 10530   # diagonal arrow bottom left to top right
                        },
                  
+                 24 : {61189 : 8195,   # em space
+                       61188 : 8201,   # thick space
+                       61186 : 8201,   # thin space - SAME AS ABOVE FOR NOW
+                       61192 : 8202,   # one-point space
+                       61185 : 8203    # zero-width space (what's the point of that?)
+                       },
+                 
                  41681 : {209 : 8913}   # double superset
                  }
     
