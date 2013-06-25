@@ -232,6 +232,21 @@ function GetSelectionRange() {
 			}
 		}
 		
+		// Move start forward so that it removes the whitespace
+		if ((range.startContainer.nodeName == '#text')) {
+			var whitespaceRegex = /\s+/g;
+			var sub = range.startContainer.data;
+			console.debug('Substring is: ' + sub);
+			sub = sub.substring(range.startOffset);
+			console.debug('Substring is: ' + sub);
+			var result = whitespaceRegex.exec(sub);
+			if (result != null) {
+				if (result.index == 0) {
+					range.setStart(range.startContainer, whitespaceRegex.lastIndex + range.startOffset);
+				}
+			}
+		}
+		
 		// If I have a paragraph with no text, move the range to the next element
 		if ((range.startContainer.nodeName == 'P') && ($(range.startContainer).text() == '')) {
 			range.setStart(NextElement(range.startContainer), 0);
