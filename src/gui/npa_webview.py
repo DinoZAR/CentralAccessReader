@@ -7,6 +7,7 @@ from PyQt4.QtWebKit import QWebView, QWebPage
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QApplication
 import os
+from src import misc
 
 class NPAWebView(QWebView):
     '''
@@ -21,6 +22,12 @@ class NPAWebView(QWebView):
         self.mainWindow = mainWindow
         self.setAcceptDrops(True)
         self.myZoomFactor = 1.0
+        
+        # Disable the context menu if in a release environment
+        if misc.is_release_environment():
+            def nothing(s, event):
+                pass
+            self.contextMenuEvent = nothing
         
     def dragEnterEvent(self, e):
         print 'I\'m bringing something into CAR!'

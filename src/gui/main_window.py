@@ -94,10 +94,15 @@ class MainWindow(QtGui.QMainWindow):
         self.bookmarksModel = BookmarksTreeModel(BookmarkNode(None, 'Something'))
         self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
         
-        # This is my web inspector for debugging my JavaScript code
-        self.webInspector = QWebInspector()
-        self.ui.webView.settings().setAttribute(QWebSettings.DeveloperExtrasEnabled, True)
-        self.webInspector.setPage(self.ui.webView.page())
+        # Hide and other disable development tools if we are in a release
+        # environment
+        if misc.is_release_environment():
+            self.ui.menuMathML.menuAction().setVisible(False)
+        else:
+            # This is my web inspector for debugging my JavaScript code
+            self.webInspector = QWebInspector()
+            self.ui.webView.settings().setAttribute(QWebSettings.DeveloperExtrasEnabled, True)
+            self.webInspector.setPage(self.ui.webView.page())
         
         # Set the math TTS using the general pattern database
         try:
