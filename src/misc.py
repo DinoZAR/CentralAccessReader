@@ -161,8 +161,10 @@ class UpdateQtThread(Thread):
         self._stopping = False
         
     def run(self):
+        print 'Gui updator running...'
         while not self._stopping:
             QtGui.qApp.processEvents()
+            print '.'
     
     def stop(self):
         self._stopping = True

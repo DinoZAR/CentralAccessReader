@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/mainwindow.ui'
 #
-# Created: Mon Jun 24 10:49:42 2013
+# Created: Mon Jun 24 14:52:14 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(1414, 790)
+        MainWindow.resize(1296, 927)
         font = QtGui.QFont()
         font.setPointSize(12)
         MainWindow.setFont(font)
@@ -234,10 +234,11 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addItem(spacerItem1)
         self.getUpdateButton = QtGui.QPushButton(self.layoutWidget1)
         icon10 = QtGui.QIcon()
-        icon10.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/messagebox_warning.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon10.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/update_down_arrow.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.getUpdateButton.setIcon(icon10)
         self.getUpdateButton.setIconSize(QtCore.QSize(32, 32))
         self.getUpdateButton.setCheckable(False)
+        self.getUpdateButton.setFlat(True)
         self.getUpdateButton.setObjectName(_fromUtf8("getUpdateButton"))
         self.horizontalLayout.addWidget(self.getUpdateButton)
         self.horizontalLayout.setStretch(8, 1)
@@ -297,7 +298,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.addWidget(self.splitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1414, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1296, 21))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))

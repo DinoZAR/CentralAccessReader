@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1414</width>
-    <height>790</height>
+    <width>1296</width>
+    <height>927</height>
    </rect>
   </property>
   <property name="font">
@@ -512,7 +512,7 @@
             </property>
             <property name="icon">
              <iconset resource="resource.qrc">
-              <normaloff>:/icons/icons/messagebox_warning.png</normaloff>:/icons/icons/messagebox_warning.png</iconset>
+              <normaloff>:/icons/icons/update_down_arrow.png</normaloff>:/icons/icons/update_down_arrow.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -522,6 +522,9 @@
             </property>
             <property name="checkable">
              <bool>false</bool>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -650,7 +653,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1414</width>
+     <width>1296</width>
      <height>21</height>
     </rect>
    </property>

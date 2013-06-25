@@ -1,8 +1,10 @@
 <RCC>
   <qresource prefix="/icons">
+    <file>icons/update_down_arrow_big.png</file>
+    <file>icons/dialog_ok_apply.png</file>
     <file>icons/update-in-progress.gif</file>
-    <file>icons/messagebox_warning.png</file>
     <file>icons/gear.png</file>
+    <file>icons/update_down_arrow.png</file>
     <file>icons/application_exit.png</file>
     <file>icons/document_open.png</file>
     <file>icons/help_about.png</file>

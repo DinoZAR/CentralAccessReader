@@ -117,45 +117,26 @@ def get_version_number(versionFile):
     f.close()
     return float(re.search(r'[0-9]+.[0-9]+', stuff).group(0))
 
-def run_update_installer():
-    '''
-    Runs the update installer. It will use the correct mechanisms depending on
-    the platform.
-    '''
-    if os.path.exists(SETUP_TEMP_FILE):
-        if platform.system() == 'Windows':
-            
-            batch = '''
-@echo off
-            
-:: Get ADMIN Privs
-:-------------------------------------
-mkdir "%windir%\BatchGotAdmin"
-if '%errorlevel%' == '0' (
-  rmdir "%windir%\BatchGotAdmin" & goto gotAdmin 
-) else ( goto UACPrompt )
-
-:UACPrompt
-    echo Set UAC = CreateObject^("Shell.Application"^) > "%temp%\getadmin.vbs"
-    echo UAC.ShellExecute %0, "", "", "runas", 1 >> "%temp%\getadmin.vbs"
-
-    "%temp%\getadmin.vbs"
-    exit /B
-
-:gotAdmin
-    if exist "%temp%\getadmin.vbs" ( del "%temp%\getadmin.vbs" )
-    pushd "%CD%"      
-    CD /D "%~dp0"
-:-------------------------------------
-:: End Get ADMIN Privs
-'''
-            
-            batch += '"' + SETUP_TEMP_FILE + '"'
-            
-            # Save the batch to my temp
-            f = open(misc.temp_path('install_windows.bat'), 'w')
-            f.write(batch)
-            f.close()
-            
-            result = subprocess.Popen(misc.temp_path('install_windows.bat'))
-            print 'Done installing new update!'
+class RunUpdateInstallerThread(Thread):
+    
+    def __init__(self):
+        Thread.__init__(self)
+        self._closeUpdateSignal = None
+        
+    def setUpdateFinishSignal(self, closeFunction):
+        self._closeUpdateSignal = closeFunction
+        
+    def run(self):
+        '''
+        Runs the update installer. It will use the correct mechanisms depending on
+        the platform.
+        '''
+        if os.path.exists(SETUP_TEMP_FILE):
+            if platform.system() == 'Windows':
+                p = subprocess.Popen('start /wait "" "' + SETUP_TEMP_FILE + '" /VERYSILENT', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                p.wait()
+                print 'stdout:', p.stdout.read()
+                print 'stderr:', p.stderr.read()
+                
+        print 'Done installing new update!'
+        self._closeUpdateSignal.emit()

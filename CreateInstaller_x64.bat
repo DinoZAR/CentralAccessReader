@@ -1,7 +1,7 @@
 @echo off
 
-:: Add NSIS and Python to my path
-set PATH=%PATH%;C:\Program Files (x86)\NSIS;C:\Python27
+:: Add Inno Setup and Python to my path
+set PATH=%PATH%;C:\Program Files (x86)\Inno Setup 5;C:\Python27
 
 :: Deleting
 echo Deleting previous distribution folder...
@@ -60,13 +60,13 @@ XCOPY Tutorial.docx "dist\Central Access Reader\" /D /Y /Q
 echo Copying version file...
 XCOPY version.txt "dist\Central Access Reader\" /D /Y /Q
 
-:: Create the NSIS script
-echo Creating NSIS script...
-python generate_nsis_script.py 64
+:: Create the Inno Setup script
+echo Creating Inno Setup script...
+python generate_inno_setup_script.py 64
 
-:: Compile NSIS script
-echo Compiling NSIS script into installer...
-makensis /V4 NSIS_installer_script.nsi
+:: Compile Inno Setup script
+echo Compiling Inno Setup script into installer...
+iscc CAR_Setup.iss
 
 :: Copy the setup file to the top of the Central Access Reader directory
 echo Moving setup file to top...

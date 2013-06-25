@@ -23,13 +23,15 @@ from src.gui.pages import PagesTreeModel, PageNode
 from src.gui.about import AboutDialog
 from src.gui.bug_reporter import BugReporter
 from src.gui.update_in_progress import UpdateInstallProgressDialog
+from src.gui.update_done import UpdateDoneDialog
+from src.gui.update_prompt import UpdatePromptDialog
 from src.mathtype.parser import MathTypeParseError
 from src.mathml.tts import MathTTS
 from src.mathml import pattern_editor
 from src.speech.assigner import Assigner
 from src.speech.worker import SpeechWorker
 from src.docx.importer import DocxDocument
-from src.updater import GetUpdateThread, run_update_installer
+from src.updater import GetUpdateThread, RunUpdateInstallerThread
 from src import misc
 
 class MainWindow(QtGui.QMainWindow):
@@ -50,6 +52,7 @@ class MainWindow(QtGui.QMainWindow):
     
     # Program update notification
     notifyProgramUpdate = QtCore.pyqtSignal()
+    programUpdateFinish = QtCore.pyqtSignal()
     
     # JavaScript mutex
     javascriptMutex = QMutex()
@@ -168,8 +171,11 @@ class MainWindow(QtGui.QMainWindow):
         self.checkUpdateThread = GetUpdateThread(self.showUpdateButton)
         self.checkUpdateThread.start()
         
-        # Update in progress dialog
+        # Program updater threads and dialogs
         self.updateInstallProgressDialog = None
+        self.updateDoneDialog = None
+        self.updator = RunUpdateInstallerThread()
+        self.programUpdateFinish.connect(self.finishUpdate)
             
     def closeEvent(self, event):
         self.configuration.zoom_content = self.ui.webView.getZoom()
@@ -678,13 +684,7 @@ class MainWindow(QtGui.QMainWindow):
         '''
         Runs the setup file to update this program, when one exists.
         '''
-        question = QtGui.QMessageBox()
-        question.setIcon(QtGui.QMessageBox.Question)
-        question.setText('An update is available!')
-        question.setInformativeText('Would you like to install it?')
-        question.setStandardButtons(QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
-        question.setDefaultButton(QtGui.QMessageBox.No)
-        
+        question = UpdatePromptDialog(self)
         result = question.exec_()
         
         if result == QtGui.QMessageBox.Yes:
@@ -693,10 +693,15 @@ class MainWindow(QtGui.QMainWindow):
             self.updateInstallProgressDialog = UpdateInstallProgressDialog(self)
             self.updateInstallProgressDialog.show()
             
-            # Run the installer in here
-            run_update_installer()
+            # Run the installer on a separate thread
+            self.updator.setUpdateFinishSignal(self.programUpdateFinish)
+            self.updator.start()
+            print 'Updator started!'
             
-            self.updateInstallProgressDialog.close()
+    def finishUpdate(self):
+        self.updateInstallProgressDialog.close()
+        self.updateDoneDialog = UpdateDoneDialog(self)
+        self.updateDoneDialog.exec_()
             
     def setSettingsEnableState(self):
         '''
