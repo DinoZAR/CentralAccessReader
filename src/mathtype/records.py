@@ -41,6 +41,11 @@ MATHML_OPERATORS = ['+',
                     unichr(8640), # right arrow barb up
                     unichr(8641), # right arrow barb down
                     unichr(8644), # top right arrow, bottom left arrow
+                    unichr(10529),# diagonal arrow top left to bottom right
+                    unichr(10530),# diagonal arrow bottom left to top right
+                    unichr(10562),# right arrow over small left arrow
+                    unichr(10564),# small right arrow over left arrow
+                    unichr(10564),# 
                     unichr(8756), # 3 dot therefore
                     unichr(8757), # 3 dot because
                     unichr(8717), # such that
@@ -449,6 +454,12 @@ class CharRecord(Record):
                        60928 : 8755,   # counter-clockwise loop integral
                        60929 : 8754,   # clockwise loop integral
                        59791 : 183,    # dot operator
+                       60164 : 8636,   # NOT MATCH - small right harpoon over left harpoon
+                       60163 : 8636,   # NOT MATCH - right harpoon over small left harpoon
+                       60162 : 10564,  # small right arrow over left arrow
+                       60161 : 10562,  # right arrow over small left arrow
+                       60166 : 10529,  # diagonal arrow top left to bottom right
+                       60165 : 10530   # diagonal arrow bottom left to top right
                        },
                  
                  41681 : {209 : 8913}   # double superset
