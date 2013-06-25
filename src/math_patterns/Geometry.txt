@@ -1,8 +1,9 @@
-//  ______     ______     __   __     ______     ______     ______     __        
-// /\  ___\   /\  ___\   /\ "-.\ \   /\  ___\   /\  == \   /\  __ \   /\ \       
-// \ \ \__ \  \ \  __\   \ \ \-.  \  \ \  __\   \ \  __<   \ \  __ \  \ \ \____  
-//  \ \_____\  \ \_____\  \ \_\\"\_\  \ \_____\  \ \_\/\_\  \ \_\/\_\  \ \_____\ 
-//   \/_____/   \/_____/   \/_/ \/_/   \/_____/   \/_/\/_/   \/_/\/_/   \/_____/ 
+//   ________                             __                 
+//  /  _____/  ____  ____   _____   _____/  |________ ___.__.
+// /   \  ____/ __ \/  _ \ /     \_/ __ \   __\_  __ <   |  |
+// \    \_\  \  ___(  <_> )  Y Y  \  ___/|  |  |  | \/\___  |
+//  \______  /\___  >____/|__|_|  /\___  >__|  |__|   / ____|
+//         \/     \/            \/     \/             \/     
 //
 // --------------
 // Order Matters!
@@ -42,7 +43,7 @@ diamond = mi("&#8900;") -> 'diamond,'
 
 
 
-identical = mi("&#8801;") -> 'is identical to,'
+identical = mi("&#8801;") -> 'is congruent to,'
 
 
 
@@ -52,12 +53,12 @@ plus = mo("+") -> 'plus,'
 summation = mi("&#8721;") -> 'summation,'
 
 
-tilde = mo("&#732;") -> 'tilde,'
+tilde = mo("&#732;") -> 'is similar to,'
 
 
-tilde = mo("~") -> 'tilde,'
+tilde = mo("~") -> 'is similar to,'
 
-tilde = mi("~") -> 'tilde,'
+tilde = mi("~") -> 'is similar to,'
 
 
 times = mi("&#8901;") -> 'times,'
@@ -257,7 +258,22 @@ integral = msub([integral] ?) -> '{1} sub {2} of,'
 
 infinity = mi("&#8734;") -> 'infinity'
 
-infinity = mn("&#8734;") -> 'infinity'
+infinity = mn("&#8734;") -> 'infinity'
+
+
+// ------------------------------------------------------------------------------
+// Geometry Specific
+// ------------------------------------------------------------------------------
+congruent = approxEqualTilde -> 'is congruent to'
+underBothArrow = mover(? bar) -> 'the line segment {1},'
+underBothArrow = mover(? arc) -> 'the arc {1},'
+underBothArrow = mover(? leftArrow) -> 'the directly line segment from {1},'
+underBothArrow = mover(? rightArrow) -> 'the directly line segment from {1},'
+thePoint = p colon openParen ? comma ? closeParen -> 'the point {4}, {6},'
+thePoint = p openParen ? comma ? closeParen -> 'the point {3}, {5},'
+thePoint = openParen ? comma ? closeParen -> 'the point {2}, {4},'
+thePoint = openParen ? comma ? comma ? closeParen -> 'the point {2}, {4}, {6}'
+
 
 
 // ------------------------------------------------------------------------------
@@ -268,7 +284,7 @@ infinity = mn("&#8734;") -> 'infinity'
 
 overBothArrow = munder(? [arrow]) -> '{1}, over {2},'
 
-underBothArrow = mover(? [arrow]) -> '{1}, under {2},'
+
 
 overUnderArrowB = munderover(rightArrow mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
 
