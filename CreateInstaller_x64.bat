@@ -70,9 +70,13 @@ iscc CAR_Setup.iss
 
 :: Copy the setup file to the top of the Central Access Reader directory
 echo Moving setup file to top...
-move /Y CAR_Setup_64.exe ../../
+move /Y CAR_Setup_64.exe ..\..\
+
+:: Also copy the version text file to put up there too
+XCOPY version.txt "..\..\" /D /Y /Q
 
 echo ----------------------------------
 echo Done!
 echo Your file can be found as CAR_Setup_64.exe.
+echo The version file is called version.txt
 echo ----------------------------------
