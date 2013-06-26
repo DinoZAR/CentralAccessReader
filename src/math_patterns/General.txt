@@ -427,6 +427,7 @@ unionSyn = munderover(union ? ?) -> 'the {1} of'
 // ------------------------------------------------------------------------------
 // Parenthetical Expressions
 // ------------------------------------------------------------------------------
+absoluteValue = verticalBar + verticalBar -> 'absolute value {2} end absolute'
 cuberoot = mroot(mrow(+) mrow(three)) -> 'the cube root of {1}'
 
 rootPowers = mroot(mrow(+) mrow(+)) -> 'the {2} root of {1}'

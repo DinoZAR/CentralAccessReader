@@ -1,7 +1,7 @@
 import copy
 from pattern_tree import PatternTree
 
-def transform(tree, pattern):
+def transform(tree, pattern, gotMatchFlag=None):
     '''
     Transforms the tree with the pattern, converting all matched nodes to
     Variable objects representing that match.
@@ -13,6 +13,11 @@ def transform(tree, pattern):
     while start != None:
         
         if _testMatch(start, pattern):
+            
+            # Report that a match was found
+            if gotMatchFlag != None:
+                gotMatchFlag[:] = [True]
+            
             alreadyVisited = True
             start = _transformNode(start, pattern)
             if start.parent == None:

@@ -6,8 +6,10 @@ this is the script for that.
 
 @author: Spencer Graffe
 '''
+from src.misc import program_path
+
 MATHML_PATH = 'C:\\Users\\GraffeS\\Desktop\\test.xml'
-DATABASE_PATH = 'C:\\Users\\GraffeS\\Desktop\\data.txt'
+DATABASE_PATH = 'W:\\Nifty Prose Articulator\\workspace2\\another\\src\\math_patterns\\General.txt'
 
 print 'Starting!'
 
@@ -15,8 +17,7 @@ from lxml import etree
  
 from src.mathml.pattern_tree import convertDOMToPatternTree, PatternTree
 from src.mathml.database import parse, convertToPatternTree
-from src.mathml.parser import transform
-from src.misc import program_path
+from src.mathml.parser import transform, _testMatch
  
 # Test my iterator out completely before I try anything
 mathmlFile = open(MATHML_PATH, 'r')
@@ -29,21 +30,25 @@ print 'Tree:'
 print unicode(myTree).encode('utf-8')
 
 databaseFile = open(DATABASE_PATH, 'r')
-database = parse(databaseFile.read())
+database = parse(databaseFile.read(), DATABASE_PATH)
 databaseFile.close()
 
 print 'Patterns!'
 for p in database['patterns']:
     pattern = convertToPatternTree(p)
-    print '--------------------------'
-    print 'Pattern:'
-    print unicode(pattern).encode('utf-8')
-     
-    myTree = transform(myTree, pattern)
     
-    print
-    print 'After:'
-    print unicode(myTree).encode('utf-8')
+    gotMatch = [False]
+    
+    myTree = transform(myTree, pattern, gotMatchFlag=gotMatch)
+    
+    if gotMatch[0]:
+        print '--------------------------'
+        print 'Pattern:'
+        print unicode(pattern).encode('utf-8')
+        
+        print
+        print 'After:'
+        print unicode(myTree).encode('utf-8')
      
 print
 print

@@ -242,7 +242,7 @@ parser = yacc.yacc(debug=False)
 # User Functions : These are what other programmers should be using
 # ------------------------------------------------------------------------------
 
-def parse(inputString, filePath=None):
+def parse(inputString, filePath):
 	
 	# Give the lexer some input
 	lexer.input(inputString)

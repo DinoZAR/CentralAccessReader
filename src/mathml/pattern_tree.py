@@ -141,8 +141,8 @@ class PatternTree(object):
                     if curr == None:
                         return (True, curr)
                     if self.next != None:
-                        if self.next.isMatch(curr):
-                            return (True, curr.previous)
+                        if self.next.isMatch(curr)[0]:
+                            return (True, curr)
                     curr = curr.next
                         
         return (False, None)
