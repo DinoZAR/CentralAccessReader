@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/mainwindow.ui'
 #
-# Created: Mon Jun 24 14:52:14 2013
+# Created: Wed Jun 26 09:44:08 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -388,8 +388,8 @@ class Ui_MainWindow(object):
         self.menuFunctions.addAction(self.actionZoom_Out)
         self.menuFunctions.addSeparator()
         self.menuFunctions.addAction(self.actionSearch)
-        self.menuSettings.addAction(self.actionHighlights_Colors_and_Fonts)
         self.menuSettings.addAction(self.actionSpeech)
+        self.menuSettings.addAction(self.actionHighlights_Colors_and_Fonts)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuFunctions.menuAction())
         self.menubar.addAction(self.menuSettings.menuAction())
@@ -438,6 +438,7 @@ class Ui_MainWindow(object):
         self.actionTutorial.setText(_translate("MainWindow", "&Tutorial", None))
         self.actionTutorial.setShortcut(_translate("MainWindow", "Ctrl+H", None))
         self.actionAbout.setText(_translate("MainWindow", "&About", None))
+        self.actionAbout.setShortcut(_translate("MainWindow", "Ctrl+Shift+H", None))
         self.actionReport_a_Bug.setText(_translate("MainWindow", "Report a &Bug", None))
         self.actionTake_A_Survey.setText(_translate("MainWindow", "Take A &Survey", None))
         self.actionSearch.setText(_translate("MainWindow", "S&earch", None))
@@ -448,10 +449,13 @@ class Ui_MainWindow(object):
         self.actionStop.setText(_translate("MainWindow", "&Stop", None))
         self.actionStop.setShortcut(_translate("MainWindow", "Ctrl+S", None))
         self.actionSave_Selection_to_MP3.setText(_translate("MainWindow", "Save &Selection to MP3", None))
+        self.actionSave_Selection_to_MP3.setShortcut(_translate("MainWindow", "Ctrl+Shift+S", None))
         self.actionSave_All_to_MP3.setText(_translate("MainWindow", "Save &All to MP3", None))
-        self.actionSave_All_to_MP3.setShortcut(_translate("MainWindow", "Ctrl+Shift+S", None))
+        self.actionSave_All_to_MP3.setShortcut(_translate("MainWindow", "Ctrl+S", None))
         self.actionHighlights_Colors_and_Fonts.setText(_translate("MainWindow", "&Highlights, Colors, and Fonts", None))
+        self.actionHighlights_Colors_and_Fonts.setShortcut(_translate("MainWindow", "F2", None))
         self.actionSpeech.setText(_translate("MainWindow", "&Speech", None))
+        self.actionSpeech.setShortcut(_translate("MainWindow", "F1", None))
         self.actionZoom_In.setText(_translate("MainWindow", "Zoom In", None))
         self.actionZoom_In.setShortcut(_translate("MainWindow", "Ctrl+=", None))
         self.actionZoom_Out.setText(_translate("MainWindow", "Zoom Out", None))

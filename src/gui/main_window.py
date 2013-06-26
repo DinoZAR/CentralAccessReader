@@ -31,7 +31,7 @@ from src.mathml import pattern_editor
 from src.speech.assigner import Assigner
 from src.speech.worker import SpeechWorker
 from src.docx.importer import DocxDocument
-from src.updater import GetUpdateThread, RunUpdateInstallerThread
+from src.updater import GetUpdateThread, RunUpdateInstallerThread, SETUP_FILE
 from src import misc
 
 class MainWindow(QtGui.QMainWindow):
@@ -695,12 +695,15 @@ class MainWindow(QtGui.QMainWindow):
         if result == QtGui.QMessageBox.Yes:
             
             # Show a progress dialog with something spinning here
-            self.updateInstallProgressDialog = UpdateInstallProgressDialog(self)
-            self.updateInstallProgressDialog.show()
+            #self.updateInstallProgressDialog = UpdateInstallProgressDialog(self)
+            #self.updateInstallProgressDialog.show()
             
             # Run the installer on a separate thread
-            self.updator.setUpdateFinishSignal(self.programUpdateFinish)
-            self.updator.start()
+            #self.updator.setUpdateFinishSignal(self.programUpdateFinish)
+            #self.updator.start()
+            
+            webbrowser.open(SETUP_FILE)
+            
             print 'Updator started!'
             
     def finishUpdate(self):

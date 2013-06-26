@@ -168,13 +168,13 @@ def convertRecords(i, records, parentStack):
             convertRecords(0, records[i].childRecords, parentStack)
             parentStack.pop()
             
-        if isinstance(records[i], PileRecord):
+        elif isinstance(records[i], PileRecord):
             newElem = etree.SubElement(parentStack[-1], 'mrow')
             parentStack.append(newElem)
             convertRecords(0, records[i].childRecords, parentStack)
             parentStack.pop()
             
-        if isinstance(records[i], CharRecord):
+        elif isinstance(records[i], CharRecord):
             character = unichr(records[i].mtCode)
             elem = None
             if character in MATHML_OPERATORS:
@@ -193,9 +193,13 @@ def convertRecords(i, records, parentStack):
             
             parentStack[-1].append(elem)
                 
-        if isinstance(records[i], TemplateRecord):
+        elif isinstance(records[i], TemplateRecord):
             import templates
-            data = templates.getMathMLFromTemplate(records[i], i, records)
+            data = None
+            if len(parentStack[-1]) > 0:
+                data = templates.getMathMLFromTemplate(records[i], i, records, parentStack[-1][-1])
+            else:
+                data = templates.getMathMLFromTemplate(records[i], i, records, None)
             while data[1] > 0:
                 parentStack[-1].remove(parentStack[-1][-1])
                 data = (data[0], data[1] - 1)
@@ -203,7 +207,7 @@ def convertRecords(i, records, parentStack):
                 for d in data[0]:
                     parentStack[-1].append(d)
         
-        if isinstance(records[i], MatrixRecord):
+        elif isinstance(records[i], MatrixRecord):
             root = etree.SubElement(parentStack[-1], 'mtable')
             for r in range(records[i].rows):
                 rowElem = etree.SubElement(root, 'mtr')

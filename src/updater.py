@@ -133,10 +133,11 @@ class RunUpdateInstallerThread(Thread):
         '''
         if os.path.exists(SETUP_TEMP_FILE):
             if platform.system() == 'Windows':
-                p = subprocess.Popen('start /wait "" "' + SETUP_TEMP_FILE + '" /VERYSILENT', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                p.wait()
-                print 'stdout:', p.stdout.read()
-                print 'stderr:', p.stderr.read()
+                #p = subprocess.Popen('start /wait "" "' + SETUP_TEMP_FILE + '" /VERYSILENT', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                p = subprocess.Popen('"' + SETUP_TEMP_FILE + '"', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                #p.wait()
+                #print 'stdout:', p.stdout.read()
+                #print 'stderr:', p.stderr.read()
                 
         print 'Done installing new update!'
         self._closeUpdateSignal.emit()

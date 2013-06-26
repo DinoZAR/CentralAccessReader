@@ -701,8 +701,8 @@
     <property name="title">
      <string>&amp;Settings</string>
     </property>
-    <addaction name="actionHighlights_Colors_and_Fonts"/>
     <addaction name="actionSpeech"/>
+    <addaction name="actionHighlights_Colors_and_Fonts"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuFunctions"/>
@@ -759,6 +759,9 @@
    </property>
    <property name="text">
     <string>&amp;About</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+H</string>
    </property>
   </action>
   <action name="actionReport_a_Bug">
@@ -822,6 +825,9 @@
    <property name="text">
     <string>Save &amp;Selection to MP3</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
   </action>
   <action name="actionSave_All_to_MP3">
    <property name="icon">
@@ -832,7 +838,7 @@
     <string>Save &amp;All to MP3</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+S</string>
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="actionHighlights_Colors_and_Fonts">
@@ -843,6 +849,9 @@
    <property name="text">
     <string>&amp;Highlights, Colors, and Fonts</string>
    </property>
+   <property name="shortcut">
+    <string>F2</string>
+   </property>
   </action>
   <action name="actionSpeech">
    <property name="icon">
@@ -851,6 +860,9 @@
    </property>
    <property name="text">
     <string>&amp;Speech</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
    </property>
   </action>
   <action name="actionZoom_In">

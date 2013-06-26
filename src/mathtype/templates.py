@@ -49,7 +49,7 @@ TM_JSTATUS = 35
 TM_STRIKE = 36
 TM_BOX = 37
 
-def getMathMLFromTemplate(templateRecord, currentIndex, records):
+def getMathMLFromTemplate(templateRecord, currentIndex, records, mathmlBefore):
     '''
     Obtains the MathML representation of the template. This may be more than
     one element.
@@ -400,14 +400,17 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records):
         div.append(data.dividend)
         mathmlElements.append(mathml)
         
-    
     elif templateRecord.selector == TM_SUB:
         data = ScrBoxClass(templateRecord)
         mathml = etree.Element('msub')
         base = etree.Element('stuff')
-        convertRecords(0, [records[currentIndex - 1]], [base])
-        removePrevious = 1
-        base = base[0]
+        
+        # If I don't have any MathML before, just put in a empty mrow
+        if mathmlBefore == None:
+            base = etree.Element('mrow')
+        else:
+            base = mathmlBefore
+            
         mathml.append(base)
         mathml.append(data.subscript)
         mathmlElements.append(mathml)
@@ -416,9 +419,13 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records):
         data = ScrBoxClass(templateRecord)
         mathml = etree.Element('msup')
         base = etree.Element('stuff')
-        convertRecords(0, [records[currentIndex - 1]], [base])
-        removePrevious = 1
-        base = base[0]
+        
+        # If I don't have any MathML before, just put in a empty mrow
+        if mathmlBefore == None:
+            base = etree.Element('mrow')
+        else:
+            base = mathmlBefore
+            
         mathml.append(base)
         mathml.append(data.superscript)
         mathmlElements.append(mathml)
@@ -427,9 +434,13 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records):
         data = ScrBoxClass(templateRecord)
         mathml = etree.Element('msubsup')
         base = etree.Element('stuff')
-        convertRecords(0, [records[currentIndex - 1]], [base])
-        removePrevious = 1
-        base = base[0]
+        
+        # If I don't have any MathML before, just put in a empty mrow
+        if mathmlBefore == None:
+            base = etree.Element('mrow')
+        else:
+            base = mathmlBefore
+            
         mathml.append(base)
         mathml.append(data.subscript)
         mathml.append(data.superscript)
