@@ -502,14 +502,14 @@ function GetNextWord(node, offset) {
 	}
 
 	// See if it is an image
-	if (node.nodeName == "IMG") {
+	else if (node.nodeName == "IMG") {
 		var range = document.createRange();
 		range.selectNode(node);
 		return [range, needToGoToNext, true];
 	}
 
 	// See if it is anything else, like text
-	if (node.nodeName == "#text"){
+	else if (node.nodeName == "#text"){
 		range = document.createRange();
 		
 		console.debug("Content: <start>" + node.data + "<end><offset>" + offset.toString() + "<length>" + node.data.length.toString());
@@ -532,7 +532,7 @@ function GetNextWord(node, offset) {
 	
 	else {
 		var range = document.createRange();
-		range.selectNode(node);
+		range.selectNode(DeepestChild(node, false));
 		return [range, needToGoToNext, false]
 	}
 }
