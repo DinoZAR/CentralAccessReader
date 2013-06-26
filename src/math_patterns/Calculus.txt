@@ -242,11 +242,25 @@ integral = msub([integral] ?) -> '{1} sub {2} of'
 
 // -----------------
 
+argumentOf = a r g -> 'argument of'
+
+conjugateOf = c o n j -> 'conjugate of'
+
 deriv = y comma -> 'derivative'
+
+inferior = i n f -> 'inferior'
+
+greatestLowerBound = g l b -> 'greatest lower bound'
+greatestLowerBound = g point l point b point -> 'greatest lower bound'
+
+leastUpperBound = l u b -> 'least upper bound'
+leastUpperBound = l point u point b point -> 'least upper bound'
 
 nthDeriv = msup(y mrow(openParen n closeParen)) -> 'nth derivative'
 
 complexConj = z timesStar -> 'complex conjugate'
+
+supremum = s u p -> 'supremum'
 
 timeDeriv = mover(y dot) -> 'time derivative'
 
@@ -427,7 +441,7 @@ limit = munderover(mrow(l i m) mrow(? rightArrow ?) ?) -> 'the limit as {4}, app
 
 limit = munderover(mrow(l i m) mrow(? upArrow ?) ?) -> 'the limit as {4}, increases to {6}, of'
 
-limit = munderover(mrow(l i m) mrow(? downArrow ?) ?) -> 'the limit as {4}, approaches {6}, of'
+limit = munderover(mrow(l i m) mrow(? downArrow ?) ?) -> 'the limit as {4}, decreases to {6}, of'
 
 limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4}, of'
 
