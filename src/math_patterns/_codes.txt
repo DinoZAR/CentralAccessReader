@@ -36,7 +36,7 @@
 ampersand = mi("&amp;") -> 'ampersand,'
 approxEqual = mi("&#8771;") -> 'is approximately equal to,'
 
-approxEqual = mi("&#8773;") -> 'is approximately equal to,'
+approxEqualTilde = mi("&#8773;") -> 'is approximately equal to,'
 
 approxEqual = mi("&#8776;") -> 'is approximately equal to,'
 
@@ -51,6 +51,10 @@ circleCross = mi("&#8855;") -> 'circled cross,'
 circleDot = mi("&#8857;") -> 'circled dot,'
 
 circlePlus = mi("&#8853;") -> 'circled plus,'
+
+colon = mi(":") -> 'colon'
+
+comma = mi(",") -> ','
 
 coproduct [integral] = mi("&#8720;") -> 'coproduct,'
 
@@ -279,14 +283,15 @@ comma = mi(",") -> ','
 endPeriod = mo(".") -> ''
 
 point = mi(".") -> 'point,'
-space = mi("&#61185;") -> ' '
-
-space = mi("&#61186;") -> ' '
-space = mi("&#61188;") -> ' '
-
-space = mi("&#61189;") -> ' '
-
-space = mi("&#61192;") -> ' '
+//space = mi("&#61185;") -> ' '
+//space = mi("&#61186;") -> ' '
+//space = mi("&#61188;") -> ' '
+//space = mi("&#61189;") -> ' '
+//space = mi("&#61192;") -> ' '
+spaceXL = mi("&#8195;") -> ' '
+spaceL = mi("&#8201;") -> ' '
+spaceM = mi("&#8202;") -> ' '
+spaceS = mi("&#8203;") -> ' '
 
 
 // Letters
@@ -317,56 +322,56 @@ x [variable] = mi("x") -> '"x"'
 y [variable] = mi("y") -> '"y"'
 
 
-A [variable] = mi("A") -> '"capital A"'
+A [variable] = mi("A") -> '"cap A"'
 
-B [variable] = mi("B") -> '"capital B"'
+B [variable] = mi("B") -> '"cap B"'
 
-C [variable] = mi("C") -> '"capital C"'
+C [variable] = mi("C") -> '"cap C"'
 
-D [variable] = mi("D") -> '"capital D"'
+D [variable] = mi("D") -> '"cap D"'
 
-E [variable] = mi("E") -> '"capital E"'
+E [variable] = mi("E") -> '"cap E"'
 
-F [variable] = mi("F") -> '"capital F"'
+F [variable] = mi("F") -> '"cap F"'
 
-G [variable] = mi("G") -> '"capital G"'
+G [variable] = mi("G") -> '"cap G"'
 
-H [variable] = mi("H") -> '"capital H"'
+H [variable] = mi("H") -> '"cap H"'
 
-I [variable] = mi("I") -> '"capital I"'
+I [variable] = mi("I") -> '"cap I"'
 
-J [variable] = mi("J") -> '"capital J"'
+J [variable] = mi("J") -> '"cap J"'
 
-K [variable] = mi("K") -> '"capital K"'
+K [variable] = mi("K") -> '"cap K"'
 
-L [variable] = mi("L") -> '"capital L"'
+L [variable] = mi("L") -> '"cap L"'
 
-M [variable] = mi("M") -> '"capital M"'
-N [variable] = mi("N") -> '"capital N"'
+M [variable] = mi("M") -> '"cap M"'
+N [variable] = mi("N") -> '"cap N"'
 
-O [variable] = mi("O") -> '"capital O"'
+O [variable] = mi("O") -> '"cap O"'
 
-P [variable] = mi("P") -> '"capital P"'
+P [variable] = mi("P") -> '"cap P"'
 
-Q [variable] = mi("Q") -> '"capital Q"'
+Q [variable] = mi("Q") -> '"cap Q"'
 
-R [variable] = mi("R") -> '"capital R"'
+R [variable] = mi("R") -> '"cap R"'
 
-S [variable] = mi("S") -> '"capital S"'
+S [variable] = mi("S") -> '"cap S"'
 
-T [variable] = mi("T") -> '"capital T"'
+T [variable] = mi("T") -> '"cap T"'
 
-U [variable] = mi("U") -> '"capital U"'
+U [variable] = mi("U") -> '"cap U"'
 
-V [variable] = mi("V") -> '"capital V"'
+V [variable] = mi("V") -> '"cap V"'
 
-W [variable] = mi("W") -> '"capital W"'
+W [variable] = mi("W") -> '"cap W"'
 
-X [variable] = mi("X") -> '"capital X"'
+X [variable] = mi("X") -> '"cap X"'
 
-Y [variable] = mi("Y") -> '"capital Y"'
+Y [variable] = mi("Y") -> '"cap Y"'
 
-Z [variable] = mi("Z") -> '"capital Z"'
+Z [variable] = mi("Z") -> '"cap Z"'
 
 // Greek letters
 
@@ -493,27 +498,27 @@ Zeta [variable] = mi("&#918;") -> 'zeta'
 
 ahlef = mi("&#8501;") -> 'ahlef'
 
-bbcapC = mi("&#8450;") -> 'blackboard capital C'
+bbcapC = mi("&#8450;") -> 'blackboard cap C'
 
-bbcapF = mi("&#61573;") -> 'blackboard capital F'
+bbcapF = mi("&#61573;") -> 'blackboard cap F'
 
-bbcapN = mi("&#8469;") -> 'blackboard capital N'
+bbcapN = mi("&#8469;") -> 'blackboard cap N'
 
-bbcapQ = mi("&#8474;") -> 'blackboard capital Q'
+bbcapQ = mi("&#8474;") -> 'blackboard cap Q'
 
-bbcapS = mi("&#61586;") -> 'blackboard capital S'
+bbcapS = mi("&#61586;") -> 'blackboard cap S'
 
-bbcapZ = mi("&#8484;") -> 'blackboard capital Z'
+bbcapZ = mi("&#8484;") -> 'blackboard cap Z'
 
 bblowK = mi("&#61604;") -> 'blackboard k'
 
-frakturA = mi("&#61440;") -> 'Fraktur capital A'
+frakturA = mi("&#61440;") -> 'Fraktur cap A'
 
-frakturI = mi("&#8465;") -> 'Fraktur capital I'
+frakturI = mi("&#8465;") -> 'Fraktur cap I'
 
-frakturM = mi("&#61452;") -> 'Fraktur capital M'
+frakturM = mi("&#61452;") -> 'Fraktur cap M'
 
-frakturR = mi("&#8476;") -> 'Fraktur capital R'
+frakturR = mi("&#8476;") -> 'Fraktur cap R'
 
 invertedOhm = mi("&#8487;") -> 'inverted Ohm sign'
 
@@ -544,6 +549,10 @@ three = mn("3") -> 'three'
 //eight = mn("8") -> 'eight'
 //nine = mn("9") -> 'nine'
 //ten = mn("10") -> 'ten'
+
+infinity = mi("&#8734;") -> 'infinity'
+
+infinity = mn("&#8734;") -> 'infinity'
 
 number = mn(?) -> '"{1}"'
 
