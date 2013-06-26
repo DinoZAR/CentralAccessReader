@@ -281,16 +281,27 @@ hyperbolictangent = t a n h -> 'hyperbolic tangent'
 
 inverseHypeCosine = c o s msup(h mrow(minus one)) -> 'inverse hyperbolic cosine,'
 
-inverseHypeCosine = c o t msup(h mrow(minus one)) -> 'inverse hyperbolic cosine,'
+inverseHypeCotan = c o t msup(h mrow(minus one)) -> 'inverse hyperbolic cotangent,'
 
-inverseHypeCosine = c s c msup(h mrow(minus one)) -> 'inverse hyperbolic cosine,'
+inverseHypeCosec = c s c msup(h mrow(minus one)) -> 'inverse hyperbolic cosecant,'
 
-inverseHypeCosine = s e c msup(h mrow(minus one)) -> 'inverse hyperbolic secant,'
+inverseHypeSec = s e c msup(h mrow(minus one)) -> 'inverse hyperbolic secant,'
 
-inverseHypeCosine = s i n msup(h mrow(minus one)) -> 'inverse hyperbolic sine,'
+inverseHypeSine = s i n msup(h mrow(minus one)) -> 'inverse hyperbolic sine,'
 
-inverseHypeCosine = t a n msup(h mrow(minus one)) -> 'inverse hyperbolic cosine,'
+inverseHypeTan = t a n msup(h mrow(minus one)) -> 'inverse hyperbolic tangent,'
 
+inverseSine = c s msup(c mrow(minus one)) -> 'inverse cosecant,'
+
+inverseSine = c o msup(s mrow(minus one)) -> 'inverse cosine,'
+
+inverseSine = c o msup(t mrow(minus one)) -> 'inverse cotangent,'
+
+inverseSine = s e msup(c mrow(minus one)) -> 'inverse secant,'
+
+inverseSine = s i msup(n mrow(minus one)) -> 'inverse sine,'
+
+inverseSine = t a msup(n mrow(minus one)) -> 'inverse tangent,'
 
 
 hypotenuse = H y p o t e n u s e -> 'Hypotenuse'
@@ -320,19 +331,16 @@ arcsine = a r c s i n -> 'arc sine,'
 
 arctan = a r c t a n -> 'arc tangent,'
 
-inverseCosine = c o msup(s mrow(minus one)) -> 'inverse cosine,'
-
 cosine = c o s -> 'cosine,'
 
 cotangent = c o t -> 'cotangent,'
 
 cosecant = c s c -> 'cosecant,'
 
-
-
-inverseSine = s i msup(n mrow(minus one)) -> 'inverse sine,'
 secant = s e c -> 'secant,'
+
 sine = s i n -> 'sine,'
+
 tangent = t a n -> 'tangent,'
 
 
