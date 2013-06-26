@@ -84,8 +84,8 @@ class Configuration(object):
         
         # Colors
         out += 'Colors:\n'
-        out += '- Enable Text Highlight: ' + str(self.highlight_text_enable) + '\n'
-        out += '- Enable Line Highlight: ' + str(self.highlight_line_enable) + '\n'
+        out += '- Enable Word Highlight: ' + str(self.highlight_text_enable) + '\n'
+        out += '- Enable Sentence Highlight: ' + str(self.highlight_line_enable) + '\n'
         out += '- Content Text: ' + self._createRGBStringFromQColor(self.color_contentText) + '\n'
         out += '- Content Background: ' + self._createRGBStringFromQColor(self.color_contentBackground) + '\n'
         out += '- Highlight Text: ' + self._createRGBStringFromQColor(self.color_highlightText) + '\n'

@@ -103,7 +103,7 @@
        <item row="1" column="0">
         <widget class="QLabel" name="label_4">
          <property name="text">
-          <string>Highlighter Text:</string>
+          <string>Highlighter Word:</string>
          </property>
         </widget>
        </item>
@@ -141,7 +141,7 @@
        <item row="2" column="0">
         <widget class="QLabel" name="label_5">
          <property name="text">
-          <string>Highlighter Line:</string>
+          <string>Highlighter Sentence:</string>
          </property>
         </widget>
        </item>
@@ -210,14 +210,14 @@
        <item>
         <widget class="QCheckBox" name="enableHTextCheckBox">
          <property name="text">
-          <string>Text</string>
+          <string>Word</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QCheckBox" name="enableHLineCheckBox">
          <property name="text">
-          <string>Line</string>
+          <string>Sentence</string>
          </property>
         </widget>
        </item>

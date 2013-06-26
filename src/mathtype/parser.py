@@ -74,12 +74,17 @@ def parseWMF(wmfFile):
         found = False
         try:
             while not done:
-                testString += wmfString.read(1)
+                nextByte = wmfString.read(1)
+                testString += nextByte
+                if len(nextByte) == 0:
+                    found = False
+                    break
                 if len(testString) > 8:
                     testString = testString[1:]
-                if testString == 'AppsMFCC':
-                    done = True
-                    found = True
+                    if testString == 'AppsMFCC':
+                        done = True
+                        found = True              
+                    
         except EOFError:
             return None
         
@@ -97,6 +102,17 @@ def parseWMF(wmfFile):
             # If the signature is something like "Design Science, Inc.", then it is MTEF
             if signature == 'Design Science, Inc.':
                 return parseMTEF(wmfString.read(commentHeader[2]))
+        
+        else:
+            
+            # Make some MathML that says it cannot read this particular math
+            root = etree.Element('math', nsmap={None: 'http://www.w3.org/1998/Math/MathML'})
+            
+            elem = etree.SubElement(root, 'mrow')
+            elem = etree.SubElement(elem, 'mtext')
+            elem.text = 'Couldn\'t read MathType.'
+            
+            return root
             
     except Exception as ex:
         # Write the problem file to my temp

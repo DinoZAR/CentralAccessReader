@@ -557,6 +557,10 @@ infinity = mn("&#8734;") -> 'infinity'
 number = mn(?) -> '"{1}"'
 
 
+// Text
+text = mtext(?) -> '{1}'
+
+
 // Ellipses
 
 diagonalBotLeftEllipsis = mi("&#8944;") -> 'diagonal bottom left top right ellipsis,'

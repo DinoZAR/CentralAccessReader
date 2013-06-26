@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/color_settings.ui'
 #
-# Created: Tue Jun 04 16:20:43 2013
+# Created: Wed Jun 26 10:48:39 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -150,15 +150,15 @@ class Ui_ColorSettings(object):
         self.label_6.setText(_translate("ColorSettings", "Content:", None))
         self.contentBackgroundButton.setText(_translate("ColorSettings", "Background", None))
         self.contentTextButton.setText(_translate("ColorSettings", "Text", None))
-        self.label_4.setText(_translate("ColorSettings", "Highlighter Text:", None))
+        self.label_4.setText(_translate("ColorSettings", "Highlighter Word:", None))
         self.highlighterBackgroundButton.setText(_translate("ColorSettings", "Background", None))
         self.highlighterTextButton.setText(_translate("ColorSettings", "Text", None))
-        self.label_5.setText(_translate("ColorSettings", "Highlighter Line:", None))
+        self.label_5.setText(_translate("ColorSettings", "Highlighter Sentence:", None))
         self.highlighterLineBackgroundButton.setText(_translate("ColorSettings", "Background", None))
         self.highlighterLineTextButton.setText(_translate("ColorSettings", "Text", None))
         self.label_8.setText(_translate("ColorSettings", "Highlighting", None))
-        self.enableHTextCheckBox.setText(_translate("ColorSettings", "Text", None))
-        self.enableHLineCheckBox.setText(_translate("ColorSettings", "Line", None))
+        self.enableHTextCheckBox.setText(_translate("ColorSettings", "Word", None))
+        self.enableHLineCheckBox.setText(_translate("ColorSettings", "Sentence", None))
         self.restoreButton.setToolTip(_translate("ColorSettings", "Restores settings to what they were when you opened the window", None))
         self.restoreButton.setText(_translate("ColorSettings", "Restore", None))
         self.previewButton.setText(_translate("ColorSettings", "Preview", None))
