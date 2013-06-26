@@ -6,9 +6,8 @@ this is the script for that.
 
 @author: Spencer Graffe
 '''
-
-MATHML_PATH = 'C:\\Users\\GraffeS\\Desktop\\mathml.xml'
-DATABASE_PATH = 'C:\\Users\\GraffeS\\Desktop\\general.txt'
+MATHML_PATH = 'C:\\Users\\GraffeS\\Desktop\\test.xml'
+DATABASE_PATH = 'C:\\Users\\GraffeS\\Desktop\\data.txt'
 
 print 'Starting!'
 
