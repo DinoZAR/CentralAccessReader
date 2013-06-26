@@ -28,7 +28,6 @@
 // 3. Over-Under (like sums and integrals)
 // 4. Parenthetical Expressions (like square roots or things in parenthesis)
 // 5. Generic Fallbacks (like fractions, superscripting, and subscripting)
-
 // ------------------------------------------------------------------------------
 // Symbol Code
 // ------------------------------------------------------------------------------
@@ -39,87 +38,65 @@ import _codes.txt
 
 slash = divideBack -> ', backslash,'
 slash = divide -> ', slash,'
-
+
 diamond = mi("&#8900;") -> 'diamond operator'
-
 identical = mi("&#8801;") -> 'triple bars'
-
 plus = mo("+") -> 'plus sign'
-
 summation = mi("&#8721;") -> 'summation sign,'
-
 tilde = mo("&#732;") -> 'not'
-
 tilde = mo("~") -> 'not'
-
 tilde = mi("~") -> 'not'
-
 times = mi("&#8901;") -> 'dot operator'
-
 times = mi("&#59791;") -> 'dot operator'
-
+
 // Parentheses, Brackets, Braces, and Bars
 closeBrace = mo("}") -> 'right curly bracket'
 closeBracket = mo("]") -> 'right square bracket'
 closeParen = mo(")") -> 'right parentheses'
-
 leftAngleBracket = mi("&#9001;") -> 'left angle bracket'
 leftAngleBracket = mo("&#9001;") -> 'left angle bracket'
-
 openBrace = mo("{") -> 'left curly bracket'
 openBracket = mo("[") -> 'left square bracket'
-
 rightAngleBracket = mi("&#9002;") -> 'right angle bracket'
 rightAngleBracket = mo("&#9002;") -> 'right angle bracket'
-
 bullet = mi("&#8226;") -> 'dot operator'
 dot = mo("&#775;") -> 'dot operator'
 dot = mi("&#183;") -> 'dot operator'
-
 perpendicular = mi("&#8869;") -> 'up tack'
 square = mi("&#9633;") -> 'white square'
 
 // Logic
 and = mo("&#8743;") -> 'wedge (and)'
-
 because = mo("&#8757;") -> 'upside-down triple dot'
 compliment = mi("&#8705;") -> 'is a compliment of'
 containsNormalSubgroup = mi("&#8883;") -> 'contains as normal subgroup'
-
 exists = mo("&#8707;") -> 'Backwards E'
 factorial = mo("!") -> 'exclamation point'
 forAll = mo("&#8704;") -> 'Upside-down A'
 greaterThan = mo("&gt;") -> 'greater than'
 greaterThan = mi("&gt;") -> 'greater than'
-
 isElement = mo("&#8712;") -> 'element sign'
 isNotElement = mo("&#8713;") -> 'is not an element of'
 lessThan = mo("&lt;") -> 'less than'
 lessThan = mi("&lt;") -> 'less than'
-
 not = mo("&#172;") -> 'not sign'
-
 or = mo("&#8744;") -> 'wedge (or)'
-
 properSubsetRight = mo("&#8834;") -> 'subset'
 properSubsetLeft = mo("&#8835;") -> 'horseshoe'
-
 therefore = mo("&#8756;") -> 'triple dot'
-
+
 e [variable] = mi("e") -> '"e"'
-
 i [variable] = mi("i") -> '"i"'
-
 z [variable] = mi("z") -> '"z"'
 
 bbcapR = mi("&#8477;") -> 'blackboard cap R'
 
 // Other symbols
+
 
 // ------------------------------------------------------------------------------
 // Logic-based
 // ------------------------------------------------------------------------------
-
 barWedge = munder(or bar) -> 'bar wedge'
 existsOne = exists factorial -> 'backwards E followed by exclamation'
 intersection = munderover(intersection mrow() mrow()) -> 'intersection'
@@ -129,117 +106,65 @@ quadBars = mover(identical bar) -> 'quadruple bars'
 quadBars = munder(identical bar) -> 'quadruple bars'
 union = munderover(union mrow() mrow()) -> 'union'
 
-
-
 // Strikes and Slashes
 
 Strike = menclose(+) -> 'strike {1} end-strike,'
+
 
 //---------------------------------------------------------------
 // Trigonometry-Specific
 //---------------------------------------------------------------
-
-
 hyperboliccosecant = c s c h -> 'hyperbolic cosecant'
-
 hyperboliccosine = c o s h -> 'hyperbolic cosine'
-
 hyperboliccotangent = c o t h -> 'hyperbolic cotangent'
-
 hyperbolicsecant = s e c h -> 'hyperbolic secant'
-
 hyperbolicsine = s i n h -> 'hyperbolic sine'
-
 hyperbolictangent = t a n h -> 'hyperbolic tangent'
-
 inverseHypeCosine = c o s msup(h mrow(minus one)) -> 'inverse hyperbolic cosine,'
-
 inverseHypeCotan = c o t msup(h mrow(minus one)) -> 'inverse hyperbolic cotangent,'
-
 inverseHypeCosec = c s c msup(h mrow(minus one)) -> 'inverse hyperbolic cosecant,'
-
 inverseHypeSec = s e c msup(h mrow(minus one)) -> 'inverse hyperbolic secant,'
-
 inverseHypeSine = s i n msup(h mrow(minus one)) -> 'inverse hyperbolic sine,'
-
 inverseHypeTan = t a n msup(h mrow(minus one)) -> 'inverse hyperbolic tangent,'
-
 inverseSine = c s msup(c mrow(minus one)) -> 'inverse cosecant,'
-
 inverseSine = c o msup(s mrow(minus one)) -> 'inverse cosine,'
-
 inverseSine = c o msup(t mrow(minus one)) -> 'inverse cotangent,'
-
 inverseSine = s e msup(c mrow(minus one)) -> 'inverse secant,'
-
 inverseSine = s i msup(n mrow(minus one)) -> 'inverse sine,'
-
 inverseSine = t a msup(n mrow(minus one)) -> 'inverse tangent,'
-
-
 hypotenuse = H y p o t e n u s e -> 'Hypotenuse'
-
 hypotenuse = h y p o t e n u s e -> 'hypotenuse'
-
 opposite = O p p o s i t e -> 'Opposite'
-
 opposite = o p p o s i t e -> 'opposite'
-
+
 log = l n -> 'natural log of,'
-
 log = l o g -> 'log of,'
-
 log = l o msub(g mrow(e)) -> 'natural log of,'
-
 log = l o msub(g ?) -> 'log base {4}, of'
-
-
+
 arc = a r c -> 'arc'
-
-
-
 arccos = a r c c o s -> 'arc cosine,'
-
 arcsine = a r c s i n -> 'arc sine,'
-
 arctan = a r c t a n -> 'arc tangent,'
-
 cosine = c o s -> 'cosine,'
-
 cotangent = c o t -> 'cotangent,'
-
 cosecant = c s c -> 'cosecant,'
-
 secant = s e c -> 'secant,'
-
 sine = s i n -> 'sine,'
-
 tangent = t a n -> 'tangent,'
 
-
 // Powers and Primes
-
 cubed = msup(? mrow(three)) -> '{1} cubed,'
-
 cubed = msup(? three) -> '{1} cubed,'
-
 degress = msup(? mrow(composition)) -> '{1} degrees,'
-
 squared = msup(? mrow(two)) -> '{1} squared,'
-
 squared = msup(? two) -> '{1} squared,'
-
 supDubPrime = msup(? doublePrime) -> '{1} double prime,'
-
 supPrime = msup(? prime) -> '{1} prime,'
-
 supTriPrime = msup(? triplePrime) -> '{1} triple prime,'
 
-
 // Syntax Quirks
-
 doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'
-
 doubleBarSyn = munder(munder(mrow(+) bar) bar) -> '{1} over double bar'
 doubleDagger = dagger dagger -> 'double dagger'
 
@@ -249,196 +174,107 @@ doubleDagger = dagger dagger -> 'double dagger'
 // ------------------------------------------------------------------------------
 integral = msub([integral] ?) -> '{1} sub {2} of,'
 
-
 // Other symbols
-
 infinityLogic = infinity -> 'lemniscate'
-
 infinityLogic = infinity -> 'lemniscate'
-
 
 
 // ------------------------------------------------------------------------------
-
 // Conditions for arrows based on over or under
-
 // ------------------------------------------------------------------------------
-
 overBothArrow = munder(? [arrow]) -> '{1}, over {2},'
-
 underBothArrow = mover(? [arrow]) -> '{1}, under {2},'
-
 overUnderArrowB = munderover(rightArrow mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
-
 overUnderArrowB = munderover(leftArrow mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
-
 overUnderArrowB = munderover(bothArrow mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
-
 overUnderArrowB = munderover(rightHarpoon mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
-
-
-
 
 
 // ------------------------------------------------------------------------------
 // Under-Over, Integrals, Products, and Summations
 // ------------------------------------------------------------------------------
-
 backPrimes = mmultiscripts(? ? ? ?) -> '{4} {1}'
-
-
 
 // Limits
 
-
-
 limit = munderover(mrow(l i m) mrow(? ? ?) ?) -> 'the limit as {4}, approaches {6}, of'
-
 limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4}, of'
 
-
-
 // Products and Unions
-
-
-
 coproductSyn = munderover(coproduct mrow(+) mrow(+)) -> 'the {1}, from {2}, to {3}, of'
-
 coproductSyn = munderover(coproduct mrow(+) ?) -> 'the {1}, from {2}, of'
-
 coproductSyn = munderover(coproduct ? ?) -> 'the {1}, of'
-
-
-
 integralSyn = munderover(areaIntegral mrow(+) mrow(+)) -> 'the {1}, from {2}, to {3}, of'
-
 integralSyn = munderover(areaIntegral mrow(+) ?) -> 'the {1}, from {2}, of'
-
 integralSyn = munderover(areaIntegral ? ?) -> 'the {1}, of'
-
 integralSyn = munderover(closedIntegral mrow(+) mrow(+)) -> 'the {1} from {2}, to {3}, of'
-
 integralSyn = munderover(closedIntegral mrow(+) ?) -> 'the integral from {2}, of'
-
 integralSyn = munderover(closedIntegral ? ?) -> 'the integral of'
-
 integralSyn = munderover(integral mrow(+) mrow(+)) -> 'the definite {1} from {2}, to {3}, of'
-
 integralSyn = munderover(integral mrow(+) ?) -> 'the {1} from {2}, of'
-
 integralSyn = munderover(integral ? ?) -> 'the {1} of'
-
 integralSyn = munderover(integralCCW mrow(+) mrow(+)) -> 'the{1} from {2}, to {3}, of'
-
 integralSyn = munderover(integralCCW mrow(+) ?) -> 'the {1} from {2}, of'
-
 integralSyn = munderover(integralCCW ? ?) -> 'the {1} of'
-
 integralSyn = munderover(integralCon mrow(+) mrow(+)) -> 'the {1} from {2}, to {3}, of'
-
 integralSyn = munderover(integralCon mrow(+) ?) -> 'the {1} from {2}, of'
-
 integralSyn = munderover(integralCon ? ?) -> 'the {1} of'
-
 integralSyn = munderover(integralCW mrow(+) mrow(+)) -> 'the {1} from {2}, to {3}, of'
-
 integralSyn = munderover(integralCW mrow(+) ?) -> 'the {1} from {2}, of'
-
 integralSyn = munderover(integralCW ? ?) -> 'the {1} of'
-
 integralSyn = munderover(volumeIntegral mrow(+) mrow(+)) -> 'the {1} from {2}, to {3}, of'
-
 integralSyn = munderover(volumeIntegral mrow(+) ?) -> 'the {1} from {2}, of'
-
 integralSyn = munderover(volumeIntegral ? ?) -> 'the {1} of'
-
-
-
 intersectionSyn = munderover(intersection mrow(+) mrow(+)) -> 'the {1} from {2}, to {3}, of'
-
 intersectionSyn = munderover(intersection mrow(+) ?) -> 'the {1} from {2}, of'
-
 intersectionSyn = munderover(intersection ? ?) -> 'the {1} of'
-
-
-
 productSyn = munderover(product mrow(+) mrow(+)) -> 'the {1} from {2}, to {3}, of'
-
 productSyn = munderover(product mrow(+) ?) -> 'the {1} from {2}, of'
-
 productSyn = munderover(product ? ?) -> 'the {1} of'
-
-
-
 sum = munderover(SigmaBig mrow(+) mrow(+)) -> 'the summation from {2}, to {3}, of'
-
 sum = munderover(SigmaBig mrow(+) ?) -> 'the summation from {2}, of'
-
 sum = munderover(SigmaBig ? ?) -> 'the summation of'
-
-
-
 unionSyn = munderover(union mrow(+) mrow(+)) -> 'the {1} from {2}, to {3}, of'
-
 unionSyn = munderover(union mrow(+) ?) -> 'the {1} from {2}, of'
-
 unionSyn = munderover(union ? ?) -> 'the {1} of'
-
-
 
 
 // ------------------------------------------------------------------------------
 // Parenthetical Expressions
 // ------------------------------------------------------------------------------
 cuberoot = mroot(mrow(+) mrow(three)) -> 'the cube root of {1}'
-
 rootPowers = mroot(mrow(+) mrow(+)) -> 'the {2} root of {1}'
-
 squareRoot = msqrt(+) -> 'the square root of {1}'
 
 
-
-
-
 // ------------------------------------------------------------------------------
-
 // Matrices
-
 // ------------------------------------------------------------------------------
-
 matrix = mrow(mtable(#)) -> 'truth table {1}'
 matrix = mtable(#) -> 'truth table {1}'
 matrixPar = mfenced(mrow(mtable(+))) -> 'truth table {1}'
 tableColumn = mtd(+) -> '{1},'
 tableRow = mtr(+) -> 'row, {1}'
+
 
 // ------------------------------------------------------------------------------
 // Generic Fallbacks, Final Collectors
 // ------------------------------------------------------------------------------
 fenced = mfenced(+) -> 'open parenthesis, {1}, closed parenthesis,'
 
-
-
 under = munder(? ?) -> '{1} over {2}'
-
 over = mover(? ?) -> '{1} under {2}'
-
 fraction = mfrac(? ?) -> '{1} over {2}'
-
 leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left superscript {2},'
 leftSub = msup( mrow() mrow(?)) -> 'left subscript {1},'
 leftSup = msub( mrow() mrow(?)) -> 'left superscript {1},'
 subscript = msub(? ?) -> '{1} sub {2}'
 superscript = msup(? ?) -> '{1} to the {2} power'
-
 subsuperscript = msubsup(? ? ?) -> '{1} sub {2} to the {3} power'
 
-
 row = mrow(+) -> '{1}'
-
 row = mrow() -> ''
 style = mstyle(+) -> '{1}'
-
 
 // This is the final collapsing pattern
 final = math(+) -> '{1}'
