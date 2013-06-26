@@ -174,7 +174,7 @@
           </property>
           <widget class="QWidget" name="bookmarksTab">
            <attribute name="title">
-            <string>Bookmarks</string>
+            <string>Headings</string>
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout">
             <property name="spacing">

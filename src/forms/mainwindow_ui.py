@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/mainwindow.ui'
 #
-# Created: Wed Jun 26 09:44:08 2013
+# Created: Wed Jun 26 10:10:35 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -409,7 +409,7 @@ class Ui_MainWindow(object):
         self.expandBookmarksButton.setText(_translate("MainWindow", "Expand", None))
         self.collapseBookmarksButton.setToolTip(_translate("MainWindow", "Collapse Bookmarks", None))
         self.collapseBookmarksButton.setText(_translate("MainWindow", "Collapse", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.bookmarksTab), _translate("MainWindow", "Bookmarks", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.bookmarksTab), _translate("MainWindow", "Headings", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.pagesTab), _translate("MainWindow", "Pages", None))
         self.playButton.setToolTip(_translate("MainWindow", "Read (Ctrl+R)", None))
         self.pauseButton.setToolTip(_translate("MainWindow", "Stop (Ctrl+S)", None))
