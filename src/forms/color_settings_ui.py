@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/color_settings.ui'
 #
-# Created: Wed Jun 26 10:48:39 2013
+# Created: Wed Jun 26 13:34:39 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_ColorSettings(object):
     def setupUi(self, ColorSettings):
         ColorSettings.setObjectName(_fromUtf8("ColorSettings"))
-        ColorSettings.resize(455, 301)
+        ColorSettings.resize(463, 301)
         font = QtGui.QFont()
         font.setPointSize(12)
         ColorSettings.setFont(font)
@@ -142,6 +142,17 @@ class Ui_ColorSettings(object):
 
         self.retranslateUi(ColorSettings)
         QtCore.QMetaObject.connectSlotsByName(ColorSettings)
+        ColorSettings.setTabOrder(self.enableHTextCheckBox, self.enableHLineCheckBox)
+        ColorSettings.setTabOrder(self.enableHLineCheckBox, self.contentBackgroundButton)
+        ColorSettings.setTabOrder(self.contentBackgroundButton, self.contentTextButton)
+        ColorSettings.setTabOrder(self.contentTextButton, self.highlighterBackgroundButton)
+        ColorSettings.setTabOrder(self.highlighterBackgroundButton, self.highlighterTextButton)
+        ColorSettings.setTabOrder(self.highlighterTextButton, self.highlighterLineBackgroundButton)
+        ColorSettings.setTabOrder(self.highlighterLineBackgroundButton, self.highlighterLineTextButton)
+        ColorSettings.setTabOrder(self.highlighterLineTextButton, self.fontComboBox)
+        ColorSettings.setTabOrder(self.fontComboBox, self.restoreButton)
+        ColorSettings.setTabOrder(self.restoreButton, self.previewButton)
+        ColorSettings.setTabOrder(self.previewButton, self.applyButton)
 
     def retranslateUi(self, ColorSettings):
         ColorSettings.setWindowTitle(_translate("ColorSettings", "Highlighting, Colors, and Fonts", None))

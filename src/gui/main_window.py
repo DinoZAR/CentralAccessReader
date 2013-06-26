@@ -31,7 +31,7 @@ from src.mathml import pattern_editor
 from src.speech.assigner import Assigner
 from src.speech.worker import SpeechWorker
 from src.docx.importer import DocxDocument
-from src.updater import GetUpdateThread, RunUpdateInstallerThread, SETUP_FILE
+from src.updater import GetUpdateThread, RunUpdateInstallerThread, SETUP_FILE, run_update_installer
 from src import misc
 
 class MainWindow(QtGui.QMainWindow):
@@ -702,9 +702,11 @@ class MainWindow(QtGui.QMainWindow):
             #self.updator.setUpdateFinishSignal(self.programUpdateFinish)
             #self.updator.start()
             
-            webbrowser.open(SETUP_FILE)
+            #webbrowser.open(SETUP_FILE)
             
-            print 'Updator started!'
+            run_update_installer()
+            
+            QtGui.qApp.exit()
             
     def finishUpdate(self):
         self.updateInstallProgressDialog.close()

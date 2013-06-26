@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/speech_settings.ui'
 #
-# Created: Thu Jun 20 15:16:50 2013
+# Created: Wed Jun 26 13:34:39 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -121,6 +121,15 @@ class Ui_SpeechSettings(object):
 
         self.retranslateUi(SpeechSettings)
         QtCore.QMetaObject.connectSlotsByName(SpeechSettings)
+        SpeechSettings.setTabOrder(self.rateSlider, self.volumeSlider)
+        SpeechSettings.setTabOrder(self.volumeSlider, self.voiceComboBox)
+        SpeechSettings.setTabOrder(self.voiceComboBox, self.mathDatabaseComboBox)
+        SpeechSettings.setTabOrder(self.mathDatabaseComboBox, self.imageTagCheckBox)
+        SpeechSettings.setTabOrder(self.imageTagCheckBox, self.mathTagCheckBox)
+        SpeechSettings.setTabOrder(self.mathTagCheckBox, self.testSpeechText)
+        SpeechSettings.setTabOrder(self.testSpeechText, self.testButton)
+        SpeechSettings.setTabOrder(self.testButton, self.restoreButton)
+        SpeechSettings.setTabOrder(self.restoreButton, self.applyButton)
 
     def retranslateUi(self, SpeechSettings):
         SpeechSettings.setWindowTitle(_translate("SpeechSettings", "Speech", None))

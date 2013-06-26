@@ -272,6 +272,18 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>rateSlider</tabstop>
+  <tabstop>volumeSlider</tabstop>
+  <tabstop>voiceComboBox</tabstop>
+  <tabstop>mathDatabaseComboBox</tabstop>
+  <tabstop>imageTagCheckBox</tabstop>
+  <tabstop>mathTagCheckBox</tabstop>
+  <tabstop>testSpeechText</tabstop>
+  <tabstop>testButton</tabstop>
+  <tabstop>restoreButton</tabstop>
+  <tabstop>applyButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

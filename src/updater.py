@@ -117,6 +117,19 @@ def get_version_number(versionFile):
     f.close()
     return float(re.search(r'[0-9]+.[0-9]+', stuff).group(0))
 
+def run_update_installer():
+    '''
+    This function will run the correct update installer depending on the machine
+    this program is running on.
+    '''
+    if os.path.exists(SETUP_TEMP_FILE):
+        if platform.system() == 'Windows':
+            #p = subprocess.Popen('start /wait "" "' + SETUP_TEMP_FILE + '" /VERYSILENT', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            p = subprocess.Popen('"' + SETUP_TEMP_FILE + '"', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            #p.wait()
+            #print 'stdout:', p.stdout.read()
+            #print 'stderr:', p.stderr.read()
+
 class RunUpdateInstallerThread(Thread):
     
     def __init__(self):
@@ -131,13 +144,7 @@ class RunUpdateInstallerThread(Thread):
         Runs the update installer. It will use the correct mechanisms depending on
         the platform.
         '''
-        if os.path.exists(SETUP_TEMP_FILE):
-            if platform.system() == 'Windows':
-                #p = subprocess.Popen('start /wait "" "' + SETUP_TEMP_FILE + '" /VERYSILENT', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                p = subprocess.Popen('"' + SETUP_TEMP_FILE + '"', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                #p.wait()
-                #print 'stdout:', p.stdout.read()
-                #print 'stderr:', p.stderr.read()
+        run_update_installer()
                 
         print 'Done installing new update!'
         self._closeUpdateSignal.emit()

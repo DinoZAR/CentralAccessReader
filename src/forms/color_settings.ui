@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>455</width>
+    <width>463</width>
     <height>301</height>
    </rect>
   </property>
@@ -290,6 +290,20 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>enableHTextCheckBox</tabstop>
+  <tabstop>enableHLineCheckBox</tabstop>
+  <tabstop>contentBackgroundButton</tabstop>
+  <tabstop>contentTextButton</tabstop>
+  <tabstop>highlighterBackgroundButton</tabstop>
+  <tabstop>highlighterTextButton</tabstop>
+  <tabstop>highlighterLineBackgroundButton</tabstop>
+  <tabstop>highlighterLineTextButton</tabstop>
+  <tabstop>fontComboBox</tabstop>
+  <tabstop>restoreButton</tabstop>
+  <tabstop>previewButton</tabstop>
+  <tabstop>applyButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
