@@ -57,7 +57,6 @@ class Configuration(object):
         self.zoom_navigation_ptsize = 14
         
         # Search settings
-        self.search_wrap = False
         self.search_whole_word = False
         self.search_match_case = False
         
@@ -105,7 +104,6 @@ class Configuration(object):
         
         # Search
         out += 'Search:\n'
-        out += '- Wrap Search: ' + str(self.search_wrap) + '\n'
         out += '- Whole Word: ' + str(self.search_whole_word) + '\n'
         out += '- Match Case: ' + str(self.search_match_case) + '\n'
         
@@ -172,13 +170,6 @@ class Configuration(object):
             # Zoom Settings
             self.zoom_content = float(configDOM.xpath('/Configuration/Zooms/Content')[0].text)
             self.zoom_navigation_ptsize = int(configDOM.xpath('/Configuration/Zooms/Navigation')[0].text)
-            
-            # Search Settings
-            self.search_wrap = int(configDOM.xpath('/Configuration/Search/Wrap')[0].text)
-            if self.search_wrap == 1:
-                self.search_wrap = True
-            else:
-                self.search_wrap = False
                 
             self.search_whole_word = int(configDOM.xpath('/Configuration/Search/WholeWord')[0].text)
             if self.search_whole_word == 1:
@@ -274,11 +265,6 @@ class Configuration(object):
         
         # Search Settings
         searchRoot = etree.SubElement(root, 'Search')
-        elem = etree.SubElement(searchRoot, 'Wrap')
-        if self.search_wrap:
-            elem.text = '1'
-        else:
-            elem.text = '0'
         elem = etree.SubElement(searchRoot, 'WholeWord')
         if self.search_whole_word:
             elem.text = '1'
