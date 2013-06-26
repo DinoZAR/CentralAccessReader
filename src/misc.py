@@ -70,6 +70,17 @@ def pattern_databases():
             
     return fileList
 
+def is_release_environment():
+    '''
+    Returns whether this program instance is in a release environment. Returns
+    True if it is, False if it is not, which means this program instance is in
+    a development environment.
+    '''
+    if getattr(sys, 'frozen', None):
+        return True
+    else:
+        return False
+
 def clean_XML_input(input):  
     
     if input:  
