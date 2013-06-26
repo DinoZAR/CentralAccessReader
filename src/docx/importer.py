@@ -242,6 +242,28 @@ class DocxDocument(object):
             elif child.tag == '{0}r'.format(w_NS):
                 self._parseRow(child, parseData)
                 
+            # Hyperlink
+            elif child.tag == '{0}hyperlink'.format(w_NS):
+                
+                # Get all of the text from all of the rows and put it all
+                # together
+                text = ''
+                textNodes = child.xpath('w:r/w:t', namespaces={'w': w_NS[1:-1]})
+                for t in textNodes:
+                    text += t.text
+                    
+                print 'Before URL:', text
+                # Add the http:// in the beginning if not present
+                if 'http://' in text:
+                    pass
+                else:
+                    text = 'http://' + text
+            
+                print 'After URL:', text
+                    
+                parseData['data'].append({'type' : 'hyperlink', 'value' : text})
+                
+                
         return parseData
     
     def _parseOMMLPara(self, elem, parentData):
@@ -535,6 +557,11 @@ class DocxDocument(object):
                 currTextNode = mathSpan
                 currTextNode.tail = ''
                 onRoot = False
+                
+            elif c['type'] == 'hyperlink':
+                hyperlink = etree.SubElement(pRoot, 'a')
+                hyperlink.set('href', c['value'])
+                hyperlink.text = c['value']
         
         # Check to see if it is a page number
         if 'pageNumber' in p:
