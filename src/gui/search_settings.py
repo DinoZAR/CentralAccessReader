@@ -22,7 +22,6 @@ class SearchSettings(QDialog):
         self.mainConfig = None
         
     def connect_signals(self):
-        self.ui.wrapCheckBox.toggled.connect(self.setWrap)
         self.ui.wholeWordCheckBox.toggled.connect(self.setWholeWord)
         self.ui.matchCaseCheckBox.toggled.connect(self.setMatchCase)
         self.ui.okButton.clicked.connect(self.close)
@@ -31,10 +30,6 @@ class SearchSettings(QDialog):
         self.mainConfig = config
         
         # Set the checkboxes
-        self.ui.wrapCheckBox.blockSignals(True)
-        self.ui.wrapCheckBox.setChecked(self.mainConfig.search_wrap)
-        self.ui.wrapCheckBox.blockSignals(False)
-        
         self.ui.wholeWordCheckBox.blockSignals(True)
         self.ui.wholeWordCheckBox.setChecked(self.mainConfig.search_whole_word)
         self.ui.wholeWordCheckBox.blockSignals(False)
@@ -42,10 +37,6 @@ class SearchSettings(QDialog):
         self.ui.matchCaseCheckBox.blockSignals(True)
         self.ui.matchCaseCheckBox.setChecked(self.mainConfig.search_match_case)
         self.ui.matchCaseCheckBox.blockSignals(False)
-        
-    def setWrap(self, isWrap):
-        print 'isWrap:', isWrap
-        self.mainConfig.search_wrap = isWrap
     
     def setWholeWord(self, isWholeWord):
         print 'isWholeWord:', isWholeWord

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/about.ui'
 #
-# Created: Tue May 21 10:40:52 2013
+# Created: Wed Jun 26 15:20:20 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,10 @@ except AttributeError:
 class Ui_AboutDialog(object):
     def setupUi(self, AboutDialog):
         AboutDialog.setObjectName(_fromUtf8("AboutDialog"))
-        AboutDialog.resize(336, 262)
+        AboutDialog.resize(347, 226)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        AboutDialog.setFont(font)
         self.verticalLayout = QtGui.QVBoxLayout(AboutDialog)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.label = QtGui.QLabel(AboutDialog)
@@ -38,15 +41,9 @@ class Ui_AboutDialog(object):
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.label_3 = QtGui.QLabel(AboutDialog)
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.label_3.setFont(font)
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.horizontalLayout.addWidget(self.label_3)
         self.versionLabel = QtGui.QLabel(AboutDialog)
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.versionLabel.setFont(font)
         self.versionLabel.setObjectName(_fromUtf8("versionLabel"))
         self.horizontalLayout.addWidget(self.versionLabel)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
@@ -56,14 +53,11 @@ class Ui_AboutDialog(object):
         self.verticalLayout.addItem(spacerItem1)
         self.label_2 = QtGui.QLabel(AboutDialog)
         font = QtGui.QFont()
-        font.setPointSize(14)
+        font.setPointSize(16)
         self.label_2.setFont(font)
         self.label_2.setObjectName(_fromUtf8("label_2"))
         self.verticalLayout.addWidget(self.label_2)
         self.label_4 = QtGui.QLabel(AboutDialog)
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.label_4.setFont(font)
         self.label_4.setObjectName(_fromUtf8("label_4"))
         self.verticalLayout.addWidget(self.label_4)
         spacerItem2 = QtGui.QSpacerItem(20, 39, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)

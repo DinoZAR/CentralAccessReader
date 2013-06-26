@@ -59,17 +59,17 @@ function ScrollToHighlight(isInstant) {
 // Finds the next search term, highlights it, and moves the view to it, if any.
 // If after is true, it will find word after current. Otherwise, search for text before.
 // Returns true if it found something, false if it didn't
-function SearchForText(myText, after, wrap, wholeWord, matchCase) {
+function SearchForText(myText, after, wholeWord, matchCase) {
 	console.debug('SearchForText()');
 	if (after) {
-		return SearchTextForward(myText, wrap, wholeWord, matchCase, false);
+		return SearchTextForward(myText, wholeWord, matchCase, false);
 	}
 	else {
-		return SearchTextBackward(myText, wrap, wholeWord, matchCase, false);
+		return SearchTextBackward(myText, wholeWord, matchCase, false);
 	}
 }
 
-function SearchTextBackward(myText, wrap, wholeWord, matchCase, alreadyWrapped) {
+function SearchTextBackward(myText, wholeWord, matchCase, alreadyWrapped) {
 	var currentNode = null;
 	if (!(highlight === null)) {
 		currentNode = PreviousElement(highlight);
@@ -128,17 +128,17 @@ function SearchTextBackward(myText, wrap, wholeWord, matchCase, alreadyWrapped) 
 		}
 		currentNode = PreviousElement(currentNode);
 		if (currentNode === null) {
-			// If I got a word wrap, start over from the back
-			if ((wrap == true) && (alreadyWrapped == false)) {
+			// Start over from the back if I haven't already
+			if ((alreadyWrapped == false)) {
 				ClearAllHighlights();
-				return SearchTextBackward(myText, wrap, wholeWord, matchCase, true);
+				return SearchTextBackward(myText, wholeWord, matchCase, true);
 			}
 			return false;
 		}
 	}
 }
 
-function SearchTextForward(myText, wrap, wholeWord, matchCase, alreadyWrapped) {
+function SearchTextForward(myText, wholeWord, matchCase, alreadyWrapped) {
 	// Determing the starting point
 	var currentNode = null;
 	if (!(highlight === null)) {
@@ -181,10 +181,10 @@ function SearchTextForward(myText, wrap, wholeWord, matchCase, alreadyWrapped) {
 		}
 		currentNode = NextElement(currentNode);
 		if (currentNode === null) {
-			// If I have a wrap search, go back to the beginning and try again
-			if ((wrap == true) && (alreadyWrapped == false)) {
+			// Start over from the back if I haven't already
+			if ((alreadyWrapped == false)) {
 				ClearAllHighlights();
-				return SearchTextForward(myText, wrap, wholeWord, matchCase, true);
+				return SearchTextForward(myText, wholeWord, matchCase, true);
 			}
 			return false;
 		}
@@ -502,14 +502,14 @@ function GetNextWord(node, offset) {
 	}
 
 	// See if it is an image
-	if (node.nodeName == "IMG") {
+	else if (node.nodeName == "IMG") {
 		var range = document.createRange();
 		range.selectNode(node);
 		return [range, needToGoToNext, true];
 	}
 
 	// See if it is anything else, like text
-	if (node.nodeName == "#text"){
+	else if (node.nodeName == "#text"){
 		range = document.createRange();
 		
 		console.debug("Content: <start>" + node.data + "<end><offset>" + offset.toString() + "<length>" + node.data.length.toString());
@@ -532,7 +532,7 @@ function GetNextWord(node, offset) {
 	
 	else {
 		var range = document.createRange();
-		range.selectNode(node);
+		range.selectNode(DeepestChild(node, false));
 		return [range, needToGoToNext, false]
 	}
 }

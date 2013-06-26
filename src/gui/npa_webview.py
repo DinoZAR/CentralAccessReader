@@ -6,6 +6,7 @@ Created on Apr 18, 2013
 from PyQt4.QtWebKit import QWebView, QWebPage
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QApplication
+import webbrowser
 import os
 from src import misc
 
@@ -23,11 +24,15 @@ class NPAWebView(QWebView):
         self.setAcceptDrops(True)
         self.myZoomFactor = 1.0
         
+        self.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
+        
         # Disable the context menu if in a release environment
         if misc.is_release_environment():
             def nothing(s, event):
                 pass
             self.contextMenuEvent = nothing
+            
+        self.linkClicked.connect(self.myLinkClicked)
         
     def dragEnterEvent(self, e):
         print 'I\'m bringing something into CAR!'
@@ -118,4 +123,5 @@ class NPAWebView(QWebView):
         self.setZoomFactor(self.myZoomFactor)
         self.update()
         
-        
+    def myLinkClicked(self, url):
+        webbrowser.open_new(str(url.toString()))

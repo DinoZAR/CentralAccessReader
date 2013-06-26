@@ -242,6 +242,38 @@ class DocxDocument(object):
             elif child.tag == '{0}r'.format(w_NS):
                 self._parseRow(child, parseData)
                 
+            # Hyperlink
+            elif child.tag == '{0}hyperlink'.format(w_NS):
+                
+                hyperlinkData = {'type' : 'hyperlink'}
+                
+                # Get all of the text from all of the rows and put it all
+                # together
+                text = ''
+                textNodes = child.xpath('w:r/w:t', namespaces={'w': w_NS[1:-1]})
+                for t in textNodes:
+                    text += t.text
+                hyperlinkData['text'] = text
+                    
+                # Get the link URL from the rels
+                myId = child.get('{0}id'.format(rel_NS))
+                for r in self.rels:
+                    if r.get('Id') == myId:
+                        hyperlinkData['value'] = r.get('Target')
+                            
+                    
+                print 'Before URL:', hyperlinkData['value']
+                # Add the http:// in the beginning if not present
+                if 'http://' in hyperlinkData['value']:
+                    pass
+                else:
+                    hyperlinkData['value'] = 'http://' + hyperlinkData['value']
+            
+                print 'After URL:', hyperlinkData['value']
+                    
+                parseData['data'].append(hyperlinkData)
+                
+                
         return parseData
     
     def _parseOMMLPara(self, elem, parentData):
@@ -535,6 +567,11 @@ class DocxDocument(object):
                 currTextNode = mathSpan
                 currTextNode.tail = ''
                 onRoot = False
+                
+            elif c['type'] == 'hyperlink':
+                hyperlink = etree.SubElement(pRoot, 'a')
+                hyperlink.set('href', c['value'])
+                hyperlink.text = c['text']
         
         # Check to see if it is a page number
         if 'pageNumber' in p:

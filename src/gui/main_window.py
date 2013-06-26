@@ -574,7 +574,7 @@ class MainWindow(QtGui.QMainWindow):
             
     def searchBackwards(self):
         text = unicode(self.ui.searchTextBox.text())
-        args = [text, False, self.configuration.search_wrap, self.configuration.search_whole_word, self.configuration.search_match_case]
+        args = [text, False, self.configuration.search_whole_word, self.configuration.search_match_case]
         result = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SearchForText', args)).toBool()
         if not result:
             self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('ClearAllHighlights', []))
@@ -584,7 +584,7 @@ class MainWindow(QtGui.QMainWindow):
     
     def searchForwards(self):
         text = unicode(self.ui.searchTextBox.text())
-        args = [text, True, self.configuration.search_wrap, self.configuration.search_whole_word, self.configuration.search_match_case]
+        args = [text, True, self.configuration.search_whole_word, self.configuration.search_match_case]
         result = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SearchForText', args)).toBool()
         if not result:
             self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('ClearAllHighlights', []))
