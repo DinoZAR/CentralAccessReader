@@ -1,9 +1,8 @@
-//   ________                             __                 
-//  /  _____/  ____  ____   _____   _____/  |________ ___.__.
-// /   \  ____/ __ \/  _ \ /     \_/ __ \   __\_  __ <   |  |
-// \    \_\  \  ___(  <_> )  Y Y  \  ___/|  |  |  | \/\___  |
-//  \______  /\___  >____/|__|_|  /\___  >__|  |__|   / ____|
-//         \/     \/            \/     \/             \/     
+//
+//  ___  ____   __   ____  ____  ___  ____  ____  ___  ___ 
+// / __)(_  _) /__\ (_  _)(_  _)/ __)(_  _)(_  _)/ __)/ __)
+// \__ \  )(  /(__)\  )(   _)(_ \__ \  )(   _)(_( (__ \__ \
+// (___/ (__)(__)(__)(__) (____)(___/ (__) (____)\___)(___/
 //
 // --------------
 // Order Matters!
@@ -43,7 +42,7 @@ diamond = mi("&#8900;") -> 'diamond,'
 
 
 
-identical = mi("&#8801;") -> 'is congruent to,'
+identical = mi("&#8801;") -> 'is identical to,'
 
 
 
@@ -53,12 +52,12 @@ plus = mo("+") -> 'plus,'
 summation = mi("&#8721;") -> 'summation,'
 
 
-tilde = mo("&#732;") -> 'is similar to,'
+tilde = mo("&#732;") -> 'tilde,'
 
 
-tilde = mo("~") -> 'is similar to,'
+tilde = mo("~") -> 'tilde,'
 
-tilde = mi("~") -> 'is similar to,'
+tilde = mi("~") -> 'tilde,'
 
 
 times = mi("&#8901;") -> 'times,'
@@ -177,19 +176,30 @@ Strike = menclose(+) -> 'strike {1} end-strike,'
 //---------------------------------------------------------------
 // Trigonometry-Specific
 //---------------------------------------------------------------
-
-hyperboliccosecant = c s c h -> 'hyperbolic cosecant'
-hyperboliccosine = c o s h -> 'hyperbolic cosine'
-hyperboliccotangent = c o t h -> 'hyperbolic cotangent'
-hyperbolicsecant = s e c h -> 'hyperbolic secant'
-hyperbolicsine = s i n h -> 'hyperbolic sine'
-hyperbolictangent = t a n h -> 'hyperbolic tangent'
-inverseHypeCosine = c o s msup(h mrow(minus one)) -> 'inverse hyperbolic cosine,'
-inverseHypeCotan = c o t msup(h mrow(minus one)) -> 'inverse hyperbolic cotangent,'
-inverseHypeCosec = c s c msup(h mrow(minus one)) -> 'inverse hyperbolic cosecant,'
+
+
+hyperboliccosecant = c s c h -> 'hyperbolic cosecant'
+
+hyperboliccosine = c o s h -> 'hyperbolic cosine'
+
+hyperboliccotangent = c o t h -> 'hyperbolic cotangent'
+
+hyperbolicsecant = s e c h -> 'hyperbolic secant'
+
+hyperbolicsine = s i n h -> 'hyperbolic sine'
+
+hyperbolictangent = t a n h -> 'hyperbolic tangent'
+
+inverseHypeCosine = c o s msup(h mrow(minus one)) -> 'inverse hyperbolic cosine,'
+
+inverseHypeCotan = c o t msup(h mrow(minus one)) -> 'inverse hyperbolic cotangent,'
+
+inverseHypeCosec = c s c msup(h mrow(minus one)) -> 'inverse hyperbolic cosecant,'
+
 inverseHypeSec = s e c msup(h mrow(minus one)) -> 'inverse hyperbolic secant,'
 
-inverseHypeSine = s i n msup(h mrow(minus one)) -> 'inverse hyperbolic sine,'
+inverseHypeSine = s i n msup(h mrow(minus one)) -> 'inverse hyperbolic sine,'
+
 inverseHypeTan = t a n msup(h mrow(minus one)) -> 'inverse hyperbolic tangent,'
 
 inverseSine = c s msup(c mrow(minus one)) -> 'inverse cosecant,'
@@ -200,12 +210,17 @@ inverseSine = c o msup(t mrow(minus one)) -> 'inverse cotangent,'
 
 inverseSine = s e msup(c mrow(minus one)) -> 'inverse secant,'
 
-inverseSine = s i msup(n mrow(minus one)) -> 'inverse sine,'
+inverseSine = s i msup(n mrow(minus one)) -> 'inverse sine,'
+
 inverseSine = t a msup(n mrow(minus one)) -> 'inverse tangent,'
-
-hypotenuse = H y p o t e n u s e -> 'Hypotenuse'
-hypotenuse = h y p o t e n u s e -> 'hypotenuse'
-opposite = O p p o s i t e -> 'Opposite'
+
+
+hypotenuse = H y p o t e n u s e -> 'Hypotenuse'
+
+hypotenuse = h y p o t e n u s e -> 'hypotenuse'
+
+opposite = O p p o s i t e -> 'Opposite'
+
 opposite = o p p o s i t e -> 'opposite'
 
 log = l n -> 'natural log of,'
@@ -215,14 +230,22 @@ log = l o g -> 'log of,'
 log = l o msub(g mrow(e)) -> 'natural log of,'
 
 log = l o msub(g ?) -> 'log base {4}, of'
-
-arc = a r c -> 'arc'
-
-arccos = a r c c o s -> 'arc cosine,'
-arcsine = a r c s i n -> 'arc sine,'
-arctan = a r c t a n -> 'arc tangent,'
-cosine = c o s -> 'cosine,'
-cotangent = c o t -> 'cotangent,'
+
+
+arc = a r c -> 'arc'
+
+
+
+arccos = a r c c o s -> 'arc cosine,'
+
+arcsine = a r c s i n -> 'arc sine,'
+
+arctan = a r c t a n -> 'arc tangent,'
+
+cosine = c o s -> 'cosine,'
+
+cotangent = c o t -> 'cotangent,'
+
 cosecant = c s c -> 'cosecant,'
 
 secant = s e c -> 'secant,'
@@ -269,22 +292,7 @@ integral = msub([integral] ?) -> '{1} sub {2} of,'
 
 infinity = mi("&#8734;") -> 'infinity'
 
-infinity = mn("&#8734;") -> 'infinity'
-
-
-// ------------------------------------------------------------------------------
-// Geometry Specific
-// ------------------------------------------------------------------------------
-congruent = approxEqualTilde -> 'is congruent to'
-underBothArrow = mover(? bar) -> 'the line segment {1},'
-underBothArrow = mover(? arc) -> 'the arc {1},'
-underBothArrow = mover(? leftArrow) -> 'the directed line segment {1},'
-underBothArrow = mover(? rightArrow) -> 'the directed line segment {1},'
-thePoint = p colon openParen ? comma ? closeParen -> 'the point {4}, {6},'
-thePoint = p openParen ? comma ? closeParen -> 'the point {3}, {5},'
-thePoint = openParen ? comma ? closeParen -> 'the point {2}, {4},'
-thePoint = openParen ? comma ? comma ? closeParen -> 'the point {2}, {4}, {6}'
-
+infinity = mn("&#8734;") -> 'infinity'
 
 
 // ------------------------------------------------------------------------------
@@ -295,7 +303,7 @@ thePoint = openParen ? comma ? comma ? closeParen -> 'the point {2}, {4}, {6}'
 
 overBothArrow = munder(? [arrow]) -> '{1}, over {2},'
 
-
+underBothArrow = mover(? [arrow]) -> '{1}, under {2},'
 
 overUnderArrowB = munderover(rightArrow mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
 
@@ -306,7 +314,20 @@ overUnderArrowB = munderover(bothArrow mrow(+) mrow(+)) -> '{2}, above {1}, sub 
 overUnderArrowB = munderover(rightHarpoon mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
 
 
+// ------------------------------------------------------------------------------
+// Statistics and Finance
+// ------------------------------------------------------------------------------
 
+chiSquare = msup( chi mrow(two)) -> 'chi-square,'
+chiSquare = msup( chi two) -> 'chi-square,'
+chiSquare = msup( Chi mrow(two)) -> 'chi-square,'
+chiSquare = msup( Chi two) -> 'chi-square,'
+degreesFreedom = d f -> 'degrees of freedom'
+degreesFreedom = d point f point -> 'degrees of freedom'
+probableError = P E -> 'probable error'
+probableError = P point E point -> 'probable error'
+standardDev = s d -> 'standard deviation'
+standardDev = s point d point -> 'standard deviation'
 
 
 // ------------------------------------------------------------------------------
@@ -424,8 +445,7 @@ cuberoot = mroot(mrow(+) mrow(three)) -> 'the cube root of {1}'
 rootPowers = mroot(mrow(+) mrow(+)) -> 'the {2} root of {1}'
 
 squareRoot = msqrt(+) -> 'the square root of {1}'
-
-absValue = verticalBar + verticalBar -> 'absolute value of {2}'
+
 
 
 

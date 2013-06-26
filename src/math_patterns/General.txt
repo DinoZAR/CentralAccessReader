@@ -431,10 +431,11 @@ cuberoot = mroot(mrow(+) mrow(three)) -> 'the cube root of {1}'
 
 rootPowers = mroot(mrow(+) mrow(+)) -> 'the {2} root of {1}'
 
-squareRoot = msqrt(+) -> 'the square root of {1}'
-
-
-
+squareRoot = msqrt(+) -> 'the square root of {1}'
+
+leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left superscript {2},'
+leftSub = msup( mrow() mrow(?)) -> 'left subscript {1},'
+leftSup = msub( mrow() mrow(?)) -> 'left superscript {1},'
 
 
 // ------------------------------------------------------------------------------

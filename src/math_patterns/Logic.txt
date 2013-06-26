@@ -36,6 +36,9 @@
 import _codes.txt
 
 // Unicodes and MathML codes for operators
+
+slash = divideBack -> ', backslash,'
+slash = divide -> ', slash,'
 
 diamond = mi("&#8900;") -> 'diamond operator'
 
@@ -403,9 +406,9 @@ squareRoot = msqrt(+) -> 'the square root of {1}'
 
 // ------------------------------------------------------------------------------
 
-matrix = mrow(mtable(#)) -> 'matrix {1}'
-matrix = mtable(#) -> 'matrix {1}'
-matrixPar = mfenced(mrow(mtable(+))) -> 'matrix {1}'
+matrix = mrow(mtable(#)) -> 'truth table {1}'
+matrix = mtable(#) -> 'truth table {1}'
+matrixPar = mfenced(mrow(mtable(+))) -> 'truth table {1}'
 tableColumn = mtd(+) -> '{1},'
 tableRow = mtr(+) -> 'row, {1}'
 
@@ -422,6 +425,9 @@ over = mover(? ?) -> '{1} under {2}'
 
 fraction = mfrac(? ?) -> '{1} over {2}'
 
+leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left superscript {2},'
+leftSub = msup( mrow() mrow(?)) -> 'left subscript {1},'
+leftSup = msub( mrow() mrow(?)) -> 'left superscript {1},'
 subscript = msub(? ?) -> '{1} sub {2}'
 superscript = msup(? ?) -> '{1} to the {2} power'
 

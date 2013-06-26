@@ -374,7 +374,7 @@ doubleDagger = dagger dagger -> 'double dagger'
 // ------------------------------------------------------------------------------
 // Fraction-based
 // ------------------------------------------------------------------------------
-integral = msub([integral] ?) -> '{1} sub {2} of,'
+integralFrac = msub([integral] ?) -> '{1} sub {2} of,'
 
 
 
@@ -391,6 +391,7 @@ infinity = mn("&#8734;") -> 'infinity'
 // Conditions for arrows based on over or under
 
 // ------------------------------------------------------------------------------
+//darbouxIntegralLower = munder(munderover(integral mrow(+) mrow(+)) mrow() ?) -> 'lower darboux integral from {2}, to {3}, of' 
 
 overBothArrow = munder(? [arrow]) -> '{1}, over {2},'
 
@@ -411,6 +412,8 @@ overUnderArrowB = munderover(rightHarpoon mrow(+) mrow(+)) -> '{2}, above {1}, s
 // ------------------------------------------------------------------------------
 // Under-Over, Integrals, Products, and Summations
 // ------------------------------------------------------------------------------
+
+
 
 backPrimes = mmultiscripts(? ? ? ?) -> '{4} {1}'
 
@@ -420,7 +423,11 @@ backPrimes = mmultiscripts(? ? ? ?) -> '{4} {1}'
 
 
 
-limit = munderover(mrow(l i m) mrow(? ? ?) ?) -> 'the limit as {4}, approaches {6}, of'
+limit = munderover(mrow(l i m) mrow(? rightArrow ?) ?) -> 'the limit as {4}, approaches {6}, of'
+
+limit = munderover(mrow(l i m) mrow(? upArrow ?) ?) -> 'the limit as {4}, increases to {6}, of'
+
+limit = munderover(mrow(l i m) mrow(? downArrow ?) ?) -> 'the limit as {4}, approaches {6}, of'
 
 limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4}, of'
 
@@ -513,6 +520,9 @@ unionSyn = munderover(union mrow(+) ?) -> 'the {1} from {2}, of'
 unionSyn = munderover(union ? ?) -> 'the {1} of'
 
 
+
+//functionOf = f openParen  -> 'f of'
+
 
 
 // ------------------------------------------------------------------------------
@@ -553,6 +563,9 @@ over = mover(? ?) -> '{1} under {2}'
 
 fraction = mfrac(? ?) -> '{1} over {2}'
 
+leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left superscript {2},'
+leftSub = msup( mrow() mrow(?)) -> 'left subscript {1},'
+leftSup = msub( mrow() mrow(?)) -> 'left superscript {1},'
 subscript = msub(? ?) -> '{1} sub {2}'
 superscript = msup(? ?) -> '{1} to the {2} power'
 
