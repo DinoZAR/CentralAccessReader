@@ -356,7 +356,7 @@ class PileRecord(Record):
         
         # Check for ruler
         if self._checkFlag(options, Record.O_LP_RULER):
-            print '- Ruler in line!'
+            print '- Ruler in pile!'
             _handleRuler(f)
             
         # Get object list as child records
@@ -391,8 +391,9 @@ class LineRecord(Record):
         # Check for ruler
         if self._checkFlag(options, Record.O_LP_RULER):
             print '- Ruler in line!'
-            f.read(1)
-            _handleRuler(f)
+            recordType = f.read(1)
+            if recordType == R_RULER:
+                _handleRuler(f)
           
         # The rest are objects in the line record, which should be added to
         # the children
