@@ -1,12 +1,9 @@
-//                                                      
-//  ,--.      .-'),-----.   ,----.     ,-.-')   .-----.  
-//  |  |.-') ( OO'  .-.  ' '  .-./-')  |  |OO) '  .--./  
-//  |  | OO )/   |  | |  | |  |_( O- ) |  |  \ |  |('-.  
-//  |  |`-' |\_) |  |\|  | |  | .--, \ |  |(_//_) |OO  ) 
-// (|  '---.'  \ |  | |  |(|  | '. (_/,|  |_.'||  |`-'|  
-//  |      |    `'  '-'  ' |  '--'  |(_|  |  (_'  '--'\  
-//  `------'      `-----'   `------'   `--'     `-----'  
-//                                                   
+//
+//  ___  ____   __   ____  ____  ___  ____  ____  ___  ___ 
+// / __)(_  _) /__\ (_  _)(_  _)/ __)(_  _)(_  _)/ __)/ __)
+// \__ \  )(  /(__)\  )(   _)(_ \__ \  )(   _)(_( (__ \__ \
+// (___/ (__)(__)(__)(__) (____)(___/ (__) (____)\___)(___/
+//
 // --------------
 // Order Matters!
 // --------------
@@ -28,6 +25,7 @@
 // 3. Over-Under (like sums and integrals)
 // 4. Parenthetical Expressions (like square roots or things in parenthesis)
 // 5. Generic Fallbacks (like fractions, superscripting, and subscripting)
+//
 // ------------------------------------------------------------------------------
 // Symbol Code
 // ------------------------------------------------------------------------------
@@ -35,79 +33,61 @@
 import _codes.txt
 
 // Unicodes and MathML codes for operators
-
-slash = divideBack -> ', backslash,'
-slash = divide -> ', slash,'
-
-diamond = mi("&#8900;") -> 'diamond operator'
-identical = mi("&#8801;") -> 'triple bars'
-plus = mo("+") -> 'plus sign'
-summation = mi("&#8721;") -> 'summation sign,'
-tilde = mo("&#732;") -> 'not'
-tilde = mo("~") -> 'not'
-tilde = mi("~") -> 'not'
-times = mi("&#8901;") -> 'dot operator'
-times = mi("&#59791;") -> 'dot operator'
-
+diamond = mi("&#8900;") -> 'diamond,'
+identical = mi("&#8801;") -> 'is identical to,'
+plus = mo("+") -> 'plus,'
+summation = mi("&#8721;") -> 'summation,'
+tilde = mo("&#732;") -> 'tilde,'
+tilde = mo("~") -> 'tilde,'
+tilde = mi("~") -> 'tilde,'
+times = mi("&#8901;") -> 'times,'
+times = mi("&#59791;") -> 'times,'
+
 // Parentheses, Brackets, Braces, and Bars
-closeBrace = mo("}") -> 'right curly bracket'
-closeBracket = mo("]") -> 'right square bracket'
-closeParen = mo(")") -> 'right parentheses'
-leftAngleBracket = mi("&#9001;") -> 'left angle bracket'
-leftAngleBracket = mo("&#9001;") -> 'left angle bracket'
-openBrace = mo("{") -> 'left curly bracket'
-openBracket = mo("[") -> 'left square bracket'
-rightAngleBracket = mi("&#9002;") -> 'right angle bracket'
-rightAngleBracket = mo("&#9002;") -> 'right angle bracket'
-bullet = mi("&#8226;") -> 'dot operator'
-dot = mo("&#775;") -> 'dot operator'
-dot = mi("&#183;") -> 'dot operator'
-perpendicular = mi("&#8869;") -> 'up tack'
-square = mi("&#9633;") -> 'white square'
+closeBrace = mo("}") -> 'close brace,'
+closeBracket = mo("]") -> ', close bracket,'
+closeParen = mo(")") -> ', close parentheses,'
+leftAngleBracket = mi("&#9001;") -> 'left-pointing angle bracket,'
+leftAngleBracket = mo("&#9001;") -> 'left-pointing angle bracket,'
+openBrace = mo("{") -> 'open brace,'
+openBracket = mo("[") -> 'open bracket,'
+rightAngleBracket = mi("&#9002;") -> 'right-pointing angle bracket,'
+rightAngleBracket = mo("&#9002;") -> 'right-pointing angle bracket,'
+bullet = mi("&#8226;") -> 'bullet,'
+dot = mo("&#775;") -> 'dot,'
+dot = mi("&#183;") -> 'times,'
+perpendicular = mi("&#8869;") -> 'perpendicular to,'
+square = mi("&#9633;") -> 'square,'
 
 // Logic
-and = mo("&#8743;") -> 'wedge (and)'
-because = mo("&#8757;") -> 'upside-down triple dot'
-compliment = mi("&#8705;") -> 'is a compliment of'
-containsNormalSubgroup = mi("&#8883;") -> 'contains as normal subgroup'
-exists = mo("&#8707;") -> 'Backwards E'
-factorial = mo("!") -> 'exclamation point'
-forAll = mo("&#8704;") -> 'Upside-down A'
-greaterThan = mo("&gt;") -> 'greater than'
-greaterThan = mi("&gt;") -> 'greater than'
-isElement = mo("&#8712;") -> 'element sign'
-isNotElement = mo("&#8713;") -> 'is not an element of'
-lessThan = mo("&lt;") -> 'less than'
-lessThan = mi("&lt;") -> 'less than'
-not = mo("&#172;") -> 'not sign'
-or = mo("&#8744;") -> 'wedge (or)'
-properSubsetRight = mo("&#8834;") -> 'subset'
-properSubsetLeft = mo("&#8835;") -> 'horseshoe'
-therefore = mo("&#8756;") -> 'triple dot'
-
+and = mo("&#8743;") -> 'and,'
+because = mo("&#8757;") -> 'because,'
+compliment = mi("&#8705;") -> 'is a compliment of,'
+containsNormalSubgroup = mi("&#8883;") -> 'contains as normal subgroup,'
+exists = mo("&#8707;") -> 'there exists,'
+factorial = mo("!") -> 'factorial,'
+forAll = mo("&#8704;") -> 'for all,'
+greaterThan = mo("&gt;") -> 'is greater than,'
+greaterThan = mi("&gt;") -> 'is greater than,'
+isElement = mo("&#8712;") -> 'is an element of,'
+isNotElement = mo("&#8713;") -> 'is not an element of,'
+lessThan = mo("&lt;") -> 'is less than,'
+lessThan = mi("&lt;") -> 'is less than,'
+not = mo("&#172;") -> 'not,'
+or = mo("&#8744;") -> 'or,'
+properSubsetRight = mo("&#8834;") -> 'is a proper subset of,'
+properSubsetLeft = mo("&#8835;") -> 'is a proper subset of,'
+therefore = mo("&#8756;") -> 'therefore,'
+
 e [variable] = mi("e") -> '"e"'
 i [variable] = mi("i") -> '"i"'
 z [variable] = mi("z") -> '"z"'
 
-bbcapR = mi("&#8477;") -> 'blackboard cap R'
-
-// Other symbols
+bbcapR = mi("&#8477;") -> 'all real numbers'
 
-
-// ------------------------------------------------------------------------------
-// Logic-based
-// ------------------------------------------------------------------------------
-barWedge = munder(or bar) -> 'bar wedge'
-existsOne = exists factorial -> 'backwards E followed by exclamation'
-intersection = munderover(intersection mrow() mrow()) -> 'intersection'
-notExist = menclose(exists) -> 'backwards E with slash'
-parallelBars = verticalBar verticalBar -> 'parallel bars'
-quadBars = mover(identical bar) -> 'quadruple bars'
-quadBars = munder(identical bar) -> 'quadruple bars'
-union = munderover(union mrow() mrow()) -> 'union'
+// Other symbols
 
 // Strikes and Slashes
-
 Strike = menclose(+) -> 'strike {1} end-strike,'
 
 
@@ -175,8 +155,8 @@ doubleDagger = dagger dagger -> 'double dagger'
 integral = msub([integral] ?) -> '{1} sub {2} of,'
 
 // Other symbols
-infinityLogic = infinity -> 'lemniscate'
-infinityLogic = infinity -> 'lemniscate'
+infinity = mi("&#8734;") -> 'infinity'
+infinity = mn("&#8734;") -> 'infinity'
 
 
 // ------------------------------------------------------------------------------
@@ -191,12 +171,26 @@ overUnderArrowB = munderover(rightHarpoon mrow(+) mrow(+)) -> '{2}, above {1}, s
 
 
 // ------------------------------------------------------------------------------
+// Statistics and Finance
+// ------------------------------------------------------------------------------
+chiSquare = msup( chi mrow(two)) -> 'chi-square,'
+chiSquare = msup( chi two) -> 'chi-square,'
+chiSquare = msup( Chi mrow(two)) -> 'chi-square,'
+chiSquare = msup( Chi two) -> 'chi-square,'
+degreesFreedom = d f -> 'degrees of freedom'
+degreesFreedom = d point f point -> 'degrees of freedom'
+probableError = P E -> 'probable error'
+probableError = P point E point -> 'probable error'
+standardDev = s d -> 'standard deviation'
+standardDev = s point d point -> 'standard deviation'
+
+
+// ------------------------------------------------------------------------------
 // Under-Over, Integrals, Products, and Summations
 // ------------------------------------------------------------------------------
 backPrimes = mmultiscripts(? ? ? ?) -> '{4} {1}'
 
 // Limits
-
 limit = munderover(mrow(l i m) mrow(? ? ?) ?) -> 'the limit as {4}, approaches {6}, of'
 limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4}, of'
 
@@ -237,11 +231,12 @@ sum = munderover(SigmaBig ? ?) -> 'the summation of'
 unionSyn = munderover(union mrow(+) mrow(+)) -> 'the {1} from {2}, to {3}, of'
 unionSyn = munderover(union mrow(+) ?) -> 'the {1} from {2}, of'
 unionSyn = munderover(union ? ?) -> 'the {1} of'
-
+
 
 // ------------------------------------------------------------------------------
 // Parenthetical Expressions
 // ------------------------------------------------------------------------------
+absoluteValue = verticalBar + verticalBar -> 'absolute value {2} end absolute'
 cuberoot = mroot(mrow(+) mrow(three)) -> 'the cube root of {1}'
 rootPowers = mroot(mrow(+) mrow(+)) -> 'the {2} root of {1}'
 squareRoot = msqrt(+) -> 'the square root of {1}'
@@ -250,9 +245,9 @@ squareRoot = msqrt(+) -> 'the square root of {1}'
 // ------------------------------------------------------------------------------
 // Matrices
 // ------------------------------------------------------------------------------
-matrix = mrow(mtable(#)) -> 'truth table {1}'
-matrix = mtable(#) -> 'truth table {1}'
-matrixPar = mfenced(mrow(mtable(+))) -> 'truth table {1}'
+matrix = mrow(mtable(#)) -> 'matrix {1}'
+matrix = mtable(#) -> 'matrix {1}'
+matrixPar = mfenced(mrow(mtable(+))) -> 'matrix {1}'
 tableColumn = mtd(+) -> '{1},'
 tableRow = mtr(+) -> 'row, {1}'
 
@@ -261,7 +256,7 @@ tableRow = mtr(+) -> 'row, {1}'
 // Generic Fallbacks, Final Collectors
 // ------------------------------------------------------------------------------
 fenced = mfenced(+) -> 'open parenthesis, {1}, closed parenthesis,'
-
+
 under = munder(? ?) -> '{1} over {2}'
 over = mover(? ?) -> '{1} under {2}'
 fraction = mfrac(? ?) -> '{1} over {2}'

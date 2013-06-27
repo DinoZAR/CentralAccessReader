@@ -63,7 +63,10 @@ coproduct [integral] = mo("&#8720;") -> 'coproduct,'
 composition = mi("&#8728;") -> 'composition of,'
 
 dagger = mi("&#8224;") -> 'dagger,'
-divide = mo("&#247;") -> 'divided by,'
+
+divideBack = mo("&#247;") -> 'divided by,'
+
+divideBack = mi("\") -> 'divided by,'
 
 divide = mo("/") -> 'divided by,'
 
