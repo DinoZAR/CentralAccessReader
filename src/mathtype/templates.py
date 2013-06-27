@@ -239,9 +239,7 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records, mathmlBefore):
         data = BigOpBoxClass(templateRecord)
         mathml = etree.Element('munderover')
         mathml.attrib['align'] = 'center'
-        operator = etree.Element('mo')
-        operator.text = data.operator
-        mathml.append(operator)
+        mathml.append(data.operator)
         mathml.append(data.upper)
         mathml.append(data.lower)
         mathmlElements.append(mathml)
@@ -251,9 +249,7 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records, mathmlBefore):
         data = BigOpBoxClass(templateRecord)
         mathml = etree.Element('munderover')
         mathml.attrib['align'] = 'center'
-        operator = etree.Element('mo')
-        operator.text = data.operator
-        mathml.append(operator)
+        mathml.append(data.operator)
         mathml.append(data.upper)
         mathml.append(data.lower)
         mathmlElements.append(mathml)
@@ -263,9 +259,7 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records, mathmlBefore):
         data = BigOpBoxClass(templateRecord)
         mathml = etree.Element('munderover')
         mathml.attrib['align'] = 'center'
-        operator = etree.Element('mo')
-        operator.text = data.operator
-        mathml.append(operator)
+        mathml.append(data.operator)
         mathml.append(data.upper)
         mathml.append(data.lower)
         mathmlElements.append(mathml)
@@ -275,9 +269,7 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records, mathmlBefore):
         data = BigOpBoxClass(templateRecord)
         mathml = etree.Element('munderover')
         mathml.attrib['align'] = 'center'
-        operator = etree.Element('mo')
-        operator.text = data.operator
-        mathml.append(operator)
+        mathml.append(data.operator)
         mathml.append(data.upper)
         mathml.append(data.lower)
         mathmlElements.append(mathml)
@@ -287,9 +279,7 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records, mathmlBefore):
         data = BigOpBoxClass(templateRecord)
         mathml = etree.Element('munderover')
         mathml.attrib['align'] = 'center'
-        operator = etree.Element('mo')
-        operator.text = data.operator
-        mathml.append(operator)
+        mathml.append(data.operator)
         mathml.append(data.upper)
         mathml.append(data.lower)
         mathmlElements.append(mathml)
@@ -299,9 +289,7 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records, mathmlBefore):
         data = BigOpBoxClass(templateRecord)
         mathml = etree.Element('munderover')
         mathml.attrib['align'] = 'center'
-        operator = etree.Element('mo')
-        operator.text = data.operator
-        mathml.append(operator)
+        mathml.append(data.operator)
         mathml.append(data.upper)
         mathml.append(data.lower)
         mathmlElements.append(mathml)
@@ -311,9 +299,7 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records, mathmlBefore):
         data = BigOpBoxClass(templateRecord)
         mathml = etree.Element('munderover')
         mathml.attrib['align'] = 'center'
-        operator = etree.Element('mo')
-        operator.text = data.operator
-        mathml.append(operator)
+        mathml.append(data.operator)
         mathml.append(data.upper)
         mathml.append(data.lower)
         mathmlElements.append(mathml)
@@ -323,9 +309,7 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records, mathmlBefore):
         data = BigOpBoxClass(templateRecord)
         mathml = etree.Element('munderover')
         mathml.attrib['align'] = 'center'
-        operator = etree.Element('mo')
-        operator.text = data.operator
-        mathml.append(operator)
+        mathml.append(data.operator)
         mathml.append(data.upper)
         mathml.append(data.lower)
         mathmlElements.append(mathml)
@@ -632,7 +616,16 @@ class BigOpBoxClass():
         convertRecords(0, [templateRecord.childRecords[2]], [self.lower])
         self.lower = self.lower[0]
         
-        self.operator = unichr(templateRecord.childRecords[3].mtCode)
+        # This can either be a character or a line. Either way, convert the
+        # records
+        self.operator = etree.Element('mrow')
+        convertRecords(0, [templateRecord.childRecords[3]], [self.operator])
+        self.operator = self.operator[0]
+        
+        # If operator is just a character, then force to be an mo
+        charTags = ['mi', 'mo', 'mn']
+        if self.operator.tag in charTags:
+            self.operator.tag = 'mo'
 
 TV_DI_LEFT = 1
 TV_DI_RIGHT = 2

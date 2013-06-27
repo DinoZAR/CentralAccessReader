@@ -185,7 +185,26 @@ def convertRecords(i, records, parentStack):
                 elem.text = character
             else:
                 elem = etree.Element('mi')
-                elem.text = character
+                
+                set = False
+                
+                # Double-struck
+                if records[i].typeface in CharRecord.DOUBLE_STRUCK:
+                    if records[i].mtCode in CharRecord.DOUBLE_STRUCK[records[i].typeface]:
+                        elem.set('mathvariant', 'double-struck')
+                        elem.text = unichr(CharRecord.DOUBLE_STRUCK[records[i].typeface][records[i].mtCode])
+                        set = True
+                
+                # Fraktur
+                if records[i].typeface in CharRecord.FRAKTUR:
+                    if records[i].mtCode in CharRecord.FRAKTUR[records[i].typeface]:
+                        elem.set('mathvariant', 'fraktur')
+                        elem.text = unichr(CharRecord.FRAKTUR[records[i].typeface][records[i].mtCode])
+                        set = True
+                
+                # Everything else
+                if not set:
+                    elem.text = character
                 
             if len(records[i].embellishments) > 0:
                 for emb in records[i].embellishments:
@@ -477,6 +496,33 @@ class CharRecord(Record):
                  41681 : {209 : 8913}   # double superset
                  }
     
+    # This dictionary identifies double-struck characters
+    # It is in the following format:
+    # {typefaceNumber: {mtCode: characterNotDoubleStruck}}
+    DOUBLE_STRUCK = {
+                     254 : {61604 : 107,  # small k
+                            61573 : 70,   # cap F
+                            61586 : 83    # cap S
+                            },
+                     
+                     255 : {61604 : 107,  # small k
+                            61573 : 70,   # cap F
+                            61586 : 83    # cap S
+                            }
+                     }
+    
+    # This dictionary identifies fraktur characters
+    # It is in the following format:
+    # {typefaceNumber: {mtCode: characterNotFraktur}}
+    FRAKTUR = {
+               253 : {61440 : 65,  # cap A
+                      61452 : 77   # cap M
+                      },
+               255 : {61440 : 65,  # cap A
+                      61452 : 77   # cap M
+                      }
+               }
+
     def __init__(self, f):
         Record.__init__(self)
         
