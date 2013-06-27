@@ -180,7 +180,10 @@ infinity = mn("&#8734;") -> 'infinity'
 // ------------------------------------------------------------------------------
 // Geometry Specific
 // ------------------------------------------------------------------------------
+angles = angle s -> 'angles'
 congruent = approxEqualTilde -> 'is congruent to'
+parallels = parallel s -> 'parallels'
+perpendiculars = perpendicular s -> 'perpendiculars'
 underBothArrow = mover(? bar) -> 'the line segment {1},'
 underBothArrow = mover(? arc) -> 'the arc {1},'
 underBothArrow = mover(? leftArrow) -> 'the directed line segment {1},'
