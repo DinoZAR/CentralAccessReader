@@ -9,9 +9,10 @@ from lxml import etree
 from lxml import html as HTML
 import os
 import urllib
+import traceback
 from src.gui.bookmarks import BookmarkNode
-from src.misc import program_path, app_data_path, temp_path
-from src.mathtype.parser import parseWMF
+from src.misc import program_path, app_data_path, temp_path, REPORT_BUG_URL
+from src.mathtype.parser import parseWMF, MathTypeParseError
 
 # The path to this particular module
 rootPath = 'src/docx'
@@ -305,8 +306,25 @@ class DocxDocument(object):
             # Figure out the image type to run correct parser through
             imageFile = self.zip.open('word/media/' + filename, 'r')
             imageType = os.path.splitext(filename)[1].lower()
-            if imageType == '.wmf':
-                data['data'] = parseWMF(imageFile)
+            
+            try:
+                if imageType == '.wmf':
+                    data['data'] = parseWMF(imageFile)
+                    parentData['math'] = data
+                    
+            except Exception as ex:
+                # Print out the exception, then create a dummy MathML that says
+                # "Couldn't read MathType"
+                traceback.print_exc()
+                print ex.message
+                    
+                root = etree.Element('a')
+                root.set('href', REPORT_BUG_URL)
+                elem = etree.SubElement(root, 'math', nsmap={None: 'http://www.w3.org/1998/Math/MathML'})
+                elem = etree.SubElement(elem, 'mrow')
+                elem = etree.SubElement(elem, 'mtext')
+                elem.text = '[MathType Error. Click Here to Tell Central Access!]'
+                data['data'] = root
                 parentData['math'] = data
                 
             imageFile.close()

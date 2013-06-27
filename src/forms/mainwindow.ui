@@ -826,7 +826,7 @@
     <string>Save &amp;Selection to MP3</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+S</string>
+    <string>Ctrl+Shift+M</string>
    </property>
   </action>
   <action name="actionSave_All_to_MP3">
@@ -838,7 +838,7 @@
     <string>Save &amp;All to MP3</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+S</string>
+    <string>Ctrl+M</string>
    </property>
   </action>
   <action name="actionHighlights_Colors_and_Fonts">

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/mainwindow.ui'
 #
-# Created: Wed Jun 26 10:10:35 2013
+# Created: Thu Jun 27 08:15:27 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -449,9 +449,9 @@ class Ui_MainWindow(object):
         self.actionStop.setText(_translate("MainWindow", "&Stop", None))
         self.actionStop.setShortcut(_translate("MainWindow", "Ctrl+S", None))
         self.actionSave_Selection_to_MP3.setText(_translate("MainWindow", "Save &Selection to MP3", None))
-        self.actionSave_Selection_to_MP3.setShortcut(_translate("MainWindow", "Ctrl+Shift+S", None))
+        self.actionSave_Selection_to_MP3.setShortcut(_translate("MainWindow", "Ctrl+Shift+M", None))
         self.actionSave_All_to_MP3.setText(_translate("MainWindow", "Save &All to MP3", None))
-        self.actionSave_All_to_MP3.setShortcut(_translate("MainWindow", "Ctrl+S", None))
+        self.actionSave_All_to_MP3.setShortcut(_translate("MainWindow", "Ctrl+M", None))
         self.actionHighlights_Colors_and_Fonts.setText(_translate("MainWindow", "&Highlights, Colors, and Fonts", None))
         self.actionHighlights_Colors_and_Fonts.setShortcut(_translate("MainWindow", "F2", None))
         self.actionSpeech.setText(_translate("MainWindow", "&Speech", None))

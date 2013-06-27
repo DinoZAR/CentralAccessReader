@@ -9,7 +9,7 @@ import StringIO
 import traceback
 from lxml import etree
 from records import *
-from src.misc import temp_path
+from src.misc import temp_path, REPORT_BUG_URL
 
 def parseMTEF(mtefString):
     '''
@@ -106,11 +106,12 @@ def parseWMF(wmfFile):
         else:
             
             # Make some MathML that says it cannot read this particular math
-            root = etree.Element('math', nsmap={None: 'http://www.w3.org/1998/Math/MathML'})
-            
-            elem = etree.SubElement(root, 'mrow')
+            root = etree.Element('a')
+            root.set('href', REPORT_BUG_URL)
+            elem = etree.SubElement(root, 'math', nsmap={None: 'http://www.w3.org/1998/Math/MathML'})
+            elem = etree.SubElement(elem, 'mrow')
             elem = etree.SubElement(elem, 'mtext')
-            elem.text = 'Couldn\'t read MathType.'
+            elem.text = '[MathType Error. Click Here to Tell Central Access!]'
             
             return root
             
