@@ -293,6 +293,15 @@ function GetSelectionRange() {
 		console.debug('My selection range: ' + range.toString());
 	}
 	
+	// Clear the highlighting in it, if any.
+	// There would be if we did a search.
+	ClearAllHighlights();
+	
+	// Reset the user selection around the range we constructed
+	var sel = window.getSelection();
+	sel.removeAllRanges();
+	sel.addRange(range);
+	
 	return range;
 }
 
