@@ -247,6 +247,11 @@ function GetSelectionRange() {
 			}
 		}
 		
+		// If the start turns out to be the body, make the start node the same as the
+		if (range.startContainer.nodeName == 'BODY') {
+			range.setStart(range.endContainer, 0);
+		}
+		
 		// If I have a paragraph with no text, move the range to the next element
 		if ((range.startContainer.nodeName == 'P') && ($(range.startContainer).text() == '')) {
 			range.setStart(NextElement(range.startContainer), 0);
