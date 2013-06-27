@@ -37,6 +37,7 @@ ampersand = mi("&amp;") -> 'ampersand,'
 approxEqual = mi("&#8771;") -> 'is approximately equal to,'
 
 approxEqualTilde = mi("&#8773;") -> 'is approximately equal to,'
+apostrophe = mi("'") -> 'apostrophe'
 
 approxEqual = mi("&#8776;") -> 'is approximately equal to,'
 
@@ -101,7 +102,7 @@ product [integral] = mi("&#8719;") -> 'product,'
 product [integral] = mo("&#8719;") -> 'product,'
 times = mo("*") -> 'times,'
 
-times = mo("&#215;") -> 'times,'
+timesCross = mo("&#215;") -> 'times,'
 
 times = mi("&#8727;") -> 'times,'
 
