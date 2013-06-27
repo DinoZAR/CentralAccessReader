@@ -100,6 +100,7 @@ functionPrime = [variable] mi("'") mfenced(+) -> 'function {1} prime of {2}'
 // ------------------------------------------------------------------------------
 // Fraction-based
 // ------------------------------------------------------------------------------
+//darbouxIntUpper = munder(integral mrow(?) mrow(?) bar) -> 'lower Darboux integral from {2} to {3}'
 integral = msub([integral] ?) -> '{1} sub {2} of'
 
 
@@ -122,7 +123,6 @@ timeSecondDeriv = mover(y doubleDot) -> 'time second derivative'
 unitVector = mover(mrow(x) caret) -> 'unit vector'
 vector = mover(x rightArrow) -> 'vector'
 
-darbouxIntUpper = munder(integral munderover(mrow(?) mrow(?)) bar) -> 'lower Darboux integral from {2} to {3}'
 
 // Strikes and Slashes
 Strike = menclose(+) -> 'strike {1} end-strike,'
@@ -212,11 +212,13 @@ overUnderArrowB = munderover(rightHarpoon mrow(+) mrow(+)) -> '{2}, above {1}, s
 // ------------------------------------------------------------------------------
 backPrimes = mmultiscripts(? ? ? ?) -> '{4} {1}'
 
-// Limits
-limit = munderover(mrow(l i m) mrow(? rightArrow ?) ?) -> 'the limit as {4}, approaches {6}, of'
+// Limits
+limit = munderover(mrow(l i m) mrow(? downArrow +) ?) -> 'the limit as {4}, decreases from {6}, of'
+limit = munderover(mrow(l i m) mrow(? rightArrow ?) ?)-> 'the limit as {4}, approaches {6}, of'
 limit = munderover(mrow(l i m) mrow(? upArrow ?) ?) -> 'the limit as {4}, increases to {6}, of'
-limit = munderover(mrow(l i m) mrow(? downArrow ?) ?) -> 'the limit as {4}, decreases to {6}, of'
-limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4}, of'
+limit = munderover(mrow(l i m) mrow(? diagTopRightArrow ?) ?) -> 'the limit as {4}, approaches {6} from the negative direction, of'
+limit = munderover(mrow(l i m) mrow(? diagBotRightArrow ?) ?) -> 'the limit as {4}, approaches {6} from the positive direction, of'
+limit = munderover(mrow(l i m) mrow(?) ?) -> 'the limit as {4}, of'
 
 // Products and Unions
 coproductSyn = munderover(coproduct mrow(+) mrow(+)) -> 'the {1}, from {2}, to {3}, of'

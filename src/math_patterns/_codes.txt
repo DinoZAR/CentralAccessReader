@@ -90,7 +90,7 @@ muchLessThan = mi("&#8810;") -> 'is much less than,'
 
 muchGreaterThan = mi("&#8811;") -> 'is much greater than,'
 
-negative = mo("&#8722;") -> 'minus,'
+minus = mo("&#8722;") -> 'minus,'
 
 notEqual = mi("&#8800;") -> 'is not equal to,'
 
