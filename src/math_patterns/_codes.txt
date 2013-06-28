@@ -546,13 +546,13 @@ two = mn("2") -> 'two'
 
 three = mn("3") -> 'three'
 
-//four = mn("4") -> 'four'
-//five = mn("5") -> 'five'
-//six = mn("6") -> 'six'
-//seven = mn("7") -> 'seven'
-//eight = mn("8") -> 'eight'
-//nine = mn("9") -> 'nine'
-//ten = mn("10") -> 'ten'
+four = mn("4") -> 'four'
+five = mn("5") -> 'five'
+six = mn("6") -> 'six'
+seven = mn("7") -> 'seven'
+eight = mn("8") -> 'eight'
+nine = mn("9") -> 'nine'
+ten = mn("10") -> 'ten'
 
 infinity = mi("&#8734;") -> 'infinity'
 

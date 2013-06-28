@@ -34,7 +34,8 @@
 import _codes.txt
 
 // Unicodes and MathML codes for operators
-diamond = mi("&#8900;") -> 'diamond,'
+diamond = mi("&#8900;") -> 'diamond,'
+equivalent = equivalent -> 'is similar to'
 identical = mi("&#8801;") -> 'is congruent to,'
 plus = mo("+") -> 'plus,'
 summation = mi("&#8721;") -> 'summation,'
@@ -151,15 +152,8 @@ sine = s i n -> 'sine,'
 tangent = t a n -> 'tangent,'
 
 // Powers and Primes
-apostrophe = apostrophe -> 'minutes'
-cubed = msup(? mrow(three)) -> '{1} cubed,'
-cubed = msup(? three) -> '{1} cubed,'
-degress = msup(? mrow(composition)) -> '{1} degrees,'
-squared = msup(? mrow(two)) -> '{1} squared,'
-squared = msup(? two) -> '{1} squared,'
-supDubPrime = msup(? doublePrime) -> '{1} seconds,'
-supPrime = msup(? prime) -> '{1} minutes,'
-supTriPrime = msup(? triplePrime) -> '{1} triple prime,'
+
+import _PowersPrimes.txt
 
 // Syntax Quirks
 doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'
