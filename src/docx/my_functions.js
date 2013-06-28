@@ -487,7 +487,11 @@ function HighlightWord(doLine, offset, length, word) {
 	// the next text element until we find it
 	ClearAllHighlights();
 	var t = $(p).contents()[childNum];
-	while (t.data.search(word) < 0) {
+	
+	console.debug('t: ' + t.data.toString());
+	console.debug('word: ' + word);
+	
+	while (t.data.indexOf(word) < 0) {
 		// Generate a highlight 
 		var range = document.createRange();
 		range.selectNode($(p).contents()[childNum]);

@@ -322,6 +322,8 @@ class MainWindow(QtGui.QMainWindow):
     def onWord(self, offset, length, label, stream, word):
         self.hasWorded = True
         
+        print 'word:', word
+        
         if label == 'text':
             if (self.lastElement[3] != stream) and (self.lastElement[3] >= 0):
                 self.javascriptMutex.lock()
