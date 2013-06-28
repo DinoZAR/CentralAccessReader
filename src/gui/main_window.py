@@ -299,6 +299,7 @@ class MainWindow(QtGui.QMainWindow):
         outputList = []
         self.javascriptMutex.lock()
         selectedHTML = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetSelectionHTML', [])).toString())
+        print 'Selected HTML:', [selectedHTML]
         self.javascriptMutex.unlock()
         outputList = self.assigner.getSpeech(selectedHTML, self.configuration)
         
@@ -352,8 +353,8 @@ class MainWindow(QtGui.QMainWindow):
         self.lastElement = [offset, length, label, stream]
         
     def onEndStream(self, stream, label):
-        #if (not self.hasWorded) and (label == 'text') and (not self.isFirst):
-        #    self.ui.webView.page().mainFrame().evaluateJavaScript(js_command('HighlightWord', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
+#         if (not self.hasWorded) and (label == 'text') and (not self.isFirst):
+#             self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightWord', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
         self.hasWorded = False
         self.isFirst = False
         

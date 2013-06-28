@@ -201,16 +201,37 @@ function GetSelectionRange() {
 	console.debug('GetSelectionRange()');
 
 	var range = window.getSelection();
+	console.debug('Range here: ' + range.toString() + ' [start node: ' + range.focusNode.toString() + '] [end node: ' + range.anchorNode.toString() +']');
 	if (!range.isCollapsed) {
 		range = window.getSelection();
 		
 		if (range.anchorNode.compareDocumentPosition(range.focusNode) & Node.DOCUMENT_POSITION_PRECEDING) {
 			var newRange = document.createRange();
-			newRange.setStart(range.focusNode, range.focusOffset);
-			newRange.setEnd(range.anchorNode, range.anchorOffset);
+			
+			var startNode = range.focusNode;
+			var startOffset = range.focusOffset;
+			var endNode = range.anchorNode;
+			var endOffset = range.anchorOffset;
+			
+			// If the parent of the end node is the start node,
+			// get the last child of the start and swap it with
+			// the end node. Yea, it is that weird.
+			if (startNode == range.anchorNode.parentNode) {
+				swapNode = endNode;
+				swapOffset = endOffset;
+				endNode = DeepestChild(startNode, true);
+				endOffset = endNode.length;
+				startNode = swapNode;
+				startOffset = swapOffset;
+			}
+			
+			newRange.setStart(startNode, startOffset);
+			newRange.setEnd(endNode, endOffset);
 			range = newRange;
+			console.debug('Range here: ' + range.toString() + ' [start node: ' + range.startContainer.toString() + '] [end node: ' + range.endContainer.toString() + ']');
 		}
 		else {
+			console.debug('Switching around the start and end nodes.');
 			if (range.anchorNode === range.focusNode) {
 				// Switch around the offsets if needed
 				var newRange = document.createRange()
@@ -223,14 +244,18 @@ function GetSelectionRange() {
 					newRange.setEnd(range.focusNode, range.focusOffset);
 				}
 				range = newRange;
+				console.debug('Range here: ' + range.toString() + ' [start node: ' + range.startContainer.toString() + '] [end node: ' + range.endContainer.toString() + ']');
 			}
 			else {
 				var newRange = document.createRange();
 				newRange.setStart(range.anchorNode, range.anchorOffset);
 				newRange.setEnd(range.focusNode, range.focusOffset);
 				range = newRange;
+				console.debug('Range here: ' + range.toString() + ' [start node: ' + range.startContainer.toString() + '] [end node: ' + range.endContainer.toString() + ']');
 			}
 		}
+		
+		console.debug('Range here: ' + range.toString() + ' [start node: ' + range.startContainer.toString() + '] [end node: ' + range.endContainer.toString() + ']');
 		
 		// Move start forward so that it removes the whitespace
 		if ((range.startContainer.nodeName == '#text')) {
@@ -256,6 +281,8 @@ function GetSelectionRange() {
 		if ((range.startContainer.nodeName == 'P') && ($(range.startContainer).text() == '')) {
 			range.setStart(NextElement(range.startContainer), 0);
 		}
+		
+		console.debug('Range here: ' + range.toString());
 	}
 	else {
 		// Start from the heading, if applicable
