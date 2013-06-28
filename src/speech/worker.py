@@ -13,7 +13,7 @@ from src.misc import temp_path, program_path
 
 class SpeechWorker(QThread):
     
-    onWord = QtCore.pyqtSignal(int, int, str, int)
+    onWord = QtCore.pyqtSignal(int, int, str, int, str)
     onEndStream = QtCore.pyqtSignal(int, str)
     onFinish = QtCore.pyqtSignal()
     onProgress = QtCore.pyqtSignal(int)
@@ -37,8 +37,8 @@ class SpeechWorker(QThread):
         
     def run(self):
         
-        def myOnWord(offset, length, label, stream):
-            self.onWord.emit(offset, length, label, stream)
+        def myOnWord(offset, length, label, stream, word):
+            self.onWord.emit(offset, length, label, stream, word)
         
         def myOnEndStream(stream, label):
             self.onEndStream.emit(stream, label)

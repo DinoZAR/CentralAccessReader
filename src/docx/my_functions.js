@@ -201,7 +201,6 @@ function GetSelectionRange() {
 	console.debug('GetSelectionRange()');
 
 	var range = window.getSelection();
-	console.debug('Range here: ' + range.toString() + ' [start node: ' + range.focusNode.toString() + '] [end node: ' + range.anchorNode.toString() +']');
 	if (!range.isCollapsed) {
 		range = window.getSelection();
 		
@@ -228,7 +227,6 @@ function GetSelectionRange() {
 			newRange.setStart(startNode, startOffset);
 			newRange.setEnd(endNode, endOffset);
 			range = newRange;
-			console.debug('Range here: ' + range.toString() + ' [start node: ' + range.startContainer.toString() + '] [end node: ' + range.endContainer.toString() + ']');
 		}
 		else {
 			console.debug('Switching around the start and end nodes.');
@@ -478,26 +476,29 @@ function HighlightNextElement(doLine, elementType, lastElementType) {
 
 // Highlights a word in the current element based on the offset and length from
 // the TTS driver. This function will handle the offsets from the selection.
-function HighlightWord(doLine, offset, length) {
+function HighlightWord(doLine, offset, length, word) {
 	console.debug("HighlightWord()");
 	
 	// Get the parent element from the highlight from which we do these calculations
-	var p = null;
-	var childNum = 0;
-	if (!(highlightLine == null)) {
-		p = highlightLine.parentNode;
-		childNum = GetChildIndex(highlightLine);
-	}
-	else {
-		p = highlight.parentNode;
-		childNum = GetChildIndex(highlight);
-	}
+	var p = GetHighlightParent();
+	var childNum = GetHighlightChildIndex();
 	
-	// Get rid of highlights
+	// Check to see if the text we want is in the parent. Otherwise, keep moving to
+	// the next text element until we find it
 	ClearAllHighlights();
-	
-	// Get the text content of the child I want
 	var t = $(p).contents()[childNum];
+	while (t.data.search(word) < 0) {
+		// Generate a highlight 
+		var range = document.createRange();
+		range.selectNode($(p).contents()[childNum]);
+		SetHighlight(range, doLine);
+		
+		HighlightNextElement(doLine, 'text', 'text');
+		p = GetHighlightParent();
+		childNum = GetHighlightChildIndex();
+		ClearAllHighlights();
+		t = $(p).contents()[childNum];
+	}
 	
 	// Create range and select that text correctly
 	var range = document.createRange();
@@ -710,6 +711,31 @@ function SetLineHighlight() {
 // --------------------------------------------------------------------------------------------------
 // GENERAL UTILITY FUNCTIONS
 // --------------------------------------------------------------------------------------------------
+
+// Gets the parent node of the highlight in whatever form it may be
+function GetHighlightParent() {
+	var p = null;
+	var childNum = 0;
+	if (!(highlightLine == null)) {
+		p = highlightLine.parentNode;
+		childNum = GetChildIndex(highlightLine);
+	}
+	else {
+		p = highlight.parentNode;
+		childNum = GetChildIndex(highlight);
+	}
+	return p;
+}
+
+// Gets the child index of the highlight inside of its parent
+function GetHighlightChildIndex() {
+	if (!(highlightLine == null)) {
+		return GetChildIndex(highlightLine);
+	}
+	else {
+		return GetChildIndex(highlight);
+	}
+}
 
 function InsertAllChildNodes(parent, node) {
 	var contents = node.cloneNode(true);

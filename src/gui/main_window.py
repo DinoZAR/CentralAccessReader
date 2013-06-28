@@ -319,7 +319,7 @@ class MainWindow(QtGui.QMainWindow):
         
         self.startPlayback.emit()
         
-    def onWord(self, offset, length, label, stream):
+    def onWord(self, offset, length, label, stream, word):
         self.hasWorded = True
         
         if label == 'text':
@@ -328,7 +328,7 @@ class MainWindow(QtGui.QMainWindow):
                 self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
                 self.javascriptMutex.unlock()
             self.javascriptMutex.lock()
-            self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightWord', [self.configuration.highlight_line_enable, offset, length]))
+            self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightWord', [self.configuration.highlight_line_enable, offset, length, str(word)]))
             self.javascriptMutex.unlock()
             self.isFirst = False
         elif label == 'math':

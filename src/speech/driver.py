@@ -247,11 +247,13 @@ class SAPIDriver(object):
                 i = k
                 break
         self.queueLock.unlock()
-#         word = self.queue[i][0][char:char+length]
+        word = self.queue[i][0][char:char+length]
+        
+        print word
         
         # Publish this to everyone in callbacks
         for c in self.delegator['onWord']:
-            c[1](char, length, self.queue[i][1], stream)
+            c[1](char, length, self.queue[i][1], stream, word)
         
     
     def handle_onEndStream(self, stream, pos):
