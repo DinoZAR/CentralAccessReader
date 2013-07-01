@@ -189,18 +189,25 @@ def convertRecords(i, records, parentStack):
                 set = False
                 
                 # Double-struck
-                if records[i].typeface in CharRecord.DOUBLE_STRUCK:
-                    if records[i].mtCode in CharRecord.DOUBLE_STRUCK[records[i].typeface]:
-                        elem.set('mathvariant', 'double-struck')
-                        elem.text = unichr(CharRecord.DOUBLE_STRUCK[records[i].typeface][records[i].mtCode])
-                        set = True
+#                 if records[i].typeface in CharRecord.DOUBLE_STRUCK:
+                if records[i].mtCode in CharRecord.DOUBLE_STRUCK:
+                    elem.set('mathvariant', 'double-struck')
+                    elem.text = unichr(CharRecord.DOUBLE_STRUCK[records[i].mtCode])
+                    set = True
                 
                 # Fraktur
-                if records[i].typeface in CharRecord.FRAKTUR:
-                    if records[i].mtCode in CharRecord.FRAKTUR[records[i].typeface]:
-                        elem.set('mathvariant', 'fraktur')
-                        elem.text = unichr(CharRecord.FRAKTUR[records[i].typeface][records[i].mtCode])
-                        set = True
+#                 if records[i].typeface in CharRecord.FRAKTUR:
+                if records[i].mtCode in CharRecord.FRAKTUR:
+                    elem.set('mathvariant', 'fraktur')
+                    elem.text = unichr(CharRecord.FRAKTUR[records[i].mtCode])
+                    set = True
+                        
+                # Script
+#                 if records[i].typeface in CharRecord.SCRIPT:
+                if records[i].mtCode in CharRecord.SCRIPT:
+                    elem.set('mathvariant', 'script')
+                    elem.text = unichr(CharRecord.SCRIPT[records[i].mtCode])
+                    set = True
                 
                 # Everything else
                 if not set:
@@ -459,69 +466,248 @@ class CharRecord(Record):
     # A dictionary that has a lookup table to replace any character code that
     # is just too weird.
     # It is in the following format:
-    # {typefaceNumber : {mtCode : unicode, ...}, ...}
-    WEIRDNESS = {22 : {63726 : 8968,   # left ceiling
-                       63737 : 8969,   # right ceiling
-                       63728 : 8970,   # left floor
-                       63739 : 8971,   # right floor
-                       60423 : 124,    # single bar
-                       60424 : 124,    # single bar
-                       60425 : 8214,   # double bar
-                       60426 : 8214,   # double bar
-                       60429 : 9140,   # over spanning bracket
-                       60428 : 9141    # under spanning bracket
-                       },
+    # {mtCode : unicode}
+    WEIRDNESS = {
+                 209 : 8913,     # double superset
+                 59791 : 183,    # dot operator
                  
-                 11 : {60945 : 8750,   # contour integral
-                       60946 : 8751,   # double contour integral
-                       60947 : 8752,   # triple contour integral
-                       60928 : 8755,   # counter-clockwise loop integral
-                       60929 : 8754,   # clockwise loop integral
-                       59791 : 183,    # dot operator
-                       60164 : 8636,   # NOT MATCH - small right harpoon over left harpoon
-                       60163 : 8636,   # NOT MATCH - right harpoon over small left harpoon
-                       60162 : 10564,  # small right arrow over left arrow
-                       60161 : 10562,  # right arrow over small left arrow
-                       60166 : 10529,  # diagonal arrow top left to bottom right
-                       60165 : 10530   # diagonal arrow bottom left to top right
-                       },
+                 60423 : 124,    # single bar
+                 60424 : 124,    # single bar
+                 60425 : 8214,   # double bar
+                 60426 : 8214,   # double bar
+                 60428 : 9141,   # under spanning bracket
+                 60429 : 9140,   # over spanning bracket
                  
-                 24 : {61189 : 8195,   # em space
-                       61188 : 8201,   # thick space
-                       61186 : 8201,   # thin space - SAME AS ABOVE FOR NOW
-                       61192 : 8202,   # one-point space
-                       61185 : 8203    # zero-width space (what's the point of that?)
-                       },
+                 63726 : 8968,   # left ceiling
+                 63728 : 8970,   # left floor
+                 63737 : 8969,   # right ceiling
+                 63739 : 8971,   # right floor
                  
-                 41681 : {209 : 8913}   # double superset
+                 60161 : 10562,  # right arrow over small left arrow
+                 60162 : 10564,  # small right arrow over left arrow
+                 60163 : 8636,   # NOT MATCH - right harpoon over small left harpoon
+                 60164 : 8636,   # NOT MATCH - small right harpoon over left harpoon
+                 60165 : 10530,  # diagonal arrow bottom left to top right
+                 60166 : 10529,  # diagonal arrow top left to bottom right
+                 
+                 60928 : 8755,   # counter-clockwise loop integral
+                 60929 : 8754,   # clockwise loop integral
+                 60945 : 8750,   # contour integral
+                 60946 : 8751,   # double contour integral
+                 60947 : 8752,   # triple contour integral
+                 
+                 61185 : 8203,   # zero-width space (what's the point of that?)
+                 61186 : 8198,   # thin space
+                 61187 : 8196,   # thick space
+                 61189 : 8195,   # em space
+                 61190 : 8195,   # 2 em space
+                 61191 : 8202,   # inner space
+                 61192 : 8202,   # one-point space
+                 
+                 61312 : 8754,   # Clockwise contour integral (arrow left side)
+                 
+                 61824 : 7424,   # small cap A
+                 61825 : 665,    # small cap B
+                 61826 : 7428,   # small cap C
+                 61827 : 7429,   # small cap D
+                 61828 : 7431,   # small cap E
+                 61829 : 42800,  # small cap F
+                 61830 : 610,    # small cap G
+                 61831 : 668,    # small cap H
+                 61832 : 618,    # small cap I
+                 61833 : 7434,   # small cap J
+                 61834 : 7435,   # small cap K
+                 61835 : 671,    # small cap L
+                 61836 : 7437,   # small cap M
+                 61837 : 628,    # small cap N
+                 61838 : 7439,   # small cap O
+                 61839 : 7448,   # small cap P
+                 61841 : 640,    # small cap R
+                 61842 : 42801,  # small cap S
+                 61843 : 7451,   # small cap T
+                 61844 : 7452,   # small cap U
+                 61845 : 7456,   # small cap V
+                 61846 : 7457,   # small cap W
+                 61848 : 655,    # small cap Y
+                 61849 : 7458,   # small cap Z
+                 61850 : 7425,   # small cap ligature ae
+                 61851 : 7838    # small cap sharp s (not small yet)
                  }
     
     # This dictionary identifies double-struck characters
     # It is in the following format:
-    # {typefaceNumber: {mtCode: characterNotDoubleStruck}}
-    DOUBLE_STRUCK = {
-                     254 : {61604 : 107,  # small k
-                            61573 : 70,   # cap F
-                            61586 : 83    # cap S
-                            },
+    # {mtCode: characterNotDoubleStruck}
+    DOUBLE_STRUCK = {61568 : 65,  # cap A
+                     61569 : 66,  # cap B
+                     61570 : 67,  # cap C
+                     61571 : 68,  # cap D
+                     61572 : 69,  # cap E
+                     61573 : 70,  # cap F
+                     61574 : 71,  # cap G
+                     61575 : 72,  # cap H
+                     61576 : 73,  # cap I
+                     61577 : 74,  # cap J
+                     61578 : 75,  # cap K
+                     61579 : 76,  # cap L
+                     61580 : 77,  # cap M
+                     61581 : 78,  # cap N
+                     61582 : 79,  # cap O
+                     61583 : 80,  # cap P
+                     61584 : 81,  # cap Q
+                     61585 : 82,  # cap R
+                     61586 : 83,  # cap S
+                     61587 : 84,  # cap T
+                     61588 : 85,  # cap U
+                     61589 : 86,  # cap V
+                     61590 : 87,  # cap W
+                     61591 : 88,  # cap X
+                     61592 : 89,  # cap Y
+                     61593 : 90,  # cap Z
                      
-                     255 : {61604 : 107,  # small k
-                            61573 : 70,   # cap F
-                            61586 : 83    # cap S
-                            }
+                     61594 : 97,  # small A
+                     61595 : 98,  # small B
+                     61596 : 99,  # small C
+                     61597 : 100, # small D
+                     61598 : 101, # small E
+                     61599 : 102, # small F
+                     61600 : 103, # small G
+                     61601 : 104, # small H
+                     61602 : 105, # small I
+                     61603 : 106, # small J
+                     61604 : 107, # small K
+                     61605 : 108, # small L
+                     61606 : 109, # small M
+                     61607 : 110, # small N
+                     61608 : 111, # small O
+                     61609 : 112, # small P
+                     61610 : 113, # small Q
+                     61611 : 114, # small R
+                     61612 : 115, # small S
+                     61613 : 116, # small T
+                     61614 : 117, # small U
+                     61615 : 118, # small V
+                     61616 : 119, # small W
+                     61617 : 120, # small X
+                     61618 : 121, # small Y
+                     61619 : 122  # small Z
                      }
     
     # This dictionary identifies fraktur characters
     # It is in the following format:
-    # {typefaceNumber: {mtCode: characterNotFraktur}}
-    FRAKTUR = {
-               253 : {61440 : 65,  # cap A
-                      61452 : 77   # cap M
-                      },
-               255 : {61440 : 65,  # cap A
-                      61452 : 77   # cap M
-                      }
+    # {mtCode: characterNotFraktur}
+    FRAKTUR = {61440 : 65,  # cap A
+               61441 : 66,  # cap B
+               61442 : 67,  # cap C
+               61443 : 68,  # cap D
+               61444 : 69,  # cap E
+               61445 : 70,  # cap F
+               61446 : 71,  # cap G
+               61447 : 72,  # cap H
+               61448 : 73,  # cap I
+               61449 : 74,  # cap J
+               61450 : 75,  # cap K
+               61451 : 76,  # cap L
+               61452 : 77,  # cap M
+               61453 : 78,  # cap N
+               61454 : 79,  # cap O
+               61455 : 80,  # cap P
+               61456 : 81,  # cap Q
+               61457 : 82,  # cap R
+               61458 : 83,  # cap S
+               61459 : 84,  # cap T
+               61460 : 85,  # cap U
+               61461 : 86,  # cap V
+               61462 : 87,  # cap W
+               61463 : 88,  # cap X
+               61464 : 89,  # cap Y
+               61465 : 90,  # cap Z
+               
+               61466 : 97,  # small A
+               61467 : 98,  # small B
+               61468 : 99,  # small C
+               61469 : 100, # small D
+               61470 : 101, # small E
+               61471 : 102, # small F
+               61472 : 103, # small G
+               61473 : 104, # small H
+               61474 : 105, # small I
+               61475 : 106, # small J
+               61476 : 107, # small K
+               61477 : 108, # small L
+               61478 : 109, # small M
+               61479 : 110, # small N
+               61480 : 111, # small O
+               61481 : 112, # small P
+               61482 : 113, # small Q
+               61483 : 114, # small R
+               61484 : 115, # small S
+               61485 : 116, # small T
+               61486 : 117, # small U
+               61487 : 118, # small V
+               61488 : 119, # small W
+               61489 : 120, # small X
+               61490 : 121, # small Y
+               61491 : 122  # small Z
                }
+    
+    # This dictionary identifies script characters
+    # It is in the following format:
+    # {mtCode: characterNotScript}
+    SCRIPT = {
+              61696 : 65,   # cap A
+              61697 : 66,   # cap B
+              61698 : 67,   # cap C
+              61699 : 68,   # cap D
+              61700 : 69,   # cap E
+              61701 : 70,   # cap F
+              61702 : 71,   # cap G
+              61703 : 72,   # cap H
+              61704 : 73,   # cap I
+              61705 : 74,   # cap J
+              61706 : 75,   # cap K
+              61707 : 76,   # cap L
+              61708 : 77,   # cap M
+              61709 : 78,   # cap N
+              61710 : 79,   # cap O
+              61711 : 80,   # cap P
+              61712 : 81,   # cap Q
+              61713 : 82,   # cap R
+              61714 : 83,   # cap S
+              61715 : 84,   # cap T
+              61716 : 85,   # cap U
+              61717 : 86,   # cap V
+              61718 : 87,   # cap W
+              61719 : 88,   # cap X
+              61720 : 89,   # cap Y
+              61721 : 90,   # cap Z
+              
+              61722 : 97,   # small A
+              61723 : 98,   # small B
+              61724 : 99,   # small C
+              61725 : 100,  # small D
+              61726 : 101,  # small E
+              61727 : 102,  # small F
+              61728 : 103,  # small G
+              61729 : 104,  # small H
+              61730 : 105,  # small I
+              61731 : 106,  # small J
+              61732 : 107,  # small K
+              61733 : 108,  # small L
+              61734 : 109,  # small M
+              61735 : 110,  # small N
+              61736 : 111,  # small O
+              61737 : 112,  # small P
+              61738 : 113,  # small Q
+              61739 : 114,  # small R
+              61740 : 115,  # small S
+              61741 : 116,  # small T
+              61742 : 117,  # small U
+              61743 : 118,  # small V
+              61744 : 119,  # small W
+              61745 : 120,  # small X
+              61746 : 121,  # small Y
+              61747 : 122   # small Z
+              }
 
     def __init__(self, f):
         Record.__init__(self)
@@ -577,10 +763,10 @@ class CharRecord(Record):
         Searches through its database of weirdness and tries to fix up the
         character code.
         '''
-        if self.typeface in self.WEIRDNESS:
-            codes = self.WEIRDNESS[self.typeface]
-            if self.mtCode in codes:
-                self.mtCode = codes[self.mtCode]
+        #if self.typeface in self.WEIRDNESS:
+        #    codes = self.WEIRDNESS[self.typeface]
+        if self.mtCode in self.WEIRDNESS:
+            self.mtCode = self.WEIRDNESS[self.mtCode]
                          
 class TemplateRecord(Record):
     
