@@ -1,0 +1,25 @@
+fenced = mfenced(+) -> 'open parenthesis, {1}, closed parenthesis,'
+
+under = munder(? ?) -> '{1} over {2}'
+over = mover(? ?) -> '{1} under {2}'
+fraction = mfrac(? ?) -> '{1} over {2}'
+
+SubSup = msubsup( mrow(?) mrow(?) mrow(?)) -> '{1} to the {3} power, sub {2},'
+leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left superscript {2},'
+Sub = msub( mrow(?) mrow(?)) -> '{1} sub {2},'
+
+Sup = msup( mrow(?) mrow(?)) -> '{1} to the {2} power,'
+
+leftSub = msub( mrow() mrow(?)) -> 'left subscript {1},'
+leftSup = msup( mrow() mrow(?)) -> 'left superscript {1},'
+
+subscript = msub(? ?) -> '{1} sub {2}'
+superscript = msup(? ?) -> '{1} to the {2} power'
+subsuperscript = msubsup(? ? ?) -> '{1} to the {3} power sub {2}'
+
+row = mrow(+) -> '{1}'
+row = mrow() -> ''
+style = mstyle(+) -> '{1}'
+
+// This is the final collapsing pattern
+final = math(+) -> '{1}'

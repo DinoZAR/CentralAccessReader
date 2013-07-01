@@ -196,22 +196,4 @@ determinant = d e t -> 'determinant of the square matrix'
 
 // ------------------------------------------------------------------------------
 // Generic Fallbacks, Final Collectors
-// ------------------------------------------------------------------------------
-fenced = mfenced(+) -> 'open parenthesis, {1}, closed parenthesis,'
-
-under = munder(? ?) -> '{1} over {2}'
-over = mover(? ?) -> '{1} under {2}'
-fraction = mfrac(? ?) -> '{1} over {2}'
-leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left superscript {2},'
-leftSub = msup( mrow() mrow(?)) -> 'left subscript {1},'
-leftSup = msub( mrow() mrow(?)) -> 'left superscript {1},'
-subscript = msub(? ?) -> '{1} sub {2}'
-superscript = msup(? ?) -> '{1} to the {2} power'
-subsuperscript = msubsup(? ? ?) -> '{1} sub {2} to the {3} power'
-
-row = mrow(+) -> '{1}'
-row = mrow() -> ''
-style = mstyle(+) -> '{1}'
-
-// This is the final collapsing pattern
-final = math(+) -> '{1}'
+// ------------------------------------------------------------------------------import _Final.txt
