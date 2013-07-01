@@ -31,12 +31,16 @@ class Assigner(object):
         # prose
         self.mathThread = MathParserThread(self._mathTTS)
         self.mathThread.mathParsed.connect(self._setMathData)
+        self.mathThread.start()
         
     def prepare(self, content):
         '''
         Caches certain aspects of the content so that it can properly assign
         the content (like MathML)
         '''
+        
+        print 'Assigner preparing document...'
+        
         self.mathThread.clearQueue()
         self._maths = {}
         

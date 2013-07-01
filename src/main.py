@@ -31,11 +31,7 @@ def main():
     app = QApplication(sys.argv)
     window = MainWindow(app)
     window.show()
-    returnCode = app.exec_()
-    print 'Done with CAR!'
-    sys.exit(0)  # This is a very hard close
+    sys.exit(app.exec_())
 
 if __name__ == '__main__':
     main()
-    print 'Still trying to close...'
-    sys.exit()

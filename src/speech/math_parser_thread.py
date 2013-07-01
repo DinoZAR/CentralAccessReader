@@ -10,33 +10,33 @@ class MathParserThread(QThread):
     This thread is used to continuously parse math equations and then post them
     to the assigner when they are done.
     '''
-    mathParsed = pyqtSignal(list)
+    mathParsed = pyqtSignal(tuple)
+    queueLock = QMutex()
+    mathTTSLock = QMutex()
     
     def __init__(self, mathTTS):
         QThread.__init__(self)
         self._mathTTS = mathTTS
         self._mathQueue = []
-        
-        self.queueLock = QMutex()
-        self.mathTTSLock = QMutex()
     
     def run(self):
         while True:
             if self._mathTTS != None:
-                # Keep using the math database to parse math equations. Then, 
-                # publish the parsed math out to whatever needs it.
-                self.queueLock.lock()
-                math = self._mathQueue.pop(0)
-                self.queueLock.unlock()
-                
-                self.mathTTSLock.lock()
-                prose = self._mathTTS.parse(math[1]['mathml'])
-                self.mathTTSLock.unlock()
-                
-                math[1]['parsed'] = True
-                math[1]['prose'] = prose
-                
-                self.mathParsed.emit(math)
+                if len(self._mathQueue) > 0:
+                    # Keep using the math database to parse math equations. Then, 
+                    # publish the parsed math out to whatever needs it.
+                    self.queueLock.lock()
+                    math = self._mathQueue.pop(0)
+                    self.queueLock.unlock()
+                    
+                    self.mathTTSLock.lock()
+                    prose = self._mathTTS.parse(math[1]['mathml'])
+                    self.mathTTSLock.unlock()
+                    
+                    math[1]['parsed'] = True
+                    math[1]['prose'] = prose
+                    
+                    self.mathParsed.emit(math)
     
     def setMathDatabase(self, newMathTTS):
         '''
