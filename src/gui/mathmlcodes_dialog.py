@@ -3,9 +3,8 @@ Created on Feb 27, 2013
 
 @author: Spen-ZAR
 '''
-import os
-import sys
 import urllib
+import operator
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtWebKit import QWebView
 from lxml import etree, html
@@ -27,13 +26,14 @@ class MathMLCodesDialog(QtGui.QDialog):
         self.mathmlCodes = mathmlCodes
         
         # Set the items in the list box using WebViews of all of my MathML code
-        for key in self.mathmlCodes:
-            myItem = MathMLItem(self.mathmlCodes[key])
-            item = QtGui.QListWidgetItem(self.mathmlCodes[key])
+        # Sort the MathML by index
+        sortedData = sorted(self.mathmlCodes.items(), key=lambda x: x[1]['index'])
+        for data in sortedData:
+            myItem = MathMLItem(data[1]['mathml'])
+            item = QtGui.QListWidgetItem(data[1]['mathml'])
             item.setSizeHint(QtCore.QSize(0, 100))
             self.ui.mathmlCodesList.addItem(item)
             self.ui.mathmlCodesList.setItemWidget(item, myItem)
-            
         
         self.connect_signals()
         
@@ -53,7 +53,7 @@ class MathMLCodesDialog(QtGui.QDialog):
 
 class MathMLItem(QtGui.QWidget):
     
-    def __init__(self, mathmlCode):
+    def __init__(self, mathml):
         super(MathMLItem, self).__init__()
         
         self.layout = QtGui.QHBoxLayout(self)
@@ -75,7 +75,7 @@ class MathMLItem(QtGui.QWidget):
         div.attrib['style'] = r'font-size: 250%'
         
         # Get MathML
-        mathML = etree.fromstring(mathmlCode)
+        mathML = etree.fromstring(mathml)
         div.append(mathML)
         
         url = temp_path('import')

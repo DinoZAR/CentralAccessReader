@@ -249,8 +249,6 @@ class SAPIDriver(object):
         self.queueLock.unlock()
         word = self.queue[i][0][char:char+length]
         
-        print word
-        
         # Publish this to everyone in callbacks
         for c in self.delegator['onWord']:
             c[1](char, length, self.queue[i][1], stream, word)

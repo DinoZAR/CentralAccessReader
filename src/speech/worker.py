@@ -3,8 +3,8 @@ Created on Apr 8, 2013
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtCore import QThread, QMutex
-from PyQt4 import QtCore, QtGui
+from PyQt4.QtCore import QThread, QMutex, pyqtSignal
+from PyQt4.QtGui import qApp
 from src.speech import driver
 import platform
 import subprocess
@@ -13,11 +13,11 @@ from src.misc import temp_path, program_path
 
 class SpeechWorker(QThread):
     
-    onWord = QtCore.pyqtSignal(int, int, str, int, str)
-    onEndStream = QtCore.pyqtSignal(int, str)
-    onFinish = QtCore.pyqtSignal()
-    onProgress = QtCore.pyqtSignal(int)
-    onProgressLabel = QtCore.pyqtSignal(str)
+    onWord = pyqtSignal(int, int, str, int, str)
+    onEndStream = pyqtSignal(int, str)
+    onFinish = pyqtSignal()
+    onProgress = pyqtSignal(int)
+    onProgressLabel = pyqtSignal(str)
     
     queueLock = QMutex()
     
@@ -126,7 +126,7 @@ class SpeechWorker(QThread):
             ps = subprocess.Popen(lameCommand, stdout=subprocess.PIPE, stderr=subprocess.PIPE, startupinfo=startupInfo)
             
             while ps.poll() == None:
-                QtGui.qApp.processEvents()
+                qApp.processEvents()
                 if self._stopMP3Creation:
                     ps.terminate()
                     break
