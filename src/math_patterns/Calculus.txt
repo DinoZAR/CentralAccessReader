@@ -131,53 +131,12 @@ Strike = menclose(+) -> 'strike {1} end-strike,'
 //---------------------------------------------------------------
 // Trigonometry-Specific
 //---------------------------------------------------------------
-hyperboliccosecant = c s c h -> 'hyperbolic cosecant'
-hyperboliccosine = c o s h -> 'hyperbolic cosine'
-hyperboliccotangent = c o t h -> 'hyperbolic cotangent'
-hyperbolicsecant = s e c h -> 'hyperbolic secant'
-hyperbolicsine = s i n h -> 'hyperbolic sine'
-hyperbolictangent = t a n h -> 'hyperbolic tangent'
-inverseHypeCosine = c o s msup(h mrow(minus one)) -> 'inverse hyperbolic cosine,'
-inverseHypeCotan = c o t msup(h mrow(minus one)) -> 'inverse hyperbolic cotangent,'
-inverseHypeCosec = c s c msup(h mrow(minus one)) -> 'inverse hyperbolic cosecant,'
-inverseHypeSec = s e c msup(h mrow(minus one)) -> 'inverse hyperbolic secant,'
-inverseHypeSine = s i n msup(h mrow(minus one)) -> 'inverse hyperbolic sine,'
-inverseHypeTan = t a n msup(h mrow(minus one)) -> 'inverse hyperbolic tangent,'
-inverseSine = c s msup(c mrow(minus one)) -> 'inverse cosecant,'
-inverseSine = c o msup(s mrow(minus one)) -> 'inverse cosine,'
-inverseSine = c o msup(t mrow(minus one)) -> 'inverse cotangent,'
-inverseSine = s e msup(c mrow(minus one)) -> 'inverse secant,'
-inverseSine = s i msup(n mrow(minus one)) -> 'inverse sine,'
-inverseSine = t a msup(n mrow(minus one)) -> 'inverse tangent,'
-hypotenuse = H y p o t e n u s e -> 'Hypotenuse'
-hypotenuse = h y p o t e n u s e -> 'hypotenuse'
-opposite = O p p o s i t e -> 'Opposite'
-opposite = o p p o s i t e -> 'opposite'
-log = l n -> 'natural log of,'
-log = l o g -> 'log of,'
-log = l o msub(g mrow(e)) -> 'natural log of,'
-log = l o msub(g ?) -> 'log base {4}, of'
-
-arc = a r c -> 'arc'
-arccos = a r c c o s -> 'arc cosine,'
-arcsine = a r c s i n -> 'arc sine,'
-arctan = a r c t a n -> 'arc tangent,'
-cosine = c o s -> 'cosine,'
-cotangent = c o t -> 'cotangent,'
-cosecant = c s c -> 'cosecant,'
-secant = s e c -> 'secant,'
-sine = s i n -> 'sine,'
-tangent = t a n -> 'tangent,'
 
-// Powers and Primes
-cubed = msup(? mrow(three)) -> '{1} cubed,'
-cubed = msup(? three) -> '{1} cubed,'
-degress = msup(? mrow(composition)) -> '{1} degrees,'
-squared = msup(? mrow(two)) -> '{1} squared,'
-squared = msup(? two) -> '{1} squared,'
-supDubPrime = msup(? doublePrime) -> '{1} double prime,'
-supPrime = msup(? prime) -> '{1} prime,'
-supTriPrime = msup(? triplePrime) -> '{1} triple prime,'
+import _Trig.txt
+
+// Powers and Primes
+
+import _PowersPrimes.txt
 
 // Syntax Quirks
 doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'
@@ -221,47 +180,8 @@ limit = munderover(mrow(l i m) mrow(? diagBotRightArrow ?) ?) -> 'the limit as {
 limit = munderover(mrow(l i m) mrow(?) ?) -> 'the limit as {4}, of'
 
 // Products and Unions
-coproductSyn = munderover(coproduct mrow(+) mrow(+)) -> 'the {1}, from {2}, to {3}, of'
-coproductSyn = munderover(coproduct mrow(+) ?) -> 'the {1}, from {2}, of'
-coproductSyn = munderover(coproduct ? ?) -> 'the {1}, of'
 
-integralSyn = munderover(areaIntegral mrow(+) mrow(+)) -> 'the {1}, from {2}, to {3}, of'
-integralSyn = munderover(areaIntegral mrow(+) ?) -> 'the {1}, from {2}, of'
-integralSyn = munderover(areaIntegral ? ?) -> 'the {1}, of'
-integralSyn = munderover(closedIntegral mrow(+) mrow(+)) -> 'the {1} from {2}, to {3}, of'
-integralSyn = munderover(closedIntegral mrow(+) ?) -> 'the integral from {2}, of'
-integralSyn = munderover(closedIntegral ? ?) -> 'the integral of'
-integralSyn = munderover(integral mrow(+) mrow(+)) -> 'the definite {1} from {2}, to {3}, of'
-integralSyn = munderover(integral mrow(+) ?) -> 'the {1} from {2}, of'
-integralSyn = munderover(integral ? ?) -> 'the {1} of'
-integralSyn = munderover(integralCCW mrow(+) mrow(+)) -> 'the{1} from {2}, to {3}, of'
-integralSyn = munderover(integralCCW mrow(+) ?) -> 'the {1} from {2}, of'
-integralSyn = munderover(integralCCW ? ?) -> 'the {1} of'
-integralSyn = munderover(integralCon mrow(+) mrow(+)) -> 'the {1} from {2}, to {3}, of'
-integralSyn = munderover(integralCon mrow(+) ?) -> 'the {1} from {2}, of'
-integralSyn = munderover(integralCon ? ?) -> 'the {1} of'
-integralSyn = munderover(integralCW mrow(+) mrow(+)) -> 'the {1} from {2}, to {3}, of'
-integralSyn = munderover(integralCW mrow(+) ?) -> 'the {1} from {2}, of'
-integralSyn = munderover(integralCW ? ?) -> 'the {1} of'
-integralSyn = munderover(volumeIntegral mrow(+) mrow(+)) -> 'the {1} from {2}, to {3}, of'
-integralSyn = munderover(volumeIntegral mrow(+) ?) -> 'the {1} from {2}, of'
-integralSyn = munderover(volumeIntegral ? ?) -> 'the {1} of'
-
-intersectionSyn = munderover(intersection mrow(+) mrow(+)) -> 'the {1} from {2}, to {3}, of'
-intersectionSyn = munderover(intersection mrow(+) ?) -> 'the {1} from {2}, of'
-intersectionSyn = munderover(intersection ? ?) -> 'the {1} of'
-
-productSyn = munderover(product mrow(+) mrow(+)) -> 'the {1} from {2}, to {3}, of'
-productSyn = munderover(product mrow(+) ?) -> 'the {1} from {2}, of'
-productSyn = munderover(product ? ?) -> 'the {1} of'
-
-sum = munderover(SigmaBig mrow(+) mrow(+)) -> 'the summation from {2}, to {3}, of'
-sum = munderover(SigmaBig mrow(+) ?) -> 'the summation from {2}, of'
-sum = munderover(SigmaBig ? ?) -> 'the summation of'
-
-unionSyn = munderover(union mrow(+) mrow(+)) -> 'the {1} from {2}, to {3}, of'
-unionSyn = munderover(union mrow(+) ?) -> 'the {1} from {2}, of'
-unionSyn = munderover(union ? ?) -> 'the {1} of'
+import _Trig.txt
 
 functionFofF = f openParen f openParen + closeParen closeParen -> 'f of f of {5}'
 functionFofG = f openParen g openParen + closeParen closeParen -> 'f of g of {5}'
