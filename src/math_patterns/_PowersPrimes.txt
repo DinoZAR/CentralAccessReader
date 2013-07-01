@@ -8,6 +8,19 @@ supDubPrime = msup(? doublePrime) -> '{1} seconds,'
 supPrime = msup(? prime) -> '{1} minutes,'
 supTriPrime = msup(? triplePrime) -> '{1} triple prime,'
 
+Sub = msub(mrow(?) mrow(?)) -> '{1} sub {2},'
+Sup = msup(mrow(?) mrow(?)) -> '{1} to the {2} power,'
+
+leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left superscript {2},'
+leftSub = msub( mrow() mrow(?)) -> 'left subscript {1},'
+leftSup = msup( mrow() mrow(?)) -> 'left superscript {1},'
+
+SubSup = msubsup(mrow(?) mrow(?) mrow(?)) -> '{1} to the {3} power, sub {2},'
+
+subscript = msub(? ?) -> '{1} sub {2}'
+superscript = msup(? ?) -> '{1} to the {2} power'
+subsuperscript = msubsup(? ? ?) -> '{1} to the {3} power sub {2}'
+
 powerOne = msup(? mrow(one)) -> '{1} to the first power,'
 powerFour = msup(? mrow(four)) -> '{1} to the fourth power,'
 powerFive = msup(? mrow(five)) -> '{1} to the fifth power,'

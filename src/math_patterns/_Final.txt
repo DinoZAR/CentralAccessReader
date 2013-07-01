@@ -5,11 +5,12 @@ over = mover(? ?) -> '{1} under {2}'
 fraction = mfrac(? ?) -> '{1} over {2}'
 
 SubSup = msubsup( mrow(?) mrow(?) mrow(?)) -> '{1} to the {3} power, sub {2},'
-leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left superscript {2},'
+
 Sub = msub( mrow(?) mrow(?)) -> '{1} sub {2},'
 
 Sup = msup( mrow(?) mrow(?)) -> '{1} to the {2} power,'
 
+leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left superscript {2},'
 leftSub = msub( mrow() mrow(?)) -> 'left subscript {1},'
 leftSup = msup( mrow() mrow(?)) -> 'left superscript {1},'
 
