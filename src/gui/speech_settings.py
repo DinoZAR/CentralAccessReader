@@ -63,9 +63,13 @@ class SpeechSettings(QtGui.QDialog):
         for v in voiceList:
             self.ui.voiceComboBox.addItem(v[0], userData=v[1])
         
-        i = self.ui.voiceComboBox.findData(self.configuration.voice)
-        self.ui.voiceComboBox.setCurrentIndex(i)
-        self.ui.voiceComboBox.blockSignals(False)
+        if len(self.configuration.voice) > 0:
+            i = self.ui.voiceComboBox.findData(self.configuration.voice)
+            self.ui.voiceComboBox.setCurrentIndex(i)
+            self.ui.voiceComboBox.blockSignals(False)
+        else:
+            self.ui.voiceComboBox.setCurrentIndex(0)
+            self.ui.voiceComboBox.blockSignals(False)
         
         # Get a list of patterns to add to the math database combo box
         databases = pattern_databases()
@@ -73,14 +77,15 @@ class SpeechSettings(QtGui.QDialog):
         self.ui.mathDatabaseComboBox.blockSignals(True)
         for k in keys:
             self.ui.mathDatabaseComboBox.addItem(k, userData=databases[k])
-        
-        i = self.ui.mathDatabaseComboBox.findData(self.configuration.math_database)
-        self.ui.mathDatabaseComboBox.setCurrentIndex(i)
-        self.ui.mathDatabaseComboBox.blockSignals(False)
             
-        # Update my math database combo box
-        i = self.ui.mathDatabaseComboBox.findData(self.configuration.math_database)
-        self.ui.mathDatabaseComboBox.setCurrentIndex(i)
+        if len(self.configuration.math_database) > 0:
+            i = self.ui.mathDatabaseComboBox.findData(self.configuration.math_database)
+            self.ui.mathDatabaseComboBox.setCurrentIndex(i)
+            self.ui.mathDatabaseComboBox.blockSignals(False)
+        else:
+            i = self.ui.mathDatabaseComboBox.findData('General')
+            self.ui.mathDatabaseComboBox.setCurrentIndex(i)
+            self.ui.mathDatabaseComboBox.blockSignals(False)
             
     def applyButton_clicked(self):
         self.beforeConfiguration = copy.deepcopy(self.configuration)
