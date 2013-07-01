@@ -33,6 +33,8 @@
 
 import _codes.txt
 
+import _Numbers.txt
+
 // Unicodes and MathML codes for operators
 
 import _Unicodes.txt
@@ -155,13 +157,16 @@ fenced = mfenced(+) -> 'open parenthesis, {1}, closed parenthesis,'
 
 under = munder(? ?) -> '{1} over {2}'
 over = mover(? ?) -> '{1} under {2}'
-fraction = mfrac(? ?) -> '{1} over {2}'
+fraction = mfrac(? ?) -> '{1} over {2}'
+SubSup = msubsup( mrow(?) mrow(?) mrow(?)) -> '{1} to the {3} power, sub {2},'
 leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left superscript {2},'
-leftSub = msup( mrow() mrow(?)) -> 'left subscript {1},'
-leftSup = msub( mrow() mrow(?)) -> 'left superscript {1},'
+Sub = msub( mrow(?) mrow(?)) -> '{1} subscript {2},'
+Sup = msup( mrow(?) mrow(?)) -> '{1} superscript {2},'
+leftSub = msub( mrow() mrow(?)) -> 'left subscript {1},'
+leftSup = msup( mrow() mrow(?)) -> 'left superscript {1},'
 subscript = msub(? ?) -> '{1} sub {2}'
 superscript = msup(? ?) -> '{1} to the {2} power'
-subsuperscript = msubsup(? ? ?) -> '{1} sub {2} to the {3} power'
+subsuperscript = msubsup(? ? ?) -> '{1} to the {3} power sub {2}'
 
 row = mrow(+) -> '{1}'
 row = mrow() -> ''

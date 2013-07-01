@@ -32,6 +32,8 @@
 
 import _codes.txt
 
+import _Numbers.txt
+
 // Unicodes and MathML codes for operators
 
 import _Unicodes.txt

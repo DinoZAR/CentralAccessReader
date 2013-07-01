@@ -40,6 +40,8 @@
 
 import _codes.txt
 
+import _Numbers.txt
+
 // Unicodes and MathML codes for operators
 cross = timesCross -> 'cross,'
 

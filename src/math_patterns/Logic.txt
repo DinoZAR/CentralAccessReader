@@ -34,6 +34,8 @@
 
 import _codes.txt
 
+import _Numbers.txt
+
 // Unicodes and MathML codes for operators
 
 slash = divideBack -> ', backslash,'
