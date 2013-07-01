@@ -3,6 +3,7 @@ Created on Jan 21, 2013
 
 @author: Spencer
 '''
+import sys
 import os
 import webbrowser
 import traceback
@@ -57,8 +58,10 @@ class MainWindow(QtGui.QMainWindow):
     # JavaScript mutex
     javascriptMutex = QMutex()
     
-    def __init__(self, parent=None):
+    def __init__(self, app, parent=None):
         QtGui.QWidget.__init__(self, parent)
+        
+        self.app = app
         
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
@@ -709,7 +712,8 @@ class MainWindow(QtGui.QMainWindow):
             
             run_update_installer()
             
-            QtGui.qApp.exit()
+            # Completely shut down for this
+            self.app.exit(0)
             
     def finishUpdate(self):
         self.updateInstallProgressDialog.close()

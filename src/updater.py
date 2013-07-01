@@ -12,6 +12,7 @@ import subprocess
 from src import misc
 
 UPDATE_URL = r'http://www.cwu.edu/~atrc/centralaccessreader/'
+#UPDATE_URL = r'file:///W:/Nifty%20Prose%20Articulator/'  # For testing purposes
 
 # Get the correct setup file depending on architecture
 SETUP_FILE = ''
@@ -117,6 +118,19 @@ def get_version_number(versionFile):
     f.close()
     return float(re.search(r'[0-9]+.[0-9]+', stuff).group(0))
 
+def run_exe(exePath):
+    '''
+    Runs a .exe on Windows in a 100% separate environment.
+    '''
+    CREATE_NEW_PROCESS_GROUP = 0x00000200
+    DETACHED_PROCESS = 0x00000008
+    
+    kwargs = {}
+    kwargs.update(creationflags=DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP)
+    kwargs.update(close_fds=True)
+    
+    p = subprocess.Popen('"' + exePath + '"', **kwargs)
+
 def run_update_installer():
     '''
     This function will run the correct update installer depending on the machine
@@ -124,11 +138,12 @@ def run_update_installer():
     '''
     if os.path.exists(SETUP_TEMP_FILE):
         if platform.system() == 'Windows':
-            #p = subprocess.Popen('start /wait "" "' + SETUP_TEMP_FILE + '" /VERYSILENT', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            p = subprocess.Popen('"' + SETUP_TEMP_FILE + '"', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            #p.wait()
-            #print 'stdout:', p.stdout.read()
-            #print 'stderr:', p.stderr.read()
+            run_exe(SETUP_TEMP_FILE)
+            print 'Finished executing process!'
+            
+#             p = Process(target=run_exe, args=[SETUP_TEMP_FILE])
+#             p.start()
+#             p.cancel_join_thread()
 
 class RunUpdateInstallerThread(Thread):
     
@@ -145,6 +160,5 @@ class RunUpdateInstallerThread(Thread):
         the platform.
         '''
         run_update_installer()
-                
-        print 'Done installing new update!'
+        print 'Done with update installer thread!'
         self._closeUpdateSignal.emit()

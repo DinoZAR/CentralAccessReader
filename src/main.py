@@ -29,9 +29,13 @@ def main():
         os.makedirs(os.path.dirname(temp_path('test.txt')))
     
     app = QApplication(sys.argv)
-    window = MainWindow()
+    window = MainWindow(app)
     window.show()
-    sys.exit(app.exec_())
+    returnCode = app.exec_()
+    print 'Done with CAR!'
+    sys.exit(0)  # This is a very hard close
 
 if __name__ == '__main__':
     main()
+    print 'Still trying to close...'
+    sys.exit()
