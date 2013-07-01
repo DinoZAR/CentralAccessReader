@@ -302,7 +302,6 @@ class MainWindow(QtGui.QMainWindow):
         outputList = []
         self.javascriptMutex.lock()
         selectedHTML = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetSelectionHTML', [])).toString())
-        print 'Selected HTML:', [selectedHTML]
         self.javascriptMutex.unlock()
         outputList = self.assigner.getSpeech(selectedHTML, self.configuration)
         
@@ -324,8 +323,6 @@ class MainWindow(QtGui.QMainWindow):
         
     def onWord(self, offset, length, label, stream, word):
         self.hasWorded = True
-        
-        print 'word:', word
         
         if label == 'text':
             if (self.lastElement[3] != stream) and (self.lastElement[3] >= 0):
@@ -415,8 +412,6 @@ class MainWindow(QtGui.QMainWindow):
         fileName = unicode(QtGui.QFileDialog.getSaveFileName(self, 'Save MP3...', defaultFileName, '(*.mp3)'))
         print 'Saving to...', fileName
         if len(fileName) > 0:
-            print 'Got a saved place!'
-            
             # Show a progress dialog
             self.progressDialog.setWindowModality(Qt.WindowModal)
             self.progressDialog.setWindowTitle('Saving to MP3...')
