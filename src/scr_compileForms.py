@@ -6,7 +6,7 @@ files to Python files using a standard naming convention. It saves me the
 trouble of having to compile every change I make to each file individually, 
 which is quite error-prone. The script will also skip over the .ui and .qrc 
 files that have corresponding .py that are newer than itself.
-
+ 
 @author: Spencer Graffe
 '''
 

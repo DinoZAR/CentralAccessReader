@@ -11,7 +11,6 @@ def transform(tree, pattern, gotMatchFlag=None):
     start = tree
     
     while start != None:
-        
         if _testMatch(start, pattern):
             
             # Report that a match was found
