@@ -1,6 +1,11 @@
 '''
 Created on Mar 3, 2013
 
+
+WARNING: DON'T USE IT YET
+IT HAS BARELY STARTED ON ANYTHING
+
+
 @author: Spencer Graffe
 '''
 from lxml import etree

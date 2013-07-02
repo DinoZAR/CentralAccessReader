@@ -118,7 +118,7 @@ class DocxDocument(object):
                     break
             
             if progressCallback:
-                progressCallback(int(float(i) / len(paragraphs) * 100))
+                progressCallback(int(float(i) / len(paragraphs) * 90.0))
                 
             i += 1 
             if p.tag == '{0}p'.format(w_NS):
@@ -131,7 +131,7 @@ class DocxDocument(object):
         self.zip.close()
         
         # Finally, create the HTML for the thing
-        self._createHTML()
+        self._createHTML(progressCallback)
         
     def _getRels(self, zip):
         relFile = zip.open('word/_rels/document.xml.rels', 'r')
@@ -303,13 +303,12 @@ class DocxDocument(object):
                     filename = os.path.split(rel.get('Target'))[1]
                     break
             
-            # Figure out the image type to run correct parser through
+            # Figure out the image type to run correct MathType importer
             imageFile = self.zip.open('word/media/' + filename, 'r')
             imageType = os.path.splitext(filename)[1].lower()
-            
             try:
                 if imageType == '.wmf':
-                    data['data'] = parseWMF(imageFile)
+                    data['data'] = parseWMF(imageFile, debug=False)
                     parentData['math'] = data
                     
             except Exception as ex:
@@ -471,10 +470,15 @@ class DocxDocument(object):
         head.append(myScripts)
         head.append(css)
         
-    def _prepareBody(self, body):
+    def _prepareBody(self, body, progressCallback=None):
         anchorCount = 1
         i = 0
         while i < len(self.paragraphData):
+            
+            # Report my progress (90% to 100%)
+            if progressCallback:
+                progressCallback(int(90.0 + (float(i) / len(self.paragraphData)) * 10.0))
+            
             if self.paragraphData[i]['type'] == 'paragraph':
                 
 #                 if 'list' in self.paragraphData[i]:
@@ -628,8 +632,7 @@ class DocxDocument(object):
     def getMainPage(self):
         return self._html
         
-    
-    def _createHTML(self):
+    def _createHTML(self, progressCallback=None):
         '''
         Generates the HTML for the page.
         '''
@@ -642,7 +645,7 @@ class DocxDocument(object):
         
         # Create the scripts and other references here in the head
         self._prepareHead(head)
-        self._prepareBody(body)
+        self._prepareBody(body, progressCallback)
         
         # Write out the images to the import folder
         self._saveImages()

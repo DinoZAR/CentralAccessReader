@@ -11,22 +11,22 @@ from lxml import etree
 from records import *
 from src.misc import temp_path, REPORT_BUG_URL
 
-def parseMTEF(mtefString):
+def parseMTEF(mtefString, debug=False):
     '''
     Parses an MTEF data string and gets the MathType object for it or something.
     '''
     mtefFile = StringIO.StringIO(mtefString)
         
     mtefHeader = struct.unpack('<BBBBB', mtefFile.read(5))
-    print 'MTEF Header:', mtefHeader
+    if debug: print 'MTEF Header:', mtefHeader
             
-    applicationKey = getNullTermString(mtefFile)
-    print 'Application Key:', applicationKey
+    applicationKey = getNullTermString(mtefFile, debug)
+    if debug: print 'Application Key:', applicationKey
             
     equationOptions = struct.unpack('<B', mtefFile.read(1))[0]
-    print 'Equation Options:', equationOptions
+    if debug: print 'Equation Options:', equationOptions
         
-    print 'Math ---------------------------------------'
+    if debug: print 'Math ---------------------------------------'
         
     records = []
         
@@ -38,7 +38,7 @@ def parseMTEF(mtefString):
         recordType = struct.unpack('<B', recordType)[0]
         
         # Let the Record object handle how to read this record
-        newRecord = createRecord(recordType, mtefFile)
+        newRecord = createRecord(recordType, mtefFile, debug)
         if newRecord != None:
             records.append(newRecord)
             
@@ -49,14 +49,14 @@ def parseMTEF(mtefString):
     i = 0
     parentStack = []
     parentStack.append(mathmlRoot)
-    convertRecords(i, records, parentStack)
+    convertRecords(i, records, parentStack, debug)
     
     # Do some post-processing
     _combineNumbers(mathmlRoot)
         
     return mathmlRoot
 
-def parseWMF(wmfFile):
+def parseWMF(wmfFile, debug=False):
     '''
     Parses the WMF file to find the embedded MathType data. Then, it will get
     the MathML interpreted from the MTEF data.
@@ -89,19 +89,19 @@ def parseWMF(wmfFile):
             return None
         
         if found:
-            print 'Found AppsMFCC tag!'
-            print
+            if debug: print 'Found AppsMFCC tag!'
+            if debug: print
             
             # Grab all of the other data in the comment header (even most I won't need)
             commentHeader = struct.unpack('<HII', wmfString.read(10))
-            print 'Comment Header:', commentHeader
+            if debug: print 'Comment Header:', commentHeader
             
-            signature = getNullTermString(wmfString)
-            print 'Signature:', signature
+            signature = getNullTermString(wmfString, debug)
+            if debug: print 'Signature:', signature
             
             # If the signature is something like "Design Science, Inc.", then it is MTEF
             if signature == 'Design Science, Inc.':
-                return parseMTEF(wmfString.read(commentHeader[2]))
+                return parseMTEF(wmfString.read(commentHeader[2]), debug)
         
         else:
             

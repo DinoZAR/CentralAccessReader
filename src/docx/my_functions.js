@@ -8,6 +8,12 @@ var lastSearchElement = null;
 var lastSearchOffset = 0;
 var startFromSearch = false;
 
+// Detect when MathJax is done messing around with the MathML
+var finishedMathTypeset = false;
+MathJax.Hub.Queue(function () {
+	finishedMathTypeset = true;
+});
+
 // ---------------------------------------------------------------------------
 // GENERAL FUNCTIONS
 // ---------------------------------------------------------------------------
@@ -30,6 +36,19 @@ $(function() {
       show: false
     });
   });
+  
+// Returns true when the document has been completely loaded, except MathJax
+function IsPageLoaded() {
+	if (document.readyState === 'interactive') {
+		return true;
+	}
+	return false;
+}
+
+// Returns true when MathJax is done typesetting the math equations
+function IsMathTypeset() {
+	return finishedMathTypeset;
+}
 
 // Used in page navigation to move to an anchor point with specific id
 function GotoPageAnchor(anchorName) {
