@@ -1,0 +1,33 @@
+fencedRSCS = mfenced<open="[",close="]">(+) -> 'open square bracket, {1}, closed square bracket,'
+
+fencedOPCP = mfenced<open="(",close=")">(+) -> 'open parentheses, {1}, closed parentheses,'
+
+fencedOCCC = mfenced<open="{",close="}">(+) -> 'open curly brace, {1}, closed curly brace,'
+
+fencedABS = mfenced<open="|",close="|">(+) -> 'absolute value of {1},'
+
+fencedLARA = mfenced<open="&#9001;",close="&#9002;">(+) -> 'left angle bracket, {1}, right angle bracket,'
+
+fencedDVDV = mfenced<open="&#8214;",close="&#8214;">(+) -> 'double vertical bar, {1}, double vertical bar,'
+
+fencedLFRF = mfenced<open="&#8970;",close="&#8971;">(+) -> 'left floor bracket, {1}, right floor bracket,'
+
+fencedLCRC = mfenced<open="&#8968;",close="&#8969;">(+) -> 'left ceiling bracket, {1}, right ceiling bracket,'
+
+fencedRSRS = mfenced<open="[",close="[">(+) -> 'right square bracket, {1}, right square bracket,'
+
+fencedLSLS = mfenced<open="]",close="]">(+) -> 'left square bracket, {1}, left square bracket,'
+
+fencedLSRS = mfenced<open="]",close="[">(+) -> 'left square bracket, {1}, right square bracket,'
+
+fencedLTRA = mfenced<open="&lt;",close="&#9002;">(+) -> 'less than, {1}, right angle bracket,'
+
+fencedLAGT = mfenced<open="&#9001;",close="&gt;">(+) -> 'left angle bracket, {1}, greater than,'
+
+fencedLORA = mfenced<open="&#12314;",close="&#9002;">(+) -> 'left open bracket, {1}, right angle bracket,'
+
+fencedLARO = mfenced<open="&#9001;",close="&#12315;">(+) -> 'left angle bracket, {1}, right open bracket,'
+
+fencedLORO = mfenced<open="&#12314;",close="&#12315;">(+) -> 'left open bracket, {1}, right open bracket,'
+
+fencedLTGT = mfenced<open="&lt;",close="&gt;">(+) -> 'less that, {1}, greater than,'
