@@ -388,7 +388,7 @@ class PileRecord(Record):
         # Get object list as child records
         while True:
             type = struct.unpack('<B', f.read(1))[0]
-            record = createRecord(type, f)
+            record = createRecord(type, f, debug)
             if isinstance(record, EndRecord):
                 break
             else:
@@ -426,7 +426,7 @@ class LineRecord(Record):
         if not self._checkFlag(options, Record.O_LINE_NULL):
             while True:
                 type = struct.unpack('<B', f.read(1))[0]
-                record = createRecord(type, f)
+                record = createRecord(type, f, debug)
                 if isinstance(record, EndRecord):
                     break
                 else:
@@ -753,7 +753,7 @@ class CharRecord(Record):
         if self._checkFlag(self.options, Record.O_CHAR_EMBELL):
             while True:
                 type = struct.unpack('<B', f.read(1))[0]
-                record = createRecord(type, f)
+                record = createRecord(type, f, debug)
                 if isinstance(record, EndRecord):
                     break
                 else:
@@ -803,7 +803,7 @@ class TemplateRecord(Record):
         self.childRecords = []
         while True:
             type = struct.unpack('<B', f.read(1))[0]
-            record = createRecord(type, f)
+            record = createRecord(type, f, debug)
             if isinstance(record, EndRecord):
                 break
             else:
@@ -857,7 +857,7 @@ class MatrixRecord(Record):
         self.childRecords = []
         while True:
             type = struct.unpack('<B', f.read(1))[0]
-            record = createRecord(type, f)
+            record = createRecord(type, f, debug)
             if isinstance(record, EndRecord):
                 break
             else:
