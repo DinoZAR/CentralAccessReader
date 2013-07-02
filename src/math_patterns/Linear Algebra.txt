@@ -117,9 +117,7 @@ quadBars = mover(identical bar) -> 'quadruple bars'
 quadBars = munder(identical bar) -> 'quadruple bars'
 union = munderover(union mrow() mrow()) -> 'union'
 
-// Strikes and Slashes
-
-Strike = menclose(+) -> 'strike {1} end-strike,'
+// Strikes and Slashesimport _BordersSlashes.txt
 
 
 //---------------------------------------------------------------

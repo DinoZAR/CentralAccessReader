@@ -47,7 +47,9 @@ bbcapR = mi("&#8477;") -> 'all real numbers'
 // Other symbols
 
 // Strikes and Slashes
-Strike = menclose(+) -> 'strike {1} end-strike,'
+
+
+import _BordersSlashes.txt
 
 
 //---------------------------------------------------------------

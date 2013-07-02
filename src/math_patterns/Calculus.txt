@@ -82,7 +82,9 @@ vector = mover(x rightArrow) -> 'vector'
 yields = y i e l d s -> '"yields"'
 
 // Strikes and Slashes
-Strike = menclose(+) -> 'strike {1} end-strike,'
+
+
+import _BordersSlashes.txt
 
 
 //---------------------------------------------------------------

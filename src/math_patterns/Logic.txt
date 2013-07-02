@@ -113,7 +113,8 @@ union = munderover(union mrow() mrow()) -> 'union'
 
 // Strikes and Slashes
 
-Strike = menclose(+) -> 'strike {1} end-strike,'
+
+import _BordersSlashes.txt
 
 
 //---------------------------------------------------------------
