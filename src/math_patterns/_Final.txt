@@ -1,5 +1,3 @@
-fenced = mfenced(+) -> 'open parenthesis, {1}, closed parenthesis,'
-
 under = munder(? ?) -> '{1} over {2}'
 over = mover(? ?) -> '{1} under {2}'
 fraction = mfrac(? ?) -> '{1} over {2}'

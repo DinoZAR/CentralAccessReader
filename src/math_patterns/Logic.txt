@@ -31,6 +31,8 @@
 // ------------------------------------------------------------------------------
 // Symbol Code
 // ------------------------------------------------------------------------------
+
+weirdSpace = mi("&#1160;") -> ' '
 
 import _codes.txt
 
@@ -45,9 +47,9 @@ diamond = mi("&#8900;") -> 'diamond operator'
 identical = mi("&#8801;") -> 'triple bars'
 plus = mo("+") -> 'plus sign'
 summation = mi("&#8721;") -> 'summation sign,'
-tilde = mo("&#732;") -> 'not'
-tilde = mo("~") -> 'not'
-tilde = mi("~") -> 'not'
+tilde = mo("&#732;") -> 'tilde'
+tilde = mo("~") -> 'tilde'
+tilde = mi("~") -> 'tilde'
 times = mi("&#8901;") -> 'dot operator'
 times = mi("&#59791;") -> 'dot operator'
 
@@ -186,6 +188,8 @@ tableRow = mtr(+) -> 'row, {1}'
 
 // ------------------------------------------------------------------------------
 // Generic Fallbacks, Final Collectors
-// ------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
+
+import _Fences.txt
 
 import _Final.txt

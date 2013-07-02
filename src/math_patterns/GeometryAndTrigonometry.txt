@@ -154,4 +154,6 @@ tableRow = mtr(+) -> 'row, {1}'
 // Generic Fallbacks, Final Collectors
 // ------------------------------------------------------------------------------
 
+import _Fences.txt
+
 import _Final.txt
