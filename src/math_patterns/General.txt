@@ -58,8 +58,7 @@ Strike = menclose(+) -> 'strike {1} end-strike,'
 import _Trig.txt
 
 // Powers and Primes
-
-import _PowersPrimes.txt
+
 
 // Syntax Quirks
 doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'
@@ -70,7 +69,7 @@ doubleDagger = dagger dagger -> 'double dagger'
 // ------------------------------------------------------------------------------
 // Fraction-based
 // ------------------------------------------------------------------------------
-integral = msub([integral] ?) -> '{1} sub {2} of,'
+//integral = msub([integral] ?) -> '{1} sub {2} of,'
 
 // Other symbols
 infinity = mi("&#8734;") -> 'infinity'
@@ -103,6 +102,7 @@ limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4}, of'
 
 import _Integrals.txt
 
+import _PowersPrimes.txt
 
 // ------------------------------------------------------------------------------
 // Parenthetical Expressions

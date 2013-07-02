@@ -47,10 +47,11 @@ z [variable] = mi("z") -> 'complex conjugate'
 bbcapR = mi("&#8477;") -> 'all real numbers'
 
 //Functions
-function = [variable] mrow(openParen [variable] closeParen) -> 'function {1} of {3}'
-function = [variable] openParen [variable] closeParen -> 'function {1} of {3}'
-function = [variable] mfenced(+) -> 'function {1} of {2}'
-functionPrime = [variable] mi("'") mfenced(+) -> 'function {1} prime of {2}'
+function = f mrow(openParen + closeParen) -> 'function {1} of {3}'
+function = f openParen + closeParen -> 'function {1} of {3}'
+function = f mfenced(+) -> 'function {1} of {2}'
+functionPrime = f apostrophe mfenced(+) -> 'function {1} prime of {3}'
+functionPrime = f prime mfenced(+) -> 'function {1} prime of {3}'
 
 
 // ------------------------------------------------------------------------------
@@ -78,7 +79,7 @@ timeDeriv = mover(y dot) -> 'time derivative'
 timeSecondDeriv = mover(y doubleDot) -> 'time second derivative'
 unitVector = mover(mrow(x) caret) -> 'unit vector'
 vector = mover(x rightArrow) -> 'vector'
-
+yields = y i e l d s -> '"yields"'
 
 // Strikes and Slashes
 Strike = menclose(+) -> 'strike {1} end-strike,'
@@ -90,9 +91,7 @@ Strike = menclose(+) -> 'strike {1} end-strike,'
 
 import _Trig.txt
 
-// Powers and Primes
-
-import _PowersPrimes.txt
+
 
 // Syntax Quirks
 doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'
@@ -137,7 +136,7 @@ limit = munderover(mrow(l i m) mrow(?) ?) -> 'the limit as {4}, of'
 
 // Products and Unions
 
-import _Trig.txt
+import _Integrals.txt
 
 functionFofF = f openParen f openParen + closeParen closeParen -> 'f of f of {5}'
 functionFofG = f openParen g openParen + closeParen closeParen -> 'f of g of {5}'

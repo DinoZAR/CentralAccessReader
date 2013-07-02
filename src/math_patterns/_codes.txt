@@ -34,12 +34,18 @@
 
 
 ampersand = mi("&amp;") -> 'ampersand,'
+
 approxEqual = mi("&#8771;") -> 'is approximately equal to,'
 
 approxEqualTilde = mi("&#8773;") -> 'is approximately equal to,'
+
+approxEqualTilde = mo("&#8773;") -> 'is approximately equal to,'
+
 apostrophe = mi("'") -> 'apostrophe'
 
 approxEqual = mi("&#8776;") -> 'is approximately equal to,'
+
+approxEqual = mo("&#8776;") -> 'is approximately equal to,'
 
 at = mi("@") -> 'at'
 
@@ -79,7 +85,11 @@ equivalent = mi("&#8764;") -> 'is equivalent to,'
 
 greaterThanOrEqual = mi("&#8805;") -> 'is greater than or equal to,'
 
+greaterThanOrEqual = mo("&#8805;") -> 'is greater than or equal to,'
+
 lessThanOrEqual = mi("&#8804;") -> ' is less than or equal to,'
+
+lessThanOrEqual = mo("&#8804;") -> ' is less than or equal to,'
 
 minus = mo("-") -> 'minus,'
 
@@ -87,13 +97,20 @@ minus = mo("&#x2212;") -> 'minus,'
 
 minusPlus = mi("&#8723;") -> 'minus or plus,'
 
+minusPlus = mo("&#8723;") -> 'minus or plus,'
+
 muchLessThan = mi("&#8810;") -> 'is much less than,'
 
+muchLessThan = mo("&#8810;") -> 'is much less than,'
+
 muchGreaterThan = mi("&#8811;") -> 'is much greater than,'
+
+muchGreaterThan = mo("&#8811;") -> 'is much greater than,'
 
 minus = mo("&#8722;") -> 'minus,'
 
 notEqual = mi("&#8800;") -> 'is not equal to,'
+notEqual = mo("&#8800;") -> 'is not equal to,'
 
 percent = mi("%") -> 'percent,'
 plusMinus = mo("&#xB1;") -> 'plus or minus,'
@@ -101,6 +118,7 @@ product [integral] = mi("&#8719;") -> 'product,'
 
 product [integral] = mo("&#8719;") -> 'product,'
 times = mo("*") -> 'times,'
+times = mi("*") -> 'times,'
 
 timesCross = mo("&#215;") -> 'times,'
 
@@ -111,12 +129,12 @@ times = mi("&#8727;") -> 'times,'
 //Integrals
 areaIntegral [integral] = mo("&#60946;") -> 'area integral'
 areaIntegral [integral] = mo("&#8751;") -> 'area integral of'
-closedIntegral [integral] = mo("&#x222E;") -> 'closed integral'
+integralCon [integral] = mo("&#60945;") -> 'contour integral'
+integralCon [integral] = mo("&#8750;") -> 'contour integral'
+//closedIntegral [integral] = mo("&#x222E;") -> 'closed integral'
 integral [integral] = mi("&#8747;") -> 'integral of'
 integral [integral] = mo("&#8747;") -> 'integral of'
 integralCCW [integral] = mo("&#8755;") -> 'integral with a counter-clockwise circle of'
-integralCon [integral] = mo("&#60945;") -> 'contour integral'
-integralCon [integral] = mo("&#8750;") -> 'contour integral'
 integralCW [integral] = mo("&#8754;") -> 'integral with a clockwise circle of'
 volumeIntegral [integral] = mo("&#8752;") -> 'volume integral of'
 volumeIntegral [integral] = mo("&#60947;") -> 'volume integral of'
@@ -137,6 +155,7 @@ doubleRightArrow [arrow] = mi("&#8658;") -> 'double-arrow pointing right'
 doubleUpArrow [arrow] = mi("&#8657;") -> 'double-arrow pointing up'
 doubleUpDownArrow [arrow] = mi("&#8661;") -> 'double-arrow pointing both up and down'
 downArrow [arrow] = mi("&#8595;") -> 'arrow pointing down'
+downArrow [arrow] = mo("&#8595;") -> 'arrow pointing down'
 downLeftArrow [arrow] = mi("&#8629;") -> 'arrow pointing down then left'
 dualArrows [arrow] = mi("&#8644;") -> 'right-pointing arrow atop a left-pointing arrow'
 dualArrows [arrow] = mo("&#8644;") -> 'right-pointing arrow atop a left-pointing arrow'
@@ -153,6 +172,7 @@ rightArrowBar [arrow] = mi("&#8614;") -> 'right-pointing arrow originating from 
 rightHarpoon [arrow] = mo("&#8640;") -> 'right-pointing harpoon'
 rightHarpoon [arrow] = mo("&#8641;") -> 'right-pointing harpoon'
 upArrow [arrow] = mi("&#8593;") -> 'arrow pointing up'
+upArrow [arrow] = mo("&#8593;") -> 'arrow pointing up'
 upDownArrow [arrow] = mi("&#8597;") -> 'arrow point both up and down'
 
 doubleVerticalBars = mo("&#8214;") -> 'double vertical bars,'
@@ -183,6 +203,8 @@ verticalBar = mo("|") -> 'vertical bar,'
 // Primes and Dots
 
 backPrime = mo("&#8245;") -> 'back prime,'
+
+bullet = mo("&#8729;") -> 'times'
 
 doubleDot = mo("&#776;") -> 'double dot,'
 
@@ -215,6 +237,8 @@ bar = mo("&#175;") -> 'bar,'
 circle = mi("&#9675;") -> 'circle,'
 
 degree = mi("&#176;") -> 'degrees,'
+
+degree = mo("&#176;") -> 'degrees,'
 
 filledTriangle = mi("&#9650;") -> 'filled triangle,'
 
@@ -262,6 +286,7 @@ notSupNorEq = mi("&#59971;") -> 'not a superset of nor equal to,'
 precedes = mi("&#8826;") -> 'precedes,'
 
 proportional = mi("&#8733;") -> 'proportional to,'
+proportional = mo("&#8733;") -> 'proportional to,'
 
 squareImage = mi("&#8849;") -> 'is a square image of or equal to,'
 
@@ -388,11 +413,17 @@ chi [variable] = mi("&#967;") -> 'chi'
 
 del [variable] = mi("&#8711;") -> 'del'
 
+del [variable] = mo("&#8711;") -> 'nabla'
+
 delta [variable] = mi("&#948;") -> 'delta'
 
 delta [variable] = mi("&#8706;") -> 'partial differential'
 
+delta [variable] = mo("&#8706;") -> 'partial differential'
+
 epsilon [variable] = mi("&#949;") -> 'epsilon'
+
+epsilon [variable] = mi("&#1013;") -> 'epsilon'
 
 eta [variable] = mi("&#951;") -> 'eta'
 
@@ -503,6 +534,8 @@ Zeta [variable] = mi("&#918;") -> 'zeta'
 
 ahlef = mi("&#8501;") -> 'ahlef'
 
+bet = mi("&#8502;") -> 'bet'
+
 bbcapC = mi("&#8450;") -> 'blackboard cap C'
 
 bbcapF = mi("&#61573;") -> 'blackboard cap F'
@@ -545,10 +578,18 @@ text = mtext(?) -> '{1}'
 
 diagonalBotLeftEllipsis = mi("&#8944;") -> 'diagonal bottom left top right ellipsis,'
 
+diagonalBotLeftEllipsis = mo("&#8944;") -> 'diagonal bottom left top right ellipsis,'
+
 diagonalTopLeftEllipsis = mi("&#8945;") -> 'diagonal top left bottom right ellipsis,'
+
+diagonalTopLeftEllipsis = mo("&#8945;") -> 'diagonal top left bottom right ellipsis,'
 
 ellipsis = mi("&#8230;") -> 'ellipsis,'
 
 ellipsis = mi("&#8943;") -> 'ellipsis,'
 
+ellipsis = mo("&#8943;") -> 'ellipsis,'
+
 verticalEllipsis = mi("&#8942;") -> 'vertical ellipsis,'
+
+verticalEllipsis = mo("&#8942;") -> 'vertical ellipsis,'
