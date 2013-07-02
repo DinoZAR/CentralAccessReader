@@ -92,86 +92,86 @@ R_ENCODING_DEF = 19
 # Future implementations (pretty experimental stuff that I found)
 R_TEX_INPUT = 0x66
 
-def createRecord(type, fileHandle):
+def createRecord(type, fileHandle, debug=False):
     '''
     Based on the type (just a byte), it will create the record corresponding
     to it.
     ''' 
     if type == R_END:
-        return EndRecord(fileHandle)
+        return EndRecord(fileHandle, debug)
     elif type == R_LINE:
-        return LineRecord(fileHandle)
+        return LineRecord(fileHandle, debug)
     elif type == R_CHAR:
-        return CharRecord(fileHandle)
+        return CharRecord(fileHandle, debug)
     elif type == R_TMPL:
-        return TemplateRecord(fileHandle)
+        return TemplateRecord(fileHandle, debug)
     elif type == R_PILE:
-        return PileRecord(fileHandle)
+        return PileRecord(fileHandle, debug)
     elif type == R_MATRIX:
-        return MatrixRecord(fileHandle)
+        return MatrixRecord(fileHandle, debug)
     elif type == R_EMBELL:
-        return EmbellishmentRecord(fileHandle)
+        return EmbellishmentRecord(fileHandle, debug)
     elif type == R_RULER:
-        _handleRuler(fileHandle)
+        _handleRuler(fileHandle, debug)
         return None
     elif type == R_FONT_STYLE_DEF:
-        FontStyleDefinitionRecord(fileHandle)
+        FontStyleDefinitionRecord(fileHandle, debug)
         return None
     elif type == R_SIZE:
-        SizeRecord(fileHandle)
+        SizeRecord(fileHandle, debug)
         return None
     elif type == R_FULL:
-        FullRecord(fileHandle)
+        FullRecord(fileHandle, debug)
         return None
     elif type == R_SUB:
-        SubscriptRecord(fileHandle)
+        SubscriptRecord(fileHandle, debug)
         return None
     elif type == R_SUB2:
-        Subscript2Record(fileHandle)
+        Subscript2Record(fileHandle, debug)
         return None
     elif type == R_SYM:
-        print 'Symbol!'
+        if debug: print 'Symbol!'
         return None
     elif type == R_SUBSYM:
-        print 'Sub Symbol!'
+        if debug: print 'Sub Symbol!'
         return None
     elif type == R_COLOR:
-        ColorRecord(fileHandle)
+        ColorRecord(fileHandle, debug)
         return None
     elif type == R_COLOR_DEF:
-        ColorDefinitionRecord(fileHandle)
+        ColorDefinitionRecord(fileHandle, debug)
         return None
     elif type == R_FONT_DEF:
-        FontDefinitionRecord(fileHandle)
+        FontDefinitionRecord(fileHandle, debug)
         return None
     elif type == R_EQN_PREFS:
-        EquationPreferencesRecord(fileHandle)
+        EquationPreferencesRecord(fileHandle, debug)
         return None
     elif type == R_ENCODING_DEF:
-        EncodingDefinitionRecord(fileHandle)
+        EncodingDefinitionRecord(fileHandle, debug)
         return None
     elif type == R_TEX_INPUT:
-        TexInputRecord(fileHandle)
+        TexInputRecord(fileHandle, debug)
         return None
     else:
-        print 'Future implemented record! Skipping for now...'
+        if debug: print 'Future implemented record! Skipping for now...'
         count = struct.unpack('<B', fileHandle.read(1))[0]
         fileHandle.read(count)
         return None
     
-def convertRecords(i, records, parentStack):
+def convertRecords(i, records, parentStack, debug):
     while i < len(records):
         
         if isinstance(records[i], LineRecord):
             newElem = etree.SubElement(parentStack[-1], 'mrow')
             parentStack.append(newElem)
-            convertRecords(0, records[i].childRecords, parentStack)
+            convertRecords(0, records[i].childRecords, parentStack, debug)
             parentStack.pop()
             
         elif isinstance(records[i], PileRecord):
             newElem = etree.SubElement(parentStack[-1], 'mrow')
             parentStack.append(newElem)
-            convertRecords(0, records[i].childRecords, parentStack)
+            convertRecords(0, records[i].childRecords, parentStack, debug)
             parentStack.pop()
             
         elif isinstance(records[i], CharRecord):
@@ -223,9 +223,9 @@ def convertRecords(i, records, parentStack):
             import templates
             data = None
             if len(parentStack[-1]) > 0:
-                data = templates.getMathMLFromTemplate(records[i], i, records, parentStack[-1][-1])
+                data = templates.getMathMLFromTemplate(records[i], i, records, parentStack[-1][-1], debug)
             else:
-                data = templates.getMathMLFromTemplate(records[i], i, records, None)
+                data = templates.getMathMLFromTemplate(records[i], i, records, None, debug)
             while data[1] > 0:
                 parentStack[-1].remove(parentStack[-1][-1])
                 data = (data[0], data[1] - 1)
@@ -240,7 +240,7 @@ def convertRecords(i, records, parentStack):
                 for c in range(records[i].columns):
                     colElem = etree.SubElement(rowElem, 'mtd')
                     parentStack.append(colElem)
-                    convertRecords(0, [records[i].childRecords[(r * records[i].columns) + c]], parentStack)
+                    convertRecords(0, [records[i].childRecords[(r * records[i].columns) + c]], parentStack, debug)
                     parentStack.pop()
             
         i += 1
@@ -263,22 +263,22 @@ def _isNumber(character):
 # Functions that help skip over parts of the data I don't want 
 # ------------------------------------------------------------------------------
 
-def _handleRuler(f):
+def _handleRuler(f, debug=False):
     '''
     Handles a Ruler record. It's useless to me right now, so I'm going to
     cleanly skip over it.
     '''
-    print 'Ruler!'
+    if debug: print 'Ruler!'
     #f.read(1)
     n_stops = struct.unpack('<H', f.read(2))[0]
     for i in range(n_stops):
         f.read(3)
     
-def _handleNudge(f): 
+def _handleNudge(f, debug=False): 
     '''
     For now, read enough of it just to discard it.
     '''
-    print 'Nudge!'
+    if debug: print 'Nudge!'
     # Nudge can have 2 or six bytes, depending on whether the first 2
     # bytes are at +128 or not
     first2 = struct.unpack('<bb', f.read(2))
@@ -290,7 +290,7 @@ def _handleNudge(f):
 # Utility Functions
 # ------------------------------------------------------------------------------
 
-def getNullTermString(fileHandle):
+def getNullTermString(fileHandle, debug=False):
     '''
     Gets the Python string from a null-terminated string in a file. This
     function assumes that the file has already been seeked to the first position
@@ -307,7 +307,7 @@ def getNullTermString(fileHandle):
             else:
                 myString += nextChar
     except EOFError:
-        print 'ERROR: Could not get null-terminated string because of EOF'
+        if debug: print 'ERROR: Could not get null-terminated string because of EOF'
         
     return myString
 
@@ -342,48 +342,48 @@ class Record():
         return (flags & flag) > 0
 
 class FullRecord(Record):
-    def __init__(self, f):
+    def __init__(self, f, debug=False):
         Record.__init__(self)
-        print 'Full!'
+        if debug: print 'Full!'
 
 class SubscriptRecord(Record):
-    def __init__(self, f):
+    def __init__(self, f, debug=False):
         Record.__init__(self)
-        print 'Subscript!'
+        if debug: print 'Subscript!'
         
 class Subscript2Record(Record):
-    def __init__(self, f):
+    def __init__(self, f, debug=False):
         Record.__init__(self)
-        print 'Subscript 2!'
+        if debug: print 'Subscript 2!'
         
 class EndRecord(Record):
     
-    def __init__(self, f):
+    def __init__(self, f, debug=False):
         Record.__init__(self)
-        print 'End!'
+        if debug: print 'End!'
         
 class PileRecord(Record):
     
-    def __init__(self, f):
+    def __init__(self, f, debug=False):
         Record.__init__(self)
         
-        print 'Pile!'
+        if debug: print 'Pile!'
         
         # Get the options
         options = struct.unpack('<B', f.read(1))[0]
         
         # Check for nudge. If so, get the nudge
         if self._checkFlag(options, Record.O_NUDGE):
-            print '- Nudge!'
-            _handleNudge(f)
+            if debug: print '- Nudge!'
+            _handleNudge(f, debug)
             
         self.halign = struct.unpack('<B', f.read(1))[0]
         self.valign = struct.unpack('<B', f.read(1))[0]
         
         # Check for ruler
         if self._checkFlag(options, Record.O_LP_RULER):
-            print '- Ruler in pile!'
-            _handleRuler(f)
+            if debug: print '- Ruler in pile!'
+            _handleRuler(f, debug)
             
         # Get object list as child records
         while True:
@@ -396,30 +396,30 @@ class PileRecord(Record):
                     self.childRecords.append(record)
 class LineRecord(Record):
     
-    def __init__(self, f):
+    def __init__(self, f, debug=False):
         Record.__init__(self)
         
-        print 'Line!'
+        if debug: print 'Line!'
         
         # Get the options
         options = struct.unpack('<B', f.read(1))[0]
         
         # Check for nudge. If so, get the nudge
         if self._checkFlag(options, Record.O_NUDGE):
-            print '- Nudge!'
-            _handleNudge(f)
+            if debug: print '- Nudge!'
+            _handleNudge(f, debug)
             
         # Check for line spacing
         if self._checkFlag(options, Record.O_LINE_LSPACE):
-            print '- Line Spacing!'
+            if debug: print '- Line Spacing!'
             f.read(2)   # Skip it
             
         # Check for ruler
         if self._checkFlag(options, Record.O_LP_RULER):
-            print '- Ruler in line!'
+            if debug: print '- Ruler in line!'
             recordType = f.read(1)
             if recordType == R_RULER:
-                _handleRuler(f)
+                _handleRuler(f, debug)
           
         # The rest are objects in the line record, which should be added to
         # the children
@@ -434,21 +434,21 @@ class LineRecord(Record):
                         self.childRecords.append(record)
                         
 class EmbellishmentRecord(Record):
-    def __init__(self, f):
+    def __init__(self, f, debug=False):
         Record.__init__(self)
         
-        print 'Embellishment!'
+        if debug: print 'Embellishment!'
         
         self.options = struct.unpack('<B', f.read(1))[0]
         
         # Check for nudge
         if self._checkFlag(self.options, Record.O_NUDGE):
-            _handleNudge(f)
+            _handleNudge(f, debug)
             
         self.type = struct.unpack('<B', f.read(1))[0]
         
 class FontStyleDefinitionRecord(Record):
-    def __init__(self, f):
+    def __init__(self, f, debug=False):
         
         # Get the font index. It is an unsigned integer, so it gets to be
         # treated weirdly
@@ -709,42 +709,44 @@ class CharRecord(Record):
               61747 : 122   # small Z
               }
 
-    def __init__(self, f):
+    def __init__(self, f, debug=False):
         Record.__init__(self)
         
-        print 'Char!'
+        if debug: print 'Char!'
         
         self.options = struct.unpack('<B', f.read(1))[0]
         
         # Check for nudge
         if self._checkFlag(self.options, Record.O_NUDGE):
-            _handleNudge(f)
+            _handleNudge(f, debug)
         
         # Get typeface (signed integer)
         val = struct.unpack('<b', f.read(1))[0]
-        print 'Initial typeface:', val
+        if debug: print 'Initial typeface:', val
         if (val >= -128) and (val <= 127):
             self.typeface = val + 128
         else:
             self.typeface = struct.unpack('<h', f.read(2))[0] + 32768
             
-        print 'Typeface:', self.typeface
+        if debug: print 'Typeface:', self.typeface
         
         # Check for MTCode
         if not self._checkFlag(self.options, Record.O_CHAR_ENC_NO_MTCODE):
             self.mtCode = struct.unpack('<H', f.read(2))[0]
-            print 'MTCode:', self.mtCode
+            if debug: print 'MTCode:', self.mtCode
             
         # Clean it up if the code and typeface are from a weird place
         self._cleanup()
         
         # Check for 8-bit font position
         if self._checkFlag(self.options, Record.O_CHAR_ENC_CHAR_8):
-            print '8-bit Position:', struct.unpack('<B', f.read(1))[0]
+            self.char8Pos = struct.unpack('<B', f.read(1))[0]
+            if debug: print '8-bit Position:', self.char8Pos
         
         # Check for 16-bit font position (mutually exclusive)
         if self._checkFlag(self.options, Record.O_CHAR_ENC_CHAR_16):
-            print '16-bit Position:', struct.unpack('<H', f.read(2))[0]
+            self.char16Pos = struct.unpack('<H', f.read(2))[0]
+            if debug: print '16-bit Position:', self.char16Pos
             
         # Check for embellishments
         self.embellishments = []
@@ -770,20 +772,20 @@ class CharRecord(Record):
                          
 class TemplateRecord(Record):
     
-    def __init__(self, f):
+    def __init__(self, f, debug=False):
         Record.__init__(self)
         
-        print 'Template!'
+        if debug: print 'Template!'
         
         self.options = struct.unpack('<B', f.read(1))[0]
         
         # Check for nudge
         if self._checkFlag(self.options, Record.O_NUDGE):
-            _handleNudge(f)
+            _handleNudge(f, debug)
         
         # Get the template selector code
         self.selector = struct.unpack('<B', f.read(1))[0]
-        print 'Selector Code:', self.selector
+        if debug: print 'Selector Code:', self.selector
         
         # Get the variation byte, or bytes
         val = struct.unpack('<B', f.read(1))[0]
@@ -791,11 +793,11 @@ class TemplateRecord(Record):
             self.variation = (val & 0x7F) | struct.unpack('<B', f.read(1))[0]
         else:
             self.variation = val
-        print 'Variation:', self.variation
+        if debug: print 'Variation:', self.variation
         
         # Get template-specific options
         self.templateOptions = struct.unpack('<B', f.read(1))[0]
-        print 'Template Options:', self.templateOptions
+        if debug: print 'Template Options:', self.templateOptions
         
         # Get all of the children for this template
         self.childRecords = []
@@ -810,26 +812,26 @@ class TemplateRecord(Record):
                     
 class SizeRecord(Record):
     
-    def __init__(self, f):
+    def __init__(self, f, debug=False):
         Record.__init__(self)
         
-        print 'Size!'
+        if debug: print 'Size!'
         
         # Skip over it all
         f.read(2)
 
 class MatrixRecord(Record):
     
-    def __init__(self, f):
+    def __init__(self, f, debug=False):
         Record.__init__(self)
         
-        print 'Matrix!'
+        if debug: print 'Matrix!'
         
         self.options = struct.unpack('<B', f.read(1))[0]
         
         # Check for nudge
         if self._checkFlag(self.options, Record.O_NUDGE):
-            _handleNudge(f)
+            _handleNudge(f, debug)
         
         self.valign = struct.unpack('<B', f.read(1))[0]
         self.h_just = struct.unpack('<B', f.read(1))[0]
@@ -838,8 +840,8 @@ class MatrixRecord(Record):
         self.rows = struct.unpack('<B', f.read(1))[0]
         self.columns = struct.unpack('<B', f.read(1))[0]
         
-        print 'Rows:', self.rows
-        print 'Columns:', self.columns
+        if debug: print 'Rows:', self.rows
+        if debug: print 'Columns:', self.columns
         
         # Get row partition line types (ignore for now)
         f.read(1)
@@ -864,10 +866,10 @@ class MatrixRecord(Record):
         
 class ColorRecord(Record):
     
-    def __init__(self, f):
+    def __init__(self, f, debug=False):
         Record.__init__(self)
         
-        print 'Color!'
+        if debug: print 'Color!'
         
         val = struct.unpack('<B', f.read(1))[0]
         if val < 255:
@@ -875,53 +877,53 @@ class ColorRecord(Record):
         else:
             self.defIndex = struct.unpack('<H', f.read(2))[0]
             
-        print 'Definition Index:', self.defIndex
+        if debug: print 'Definition Index:', self.defIndex
                     
 class ColorDefinitionRecord(Record):
     
-    def __init__(self, f):
+    def __init__(self, f, debug=False):
         Record.__init__(self)
         
-        print 'Color Definition!'
+        if debug: print 'Color Definition!'
         
         self.options = struct.unpack('<B', f.read(1))[0]
         
         # If RGB, do one thing. If CMYK, do another
         if self._checkFlag(self.options, Record.O_COLOR_CMYK):
-            print 'Color Type: CMYK'
+            if debug: print 'Color Type: CMYK'
             f.read(8)
         else:
-            print 'Color Type: RGB'
+            if debug: print 'Color Type: RGB'
             f.read(6)
         
         # Check if we got a color name. If we do, get it
         if self._checkFlag(self.options, Record.O_COLOR_NAME):
-            self.name = getNullTermString(f)
-            print 'Color Name: ' + self.name
+            self.name = getNullTermString(f, debug)
+            if debug: print 'Color Name: ' + self.name
                     
 class FontDefinitionRecord(Record):
     
-    def __init__(self, f):
+    def __init__(self, f, debug=False):
         Record.__init__(self)
         
-        print 'Font Definition!'
+        if debug: print 'Font Definition!'
         
         val = struct.unpack('<B', f.read(1))[0]
         if val < 255:
             self.encodingIndex = val
         else:
             self.encodingIndex = struct.unpack('<H', f.read(2))[0]
-        self.fontName = getNullTermString(f)
+        self.fontName = getNullTermString(f, debug)
         
-        print 'Encoding Index:', self.encodingIndex
-        print 'Font Name:', self.fontName
+        if debug: print 'Encoding Index:', self.encodingIndex
+        if debug: print 'Font Name:', self.fontName
 
 class EquationPreferencesRecord(Record):
     
-    def __init__(self, f):
+    def __init__(self, f, debug=False):
         Record.__init__(self)
         
-        print 'Equation Preferences!'
+        if debug: print 'Equation Preferences!'
         
         # Grab byte for options flags that hasn't been implemented yet?
         f.read(1)
@@ -930,7 +932,7 @@ class EquationPreferencesRecord(Record):
         # (2 being dimensional arrays and the other just a weird one)
         for i in range(2):
             count = struct.unpack('<B', f.read(1))[0]
-            print 'Dimensional Array', i, 'Count:', count
+            if debug: print 'Dimensional Array', i, 'Count:', count
             while count > 0:
                 nextVal = struct.unpack('<B', f.read(1))[0]
                 if (nextVal & 0x0F) == 0x0F:
@@ -940,7 +942,7 @@ class EquationPreferencesRecord(Record):
         
         # Handle the "weird" styles array
         count = struct.unpack('<B', f.read(1))[0]
-        print 'Styles Array Count:', count
+        if debug: print 'Styles Array Count:', count
         while count > 0:
             nextVal = struct.unpack('<B', f.read(1))[0]
             if nextVal > 0:
@@ -949,26 +951,26 @@ class EquationPreferencesRecord(Record):
                     
 class EncodingDefinitionRecord(Record):
     
-    def __init__(self, f):
+    def __init__(self, f, debug=False):
         Record.__init__(self)
         
-        print 'Encoding Definition!'
+        if debug: print 'Encoding Definition!'
         
         # Grab the encoding name, which is null-terminated
-        self.encodingName = getNullTermString(f)
+        self.encodingName = getNullTermString(f, debug)
         
-        print 'Encoding Name:', self.encodingName
+        if debug: print 'Encoding Name:', self.encodingName
         
 class TexInputRecord(Record):
     
-    def __init__(self, f):
+    def __init__(self, f, debug=False):
         Record.__init__(self)
         
-        print 'LaTex Input! (I think)'
+        if debug: print 'LaTex Input! (I think)'
         
         self.options = struct.unpack('<B', f.read(1))
-        self.description = getNullTermString(f)
-        self.code = getNullTermString(f)
+        self.description = getNullTermString(f, debug)
+        self.code = getNullTermString(f, debug)
         
-        print 'Description:', self.description
-        print 'Code:', self.code
+        if debug: print 'Description:', self.description
+        if debug: print 'Code:', self.code

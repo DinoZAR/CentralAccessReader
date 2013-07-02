@@ -7,6 +7,7 @@ import sys
 import os
 import webbrowser
 import traceback
+import time
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt, QUrl, QMutex
 from PyQt4 import QtCore
@@ -505,6 +506,10 @@ class MainWindow(QtGui.QMainWindow):
                 self.document = DocxDocument(str(filePath), myProgressCallback, myCheckCancel)
                 
                 if not self.stopDocumentLoad:
+                    
+                    self.progressDialog.setLabelText('Loading content into view...')
+                    QtGui.qApp.processEvents()
+                    
                     docxHtml = self.document.getMainPage()
                     
                     # Clear the cache in the web view
@@ -526,6 +531,20 @@ class MainWindow(QtGui.QMainWindow):
                     self.ui.pagesTreeView.expandAll()
                     
                     self.lastDocumentFilePath = filePath
+                    
+                    # Wait until the document has completely loaded
+                    loaded = False
+                    while not loaded:
+                        loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsPageLoaded', [])).toBool()
+                        QtGui.qApp.processEvents()
+                    
+                    # Wait until MathJax is done typesetting
+                    self.progressDialog.setLabelText('Typesetting math equations...')
+                    QtGui.qApp.processEvents()
+                    loaded = False
+                    while not loaded:
+                        loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsMathTypeset', [])).toBool()
+                        QtGui.qApp.processEvents()
                 
                 # Stop progress bars and update threads
                 t.stop()
