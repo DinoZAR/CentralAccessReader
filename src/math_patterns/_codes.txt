@@ -315,13 +315,13 @@ endPeriod = mo(".") -> ''
 
 point = mi(".") -> 'point'
 
-//spaceOdd = mi("&#160;") -> ' '
-spaceXL = mi("&#8195;") -> ' '
+spaceWorking = mi("&#8203;") -> ' '
+empty = mi("&#160;") -> ' '
+empty = mi("&#8195;") -> ' '
 space = mi("&#8198;") -> ' '
-spaceL = mi("&#8201;") -> ' '
-spaceM = mi("&#8202;") -> ' '
-spaceS = mi("&#8203;") -> ' '
-
+space = mi("&#8201;") -> ' '
+space = mi("&#8202;") -> ' '
+space = mi("&#8203;") -> ' '
 
 // Letters
 a [variable] = mi("a") -> '"a"'
