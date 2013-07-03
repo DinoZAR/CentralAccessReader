@@ -54,6 +54,7 @@ functionPrime = f apostrophe mfenced(+) -> 'function {1} prime of {3}'
 functionPrime = f prime mfenced(+) -> 'function {1} prime of {3}'
 
 
+
 // ------------------------------------------------------------------------------
 // Fraction-based
 // ------------------------------------------------------------------------------
@@ -83,9 +84,10 @@ yields = y i e l d s -> '"yields"'
 
 // Strikes and Slashes
 
+import _Vocab.txt
 
 import _BordersSlashes.txt
-
+
 
 //---------------------------------------------------------------
 // Trigonometry-Specific

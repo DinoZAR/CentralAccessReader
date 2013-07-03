@@ -48,9 +48,10 @@ bbcapR = mi("&#8477;") -> 'all real numbers'
 
 // Strikes and Slashes
 
+import _Vocab.txt
 
 import _BordersSlashes.txt
-
+
 
 //---------------------------------------------------------------
 // Trigonometry-Specific

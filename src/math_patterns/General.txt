@@ -51,7 +51,7 @@ bbcapR = mi("&#8477;") -> 'all real numbers'
 
 import _Vocab.txt
 import _BordersSlashes.txt
-
+
 
 //---------------------------------------------------------------
 // Trigonometry-Specific
