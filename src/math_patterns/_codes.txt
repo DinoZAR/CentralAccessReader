@@ -91,9 +91,9 @@ lessThanOrEqual = mi("&#8804;") -> ' is less than or equal to,'
 
 lessThanOrEqual = mo("&#8804;") -> ' is less than or equal to,'
 
-minus = mo("-") -> 'minus,'
+minus = mo("-") -> 'minus'
 
-minus = mo("&#x2212;") -> 'minus,'
+minus = mo("&#x2212;") -> 'minus'
 
 minusPlus = mi("&#8723;") -> 'minus or plus,'
 
@@ -311,14 +311,11 @@ comma = mi(",") -> ','
 
 endPeriod = mo(".") -> ''
 
-point = mi(".") -> 'point,'
-//space = mi("&#61185;") -> ' '
-//space = mi("&#61186;") -> ' '
-//space = mi("&#61188;") -> ' '
-//space = mi("&#61189;") -> ' '
-//space = mi("&#61192;") -> ' '
-spaceOdd = mi("&#160;") -> ' '
+point = mi(".") -> 'point'
+
+//spaceOdd = mi("&#160;") -> ' '
 spaceXL = mi("&#8195;") -> ' '
+space = mi("&#8198;") -> ' '
 spaceL = mi("&#8201;") -> ' '
 spaceM = mi("&#8202;") -> ' '
 spaceS = mi("&#8203;") -> ' '

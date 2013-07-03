@@ -138,6 +138,12 @@ limit = munderover(mrow(l i m) mrow(?) ?) -> 'the limit as {4}, of'
 
 // Products and Unions
 
+change = c h a n g e -> 'change'
+
+intercept = i n t e r c e p t -> 'intercept'
+
+in = i n -> 'in'
+
 import _Integrals.txt
 
 functionFofF = f openParen f openParen + closeParen closeParen -> 'f of f of {5}'
@@ -154,7 +160,9 @@ functionGofF = g composition f -> 'g of f'
 functionGofG = g composition g -> 'g of g'
 functionF = f openParen + closeParen -> 'f of {3}'
 functionG = g openParen + closeParen -> 'g of {3}'
+rise = r i s e -> 'rise'
 
+run = r u n -> 'run'
 
 // ------------------------------------------------------------------------------
 // Parenthetical Expressions
