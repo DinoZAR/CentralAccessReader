@@ -1,6 +1,8 @@
 <RCC>
   <qresource prefix="/icons">
+    <file>icons/prepare_speech_stop.png</file>
     <file>icons/update_down_arrow_big.png</file>
+    <file>icons/prepare_speech_background.png</file>
     <file>icons/dialog_ok_apply.png</file>
     <file>icons/update-in-progress.gif</file>
     <file>icons/gear.png</file>

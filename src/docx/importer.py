@@ -10,6 +10,7 @@ from lxml import html as HTML
 import os
 import urllib
 import traceback
+from PyQt4.QtCore import QThread, pyqtSignal, QUrl
 from src.gui.bookmarks import BookmarkNode
 from src.misc import program_path, app_data_path, temp_path, REPORT_BUG_URL
 from src.mathtype.parser import parseWMF, MathTypeParseError
@@ -68,6 +69,69 @@ def clean_XML_input(input):
         input = re.sub(r"[\x01-\x1F\x7F]", "", input)  
               
     return input.decode('utf8')
+
+
+class DocxImporterThread(QThread):
+    '''
+    This thread is used to import a .docx document, report its progress, and
+    then return the document that it parsed.
+    '''
+    reportProgress = pyqtSignal(int)
+    reportError = pyqtSignal(Exception)
+    reportText = pyqtSignal(str)
+    
+    def __init__(self, filePath):
+        QThread.__init__(self)
+        self._filePath = filePath
+        self._docx = None
+        self._html = ''
+        self._bookmarks = None
+        self._pages = None
+        self._stop = False
+        
+    def run(self):
+        
+        def myProgressCallback(percentage):
+            self.reportProgress.emit(percentage)
+            
+        def myCheckCancel():
+            return self._stop
+        
+        try:
+            self._docx = DocxDocument(self._filePath, myProgressCallback, myCheckCancel)
+            
+            if not self._stop:
+                self._html = self._docx.getMainPage()
+                self._bookmarks = self._docx.getBookmarks()
+                self._pages = self._docx.getPages()
+            
+        except Exception as e:
+            self.reportError.emit(e)
+        
+    def stop(self):
+        self._stop = True
+        
+    def isSuccessful(self):
+        '''
+        Returns whether the importer successfully finished parsing the .docx
+        '''
+        return not self._stop
+    
+    def getFilePath(self):
+        return self._filePath
+    
+    def getDocument(self):
+        return self._docx
+    
+    def getHTML(self):
+        return self._html
+    
+    def getBookmarks(self):
+        return self._bookmarks
+    
+    def getPages(self):
+        return self._pages
+
 
 class DocxDocument(object):
     '''
@@ -131,7 +195,11 @@ class DocxDocument(object):
         self.zip.close()
         
         # Finally, create the HTML for the thing
-        self._createHTML(progressCallback)
+        if checkCancelFunction:
+            if not checkCancelFunction():
+                self._createHTML(progressCallback, checkCancelFunction)
+        else:
+            self._createHTML(progressCallback, checkCancelFunction)
         
     def _getRels(self, zip):
         relFile = zip.open('word/_rels/document.xml.rels', 'r')
@@ -262,18 +330,13 @@ class DocxDocument(object):
                     if r.get('Id') == myId:
                         hyperlinkData['value'] = r.get('Target')
                             
-                    
-                print 'Before URL:', hyperlinkData['value']
                 # Add the http:// in the beginning if not present
                 if 'http://' in hyperlinkData['value']:
                     pass
                 else:
                     hyperlinkData['value'] = 'http://' + hyperlinkData['value']
-            
-                print 'After URL:', hyperlinkData['value']
                     
                 parseData['data'].append(hyperlinkData)
-                
                 
         return parseData
     
@@ -470,10 +533,14 @@ class DocxDocument(object):
         head.append(myScripts)
         head.append(css)
         
-    def _prepareBody(self, body, progressCallback=None):
+    def _prepareBody(self, body, progressCallback=None, checkCancelFunction=None):
         anchorCount = 1
         i = 0
         while i < len(self.paragraphData):
+            
+            if checkCancelFunction:
+                if checkCancelFunction():
+                    break
             
             # Report my progress (90% to 100%)
             if progressCallback:
@@ -632,7 +699,7 @@ class DocxDocument(object):
     def getMainPage(self):
         return self._html
         
-    def _createHTML(self, progressCallback=None):
+    def _createHTML(self, progressCallback=None, checkCancelFunction=None):
         '''
         Generates the HTML for the page.
         '''
@@ -645,12 +712,16 @@ class DocxDocument(object):
         
         # Create the scripts and other references here in the head
         self._prepareHead(head)
-        self._prepareBody(body, progressCallback)
+        self._prepareBody(body, progressCallback, checkCancelFunction)
         
         # Write out the images to the import folder
-        self._saveImages()
-        
-        self._html = HTML.tostring(html)
+        if checkCancelFunction:
+            if not checkCancelFunction():
+                self._saveImages()
+                self._html = HTML.tostring(html)
+        else:
+            self._saveImages()
+            self._html = HTML.tostring(html)
     
     def getPages(self):
         '''
