@@ -6,13 +6,49 @@ Created on Feb 20, 2013
 import traceback
 from HTMLParser import HTMLParser
 from lxml import etree, html
-from PyQt4.QtCore import QMutex
+from PyQt4.QtCore import QMutex, QThread, pyqtSignal
 from src.mathml.tts import MathTTS
 from src.speech.math_parser_thread import MathParserThread
 
 # Namespace for XHTML
 html_NS = '{http://www.w3.org/1999/xhtml}'
 
+class PrepareSpeechThread(QThread):
+    '''
+    This thread prepares the HTML given to it into an output list that should
+    be queued into the TTS engine. It will report progress and say when it is
+    finished.
+    '''
+    reportProgress = pyqtSignal(int)
+    
+    def __init__(self, assigner, configuration, htmlToConvert, maxPercent):
+        QThread.__init__(self)
+        self._assigner = assigner
+        self._config = configuration
+        self._html = htmlToConvert
+        self._outputList = []
+        self._stop = False
+        self._max = maxPercent
+        
+    def run(self):
+        def myProgressCallback(percent):
+            self.reportProgress.emit(int(percent / 100.0 * self._max))
+            
+        def myCheckCancel():
+            return self._stop
+        
+        self._outputList = self._assigner.getSpeech(self._html, self._config, myProgressCallback, myCheckCancel)
+        
+    def stop(self):
+        print 'Stopping preparer...'
+        self._stop = True
+        
+    def isSuccessful(self):
+        return not self._stop
+    
+    def getOutputList(self):
+        return self._outputList
+            
 class Assigner(object):
     '''
     Used to assign parts of the content (represented as HTML) to specific
@@ -62,15 +98,22 @@ class Assigner(object):
             
             i += 1
     
-    def getSpeech(self, htmlContent, configuration):
+    def getSpeech(self, htmlContent, configuration, progressCallback=None, checkCancelFunction=None):
         '''
         Returns a list of utterances to say the HTML content in the following 
         format:
         
         [[text, label], [text, label], ...]
         '''
+        if progressCallback:
+            progressCallback(0)
+        
         htmlDom = html.fromstring(htmlContent)
-        return self._recursiveGetSpeech(htmlDom, configuration)
+        
+        if progressCallback:
+            progressCallback(3)
+            
+        return self._recursiveGetSpeech(htmlDom, configuration, progressCallback, checkCancelFunction)
     
     def setMathDatabase(self, filePath):
         '''
@@ -95,7 +138,7 @@ class Assigner(object):
         self._maths[mathData[0]] = mathData[1]
         self._mathsLock.unlock()
         
-    def _recursiveGetSpeech(self, element, configuration):
+    def _recursiveGetSpeech(self, element, configuration, progressCallback=None, checkCancelFunction=None):
         
         # Use recursion to handle it.
         myList = []
@@ -119,7 +162,25 @@ class Assigner(object):
             if element.tail != None:
                 myList.append([element.tail, 'text'])
         
+        
+        # Make up my own progress callback function, which I will transform
+        # into the actual progress I will report
+        i = 0
+        def myProgressCallback(percent):
+            if progressCallback:
+                p = int(percent * (float(i) / len(element)))
+                progressCallback(p)
+        
         for child in element:
+            
+            # Check to see if I need to stop abruptly
+            if checkCancelFunction:
+                print ' '
+                if checkCancelFunction():
+                    break
+            
+            i += 1
+            
             testTag = child.tag.split('}')[-1]
             
             if testTag == 'span':
@@ -142,7 +203,7 @@ class Assigner(object):
                     else:
                         myList.append([mathOutput, 'math'])
                 else:
-                    myList.extend(self._recursiveGetSpeech(child, configuration))
+                    myList.extend(self._recursiveGetSpeech(child, configuration, myProgressCallback, checkCancelFunction))
                         
             elif testTag == 'img':
                 
@@ -165,9 +226,12 @@ class Assigner(object):
                 pass
             
             else:
-                myList.extend(self._recursiveGetSpeech(child, configuration))
-        
+                myList.extend(self._recursiveGetSpeech(child, configuration, myProgressCallback, checkCancelFunction))
+                
         if element.tail != None:
             myList.append([element.tail, 'text'])
+        
+        if progressCallback:
+            progressCallback(100)
             
         return myList

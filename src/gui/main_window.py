@@ -27,12 +27,13 @@ from src.gui.bug_reporter import BugReporter
 from src.gui.update_in_progress import UpdateInstallProgressDialog
 from src.gui.update_done import UpdateDoneDialog
 from src.gui.update_prompt import UpdatePromptDialog
+from src.gui.prepare_speech import PrepareSpeechProgressWidget
 from src.mathtype.parser import MathTypeParseError
 from src.mathml.tts import MathTTS
 from src.mathml import pattern_editor
-from src.speech.assigner import Assigner
+from src.speech.assigner import Assigner, PrepareSpeechThread
 from src.speech.worker import SpeechWorker
-from src.docx.importer import DocxDocument
+from src.docx.importer import DocxImporterThread
 from src.updater import GetUpdateThread, RunUpdateInstallerThread, SETUP_FILE, run_update_installer
 from src import misc
 
@@ -185,10 +186,22 @@ class MainWindow(QtGui.QMainWindow):
         self.updateDoneDialog = None
         self.updator = RunUpdateInstallerThread()
         self.programUpdateFinish.connect(self.finishUpdate)
+        
+        # Prepare speech widget that pops up every time you press Play
+        # Connect all event handlers that may be relevant to update the position
+        self.prepareSpeechProgress = PrepareSpeechProgressWidget(self.ui.playButton, self)
+        self.ui.splitter.splitterMoved.connect(self.prepareSpeechProgress.updatePos_splitterMoved)
+        self.prepareSpeechProgress.hide()
             
     def closeEvent(self, event):
         self.configuration.zoom_content = self.ui.webView.getZoom()
         self.configuration.saveToFile(misc.app_data_path('configuration.xml'))
+        
+    def resizeEvent(self, event):
+        self.prepareSpeechProgress.updatePos()
+        
+    def updateGUI(self):
+        QtGui.qApp.processEvents()
         
     def connect_signals(self):
         '''
@@ -203,7 +216,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.zoomInButton.clicked.connect(self.zoomIn)
         self.ui.zoomOutButton.clicked.connect(self.zoomOut)
         
-        # Main menu
+        # Main Menu
         # File
         self.ui.actionOpen_Docx.triggered.connect(self.showOpenDocxDialog)
         self.ui.actionSave_All_to_MP3.triggered.connect(self.saveMP3All)
@@ -299,28 +312,67 @@ class MainWindow(QtGui.QMainWindow):
         while self.ttsPlaying:
             QtGui.qApp.processEvents()
         
-        # Get list of string output for feeding into my speech
-        outputList = []
+        # Get the selected HTML
         self.javascriptMutex.lock()
         selectedHTML = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetSelectionHTML', [])).toString())
         self.javascriptMutex.unlock()
-        outputList = self.assigner.getSpeech(selectedHTML, self.configuration)
         
-        # Add my words to the queue
-        for o in outputList:
-            self.addToQueue.emit(o[0], o[1])
+        # Disable my other widgets
+        self.setSettingsEnableState(False)
         
-        self.javascriptMutex.lock()
-        self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SetBeginning', [self.configuration.highlight_line_enable, outputList[0][1]]))
-        self.javascriptMutex.unlock()
+        # Show the prepare speech progress widget
+        self.prepareSpeechProgress.setProgress(0)
+        self.prepareSpeechProgress.show()
         
-        self.isFirst = True
-        self.lastElement = ['', -1, '', -1]
+        # Prepare the speech for the TTS using a thread
+        # Make it only report up to 80%
+        try:
+            # Stop it if I hadn't already
+            self.prepareSpeechThread.stop()
+            self.prepareSpeechThread.wait()
+        except Exception:
+            pass
         
-        self.ttsPlaying = True
-        self.setSettingsEnableState()
+        self.prepareSpeechThread = PrepareSpeechThread(self.assigner, self.configuration, selectedHTML, 80)
+        self.prepareSpeechThread.reportProgress.connect(self.reportProgressPlaySpeech)
+        self.prepareSpeechThread.finished.connect(self.finishPlaySpeech)
+        self.ui.actionStop.triggered.connect(self.prepareSpeechThread.stop)
         
-        self.startPlayback.emit()
+        self.prepareSpeechThread.start()
+    
+    def reportProgressPlaySpeech(self, percent):
+        self.prepareSpeechProgress.setProgress(percent)
+        
+    def finishPlaySpeech(self):
+        
+        if self.prepareSpeechThread.isSuccessful():
+            outputList = self.prepareSpeechThread.getOutputList()
+            
+            if len(outputList) > 0:
+                
+                # Add my words to the queue
+                # Make the progress go from 80%-100%
+                i = 0
+                for o in outputList:
+                    self.addToQueue.emit(o[0], o[1])
+                    i += 1
+                    self.prepareSpeechProgress.setProgress(80 + (float(i) / len(outputList)) * 20.0)
+                    QtGui.qApp.processEvents()
+                
+                # Start the highlighter at the beginning
+                self.javascriptMutex.lock()
+                self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SetBeginning', [self.configuration.highlight_line_enable, outputList[0][1]]))
+                self.javascriptMutex.unlock()
+                
+                self.isFirst = True
+                self.lastElement = ['', -1, '', -1]
+                
+                self.ttsPlaying = True
+                self.setSettingsEnableState(False)
+                
+                self.startPlayback.emit()
+        
+        self.prepareSpeechProgress.hide()
         
     def onWord(self, offset, length, label, stream, word):
         self.hasWorded = True
@@ -331,7 +383,7 @@ class MainWindow(QtGui.QMainWindow):
                 self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
                 self.javascriptMutex.unlock()
             self.javascriptMutex.lock()
-            self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightWord', [self.configuration.highlight_line_enable, offset, length, str(word)]))
+            self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightWord', [self.configuration.highlight_line_enable, offset, length, unicode(word)]))
             self.javascriptMutex.unlock()
             self.isFirst = False
         elif label == 'math':
@@ -368,16 +420,13 @@ class MainWindow(QtGui.QMainWindow):
         self.isFirst = False
         self.ttsPlaying = False
         self.lastElement = ['', -1, '', -1]
-        self.setSettingsEnableState()
+        self.setSettingsEnableState(True)
         
     def stopSpeech(self):
         self.isFirst = False
         self.stopPlayback.emit()
         self.ttsPlaying = False
-        self.setSettingsEnableState()
-
-    def muteButton_clicked(self):
-        pass
+        self.setSettingsEnableState(True)
             
     def changeSpeechRate(self, value):
         self.configuration.rate = value
@@ -462,111 +511,101 @@ class MainWindow(QtGui.QMainWindow):
     def zoomOut(self):
         self.ui.webView.zoomOut()
             
-    def openHTML(self):
-        fileName = QtGui.QFileDialog.getOpenFileName(self, 'Open HTML...','./tests','(*.html)')
-        f = open(fileName, 'r')
-        content = f.read()
-        f.close()
-        self.assigner.prepare(content)
-        baseUrl = QUrl.fromLocalFile(fileName)
-        self.ui.webView.setHtml(content, baseUrl)
-        
+#     def openHTML(self):
+#         fileName = QtGui.QFileDialog.getOpenFileName(self, 'Open HTML...','./tests','(*.html)')
+#         f = open(fileName, 'r')
+#         content = f.read()
+#         f.close()
+#         self.assigner.prepare(content)
+#         baseUrl = QUrl.fromLocalFile(fileName)
+#         self.ui.webView.setHtml(content, baseUrl)
+
+
     def openDocx(self, filePath):
+        '''
+        Opens a .docx file. It will span a progress bar and run the task in the
+        background to prevent GUI from freezing up.
+        '''
+        filePath = str(filePath)
+        if len(filePath) > 0:
+            
+            # Create my .docx importer thread
+            self.docxImporterThread = DocxImporterThread(filePath)
+            self.docxImporterThread.reportProgress.connect(self.reportProgressOpenDocx)
+            self.docxImporterThread.finished.connect(self.finishOpenDocx)
+            
+            #Show a progress dialog
+            self.progressDialog.setWindowModality(Qt.WindowModal)
+            self.progressDialog.setWindowTitle('Opening Word document...')
+            self.progressDialog.setLabelText('Reading ' + os.path.basename(str(filePath)) + '...')
+            self.progressDialog.setValue(0)
+            self.progressDialog.canceled.connect(self.docxImporterThread.stop)
+            self.progressDialog.show()
+           
+            self.docxImporterThread.start()
         
-        t = misc.UpdateQtThread()
-        try:
-            if len(filePath) > 0:
-                url = misc.temp_path('import')
-                baseUrl = QUrl.fromLocalFile(url)
-                
-                # Function callback when user clicks on the cancel button
-                def myCancelCallback():
-                    self.stopDocumentLoad = True
-                    
-                # Show a progress dialog
-                self.progressDialog.setWindowModality(Qt.WindowModal)
-                self.progressDialog.setWindowTitle('Opening Word document...')
-                self.progressDialog.setLabelText('Reading ' + os.path.basename(str(filePath)) + '...')
-                self.progressDialog.setValue(0)
-                self.progressDialog.canceled.connect(myCancelCallback)
-                self.progressDialog.show()
-                QtGui.qApp.processEvents()
-                    
-                # Run a separate thread for updating my GUI thread
-                t.start()
-                
-                # Function for updating my progress bar
-                def myProgressCallback(percentage):
-                    self.progressDialog.setValue(percentage)
-                    
-                def myCheckCancel():
-                    return self.stopDocumentLoad
-                
-                # Read in my Word document
-                self.document = DocxDocument(str(filePath), myProgressCallback, myCheckCancel)
-                
-                if not self.stopDocumentLoad:
-                    
-                    self.progressDialog.setLabelText('Loading content into view...')
-                    QtGui.qApp.processEvents()
-                    
-                    docxHtml = self.document.getMainPage()
-                    
-                    # Clear the cache in the web view
-                    QWebSettings.clearIconDatabase()
-                    QWebSettings.clearMemoryCaches()
-                    
-                    # Set the content views and prepare assigner
-                    self.assigner.prepare(docxHtml)
-                    self.ui.webView.setHtml(docxHtml, baseUrl)
-                    
-                    # Get and set the bookmarks
-                    self.bookmarksModel = BookmarksTreeModel(self.document.getBookmarks())
-                    self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
-                    self.ui.bookmarksTreeView.expandAll()
-                    
-                    # Get and set the pages
-                    self.pagesModel = PagesTreeModel(self.document.getPages())
-                    self.ui.pagesTreeView.setModel(self.pagesModel)
-                    self.ui.pagesTreeView.expandAll()
-                    
-                    self.lastDocumentFilePath = filePath
-                    
-                    # Wait until the document has completely loaded
-                    loaded = False
-                    while not loaded:
-                        loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsPageLoaded', [])).toBool()
-                        QtGui.qApp.processEvents()
-                    
-                    # Wait until MathJax is done typesetting
-                    self.progressDialog.setLabelText('Typesetting math equations...')
-                    QtGui.qApp.processEvents()
-                    loaded = False
-                    while not loaded:
-                        loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsMathTypeset', [])).toBool()
-                        QtGui.qApp.processEvents()
-                
-                # Stop progress bars and update threads
-                t.stop()
-                t.join()
-                self.progressDialog.hide()
-                
-        except MathTypeParseError as ex:
-            t.stop()
-            t.join()
-            self.progressDialog.hide()
-            out = misc.prepare_bug_report(traceback.format_exc(), self.configuration, detailMessage=ex.message)
+    def reportProgressOpenDocx(self, percent):
+        self.progressDialog.setValue(percent)
+        
+    def reportTextOpenDocx(self, text):
+        self.progressDialog.setLabelText(text)
+        
+    def reportErrorOpenDocx(self, exception):
+        if isinstance(exception, MathTypeParseError):
+            out = misc.prepare_bug_report(traceback.format_exc(), self.configuration, detailMessage=exception.message)
             dialog = BugReporter(out)
             dialog.exec_()
-        
-        except Exception as e:
-            t.stop()
-            t.join()
-            self.progressDialog.hide()
+        else:
             out = misc.prepare_bug_report(traceback.format_exc(), self.configuration)
             dialog = BugReporter(out)
             dialog.exec_()
         
+    def finishOpenDocx(self):
+        
+        print 'Finishing up...'
+        
+        if self.docxImporterThread.isSuccessful():
+            print 'Import was a success'
+            url = misc.temp_path('import')
+            baseUrl = QUrl.fromLocalFile(url)
+            
+            # Clear the cache in the web view
+            QWebSettings.clearIconDatabase()
+            QWebSettings.clearMemoryCaches()
+            
+            # Set the content views and prepare assigner
+            docxHtml = self.docxImporterThread.getHTML()
+            self.assigner.prepare(docxHtml)
+            self.ui.webView.setHtml(docxHtml, baseUrl)
+            
+            # Get and set the bookmarks
+            self.bookmarksModel = BookmarksTreeModel(self.docxImporterThread.getBookmarks())
+            self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
+            self.ui.bookmarksTreeView.expandAll()
+                    
+            # Get and set the pages
+            self.pagesModel = PagesTreeModel(self.docxImporterThread.getPages())
+            self.ui.pagesTreeView.setModel(self.pagesModel)
+            self.ui.pagesTreeView.expandAll()
+            
+            self.document = self.docxImporterThread.getDocument()
+            self.lastDocumentFilePath = self.docxImporterThread.getFilePath()
+                    
+            # Wait until the document has completely loaded
+            self.progressDialog.setLabelText('Loading content into view...')
+            loaded = False
+            while not loaded:
+                QtGui.qApp.processEvents()
+                loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsPageLoaded', [])).toBool()
+                    
+            # Wait until MathJax is done typesetting
+            self.progressDialog.setLabelText('Typesetting math equations...')
+            loaded = False
+            while not loaded:
+                QtGui.qApp.processEvents()
+                loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsMathTypeset', [])).toBool()
+                    
+        self.progressDialog.hide()
         self.stopDocumentLoad = False
         
     def showOpenDocxDialog(self):
@@ -734,12 +773,12 @@ class MainWindow(QtGui.QMainWindow):
         self.updateDoneDialog = UpdateDoneDialog(self)
         self.updateDoneDialog.exec_()
             
-    def setSettingsEnableState(self):
+    def setSettingsEnableState(self, isEnable):
         '''
         Disables or enables the TTS sliders depending on whether we are playing
         back right now or not.
         '''
-        if self.ttsPlaying:
+        if not isEnable:
             self.ui.rateSlider.setEnabled(False)
             self.ui.volumeSlider.setEnabled(False)
             self.ui.colorSettingsButton.setEnabled(False)
