@@ -116,6 +116,8 @@ percent = mi("%") -> 'percent,'
 plusMinus = mo("&#xB1;") -> 'plus or minus,'
 product [integral] = mi("&#8719;") -> 'product,'
 
+questionMark = mi("?") -> 'question mark'
+
 product [integral] = mo("&#8719;") -> 'product,'
 times = mo("*") -> 'times,'
 times = mi("*") -> 'times,'
