@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/mainwindow.ui'
 #
-# Created: Tue Jul 02 10:58:44 2013
+# Created: Wed Jul 03 16:30:25 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!

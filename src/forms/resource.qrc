@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/icons">
+    <file>icons/CAR Splashscreen.png</file>
     <file>icons/prepare_speech_stop.png</file>
     <file>icons/update_down_arrow_big.png</file>
     <file>icons/prepare_speech_background.png</file>
