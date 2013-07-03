@@ -10,8 +10,7 @@ import sys
 import os
 import platform
 import subprocess
-from threading import Thread
-from PyQt4 import QtGui
+from PyQt4.QtCore import QThread, pyqtSignal
 
 _PROGRAM_ROOT = 'Central Access Reader'
 
@@ -162,19 +161,22 @@ def prepare_bug_report(traceback, configuration, detailMessage=None):
     
     return out
 
-class UpdateQtThread(Thread):
+class UpdateQtThread(QThread):
     '''
     Used to process events in the PyQt main thread while something else is
     hogging up my main thread.
     '''
+    
+    updateGUI = pyqtSignal()
+    
     def __init__(self):
-        Thread.__init__(self)
+        QThread.__init__(self)
         self._stopping = False
         
     def run(self):
         print 'Gui updator running...'
         while not self._stopping:
-            QtGui.qApp.processEvents()
+            self.updateGUI.emit()
     
     def stop(self):
         self._stopping = True
