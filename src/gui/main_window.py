@@ -337,6 +337,7 @@ class MainWindow(QtGui.QMainWindow):
         self.prepareSpeechThread.reportProgress.connect(self.reportProgressPlaySpeech)
         self.prepareSpeechThread.finished.connect(self.finishPlaySpeech)
         self.ui.actionStop.triggered.connect(self.prepareSpeechThread.stop)
+        self.ui.pauseButton.clicked.connect(self.prepareSpeechThread.stop)
         
         self.prepareSpeechThread.start()
     
