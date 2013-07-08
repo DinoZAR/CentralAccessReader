@@ -289,8 +289,19 @@ function GetSelectionRange() {
 			}
 		}
 		
+		// If my range is inside of a math equation on both sides, then make the range
+		// surround the math equation
+		var startEq = GetEquation(range.startContainer);
+		var endEq = GetEquation(range.endContainer);
+		if ($(startEq).is($(endEq)) && (startEq != null)) {
+			console.debug('Equation: ' + startEq.nodeName + ', class name: ' + startEq.className);
+			range.selectNode(startEq);
+			range.setStart(startEq, 0);
+		}
+		
 		// If the start turns out to be the body, make the start node the same as the
-		// end node, but at the beginning. This is more of a hack, not an adequate fix.
+		// end node, but at the beginning. This is more of a hack to work around a
+		// JavaScript issue.
 		if (range.startContainer.nodeName == 'BODY') {
 			range.setStart(range.endContainer, 0);
 		}
@@ -298,28 +309,6 @@ function GetSelectionRange() {
 		// If I have a paragraph with no text, move the range to the next element
 		if ((range.startContainer.nodeName == 'P') && ($(range.startContainer).text() == '')) {
 			range.setStart(NextElement(range.startContainer), 0);
-		}
-		
-		// If my range is inside of a math equation on both sides, then make the range
-		// surround the math equation
-		var startEq = GetEquation(range.startContainer)
-		var endEq = GetEquation(range.endContainer)
-		if ((startEq === endEq) && (startEq != null)) {
-			console.debug('Equation: ' + startEq.nodeName + ', class name: ' + startEq.className);
-			range.selectNode(startEq);
-			
-			if (startEq.previousSibling != null) {
-				console.debug('Setting range to sibling before the equation');
-				range.setStart(startEq.previousSibling, startEq.previousSibling.length);
-			}
-			else {
-				console.debug('Setting range to last child of previous parent, if exists');
-				range.setStart(startEq.parentNode, 0);
-				if (startEq.parentNode.previousSibling != null) {
-					n = startEq.parentNode.previousSibling.lastChild;
-					range.setStart(n, n.length); 
-				}
-			}
 		}
 		
 		console.debug('Range here: ' + range.toString());
