@@ -61,7 +61,7 @@ circlePlus = mi("&#8853;") -> 'circled plus,'
 
 colon = mi(":") -> 'colon'
 
-comma = mi(",") -> ','
+comma = mi(",") -> ''
 
 coproduct [integral] = mi("&#8720;") -> 'coproduct,'
 
@@ -130,16 +130,16 @@ times = mi("&#8727;") -> 'times,'
 
 //Integrals
 areaIntegral [integral] = mo("&#60946;") -> 'area integral'
-areaIntegral [integral] = mo("&#8751;") -> 'area integral of'
+areaIntegral [integral] = mo("&#8751;") -> 'area integral'
 integralCon [integral] = mo("&#60945;") -> 'contour integral'
 integralCon [integral] = mo("&#8750;") -> 'contour integral'
 //closedIntegral [integral] = mo("&#x222E;") -> 'closed integral'
-integral [integral] = mi("&#8747;") -> 'integral of'
-integral [integral] = mo("&#8747;") -> 'integral of'
-integralCCW [integral] = mo("&#8755;") -> 'integral with a counter-clockwise circle of'
-integralCW [integral] = mo("&#8754;") -> 'integral with a clockwise circle of'
-volumeIntegral [integral] = mo("&#8752;") -> 'volume integral of'
-volumeIntegral [integral] = mo("&#60947;") -> 'volume integral of'
+integral [integral] = mi("&#8747;") -> 'integral'
+integral [integral] = mo("&#8747;") -> 'integral'
+integralCCW [integral] = mo("&#8755;") -> 'integral with a counter-clockwise circle'
+integralCW [integral] = mo("&#8754;") -> 'integral with a clockwise circle'
+volumeIntegral [integral] = mo("&#8752;") -> 'volume integral'
+volumeIntegral [integral] = mo("&#60947;") -> 'volume integral'
 
 // Arrows
 bothArrow [arrow] = mo("&#8596;") -> 'arrow pointing both left and right'
