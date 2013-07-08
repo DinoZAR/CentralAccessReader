@@ -795,6 +795,7 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.actionSave_Selection_to_MP3.setEnabled(False)
             self.ui.actionOpen_Docx.setEnabled(False)
             self.ui.actionTutorial.setEnabled(False)
+            self.ui.actionSearch.setEnabled(False)
             
             # Search bar
             for w in self.searchWidgets:
@@ -815,6 +816,7 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.actionSave_Selection_to_MP3.setEnabled(True)
             self.ui.actionOpen_Docx.setEnabled(True)
             self.ui.actionTutorial.setEnabled(True)
+            self.ui.actionSearch.setEnabled(True)
             
             # Search bar
             for w in self.searchWidgets:
