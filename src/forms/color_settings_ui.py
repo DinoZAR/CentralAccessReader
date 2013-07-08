@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/color_settings.ui'
 #
-# Created: Wed Jun 26 13:34:39 2013
+# Created: Mon Jul 08 13:14:51 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -30,6 +30,9 @@ class Ui_ColorSettings(object):
         font = QtGui.QFont()
         font.setPointSize(12)
         ColorSettings.setFont(font)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/color_settings.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        ColorSettings.setWindowIcon(icon)
         self.verticalLayout_2 = QtGui.QVBoxLayout(ColorSettings)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.gridLayout_3 = QtGui.QGridLayout()
@@ -176,3 +179,4 @@ class Ui_ColorSettings(object):
         self.applyButton.setToolTip(_translate("ColorSettings", "Apply new speech settings", None))
         self.applyButton.setText(_translate("ColorSettings", "Apply", None))
 
+import resource_rc

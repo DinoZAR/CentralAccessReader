@@ -18,6 +18,10 @@
   <property name="windowTitle">
    <string>Speech</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resource.qrc">
+    <normaloff>:/icons/icons/system_config_services.png</normaloff>:/icons/icons/system_config_services.png</iconset>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1,0">
    <item>
     <layout class="QFormLayout" name="formLayout">
@@ -284,6 +288,8 @@
   <tabstop>restoreButton</tabstop>
   <tabstop>applyButton</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

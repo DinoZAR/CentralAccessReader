@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/update_prompt.ui'
 #
-# Created: Wed Jun 26 13:42:30 2013
+# Created: Mon Jul 08 13:14:51 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -30,6 +30,9 @@ class Ui_UpdatePromptDialog(object):
         font = QtGui.QFont()
         font.setPointSize(12)
         UpdatePromptDialog.setFont(font)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/update_down_arrow.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        UpdatePromptDialog.setWindowIcon(icon)
         self.verticalLayout_3 = QtGui.QVBoxLayout(UpdatePromptDialog)
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
         self.horizontalLayout = QtGui.QHBoxLayout()

@@ -18,6 +18,10 @@
   <property name="windowTitle">
    <string>Report a Bug</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resource.qrc">
+    <normaloff>:/icons/icons/report_bug.png</normaloff>:/icons/icons/report_bug.png</iconset>
+  </property>
   <layout class="QHBoxLayout" name="horizontalLayout_2">
    <item>
     <widget class="QLabel" name="label_2">

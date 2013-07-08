@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\mathml\pattern_editor\forms/patterneditorwindow.ui'
 #
-# Created: Wed Jun 19 10:35:04 2013
+# Created: Mon Jul 08 13:23:44 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -30,6 +30,9 @@ class Ui_PatternEditorWindow(object):
         font = QtGui.QFont()
         font.setPointSize(12)
         PatternEditorWindow.setFont(font)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/CAR_Logo.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        PatternEditorWindow.setWindowIcon(icon)
         self.centralwidget = QtGui.QWidget(PatternEditorWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.centralwidget)
@@ -99,15 +102,15 @@ class Ui_PatternEditorWindow(object):
         self.mathmlEditor.setWhatsThis(_fromUtf8(""))
         self.mathmlEditor.setObjectName(_fromUtf8("mathmlEditor"))
         self.verticalLayout_3.addWidget(self.mathmlEditor)
-        self.widget = QtGui.QWidget(self.splitter_3)
-        self.widget.setObjectName(_fromUtf8("widget"))
-        self.verticalLayout = QtGui.QVBoxLayout(self.widget)
+        self.layoutWidget2 = QtGui.QWidget(self.splitter_3)
+        self.layoutWidget2.setObjectName(_fromUtf8("layoutWidget2"))
+        self.verticalLayout = QtGui.QVBoxLayout(self.layoutWidget2)
         self.verticalLayout.setMargin(0)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.label = QtGui.QLabel(self.widget)
+        self.label = QtGui.QLabel(self.layoutWidget2)
         self.label.setObjectName(_fromUtf8("label"))
         self.verticalLayout.addWidget(self.label)
-        self.consoleTextBox = QtGui.QPlainTextEdit(self.widget)
+        self.consoleTextBox = QtGui.QPlainTextEdit(self.layoutWidget2)
         self.consoleTextBox.setReadOnly(True)
         self.consoleTextBox.setObjectName(_fromUtf8("consoleTextBox"))
         self.verticalLayout.addWidget(self.consoleTextBox)
@@ -168,3 +171,4 @@ class Ui_PatternEditorWindow(object):
         self.actionOpen_MathML.setShortcut(_translate("PatternEditorWindow", "Ctrl+Shift+O", None))
 
 from PyQt4 import Qsci
+import icon_rc

@@ -26,7 +26,7 @@ def main():
         os.makedirs(os.path.dirname(temp_path('test.txt')))
     
     app = QApplication(sys.argv)
-    
+      
     # Generate a splash screen
     from src.forms import resource_rc
     pixmap = QPixmap(':/icons/icons/CAR Splashscreen.png')

@@ -79,6 +79,8 @@ SolidCompression=yes
 ArchitecturesInstallIn64BitMode=x64
 ArchitecturesAllowed=x64
 OutputDir=.
+SetupIconFile=''' + os.path.abspath(os.path.join(DIST_DIRECTORY, 'CAR_Logo.ico')) + '''
+UninstallIconFile=''' + os.path.abspath(os.path.join(DIST_DIRECTORY, 'CAR_Logo.ico')) + '''
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"

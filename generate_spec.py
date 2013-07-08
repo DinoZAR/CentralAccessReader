@@ -24,7 +24,8 @@ exe = EXE(pyz,
           debug=False,
           strip=None,
           upx=True,
-          console=False )
+          console=False,
+          icon=os.path.normpath('src/forms/icons/CAR_Logo.ico') )
 coll = COLLECT(exe,
 			   Tree(os.path.abspath('src/forms/icons')),
                a.binaries,

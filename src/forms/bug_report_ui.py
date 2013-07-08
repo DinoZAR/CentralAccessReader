@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/bug_report.ui'
 #
-# Created: Mon May 20 10:33:12 2013
+# Created: Mon Jul 08 13:14:51 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -30,6 +30,9 @@ class Ui_BugReporter(object):
         font = QtGui.QFont()
         font.setPointSize(12)
         BugReporter.setFont(font)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/report_bug.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        BugReporter.setWindowIcon(icon)
         self.horizontalLayout_2 = QtGui.QHBoxLayout(BugReporter)
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         self.label_2 = QtGui.QLabel(BugReporter)

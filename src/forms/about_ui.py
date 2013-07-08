@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/about.ui'
 #
-# Created: Wed Jun 26 15:20:20 2013
+# Created: Mon Jul 08 13:09:39 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,11 +26,23 @@ except AttributeError:
 class Ui_AboutDialog(object):
     def setupUi(self, AboutDialog):
         AboutDialog.setObjectName(_fromUtf8("AboutDialog"))
-        AboutDialog.resize(347, 226)
+        AboutDialog.resize(598, 309)
         font = QtGui.QFont()
         font.setPointSize(12)
         AboutDialog.setFont(font)
-        self.verticalLayout = QtGui.QVBoxLayout(AboutDialog)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/help_about.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        AboutDialog.setWindowIcon(icon)
+        self.verticalLayout_2 = QtGui.QVBoxLayout(AboutDialog)
+        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
+        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
+        self.label_5 = QtGui.QLabel(AboutDialog)
+        self.label_5.setText(_fromUtf8(""))
+        self.label_5.setPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/CAR_Logo.ico")))
+        self.label_5.setObjectName(_fromUtf8("label_5"))
+        self.horizontalLayout_2.addWidget(self.label_5)
+        self.verticalLayout = QtGui.QVBoxLayout()
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.label = QtGui.QLabel(AboutDialog)
         font = QtGui.QFont()
@@ -62,11 +74,13 @@ class Ui_AboutDialog(object):
         self.verticalLayout.addWidget(self.label_4)
         spacerItem2 = QtGui.QSpacerItem(20, 39, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem2)
+        self.horizontalLayout_2.addLayout(self.verticalLayout)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_2)
         self.buttonBox = QtGui.QDialogButtonBox(AboutDialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
-        self.verticalLayout.addWidget(self.buttonBox)
+        self.verticalLayout_2.addWidget(self.buttonBox)
 
         self.retranslateUi(AboutDialog)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), AboutDialog.accept)
@@ -81,3 +95,4 @@ class Ui_AboutDialog(object):
         self.label_2.setText(_translate("AboutDialog", "Central Washington University", None))
         self.label_4.setText(_translate("AboutDialog", "Author: Spencer Graffe", None))
 
+import resource_rc

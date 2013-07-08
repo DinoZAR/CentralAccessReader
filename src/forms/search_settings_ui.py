@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/search_settings.ui'
 #
-# Created: Wed Jun 26 15:15:08 2013
+# Created: Mon Jul 08 13:16:33 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -30,6 +30,9 @@ class Ui_SearchSettings(object):
         font = QtGui.QFont()
         font.setPointSize(12)
         SearchSettings.setFont(font)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/CAR_Logo.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        SearchSettings.setWindowIcon(icon)
         self.verticalLayout_2 = QtGui.QVBoxLayout(SearchSettings)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.verticalLayout = QtGui.QVBoxLayout()
@@ -61,3 +64,4 @@ class Ui_SearchSettings(object):
         self.matchCaseCheckBox.setText(_translate("SearchSettings", "Match Case", None))
         self.okButton.setText(_translate("SearchSettings", "OK", None))
 
+import resource_rc

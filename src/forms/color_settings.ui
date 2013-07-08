@@ -18,6 +18,10 @@
   <property name="windowTitle">
    <string>Highlighting, Colors, and Fonts</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resource.qrc">
+    <normaloff>:/icons/icons/color_settings.png</normaloff>:/icons/icons/color_settings.png</iconset>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <layout class="QGridLayout" name="gridLayout_3" rowstretch="0,0,0">
@@ -304,6 +308,8 @@
   <tabstop>previewButton</tabstop>
   <tabstop>applyButton</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

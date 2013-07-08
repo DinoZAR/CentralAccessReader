@@ -18,6 +18,10 @@
   <property name="windowTitle">
    <string>MathML Pattern Editor</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="icon.qrc">
+    <normaloff>:/CAR_Logo.ico</normaloff>:/CAR_Logo.ico</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1">
     <item>
@@ -131,7 +135,7 @@
         </layout>
        </widget>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <widget class="QLabel" name="label">
@@ -233,6 +237,8 @@
    <header>Qsci/qsciscintilla.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="icon.qrc"/>
+ </resources>
  <connections/>
 </ui>

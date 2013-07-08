@@ -22,9 +22,8 @@
    <string>Central Access Reader</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>../icons/cwuLogo.png</normaloff>
-    <normalon>:/icons/icons/cwuLogo.png</normalon>../icons/cwuLogo.png</iconset>
+   <iconset resource="resource.qrc">
+    <normaloff>:/icons/icons/CAR_Logo.ico</normaloff>:/icons/icons/CAR_Logo.ico</iconset>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>

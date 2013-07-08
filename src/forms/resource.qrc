@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/icons">
+    <file>icons/CAR_Logo.ico</file>
     <file>icons/CAR Splashscreen.png</file>
     <file>icons/prepare_speech_stop.png</file>
     <file>icons/update_down_arrow_big.png</file>
@@ -19,7 +20,6 @@
     <file>icons/report_bug.png</file>
     <file>icons/text_speak.png</file>
     <file>icons/color_settings.png</file>
-    <file>icons/cwuLogo.png</file>
     <file>icons/forward.png</file>
     <file>icons/loop.png</file>
     <file>icons/next.png</file>
