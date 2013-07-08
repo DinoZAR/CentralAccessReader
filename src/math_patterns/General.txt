@@ -60,7 +60,7 @@ import _BordersSlashes.txt
 import _Trig.txt
 
 // Powers and Primes
-
+import _PowersPrimes.txt
 
 // Syntax Quirks
 doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'
@@ -104,7 +104,6 @@ limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4}, of'
 
 import _Integrals.txt
 
-import _PowersPrimes.txt
 
 // ------------------------------------------------------------------------------
 // Parenthetical Expressions
