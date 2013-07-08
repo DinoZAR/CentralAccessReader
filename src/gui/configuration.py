@@ -370,6 +370,26 @@ p
 color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
 }
 
+a:link
+{
+color: ''' + self._createRGBStringFromQColor(self.color_highlightLineBackground) + ''';
+}
+
+a:visited
+{
+color: ''' + self._createRGBStringFromQColor(self.color_highlightLineBackground) + ''';
+}
+
+a:hover
+{
+color: ''' + self._createRGBStringFromQColor(self.color_highlightBackground) + ''';
+}
+
+a:active
+{
+color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
+}
+
 img
 {
 max-width: 300px;
