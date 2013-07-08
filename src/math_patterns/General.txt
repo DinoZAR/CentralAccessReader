@@ -115,7 +115,7 @@ squareRoot = msqrt(+) -> 'the square root of {1}'
 leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left superscript {2},'
 leftSub = msup( mrow() mrow(?)) -> 'left subscript {1},'
 leftSup = msub( mrow() mrow(?)) -> 'left superscript {1},'
-
+
 
 // ------------------------------------------------------------------------------
 // Matrices
