@@ -309,6 +309,13 @@ function GetSelectionRange() {
 			range.setStart(startEq, 0);
 		}
 		
+		// If I am starting at a paragraph with absolutely nothing in it, move to the
+		// next element
+		if ((range.startContainer.nodeName == 'P') && (range.startContainer.hasChildNodes())) {
+			console.debug('Moving off of a completely empty paragraph');
+			range.setStart(NextElement(range.startContainer), 0);
+		}
+		
 		console.debug('Range here: ' + GetHTMLSource(range));
 	}
 	else {
