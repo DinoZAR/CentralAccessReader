@@ -506,7 +506,6 @@ def convertDOMToPatternTree(elem, parent=None):
     if elem.text != None:
         myText = removeGarbageWhitespace(unicode(elem.text))
         if len(myText) > 0:
-            print 'Whitespace text:', [myText]
             textNode = PatternTree(myText, myTree)
             textNode.type = PatternTree.TEXT
 

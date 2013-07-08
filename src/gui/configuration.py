@@ -378,6 +378,9 @@ max-height: 300px
 
 table, th, td
 {
+margin-top: 2em;
+margin-bottom: 2em;
+border-collapse: collapse;
 border: 1px solid ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
 padding: 15px;
 }

@@ -261,21 +261,22 @@ function GetSelectionRange() {
 					newRange.setEnd(range.focusNode, range.focusOffset);
 				}
 				range = newRange;
-				console.debug('Range here: ' + range.toString() + ' [start node: ' + range.startContainer.toString() + '] [end node: ' + range.endContainer.toString() + ']');
+				console.debug('Range here: ' + GetHTMLSource(range) + ' [start node: ' + range.startContainer.toString() + '] [end node: ' + range.endContainer.toString() + ']');
 			}
 			else {
 				var newRange = document.createRange();
 				newRange.setStart(range.anchorNode, range.anchorOffset);
 				newRange.setEnd(range.focusNode, range.focusOffset);
 				range = newRange;
-				console.debug('Range here: ' + range.toString() + ' [start node: ' + range.startContainer.toString() + '] [end node: ' + range.endContainer.toString() + ']');
+				console.debug('Range here: ' + GetHTMLSource(range) + ' [start node: ' + range.startContainer.toString() + '] [end node: ' + range.endContainer.toString() + ']');
 			}
 		}
 		
-		console.debug('Range here: ' + range.toString() + ' [start node: ' + range.startContainer.toString() + '] [end node: ' + range.endContainer.toString() + ']');
+		console.debug('Range here: ' + GetHTMLSource(range) + ' [start node: ' + range.startContainer.toString() + '] [end node: ' + range.endContainer.toString() + ']');
 		
 		// Move start forward so that it removes the whitespace
 		if ((range.startContainer.nodeName == '#text')) {
+			console.debug('Skipping #text node with whitespace...');
 			var whitespaceRegex = /\s+/g;
 			var sub = range.startContainer.data;
 			console.debug('Substring is: ' + sub);
@@ -283,10 +284,19 @@ function GetSelectionRange() {
 			console.debug('Substring is: ' + sub);
 			var result = whitespaceRegex.exec(sub);
 			if (result != null) {
+				console.debug('Skipping #text node with whitespace...');
 				if (result.index == 0) {
 					range.setStart(range.startContainer, whitespaceRegex.lastIndex + range.startOffset);
 				}
 			}
+		}
+		
+		// If the start turns out to be the body, alter the start so that it points at the
+		// deepest node in child that's referred to by the offset
+		if (range.startContainer.nodeName == 'BODY') {
+			console.debug('Moving start to deepest element in offset of body');
+			myNode = DeepestChild(document.body.childNodes[range.startOffset], false);
+			range.setStart(myNode, 0);
 		}
 		
 		// If my range is inside of a math equation on both sides, then make the range
@@ -299,19 +309,7 @@ function GetSelectionRange() {
 			range.setStart(startEq, 0);
 		}
 		
-		// If the start turns out to be the body, make the start node the same as the
-		// end node, but at the beginning. This is more of a hack to work around a
-		// JavaScript issue.
-		if (range.startContainer.nodeName == 'BODY') {
-			range.setStart(range.endContainer, 0);
-		}
-		
-		// If I have a paragraph with no text, move the range to the next element
-		if ((range.startContainer.nodeName == 'P') && ($(range.startContainer).text() == '')) {
-			range.setStart(NextElement(range.startContainer), 0);
-		}
-		
-		console.debug('Range here: ' + range.toString());
+		console.debug('Range here: ' + GetHTMLSource(range));
 	}
 	else {
 		// Start from the heading, if applicable
