@@ -504,8 +504,10 @@ def convertDOMToPatternTree(elem, parent=None):
         
     # If there is text in the node, add it as the first child
     if elem.text != None:
-        if len(elem.text.strip()) > 0:
-            textNode = PatternTree(unicode(elem.text), myTree)
+        myText = removeGarbageWhitespace(unicode(elem.text))
+        if len(myText) > 0:
+            print 'Whitespace text:', [myText]
+            textNode = PatternTree(myText, myTree)
             textNode.type = PatternTree.TEXT
 
     # Convert all children            
@@ -513,3 +515,11 @@ def convertDOMToPatternTree(elem, parent=None):
         convertDOMToPatternTree(child, myTree)
         
     return myTree
+
+
+def removeGarbageWhitespace(s):
+    '''
+    Removes all of the characters from the string that I consider to be
+    garbage, which are spaces, carraige returns, and line feeds.
+    '''
+    return s.replace(' ', '').replace('\n', '').replace('\r', '')

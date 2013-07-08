@@ -498,7 +498,8 @@ class CharRecord(Record):
                  
                  61185 : 8203,   # zero-width space (what's the point of that?)
                  61186 : 8198,   # thin space
-                 61187 : 8196,   # thick space
+                 61187 : 8196,   # medium space
+                 61188 : 8196,   # thick space
                  61189 : 8195,   # em space
                  61190 : 8195,   # 2 em space
                  61191 : 8202,   # inner space
