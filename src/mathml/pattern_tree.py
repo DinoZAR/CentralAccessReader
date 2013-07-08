@@ -505,7 +505,7 @@ def convertDOMToPatternTree(elem, parent=None):
     # If there is text in the node, add it as the first child
     if elem.text != None:
         if len(elem.text.strip()) > 0:
-            textNode = PatternTree(unicode(elem.text.strip()), myTree)
+            textNode = PatternTree(unicode(elem.text), myTree)
             textNode.type = PatternTree.TEXT
 
     # Convert all children            
