@@ -9,7 +9,7 @@ RMDIR dist /S /Q
 
 :: Generating the spec for the PyInstaller
 echo Creating spec...
-python generate_spec.py release
+python generate_spec.py debug
 
 :: Creating the executable
 echo Creating executable...
