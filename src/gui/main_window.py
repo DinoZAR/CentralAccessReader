@@ -161,7 +161,7 @@ class MainWindow(QtGui.QMainWindow):
         if len(self.configuration.voice) == 0:
             voiceList = self.speechThread.getVoiceList()
             if len(voiceList) > 0:
-                self.configuration.voice = voiceList[0]
+                self.configuration.voice = voiceList[0][1]
         self.updateSettings()
         
         # Set the search settings to use the configuration
