@@ -121,11 +121,13 @@ quadBars = munder(identical bar) -> 'quadruple bars'
 union = munderover(union mrow() mrow()) -> 'union'
 
 // Strikes and Slashes
-
 import _Vocab.txt
 
 import _BordersSlashes.txt
-
+
+// Linear
+dubsub = msub( + mrow( + comma + )) -> '{1} double subscript {2} comma {4}'
+
 
 //---------------------------------------------------------------
 // Trigonometry-Specific
@@ -190,20 +192,23 @@ squareRoot = msqrt(+) -> 'the square root of {1}'
 // ------------------------------------------------------------------------------
 // Matrices
 // ------------------------------------------------------------------------------
+detMat = d e t mfenced(mrow(mtable(#))) -> 'determinant of the matrix {4} end matrix'
+detMat = d e t mrow(mtable(#)) -> 'determinant of the matrix {4} end matrix'
 matrix = mrow(mtable(#)) -> 'matrix {1}'
-matrix = mtable(#) -> 'truth table {1}'
-matrixPar = mfenced(mrow(mtable(+))) -> 'truth table {1}'
+matrix = mtable(#) -> 'matrix {1}'
+matrixPar = mfenced(mrow(mtable(+))) -> 'matrix {1}'
 tableColumn = mtd(+) -> '{1},'
 tableRow = mtr(+) -> 'row, {1}'
 
-detMat = d e t matrix -> 'the determinate matrix'
-
+determ = d e t -> 'determinant of the square matrix'
 
 // ------------------------------------------------------------------------------
 // Generic Fallbacks, Final Collectors
 // ------------------------------------------------------------------------------
 
 import _Fractions.txt
+
+fencedABS = mfenced<open="|",close="|">(+) -> 'determinant of the square matrix {1},'
 
 import _Fences.txt
 

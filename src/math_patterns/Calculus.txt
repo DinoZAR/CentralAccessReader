@@ -41,17 +41,17 @@ import _Numbers.txt
 import _Unicodes.txt
 
 e [variable] = mi("e") -> 'Eulers number'
-i [variable] = mi("i") -> 'imaginary number'
+i [variable] = mi("i") -> 'i'
 z [variable] = mi("z") -> 'complex conjugate'
 
 bbcapR = mi("&#8477;") -> 'all real numbers'
 
 //Functions
-function = f mrow(openParen + closeParen) -> 'function {1} of {3}'
-function = f openParen + closeParen -> 'function {1} of {3}'
-function = f mfenced(+) -> 'function {1} of {2}'
-functionPrime = f apostrophe mfenced(+) -> 'function {1} prime of {3}'
-functionPrime = f prime mfenced(+) -> 'function {1} prime of {3}'
+//function = f mrow(openParen + closeParen) -> 'function {1} of {3}'
+//function = f openParen + closeParen -> 'function {1} of {3}'
+//function = f mfenced(+) -> 'function {1} of {2}'
+//functionPrime = f apostrophe mfenced(+) -> 'function {1} prime of {3}'
+//functionPrime = f prime mfenced(+) -> 'function {1} prime of {3}'
 
 
 
@@ -133,6 +133,20 @@ overUnderArrowB = munderover(rightHarpoon mrow(+) mrow(+)) -> '{2}, above {1}, s
 backPrimes = mmultiscripts(? ? ? ?) -> '{4} {1}'
 
 // Limits
+limit = munderover(mrow(mover(mrow(l i m) bar)) mrow(? downArrow +) ?) -> 'the superior limit as {5}, decreases from {7}, of'
+limit = munderover(mrow(mover(mrow(l i m) bar)) mrow(? rightArrow ?) ?)-> 'the superior limit as {5}, approaches {7}, of'
+limit = munderover(mrow(mover(mrow(l i m) bar)) mrow(? upArrow ?) ?) -> 'the superior limit as {5}, increases to {7}, of'
+limit = munderover(mrow(mover(mrow(l i m) bar)) mrow(? diagTopRightArrow ?) ?) -> 'the superior limit as {5}, approaches {7} from the negative direction, of'
+limit = munderover(mrow(mover(mrow(l i m) bar)) mrow(? diagBotRightArrow ?) ?) -> 'the superior limit as {5}, approaches {7} from the positive direction, of'
+limit = munderover(mrow(mover(mrow(l i m) bar)) mrow(?) ?) -> 'the superior limit as {5}, of'
+
+limit = munderover(mrow(munder(mrow(l i m) bar)) mrow(? downArrow +) ?) -> 'the inferior limit as {5}, decreases from {7}, of'
+limit = munderover(mrow(munder(mrow(l i m) bar)) mrow(? rightArrow ?) ?)-> 'the inferior limit as {5}, approaches {7}, of'
+limit = munderover(mrow(munder(mrow(l i m) bar)) mrow(? upArrow ?) ?) -> 'the inferior limit as {5}, increases to {7}, of'
+limit = munderover(mrow(munder(mrow(l i m) bar)) mrow(? diagTopRightArrow ?) ?) -> 'the inferior limit as {5}, approaches {7} from the negative direction, of'
+limit = munderover(mrow(munder(mrow(l i m) bar)) mrow(? diagBotRightArrow ?) ?) -> 'the inferior limit as {5}, approaches {7} from the positive direction, of'
+limit = munderover(mrow(munder(mrow(l i m) bar)) mrow(?) ?) -> 'the inferior limit as {5}, of'
+
 limit = munderover(mrow(l i m) mrow(? downArrow +) ?) -> 'the limit as {4}, decreases from {6}, of'
 limit = munderover(mrow(l i m) mrow(? rightArrow ?) ?)-> 'the limit as {4}, approaches {6}, of'
 limit = munderover(mrow(l i m) mrow(? upArrow ?) ?) -> 'the limit as {4}, increases to {6}, of'
@@ -150,20 +164,31 @@ in = i n -> 'in'
 
 import _Integrals.txt
 
-functionFofF = f openParen f openParen + closeParen closeParen -> 'f of f of {5}'
-functionFofG = f openParen g openParen + closeParen closeParen -> 'f of g of {5}'
-functionGofF = g openParen f openParen + closeParen closeParen -> 'g of f of {5}'
-functionGofG = g openParen g openParen + closeParen closeParen -> 'g of g of {5}'
-functionFofF = f composition f openParen + closeParen -> 'f of f of {5}'
-functionFofG = f composition g openParen + closeParen -> 'f of g of {5}'
-functionGofF = g composition f openParen + closeParen -> 'g of f of {5}'
-functionGofG = g composition g openParen + closeParen -> 'g of g of {5}'
-functionFofF = f composition f -> 'f of f'
-functionFofG = f composition g -> 'f of g'
-functionGofF = g composition f -> 'g of f'
-functionGofG = g composition g -> 'g of g'
-functionF = f openParen + closeParen -> 'f of {3}'
-functionG = g openParen + closeParen -> 'g of {3}'
+functionFofF = f openParen f openParen + closeParen closeParen -> 'function f of f of {5}'
+functionFofG = f openParen g openParen + closeParen closeParen -> 'function f of g of {5}'
+functionGofF = g openParen f openParen + closeParen closeParen -> 'function g of f of {5}'
+functionGofG = g openParen g openParen + closeParen closeParen -> 'function g of g of {5}'
+functionFofF = f composition f openParen + closeParen -> 'function f of f of {5}'
+functionFofG = f composition g openParen + closeParen -> 'function f of g of {5}'
+functionGofF = g composition f openParen + closeParen -> 'function g of f of {5}'
+functionGofG = g composition g openParen + closeParen -> 'function g of g of {5}'
+functionFofF = f composition f mfenced<open="(",close=")">( mrow( + )) -> 'function f of f of {4}'
+functionFofG = f composition g mfenced<open="(",close=")">( mrow( + )) -> 'function f of g of {4}'
+functionGofF = g composition f mfenced<open="(",close=")">( mrow( + )) -> 'function g of f of {4}'
+functionGofG = g composition g mfenced<open="(",close=")">( mrow( + )) -> 'function g of g of {4}'
+functionFofF = f composition f -> 'function f of f'
+functionFofG = f composition g -> 'function f of g'
+functionGofF = g composition f -> 'function g of f'
+functionGofG = g composition g -> 'function g of g'
+functionF = f openParen + closeParen -> 'function f of {3}'
+functionG = g openParen + closeParen -> 'function g of {3}'
+functionFofF = f mfenced<open="(",close=")">( mrow(f mfenced<open="(",close=")">( mrow( + )))) -> 'function g of f of {3}'
+functionFofG = f mfenced<open="(",close=")">( mrow(g mfenced<open="(",close=")">( mrow( + )))) -> 'function g of f of {3}'
+functionGofF = g mfenced<open="(",close=")">( mrow(f mfenced<open="(",close=")">( mrow( + )))) -> 'function g of f of {3}'
+functionGofG = g mfenced<open="(",close=")">( mrow(g mfenced<open="(",close=")">( mrow( + )))) -> 'function g of f of {3}'
+functionF = f mfenced<open="(",close=")">( mrow( + )) -> 'function f of {2}'
+functionG = g mfenced<open="(",close=")">( mrow( + )) -> 'function g of {2}'
+
 rise = r i s e -> 'rise'
 
 run = r u n -> 'run'
