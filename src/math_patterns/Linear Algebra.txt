@@ -205,7 +205,7 @@ determ = d e t -> 'determinant of the square matrix'
 // ------------------------------------------------------------------------------
 // Generic Fallbacks, Final Collectors
 // ------------------------------------------------------------------------------
-
+//import _SoftFractions.txt
 import _Fractions.txt
 
 fencedABS = mfenced<open="|",close="|">(+) -> 'determinant of the square matrix {1},'
