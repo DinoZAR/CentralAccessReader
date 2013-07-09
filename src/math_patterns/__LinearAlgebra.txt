@@ -1,17 +1,17 @@
-//  __        ________  ___   __    ______   ________   ______       
-// /_/\      /_______/\/__/\ /__/\ /_____/\ /_______/\ /_____/\      
-// \:\ \     \__.::._\/\::\_\\  \ \\::::_\/_\::: _  \ \\:::_ \ \     
-//  \:\ \       \::\ \  \:. `-\  \ \\:\/___/\\::(_)  \ \\:(_) ) )_   
-//   \:\ \____  _\::\ \__\:. _    \ \\::___\/_\:: __  \ \\: __ `\ \  
-//    \:\/___/\/__\::\__/\\. \`-\  \ \\:\____/\\:.\ \  \ \\ \ `\ \ \ 
-//     \_____\/\________\/ \__\/ \__\/ \_____\/ \__\/\__\/ \_\/ \_\/ 
-//  ________   __       _______    ______    _______   ______    ________      
-// /_______/\ /_/\     /______/\  /_____/\ /_______/\ /_____/\  /_______/\     
-// \::: _  \ \\:\ \    \::::__\/__\::::_\/_\::: _  \ \\:::_ \ \ \::: _  \ \    
-//  \::(_)  \ \\:\ \    \:\ /____/\\:\/___/\\::(_)  \/_\:(_) ) )_\::(_)  \ \   
-//   \:: __  \ \\:\ \____\:\\_  _\/ \::___\/_\::  _  \ \\: __ `\ \\:: __  \ \  
-//    \:.\ \  \ \\:\/___/\\:\_\ \ \  \:\____/\\::(_)  \ \\ \ `\ \ \\:.\ \  \ \ 
-//     \__\/\__\/ \_____\/ \_____\/   \_____\/ \_______\/ \_\/ \_\/ \__\/\__\/ 
+//  __        ________  ___   __    ______   ________   ______       
+// /_/\      /_______/\/__/\ /__/\ /_____/\ /_______/\ /_____/\      
+// \:\ \     \__.::._\/\::\_\\  \ \\::::_\/_\::: _  \ \\:::_ \ \     
+//  \:\ \       \::\ \  \:. `-\  \ \\:\/___/\\::(_)  \ \\:(_) ) )_   
+//   \:\ \____  _\::\ \__\:. _    \ \\::___\/_\:: __  \ \\: __ `\ \  
+//    \:\/___/\/__\::\__/\\. \`-\  \ \\:\____/\\:.\ \  \ \\ \ `\ \ \ 
+//     \_____\/\________\/ \__\/ \__\/ \_____\/ \__\/\__\/ \_\/ \_\/ 
+//  ________   __       _______    ______    _______   ______    ________      
+// /_______/\ /_/\     /______/\  /_____/\ /_______/\ /_____/\  /_______/\     
+// \::: _  \ \\:\ \    \::::__\/__\::::_\/_\::: _  \ \\:::_ \ \ \::: _  \ \    
+//  \::(_)  \ \\:\ \    \:\ /____/\\:\/___/\\::(_)  \/_\:(_) ) )_\::(_)  \ \   
+//   \:: __  \ \\:\ \____\:\\_  _\/ \::___\/_\::  _  \ \\: __ `\ \\:: __  \ \  
+//    \:.\ \  \ \\:\/___/\\:\_\ \ \  \:\____/\\::(_)  \ \\ \ `\ \ \\:.\ \  \ \ 
+//     \__\/\__\/ \_____\/ \_____\/   \_____\/ \_______\/ \_\/ \_\/ \__\/\__\/ 
 //                                                                                                                                                                                                 
 // --------------
 // Order Matters!
@@ -41,22 +41,22 @@
 import _codes.txt
 
 import _Numbers.txt
-
-// Unicodes and MathML codes for operators
+
+// Unicodes and MathML codes for operators
 cross = timesCross -> 'cross,'
 
 slash = divideBack -> ', backslash,'
 slash = divide -> ', slash,'
 
-diamond = mi("&#8900;") -> 'diamond operator'
-identical = mi("&#8801;") -> 'triple bars'
-plus = mo("+") -> 'plus'
-summation = mi("&#8721;") -> 'summation,'
-tilde = mo("&#732;") -> 'not'
-tilde = mo("~") -> 'not'
-tilde = mi("~") -> 'not'
-times = mi("&#8901;") -> 'dot'
-times = mi("&#59791;") -> 'dot'
+diamond = mi("&#8900;") -> 'diamond operator'
+identical = mi("&#8801;") -> 'triple bars'
+plus = mo("+") -> 'plus'
+summation = mi("&#8721;") -> 'summation,'
+tilde = mo("&#732;") -> 'not'
+tilde = mo("~") -> 'not'
+tilde = mi("~") -> 'not'
+times = mi("&#8901;") -> 'dot'
+times = mi("&#59791;") -> 'dot'
 
 // Parentheses, Brackets, Braces, and Bars
 closeBrace = mo("}") -> 'right curly bracket'
@@ -68,12 +68,13 @@ openBrace = mo("{") -> 'left curly bracket'
 openBracket = mo("[") -> 'left square bracket'
 rightAngleBracket = mi("&#9002;") -> 'right angle bracket'
 rightAngleBracket = mo("&#9002;") -> 'right angle bracket'
-bullet = mi("&#8226;") -> 'dot'
-dot = mo("&#775;") -> 'dot'
-dot = mi("&#183;") -> 'dot'
+bullet = mi("&#8226;") -> 'dot operator'
+bullet = bullet -> 'dot operator'
+dot = mo("&#775;") -> 'dot operator'
+dot = mi("&#183;") -> 'dot operator'
 perpendicular = mi("&#8869;") -> 'up tack'
 square = mi("&#9633;") -> 'white square'
-
+
 // Logic
 and = mo("&#8743;") -> 'wedge (and)'
 because = mo("&#8757;") -> 'upside-down triple dot'
@@ -100,32 +101,32 @@ z [variable] = mi("z") -> '"z"'
 
 bbcapR = mi("&#8477;") -> 'blackboard cap R'
 
-// Other symbols
+// Other symbols
 
-
-// ------------------------------------------------------------------------------
-// Linearally Algebraically Specifically
-// ------------------------------------------------------------------------------
-barWedge = munder(or bar) -> 'bar wedge'
+
+// ------------------------------------------------------------------------------
+// Linearally Algebraically Specifically
+// ------------------------------------------------------------------------------
+barWedge = munder(or bar) -> 'bar wedge'
 existsOne = exists factorial -> 'backwards E followed by exclamation'
 
-doubleSub = msub( + mrow( + comma + )) -> '{1} double subscript, {2}, comma, {4}' 
-intersection = munderover(intersection mrow() mrow()) -> 'intersection'
-notExist = menclose(exists) -> 'backwards E with slash'
-parallelBars = verticalBar verticalBar -> 'parallel bars'
-quadBars = mover(identical bar) -> 'quadruple bars'
-quadBars = munder(identical bar) -> 'quadruple bars'
+doubleSub = msub( + mrow( + comma + )) -> '{1} double subscript, {2}, comma, {4}' 
+intersection = munderover(intersection mrow() mrow()) -> 'intersection'
+notExist = menclose(exists) -> 'backwards E with slash'
+parallelBars = verticalBar verticalBar -> 'parallel bars'
+quadBars = mover(identical bar) -> 'quadruple bars'
+quadBars = munder(identical bar) -> 'quadruple bars'
 union = munderover(union mrow() mrow()) -> 'union'
 
-// Strikes and Slashesimport _Vocab.txtimport _BordersSlashes.txt//---------------------------------------------------------------
+// Strikes and Slashes
+import _Vocab.txt
+import _BordersSlashes.txt
+//---------------------------------------------------------------
 // Trigonometry-Specific
 //---------------------------------------------------------------
-
 import _Trig.txt
 
-// Powers and Primes
-
-import _PowersPrimes.txt
+// Powers and Primesimport _PowersPrimes.txt
 
 // Syntax Quirks
 doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'
@@ -139,7 +140,6 @@ doubleDagger = dagger dagger -> 'double dagger'
 integral = msub([integral] ?) -> '{1} sub {2} of,'
 
 // Other symbols
-infinityLogic = infinity -> 'lemniscate'
 infinityLogic = infinity -> 'lemniscate'
 
 
@@ -167,27 +167,6 @@ limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4}, of'
 // Products and Unions
 
 import _Integrals.txt
-
-
-// ------------------------------------------------------------------------------
-// Parenthetical Expressions
-// ------------------------------------------------------------------------------
-cuberoot = mroot(mrow(+) mrow(three)) -> 'the cube root of {1}'
-rootPowers = mroot(mrow(+) mrow(+)) -> 'the {2} root of {1}'
-squareRoot = msqrt(+) -> 'the square root of {1}'
-
-
-// ------------------------------------------------------------------------------
-// Matrices
-// ------------------------------------------------------------------------------
-matrix = mrow(mtable(#)) -> 'matrix {1}'
-matrix = mtable(#) -> 'matrix {1}'
-matrixPar = mfenced(mrow(mtable(+))) -> 'matrix {1}'
-tableColumn = mtd(+) -> '{1},'
-tableRow = mtr(+) -> 'row, {1}'
-
-deterMatrix = d e t matrix -> 'determinant of the {4}'
-determinant = d e t -> 'determinant of the square matrix'
 
 // ------------------------------------------------------------------------------
 // Generic Fallbacks, Final Collectors
