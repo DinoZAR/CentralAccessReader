@@ -1,6 +1,6 @@
 fencedRSCS = mfenced<open="[",close="]">(+) -> 'open square bracket, {1}, closed square bracket,'
 
-fencedOPCP = mfenced<open="(",close=")">(+) -> 'open parentheses, {1}, closed parentheses,'
+fencedOPCP = mfenced<open="(",close=")">(+) -> 'open parentheses {1} closed parentheses'
 
 fencedOCCC = mfenced<open="{",close="}">(+) -> 'open curly brace, {1}, closed curly brace,'
 
