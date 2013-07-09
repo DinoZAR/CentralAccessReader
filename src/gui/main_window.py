@@ -155,6 +155,13 @@ class MainWindow(QtGui.QMainWindow):
         # Load the configuration file
         self.configuration = Configuration()
         self.configuration.loadFromFile(misc.app_data_path('configuration.xml'))
+        
+        # Check to see if I have a voice. If I don't, grab the first one from
+        # the TTS driver
+        if len(self.configuration.voice) == 0:
+            voiceList = self.speechThread.getVoiceList()
+            if len(voiceList) > 0:
+                self.configuration.voice = voiceList[0]
         self.updateSettings()
         
         # Set the search settings to use the configuration
@@ -462,6 +469,7 @@ class MainWindow(QtGui.QMainWindow):
         defaultFileName = os.path.splitext(str(self.lastDocumentFilePath))[0] + '.mp3'
         fileName = unicode(QtGui.QFileDialog.getSaveFileName(self, 'Save MP3...', defaultFileName, '(*.mp3)'))
         print 'Saving to...', fileName
+        
         if len(fileName) > 0:
             # Show a progress dialog
             self.progressDialog.setWindowModality(Qt.WindowModal)

@@ -41,6 +41,8 @@ class SAPIDriver(object):
         self.volume = 5 # Between 0 to 100
         self.voiceId = ''
         
+        self.voice = None
+        
         # Used for callback functions
         self.delegator = {'onWord': [], 'onEndStream' : [], 'onFinish' : []}
         
@@ -63,7 +65,7 @@ class SAPIDriver(object):
         
     def setVoice(self, voice):
         '''
-        Sets the voice, represented as a string (normally a URI)
+        Sets the voice, represented as a string (normally a URI).
         '''
         if len(voice) > 0:
             self.voiceId = voice
@@ -184,26 +186,26 @@ class SAPIDriver(object):
         saveFileStream.Format.Type = 18  # Some magic number that gives good results
         saveFileStream.Open(wavFilePath, 3)
     
-        voice = SpVoice()
-        voice.AudioOutputStream = saveFileStream
-        voice.EventInterests = 33790 # SVEAllEvents
-        voice.AlertBoundary = 64 # SVEPhoneme
+        self.voice = SpVoice()
+        self.voice.AudioOutputStream = saveFileStream
+        self.voice.EventInterests = 33790 # SVEAllEvents
+        self.voice.AlertBoundary = 64 # SVEPhoneme
         
         if len(self.voiceId) > 0:
             token = self.voiceTokenFromId(self.voiceId)
-            voice.Voice = token
+            self.voice.Voice = token
             
-        voice.Volume = self.volume
-        voice.Rate = self.rate
+        self.voice.Volume = self.volume
+        self.voice.Rate = self.rate
         
         # Voice events for updating the progress thing
-        advisor = win32com.client.WithEvents(voice, SAPIEventSink)
+        advisor = win32com.client.WithEvents(self.voice, SAPIEventSink)
         advisor.setDriver(self)
         
         for i in range(len(outputList)):
             progressCallback(int(float(i) / len(outputList) * 100.0 - 1))
-            voice.Speak(outputList[i][0], 1)
-            while not voice.WaitUntilDone(10):
+            self.voice.Speak(outputList[i][0], 1)
+            while not self.voice.WaitUntilDone(10):
                 if checkStopFunction():
                     break
             if checkStopFunction():
