@@ -83,6 +83,7 @@ hundred = h u n d r e d -> 'hundred'
 slope = s l o p e -> 'slope'
 change = c h a n g e -> 'change'
 rise = r i s e -> 'rise'
+intercept = i n t e r c e p t -> 'intercept'
 in = i n -> 'in'
 run = r u n -> 'run'
 

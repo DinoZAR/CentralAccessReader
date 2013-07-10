@@ -12,8 +12,6 @@ regurgitate = mi<mathvariant="normal">("csch") -> 'hyperbolic cosecant'
 regurgitate = mi<mathvariant="normal">("sech") -> 'hyperbolic cosecant'
 regurgitate = mi<mathvariant="normal">("coth") -> 'hyperbolic cosecant'
 
-limitWord = mi<mathvariant="normal">("lim") -> 'limit'
-
 hyperboliccosecant = c s c h -> 'hyperbolic cosecant'
 hyperboliccosine = c o s h -> 'hyperbolic cosine'
 hyperboliccotangent = c o t h -> 'hyperbolic cotangent'

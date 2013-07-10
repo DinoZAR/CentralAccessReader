@@ -31,7 +31,11 @@
 
 // Unicodes and MathML codes for operators
 
-
+limit = mi<mathvariant="normal">("lim") -> 'limit'
+l = mi<mathvariant="normal">("l") -> 'l'
+i = mi<mathvariant="normal">("i") -> 'i'
+m = mi<mathvariant="normal">("m") -> 'm'
+limit = l i m -> 'limit'
 
 ampersand = mi("&amp;") -> 'ampersand,'
 
@@ -240,6 +244,8 @@ arc = mo("&#8995;") -> 'arc,'
 
 bar = mo("&#175;") -> 'bar,'
 
+bar = mo("_") -> 'bar,'
+
 circle = mi("&#9675;") -> 'circle,'
 
 degree = mi("&#176;") -> 'degrees,'
@@ -336,7 +342,7 @@ space = mo("&#8289;") -> ' '
 
 // Letters
 a [variable] = mi("a") -> '"a"'
-b [variable] = mi("b") -> '"b,"'
+b [variable] = mi("b") -> ', "b"'
 c [variable] = mi("c") -> '"c"'
 d [variable] = mi("d") -> '"d"'
 
