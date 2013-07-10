@@ -40,9 +40,9 @@ import _Numbers.txt
 
 import _Unicodes.txt
 
-e [variable] = mi("e") -> 'Eulers number'
+e [variable] = mi("e") -> 'e'
 i [variable] = mi("i") -> 'i'
-z [variable] = mi("z") -> 'complex conjugate'
+z [variable] = mi("z") -> 'z'
 
 bbcapR = mi("&#8477;") -> 'all real numbers'
 

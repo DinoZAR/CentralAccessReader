@@ -326,7 +326,7 @@ space = mi("&#8203;") -> ' '
 
 // Letters
 a [variable] = mi("a") -> '"a"'
-b [variable] = mi("b") -> '"b"'
+b [variable] = mi("b") -> '"b,"'
 c [variable] = mi("c") -> '"c"'
 d [variable] = mi("d") -> '"d"'
 
