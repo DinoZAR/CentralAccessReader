@@ -136,6 +136,10 @@ integralCon [integral] = mo("&#8750;") -> 'contour integral'
 //closedIntegral [integral] = mo("&#x222E;") -> 'closed integral'
 integral [integral] = mi("&#8747;") -> 'integral'
 integral [integral] = mo("&#8747;") -> 'integral'
+integralDouble [integral] = mi("&#8748;") -> 'double integral'
+integralDouble [integral] = mo("&#8748;") -> 'double integral'
+integralTriple [integral] = mi("&#8749;") -> 'triple integral'
+integralTriple [integral] = mo("&#8749;") -> 'triple integral'
 integralCCW [integral] = mo("&#8755;") -> 'integral with a counter-clockwise circle'
 integralCW [integral] = mo("&#8754;") -> 'integral with a clockwise circle'
 volumeIntegral [integral] = mo("&#8752;") -> 'volume integral'
@@ -262,7 +266,11 @@ triangle = mi("&#9651;") -> 'triangle,'
 // Logic
 approachesLimit = mi("&#8784;") -> 'approaches the limit of,'
 
+conjunction = mo("&#8896;") -> 'conjunction'
+
 deltaEqual = mi("&#8796;") -> 'delta equal to,'
+
+disjunction = mo("&#8897;") -> 'disjuction'
 
 doubleSubSet = mi("&#8912;") -> 'is a double subset of,'
 
@@ -304,6 +312,7 @@ suchThat = mo("&#8717;") -> 'such that,'
 
 union [integral] = mo("&#8746;") -> 'union,'
 
+union [integral] = mo("&#8899;") -> 'union,'
 
 
 // Periods And Spaces
@@ -323,6 +332,7 @@ space = mi("&#8198;") -> ' '
 space = mi("&#8201;") -> ' '
 space = mi("&#8202;") -> ' '
 space = mi("&#8203;") -> ' '
+space = mo("&#8289;") -> ' '
 
 // Letters
 a [variable] = mi("a") -> '"a"'

@@ -1,3 +1,19 @@
+regurgitate = mi<mathvariant="normal">("cos") -> 'cosine'
+regurgitate = mi<mathvariant="normal">("sin") -> 'sine'
+regurgitate = mi<mathvariant="normal">("tan") -> 'tangent'
+regurgitate = mi<mathvariant="normal">("csc") -> 'cosecant'
+regurgitate = mi<mathvariant="normal">("sec") -> 'cosecant'
+regurgitate = mi<mathvariant="normal">("cot") -> 'cosecant'
+
+regurgitate = mi<mathvariant="normal">("cosh") -> 'hyperbolic cosine'
+regurgitate = mi<mathvariant="normal">("sinh") -> 'hyperbolic sine'
+regurgitate = mi<mathvariant="normal">("tanh") -> 'hyperbolic tangent'
+regurgitate = mi<mathvariant="normal">("csch") -> 'hyperbolic cosecant'
+regurgitate = mi<mathvariant="normal">("sech") -> 'hyperbolic cosecant'
+regurgitate = mi<mathvariant="normal">("coth") -> 'hyperbolic cosecant'
+
+limitWord = mi<mathvariant="normal">("lim") -> 'limit'
+
 hyperboliccosecant = c s c h -> 'hyperbolic cosecant'
 hyperboliccosine = c o s h -> 'hyperbolic cosine'
 hyperboliccotangent = c o t h -> 'hyperbolic cotangent'
@@ -24,7 +40,7 @@ log = l n -> 'natural log of,'
 log = l o g -> 'log of,'
 log = l o msub(g mrow(e)) -> 'natural log of,'
 log = l o msub(g ?) -> 'log base {4}, of'
-
+
 arc = a r c -> 'arc'
 arccos = a r c c o s -> 'arc cosine,'
 arcsine = a r c s i n -> 'arc sine,'

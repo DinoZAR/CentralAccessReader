@@ -97,6 +97,8 @@ import _Trig.txt
 
 // Powers and Primes
 
+import _Integrals.txt
+
 import _PowersPrimes.txt
 
 // Syntax Quirks
@@ -130,7 +132,8 @@ overUnderArrowB = munderover(rightHarpoon mrow(+) mrow(+)) -> '{2}, above {1}, s
 // ------------------------------------------------------------------------------
 // Under-Over, Integrals, Products, and Summations
 // ------------------------------------------------------------------------------
-backPrimes = mmultiscripts(? ? ? ?) -> '{4} {1}'
+backPrimes = mmultiscripts(? ? ? backPrime) -> '{4}, {1}'
+leftSubSup = mmultiscripts(? ? ? ?) -> 'left subscript {3}, left superscript {4}, {1}'
 
 // Limits
 limit = munderover(mrow(mover(mrow(l i m) bar)) mrow(? downArrow +) ?) -> 'the superior limit as {5}, decreases from {7}, of'
@@ -161,8 +164,6 @@ change = c h a n g e -> 'change'
 intercept = i n t e r c e p t -> 'intercept'
 
 in = i n -> 'in'
-
-import _Integrals.txt
 
 functionFofF = f openParen f openParen + closeParen closeParen -> 'function f of f of {5}'
 functionFofG = f openParen g openParen + closeParen closeParen -> 'function f of g of {5}'
@@ -198,6 +199,8 @@ run = r u n -> 'run'
 // ------------------------------------------------------------------------------
 absoluteValue = verticalBar + verticalBar -> 'absolute value {2} end absolute'
 cuberoot = mroot(mrow(+) mrow(three)) -> 'the cube root of {1}'
+squareRoot = mroot(mrow(+) mrow(two)) -> 'the square root of {1}'
+fourthRoot = mroot(mrow(+) mrow(four)) -> 'the fourth root of {1}'
 rootPowers = mroot(mrow(+) mrow(+)) -> 'the {2} root of {1}'
 squareRoot = msqrt(+) -> 'the square root of {1}'
 
@@ -217,6 +220,8 @@ tableRow = mtr(+) -> 'row, {1}'
 // ------------------------------------------------------------------------------
 
 //import _SoftFractions.txt
+
+leftSubSup = mmultiscipts(mrow(+) ? mrow(+) mrow(+)) -> 'left subscript {2}, left superscript {3}, {1}'
 
 import _Fractions.txt
 
