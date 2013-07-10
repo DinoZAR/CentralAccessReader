@@ -11,8 +11,8 @@ import os
 import subprocess
 from src import misc
 
-#UPDATE_URL = r'http://www.cwu.edu/~atrc/centralaccessreader/'
-UPDATE_URL = r'file:///W:/Nifty%20Prose%20Articulator/'  # For testing purposes
+UPDATE_URL = r'http://www.cwu.edu/~atrc/centralaccessreader/'
+#UPDATE_URL = r'file:///W:/Nifty%20Prose%20Articulator/'  # For testing purposes
 
 # Get the correct setup file depending on architecture
 SETUP_FILE = ''
