@@ -11,8 +11,8 @@ import os
 import subprocess
 from src import misc
 
-UPDATE_URL = r'http://www.cwu.edu/~atrc/centralaccessreader/'
-#UPDATE_URL = r'file:///W:/Nifty%20Prose%20Articulator/'  # For testing purposes
+#UPDATE_URL = r'http://www.cwu.edu/~atrc/centralaccessreader/'
+UPDATE_URL = r'file:///W:/Nifty%20Prose%20Articulator/'  # For testing purposes
 
 # Get the correct setup file depending on architecture
 SETUP_FILE = ''
@@ -29,8 +29,9 @@ VERSION_HERE = misc.program_path('version.txt')
 class GetUpdateThread(Thread):
     '''
     Used to check to see if there is an update for this program. If there is,
-    then it will go ahead and download it. After it has downloaded it, it will
-    then tell the GUI to display the Update button.
+    then it will check to see if it the update was already downloaded. Then, it
+    will prompt the GUI to either ask the user to download it or to install the
+    update.
     '''
     
     def __init__(self, updateCallback):
@@ -78,18 +79,17 @@ class GetUpdateThread(Thread):
                 thereVersion = float(re.search(r'[0-9]*.[0-9]+', contents).group(0))
                 
                 if thereVersion > thisVersion:
-                    # Download setup file
-                    response = urllib2.urlopen(SETUP_FILE)
-                    f = open(SETUP_TEMP_FILE, 'wb')
-                    f.write(response.read())
-                    f.close()
+#                     # Download setup file
+#                     response = urllib2.urlopen(SETUP_FILE)
+#                     f = open(SETUP_TEMP_FILE, 'wb')
+#                     f.write(response.read())
+#                     f.close()
                     
-                    # Save version number to signal I have completed transfer
-                    fv = open(VERSION_TEMP, 'w')
-                    fv.write(contents)
-                    fv.close()
-                    
-                    self._updateCallback()     
+#                     # Save version number to signal I have completed transfer
+#                     fv = open(VERSION_TEMP, 'w')
+#                     fv.write(contents)
+#                     fv.close()
+                    self._updateCallback()
         
         print 'Done checking for updates!'
                 
@@ -112,11 +112,47 @@ def check_program_update():
     
     return versionThere > versionHere
 
+def is_update_downloaded():
+    '''
+    Says whether the update has been downloaded. Make sure to use other
+    functions to check if an update does exist.
+    '''
+    # Check the version number in my temp and the version number on the server.
+    # If they are the same, then my update has downloaded. Otherwise, no.
+    versionHere = get_version_number(VERSION_TEMP)
+    versionThere = urllib2.urlopen(VERSION_THERE)
+    versionThere = float(re.search(r'[0-9]+.[0-9]+', versionThere.read()).group(0))
+    
+    return versionHere == versionThere
+    
 def get_version_number(versionFile):
     f = open(versionFile, 'r')
     stuff = f.read()
     f.close()
     return float(re.search(r'[0-9]+.[0-9]+', stuff).group(0))
+
+def save_server_version_to_temp():
+    '''
+    Downloads the version file from the update server and saves it to my temp.
+    This must be called after the download has finished in order to finalize it.
+    
+    Returns the string contents of that version file.
+    '''
+    versionInfo = ''
+    try:
+        response = urllib2.urlopen(VERSION_THERE)
+        contents = response.read()
+        
+        f = open(VERSION_TEMP, 'w')
+        f.write(contents)
+        f.close()
+        
+        versionInfo = contents
+        
+    except Exception:
+        print 'ERROR: Could not save update version to temp.'
+    
+    return versionInfo
 
 def run_exe(exePath):
     '''

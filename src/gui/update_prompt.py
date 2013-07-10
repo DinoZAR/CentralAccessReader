@@ -27,3 +27,6 @@ class UpdatePromptDialog(QDialog):
     def noButtonClicked(self):
         self.done(QMessageBox.No)
         
+    def setText(self, t):
+        self.ui.contentText.setText(t)
+        

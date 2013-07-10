@@ -8,6 +8,7 @@ import os
 import webbrowser
 import traceback
 import time
+import urllib2
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt, QUrl, QMutex
 from PyQt4 import QtCore
@@ -24,9 +25,9 @@ from src.gui.bookmarks import BookmarksTreeModel, BookmarkNode
 from src.gui.pages import PagesTreeModel, PageNode
 from src.gui.about import AboutDialog
 from src.gui.bug_reporter import BugReporter
-from src.gui.update_in_progress import UpdateInstallProgressDialog
 from src.gui.update_done import UpdateDoneDialog
 from src.gui.update_prompt import UpdatePromptDialog
+from src.gui.download_progress import DownloadProgressWidget
 from src.gui.prepare_speech import PrepareSpeechProgressWidget
 from src.mathtype.parser import MathTypeParseError
 from src.mathml.tts import MathTTS
@@ -34,7 +35,7 @@ from src.mathml import pattern_editor
 from src.speech.assigner import Assigner, PrepareSpeechThread
 from src.speech.worker import SpeechWorker
 from src.docx.importer import DocxImporterThread
-from src.updater import GetUpdateThread, RunUpdateInstallerThread, SETUP_FILE, run_update_installer
+from src.updater import GetUpdateThread, RunUpdateInstallerThread, SETUP_FILE, SETUP_TEMP_FILE, run_update_installer, is_update_downloaded, save_server_version_to_temp
 from src import misc
 
 class MainWindow(QtGui.QMainWindow):
@@ -72,7 +73,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.webViewLayout.removeWidget(self.ui.webView)
         self.ui.webView.close()
         self.ui.webView = NPAWebView(mainWindow=self, parent=self.ui.centralwidget)
-        self.ui.webViewLayout.addWidget(self.ui.webView, 1)
+        self.ui.webViewLayout.insertWidget(2, self.ui.webView, stretch=1)
         self.ui.webViewLayout.update()
         
         # Get the search function widgets
@@ -192,7 +193,7 @@ class MainWindow(QtGui.QMainWindow):
         self.updateInstallProgressDialog = None
         self.updateDoneDialog = None
         self.updator = RunUpdateInstallerThread()
-        self.programUpdateFinish.connect(self.finishUpdate)
+        self.programUpdateFinish.connect(self.finishUpdateDownload)
         
         # Prepare speech widget that pops up every time you press Play
         # Connect all event handlers that may be relevant to update the position
@@ -757,30 +758,55 @@ class MainWindow(QtGui.QMainWindow):
         '''
         Runs the setup file to update this program, when one exists.
         '''
-        question = UpdatePromptDialog(self)
-        result = question.exec_()
+        # Depending on whether the update has already downloaded or not, make
+        # the prompt tell the user the appropriate action (download it or
+        # install it)
+        if is_update_downloaded():
+            question = UpdatePromptDialog(self)
+            question.setText('Update has already downloaded. Want to install it?')
+            result = question.exec_()
+            
+            if result == QtGui.QMessageBox.Yes:
+                run_update_installer()
+                self.app.exit(0)
         
-        if result == QtGui.QMessageBox.Yes:
+        else:
+            question = UpdatePromptDialog(self)
+            result = question.exec_()
+        
+            if result == QtGui.QMessageBox.Yes:
             
-            # Show a progress dialog with something spinning here
-            #self.updateInstallProgressDialog = UpdateInstallProgressDialog(self)
-            #self.updateInstallProgressDialog.show()
+                # Create the widget for the download right below the content view
+                self.updateDownloadProgress = DownloadProgressWidget(self)
+                self.updateDownloadProgress.setUrl(SETUP_FILE)
+                self.updateDownloadProgress.setDestination(SETUP_TEMP_FILE)
             
-            # Run the installer on a separate thread
-            #self.updator.setUpdateFinishSignal(self.programUpdateFinish)
-            #self.updator.start()
+                self.updateDownloadProgress.downloadFinished.connect(self.finishUpdateDownload)
+                self.ui.webViewLayout.addWidget(self.updateDownloadProgress, stretch=0)
             
-            #webbrowser.open(SETUP_FILE)
+                self.updateDownloadProgress.startDownload()
             
-            run_update_installer()
+    def finishUpdateDownload(self, success):
+        '''
+        Does the cleanup logic for downloading an update.
+        '''
+        self.ui.webViewLayout.removeWidget(self.updateDownloadProgress)
+        self.updateDownloadProgress.hide()
+        if success:
             
-            # Completely shut down for this
-            self.app.exit(0)
+            # Save the version from over there to here
+            versionInfo = save_server_version_to_temp()
             
-    def finishUpdate(self):
-        self.updateInstallProgressDialog.close()
-        self.updateDoneDialog = UpdateDoneDialog(self)
-        self.updateDoneDialog.exec_()
+            # Prompt the user if they want to install it
+            if len(versionInfo) > 0:
+                question = UpdatePromptDialog(self)
+                question.setText('Downloaded update! Want to install it?')
+                result = question.exec_()
+                if result == QtGui.QMessageBox.Yes:
+                    
+                    # Run the installer
+                    run_update_installer()
+                    self.app.exit(0)
             
     def setSettingsEnableState(self, isEnable):
         '''
