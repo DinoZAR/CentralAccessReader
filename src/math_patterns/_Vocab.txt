@@ -89,3 +89,13 @@ run = r u n -> 'run'
 
 cup = c u p s -> 'cups'
 cup = c u p -> 'cup'
+
+faster = f a s t e r -> 'faster'
+slower = s l o w e r -> 'slower'
+total = t o t a l s -> 'totals'
+total = t o t a l -> 'total'
+
+north = n o r t h -> 'north'
+south = s o u t h -> 'south'
+east = e a s t -> 'east'
+west = w e s t -> 'west'

@@ -65,7 +65,7 @@ circlePlus = mi("&#8853;") -> 'circled plus,'
 
 colon = mi(":") -> 'colon'
 
-comma = mi(",") -> ','
+comma = mi(",") -> 'comma,'
 
 coproduct [integral] = mi("&#8720;") -> 'coproduct,'
 
