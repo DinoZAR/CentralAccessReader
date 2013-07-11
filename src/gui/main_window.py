@@ -34,7 +34,7 @@ from src.mathml.tts import MathTTS
 from src.mathml import pattern_editor
 from src.speech.assigner import Assigner, PrepareSpeechThread
 from src.speech.worker import SpeechWorker
-from src.docx.importer import DocxImporterThread
+from src.docx.thread import DocxImporterThread
 from src.updater import GetUpdateThread, RunUpdateInstallerThread, SETUP_FILE, SETUP_TEMP_FILE, run_update_installer, is_update_downloaded, save_server_version_to_temp
 from src import misc
 
@@ -589,7 +589,7 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.webView.setHtml(docxHtml, baseUrl)
             
             # Get and set the bookmarks
-            self.bookmarksModel = BookmarksTreeModel(self.docxImporterThread.getBookmarks())
+            self.bookmarksModel = BookmarksTreeModel(self.docxImporterThread.getHeadings())
             self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
             self.ui.bookmarksTreeView.expandAll()
                     
