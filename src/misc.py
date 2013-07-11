@@ -10,6 +10,7 @@ import sys
 import os
 import platform
 import subprocess
+import inspect
 from PyQt4.QtCore import QThread, pyqtSignal
 
 _PROGRAM_ROOT = 'Central Access Reader'
@@ -28,7 +29,7 @@ def program_path(resourceFile):
         myPath = os.path.join(sys._MEIPASS, resourceFile)
         return myPath
     else:
-        myPath = os.path.abspath('../' + resourceFile)
+        myPath = os.path.normpath(os.path.join(os.path.dirname(os.path.dirname(inspect.getsourcefile(program_path))), resourceFile))
         return myPath
     
 def app_data_path(resourceFile):
