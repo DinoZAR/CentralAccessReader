@@ -11,6 +11,7 @@ supTriPrime = msup(? triplePrime) -> '{1} triple prime,'
 Sub = msub(mrow(?) mrow(?)) -> '{1} sub {2},'
 Sup = msup(mrow(?) mrow(?)) -> '{1} to the {2} power,'
 
+leftSubSup = msubsup( mrow(?) mrow(?) mrow(?)) -> '{1}, sub {2}, to the power of {3},'
 leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left superscript {2},'
 leftSub = msub( mrow() mrow(?)) -> 'left subscript {1},'
 leftSup = msup( mrow() mrow(?)) -> 'left superscript {1},'

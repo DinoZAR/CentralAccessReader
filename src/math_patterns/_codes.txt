@@ -248,13 +248,21 @@ bar = mo("_") -> 'bar,'
 
 circle = mi("&#9675;") -> 'circle,'
 
+colon = mo("&#8758;") -> 'colon'
+
+defEqual = mo("&#8797;") -> 'equal to by definition,'
+
 degree = mi("&#176;") -> 'degrees,'
 
 degree = mo("&#176;") -> 'degrees,'
 
+deltaEqual = mo("&#8796;") -> 'Delta equal to'
+
 filledTriangle = mi("&#9650;") -> 'filled triangle,'
 
 joint = mi("&#65081;") -> 'joint,'
+
+measured = mo("&#8798;") -> 'measured by'
 
 multimap = mi("&#8888;") -> 'multimap,'
 
@@ -274,6 +282,8 @@ approachesLimit = mi("&#8784;") -> 'approaches the limit of,'
 
 conjunction = mo("&#8896;") -> 'conjunction'
 
+contraCode = upArrow upArrow downArrow downArrow leftArrow rightArrow leftArrow rightArrow -> 'secret contra code for extra life'
+
 deltaEqual = mi("&#8796;") -> 'delta equal to,'
 
 disjunction = mo("&#8897;") -> 'disjuction'
@@ -287,6 +297,8 @@ emptySet = mi("&#8709;") -> 'the empty set,'
 estimates = mi("&#8793;") -> 'estimates,'
 
 intersection [integral] = mo("&#8745;") -> 'intersection,'
+
+intersection [integral] = mo("&#8898;") -> 'intersection'
 
 multimapRight = mi("&#168;") -> 'right multimap,'
 
@@ -601,6 +613,8 @@ diagonalTopLeftEllipsis = mi("&#8945;") -> 'diagonal top left bottom right ellip
 diagonalTopLeftEllipsis = mo("&#8945;") -> 'diagonal top left bottom right ellipsis,'
 
 ellipsis = mi("&#8230;") -> 'ellipsis,'
+
+ellipsis = mo("&#8230;") -> 'ellipsis,'
 
 ellipsis = mi("&#8943;") -> 'ellipsis,'
 
