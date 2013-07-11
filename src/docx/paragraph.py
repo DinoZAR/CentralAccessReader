@@ -128,7 +128,7 @@ def parseParagraph(elem, otherData):
     
     # Generate the HTML from the parse data
     htmlContent = _generateParagraphHTMLNode(parseData, 0)[0]
-            
+                
     return htmlContent
 
 def parseTable(elem, otherData):
@@ -191,7 +191,13 @@ def _parseObject(elem, parentData, otherData):
         while True:
             try:
                 imageFile = open(imagePath, 'rb')
-                break
+                
+                # Make sure I can get something from it. If I don't get anything
+                # then the one writing the file hasn't closed the handle.
+                stuff = imageFile.read(1)
+                
+                if len(stuff) == 1:
+                    break
             except Exception:
                 pass
         
