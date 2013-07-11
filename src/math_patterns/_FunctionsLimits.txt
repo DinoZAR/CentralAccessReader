@@ -40,9 +40,6 @@ limitSyn = munder(mrow( limit ) mrow(? upArrow ?)) -> 'the limit as {2}, increas
 limitSyn = munder(mrow( limit ) mrow(? diagTopRightArrow ?)) -> 'the limit as {2}, approaches {4} from the negative direction, of'
 limitSyn = munder(mrow( limit ) mrow(? diagBotRightArrow ?)) -> 'the limit as {2}, approaches {4} from the positive direction, of'
 
-limitSyn = munder(mrow( limit ) mrow()) -> 'the limit of'
-
-
 
 limitSyn = munder(mrow( mover( mrow( limit ) minus) )  mrow(? downArrow ?)) -> 'the superior limit as {3}, decreases from {5}, of'
 
@@ -54,7 +51,9 @@ limitSyn = munder(mrow( mover( mrow( limit ) minus) )  mrow(? diagTopRightArrow 
 
 limitSyn = munder(mrow( mover( mrow( limit ) minus) )  mrow(? diagBotRightArrow ?)) -> 'the superior limit as {3}, approaches {5} from the positive direction, of'
 
-limitSyn = munder(mrow( mover( mrow( limit ) minus) ) mrow()) -> 'the superior limit of'
+limitSyn = munder(mrow( mover( mrow( limit ) minus) ) mrow(+)) -> 'the superior limit as {3}, of'
+
+limitSyn = munder(mrow( mover( mrow( limit ) minus) )) -> 'the superior limit of'
 
 
 
@@ -68,7 +67,9 @@ limitSyn = munder(mrow( munder( mrow( limit ) minus) )  mrow(? diagTopRightArrow
 
 limitSyn = munder(mrow( munder( mrow( limit ) minus) )  mrow(? diagBotRightArrow ?)) -> 'the inferior limit as {3}, approaches {5} from the positive direction, of'
 
-limitSyn = munder(mrow( munder( mrow( limit ) minus) ) mrow()) -> 'the inferior limit of'
+limitSyn = munder(mrow( munder( mrow( limit ) minus) ) mrow(+)) -> 'the inferior limit as {3}, of'
+
+limitSyn = munder(mrow( munder( mrow( limit ) minus) )) -> 'the inferior limit of'
 
 
 
@@ -82,7 +83,9 @@ limitSyn = munder(mrow( mover( mrow( limit ) bar) )  mrow(? diagTopRightArrow ?)
 
 limitSyn = munder(mrow( mover( mrow( limit ) bar) )  mrow(? diagBotRightArrow ?)) -> 'the superior limit as {3}, approaches {5} from the positive direction, of'
 
-limitSyn = munder(mrow( mover( mrow( limit ) bar) ) mrow()) -> 'the superior limit of'
+limitSyn = munder(mrow( mover( mrow( limit ) bar) ) mrow(+)) -> 'the superior limit as {3}, of'
+
+limitSyn = munder(mrow( mover( mrow( limit ) bar) )) -> 'the superior limit of'
 
 
 
@@ -96,11 +99,22 @@ limitSyn = munder(mrow( munder( mrow( limit ) bar) )  mrow(? diagTopRightArrow ?
 
 limitSyn = munder(mrow( munder( mrow( limit ) bar) )  mrow(? diagBotRightArrow ?)) -> 'the inferior limit as {3}, approaches {5} from the positive direction, of'
 
-limitSyn = munder(mrow( munder( mrow( limit ) bar) ) mrow()) -> 'the inferior limit of'
+limitSyn = munder(mrow( munder( mrow( limit ) bar) ) mrow(+)) -> 'the inferior limit as {3}, of'
+
+limitSyn = munder(mrow( munder( mrow( limit ) bar) )) -> 'the inferior limit of'
 
 
+limitSyn = munderover(mrow(l i m) mrow(+)) -> 'the limit as {4}, of'
+
+limitSyn = munder(mrow( limit ) mrow(+)) -> 'the limit as {2}, of'
 
 limitSyn = munderover(mrow(l i m) mrow(?) ?) -> 'the limit as {4}, of'
+
+limitSyn = munder(mrow( limit ) mrow(?) ?) -> 'the limit as {2}, of'
+
+limitSyn = munder(mrow( limit ) mrow()) -> 'the limit of'
+
+
 
 // Products and Unions
 
