@@ -3,18 +3,18 @@ Created on Jan 21, 2013
 
 @author: Spencer
 '''
-print 'Starting Central Access Reader...'
-
-import sys
-import os
-from PyQt4.QtGui import QApplication, QPixmap, QSplashScreen
-
-# Because we have local stuff, we need to append this local directory
-# to the Python path
-sys.path.append(os.path.abspath('..'))
-from src.misc import program_path, app_data_path, temp_path
 
 def main():
+    print 'Starting Central Access Reader...'
+
+    import sys
+    import os
+    from PyQt4.QtGui import QApplication, QPixmap, QSplashScreen
+    
+    # Because we have local stuff, we need to append this local directory
+    # to the Python path
+    sys.path.append(os.path.abspath('..'))
+    from src.misc import program_path, app_data_path, temp_path
     
     # Check to see if my folders in my different paths exist. If they don't,
     # make them

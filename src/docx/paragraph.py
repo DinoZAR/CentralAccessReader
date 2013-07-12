@@ -388,3 +388,45 @@ def _generateTableHTMLNode(t):
 #         ordered list or unordered list
 #         '''
 #         return elem.find('./{0}pPr/{0}numPr'.format(w_NS)) != None
+
+#     def _getNumberingDict(self, zip):
+#         '''
+#         Returns a nested dictionary that looks like the following:
+#         
+#         {numId : {levelId : {"format" : "decimal|bullet", "start" : 0}, levelId : {...}, ...}}
+#         '''
+#         myDict = {}
+#         
+#         if 'word/numbering.xml' in zip.namelist():
+#             # Get the numbering XML
+#             numberingFile = zip.open('word/numbering.xml', 'r')
+#             numXML = etree.parse(numberingFile)
+#             numberingFile.close()
+#             
+#             # Get all numberings and get the abstract element they refer to
+#             # (pointless indirection in my opinion)
+#             nums = numXML.findall('./{0}num'.format(w_NS))
+#             for e in nums:
+#                 abstractId = e.find('./{0}abstractNumId'.format(w_NS)).attrib['{0}val'.format(w_NS)]
+#                 abstractNum = numXML.find('./{0}abstractNum[@{0}abstractNumId=\''.format(w_NS) + abstractId + '\']')
+#                 
+#                 # Get list of levels in that particular element
+#                 levels = abstractNum.findall('./{0}lvl'.format(w_NS))
+#                 levelDicts = {}
+#                 for l in levels:
+#                     key = l.attrib['{0}ilvl'.format(w_NS)]
+#                     levelDicts[key] = {}
+#                     format = l.find('./{0}numFmt'.format(w_NS)).attrib['{0}val'.format(w_NS)]
+#                     
+#                     if l.find('./{0}start'.format(w_NS)):
+#                         levelDicts[key]['start'] = l.find('./{0}start'.format(w_NS)).attrib['{0}val'.format(w_NS)]
+#                     else:
+#                         levelDicts[key]['start'] = 1
+#                     
+#                     #start = l.find('./{0}start'.format(w_NS)).attrib['{0}val'.format(w_NS)]
+#                     levelDicts[key]['format'] = format
+#                 
+#                 key = e.attrib['{0}numId'.format(w_NS)]
+#                 myDict[key] = levelDicts
+#                 
+#         return myDict

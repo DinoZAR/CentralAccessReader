@@ -35,6 +35,7 @@ from src.mathml import pattern_editor
 from src.speech.assigner import Assigner, PrepareSpeechThread
 from src.speech.worker import SpeechWorker
 from src.docx.thread import DocxImporterThread
+from src.docx.importer import DocxImportError
 from src.updater import GetUpdateThread, RunUpdateInstallerThread, SETUP_FILE, SETUP_TEMP_FILE, run_update_installer, is_update_downloaded, save_server_version_to_temp
 from src import misc
 
@@ -542,6 +543,7 @@ class MainWindow(QtGui.QMainWindow):
             # Create my .docx importer thread
             self.docxImporterThread = DocxImporterThread(filePath)
             self.docxImporterThread.reportProgress.connect(self.reportProgressOpenDocx)
+            self.docxImporterThread.reportError.connect(self.reportErrorOpenDocx)
             self.docxImporterThread.finished.connect(self.finishOpenDocx)
             
             #Show a progress dialog
@@ -560,13 +562,18 @@ class MainWindow(QtGui.QMainWindow):
     def reportTextOpenDocx(self, text):
         self.progressDialog.setLabelText(text)
         
-    def reportErrorOpenDocx(self, exception):
+    def reportErrorOpenDocx(self, exception, tb):
         if isinstance(exception, MathTypeParseError):
-            out = misc.prepare_bug_report(traceback.format_exc(), self.configuration, detailMessage=exception.message)
+            out = misc.prepare_bug_report(tb, self.configuration, detailMessage=exception.message)
+            dialog = BugReporter(out)
+            dialog.exec_()
+        elif isinstance(exception, DocxImportError):
+            print 'Trying to get DocxImportError traceback'
+            out = misc.prepare_bug_report(tb, self.configuration, detailMessage=exception.message)
             dialog = BugReporter(out)
             dialog.exec_()
         else:
-            out = misc.prepare_bug_report(traceback.format_exc(), self.configuration)
+            out = misc.prepare_bug_report(tb, self.configuration)
             dialog = BugReporter(out)
             dialog.exec_()
         

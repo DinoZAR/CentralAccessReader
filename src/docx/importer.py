@@ -9,7 +9,8 @@ from lxml import html as HTML
 import os
 import urllib
 import re
-from threading import Thread
+from multiprocessing import Process
+from Queue import Queue, Empty
 from src.threadpool import Pool
 from src.gui.bookmarks import BookmarkNode
 from src.misc import program_path, temp_path
@@ -25,15 +26,38 @@ def convert_paragraph_to_html(paraId, elem, otherData):
     WARNING: Should only be called by the thread pools that are in the
     DocxDocument class. There is a reason why this is removed and isolated.
     
-    Converts a Docx <p> XML element into a HTML element. Returns the tuple
-    (id, htmlElement) when done.
+    Converts a Docx <p> XML element string into a HTML element. Returns the 
+    tuple (id, htmlElementString) when done.
     '''
+    print 'Deserializing my inputs'
+    # Deserialize all of my elements into DOM objects
+    elem = etree.fromstring(elem)
+    otherData['rels'] = [etree.fromstring(f) for f in otherData['rels']]
+    otherData['styles'] = [etree.fromstring(f) for f in otherData['styles']]
+#     for k in otherData['paraStyles'].keys():
+#         otherData['paraStyles'] = etree.fromstring(otherData['paraStyles']) 
+    
+    print 'Parsing paragraph'
     if elem.tag == '{0}p'.format(w_NS):
-        return (paraId, parseParagraph(elem, otherData))
+        return (paraId, HTML.tostring(parseParagraph(elem, otherData)))
     elif elem.tag == '{0}tbl'.format(w_NS):
-        return (paraId, parseTable(elem, otherData))
+        return (paraId, HTML.tostring(parseTable(elem, otherData)))
     
     return None
+
+def save_images(docxPath, importPath):
+     
+    # Open a zip file of my docx file
+    z = zipfile.ZipFile(docxPath, 'r')
+ 
+    for f in z.namelist():
+        if f.find('word/media/') == 0:
+            # Extract it to my import folder
+            imageFile = open(importPath + '/images/' + f.replace('word/media/', ''), 'wb')
+            imageFile.write(z.read(f))
+            imageFile.close()
+     
+    z.close()
 
 class DocxDocument(object):
     '''
@@ -44,8 +68,8 @@ class DocxDocument(object):
     
     progressCallback(percentageOutOf100)
     
-    The checkCancelFunction is a function that returns True when we should the
-    import process and False otherwise.
+    The checkCancelFunction is a function that returns True when we should stop
+    the import process and False otherwise.
     '''
     
     def __init__(self, docxFilePath, progressCallback=None, checkCancelFunction=None):
@@ -55,12 +79,27 @@ class DocxDocument(object):
         
         self.docxFilePath = docxFilePath
         self.importFolder = temp_path('import')
+        self.progressCallback = progressCallback
         
-        if progressCallback:
-            progressCallback(0)
+        if self.progressCallback is not None:
+            self.progressCallback(0)
+            
+        print 'Cleaning up things...'
+            
+        # Delete all of the images in my import directory, if any
+        if os.path.isdir(self.importFolder + '/images'):
+            for the_file in os.listdir(self.importFolder + '/images'):
+                file_path = os.path.join(self.importFolder + '/images', the_file)
+                try:
+                    if os.path.isfile(file_path):
+                        os.unlink(file_path)
+                except Exception, e:
+                    print e
+        else:
+            os.makedirs(self.importFolder + '/images')
         
         # Start saving images to my import folder in the background
-        saveImagesThread = Thread(target=self._saveImages)
+        saveImagesThread = Process(target=save_images, args=(self.docxFilePath, self.importFolder))
         saveImagesThread.start()
         
         # .docx is just a zip file
@@ -92,39 +131,124 @@ class DocxDocument(object):
         idCounter = 0
         for p in paragraphs:
             
-            if checkCancelFunction:
+            if checkCancelFunction is not None:
                 if checkCancelFunction():
                     break
                 
-            threadPool.addTask(convert_paragraph_to_html, self._appendParagraphResult, args=(idCounter, p, otherData)) 
+            threadPool.addTask(convert_paragraph_to_html, self._appendParagraphResult, args=(idCounter, etree.tostring(p), otherData)) 
             idCounter += 1
-            
+        
+        # After all paragraphs have been queued, just check for cancel
         print 'All paragraphs queued! Waiting for them to finish...'
-        threadPool.join()
+        interrupted = False
+        while True:
+            if checkCancelFunction is not None:
+                if checkCancelFunction():
+                    threadPool.stop()
+                    interrupted = True
+                    break
+            if not threadPool.hasTasks():
+                break
         
-        print 'Putting together HTML...'
-        self._html = HTML.Element('html')
-        head = HTML.Element('head')
-        body = HTML.Element('body')
-        self._html.append(head)
-        self._html.append(body)
+        # Check that I didn't get any errors
+        self._error = threadPool.getErrors()
+        if self._error:
+            interrupted = True
+            self._error = self._error[0]
         
-        self._prepareHead(head)
-        self._prepareBody(body)
+        # If I haven't been interrupted at this point, construct HTML
+        if not interrupted:
+            threadPool.join()
+        
+            print 'Putting together HTML...'
+            self._html = HTML.Element('html')
+            head = HTML.Element('head')
+            body = HTML.Element('body')
+            self._html.append(head)
+            self._html.append(body)
+            
+            self._prepareHead(head)
+            self._prepareBody(body)
         
         print 'Waiting for image saving thread to finish...'
         saveImagesThread.join()
         
         print 'Import done!'
         
+    def getMainPage(self):
+        return HTML.tostring(self._html)
+    
+    def getHeadings(self):
+        '''
+        Returns the BookmarkNodes for this document.
+        '''
+        # State data for creating the bookmarks
+        parentStack = [(BookmarkNode(None, 'Docx'), 0)]
+        lastNode = parentStack[0]
+        currLevel = -1
+        anchorCount = 1
+        
+        # Get every heading element in the document
+        headingElements = self._html.xpath(r'//h1 | //h2 | //h3 | //h4 | //h5') 
+        
+        for heading in headingElements:
+            currLevel = int(re.search('[0-9]+', heading.tag).group(0))
+            
+            # Add last node inserted as parent if it is logical to do so
+            if lastNode[1] < currLevel:
+                parentStack.append(lastNode)
+            
+            # Pop off unsuitable parents
+            while True:
+                if parentStack[-1][1] >= currLevel:
+                    parentStack.pop()
+                else:
+                    break
+            
+            # Make my bookmark and stuff
+            if len(parentStack) > 0:
+                myNode = BookmarkNode(parentStack[-1][0], heading.text_content(), anchorId=str(anchorCount))
+                lastNode = (myNode, currLevel)
+            else:
+                myNode = BookmarkNode(lastNode[0], heading.text_content(), anchorId=str(anchorCount))
+                lastNode = (myNode, currLevel)
+                
+            anchorCount += 1
+        
+        return parentStack[0][0]
+    
+    def getPages(self):
+        '''
+        Returns the PageNodes for this document.
+        '''
+        myPages = []
+        
+        pages = self._html.xpath("//*[@class='pageNumber']")
+        if pages is not None:
+            for p in pages:
+                myPages.append(p.text_content())
+         
+        return myPages
+    
+    def getError(self):
+        '''
+        Returns a DocxImportError object if the import process encountered an
+        exception. Otherwise, it returns None.
+        '''
+        return self._error
+        
     def _appendParagraphResult(self, result):
         '''
         Callback used by thread pool to post results of their computation into
         the paragraph data structure.
         '''
+        if self.progressCallback is not None:
+            self.numCompleted += 1
+            self.progressCallback(int(float(self.numCompleted) / self.numParagraphs * 99.0))
+        
         if result is not None:
             id = result[0]
-            data = result[1]
+            data = HTML.fromstring(result[1])
             if len(data) > 0 or len(data.text_content()) > 0:
                 self.paragraphData[id] = data
          
@@ -133,14 +257,14 @@ class DocxDocument(object):
         myRels = etree.parse(relFile)
         myRels = myRels.findall('./{0}Relationship'.format(r_NS))
         relFile.close()
-        return myRels
+        return [etree.tostring(f) for f in myRels]
      
     def _getStyles(self, zip):
         stylesFile = zip.open('word/styles.xml', 'r')
         myStyles = etree.parse(stylesFile)
         myStyles = myStyles.findall('./{0}style'.format(w_NS))
         stylesFile.close()
-        return myStyles
+        return [etree.tostring(f) for f in myStyles]
      
     def _getParaStyles(self, styles):
         '''
@@ -149,9 +273,10 @@ class DocxDocument(object):
         '''
         myDict = {}
         for s in styles:
-            query = s.find('./{0}name'.format(w_NS))
+            sElem = etree.fromstring(s)
+            query = sElem.find('./{0}name'.format(w_NS))
             if query != None:
-                key = s.get('{0}styleId'.format(w_NS))
+                key = sElem.get('{0}styleId'.format(w_NS))
                 value = query.get('{0}val'.format(w_NS))
                 myDict[key] = value
         return myDict
@@ -208,167 +333,22 @@ class DocxDocument(object):
         for p in sortedParas:
             if p[1] is not None:
                 body.append(p[1])
-
-    def _saveImages(self):
-         
-        # Open a zip file of my docx file
-        zip = zipfile.ZipFile(self.docxFilePath, 'r')
-         
-        # Delete images directory, if there is one
-        if os.path.isdir(self.importFolder + '/images'):
-            for the_file in os.listdir(self.importFolder + '/images'):
-                file_path = os.path.join(self.importFolder + '/images', the_file)
-                try:
-                    if os.path.isfile(file_path):
-                        os.unlink(file_path)
-                except Exception, e:
-                    print e
-        else:
-            os.makedirs(self.importFolder + '/images')
-     
-        for f in zip.namelist():
-            if f.find('word/media/') == 0:
-                # Extract it to my import folder
-                imageFile = open(self.importFolder + '/images/' + f.replace('word/media/', ''), 'wb')
-                imageFile.write(zip.read(f))
-                imageFile.close()
-         
-        zip.close()
-             
-    def getMainPage(self):
-        return HTML.tostring(self._html)
-    
-    def getHeadings(self):
-        '''
-        Returns the BookmarkNodes for this document.
-        '''
-        # State data for creating the bookmarks
-        parentStack = [(BookmarkNode(None, 'Docx'), 0)]
-        lastNode = parentStack[0]
-        currLevel = -1
-        anchorCount = 1
-        
-        
-        # Get every heading element in the document
-        headingElements = self._html.xpath(r'//h1 | //h2 | //h3 | //h4 | //h5') 
-        
-        for heading in headingElements:
-            currLevel = int(re.search('[0-9]+', heading.tag).group(0))
-            
-            # Add last node inserted as parent if it is logical to do so
-            if lastNode[1] < currLevel:
-                parentStack.append(lastNode)
-            
-            # Pop off unsuitable parents
-            while True:
-                if parentStack[-1][1] >= currLevel:
-                    parentStack.pop()
-                else:
-                    break
-            
-            # Make my bookmark and stuff
-            if len(parentStack) > 0:
-                myNode = BookmarkNode(parentStack[-1][0], heading.text_content(), anchorId=str(anchorCount))
-                lastNode = (myNode, currLevel)
-            else:
-                myNode = BookmarkNode(lastNode[0], heading.text_content(), anchorId=str(anchorCount))
-                lastNode = (myNode, currLevel)
                 
+        # Get all of the headings and add anchor ids to them
+        headings = body.xpath('//h1 | //h2 | //h3 | //h4 | //h5 | //h6')
+        anchorCount = 1
+        for h in headings:
+            h.set('id', str(anchorCount))
             anchorCount += 1
-        
-        return parentStack[0][0]
-        
-#         # The paragraphs are just a bunch of dictionaries
-#         for p in self.paragraphData:
-#              
-#             if 'style' in p:
-#                 if p['style'] in heirarchyStyles:
-#                     currLevel = heirarchyStyles[p['style']]
-#                 else:
-#                     currLevel = -1
-#             else:
-#                 currLevel = -1
-#          
-#             # Create a bookmark if it is an actual hierarchical piece of content  
-#             if currLevel > 0:
-#                  
-#                 # Add last node inserted as parent if it is logical to do so
-#                 if lastNode[1] < currLevel:
-#                     parentStack.append(lastNode)
-#                      
-#                 # Pop off unsuitable parents
-#                 while True:
-#                     if parentStack[-1][1] >= currLevel:
-#                         parentStack.pop()
-#                     else:
-#                         break
-#                      
-#                 # Make my BookmarkNode and stuff
-#                 if len(parentStack) > 0:
-#                     myNode = BookmarkNode(parentStack[-1][0], self._generateParagraphHTMLNode(p, 0)[0].text_content(), anchorId=str(anchorCount))
-#                     lastNode = (myNode, currLevel)
-#                 else:
-#                     myNode = BookmarkNode(lastNode[0], self._generateParagraphHTMLNode(p, 0)[0].text_content(), anchorId=str(anchorCount))
-#                     lastNode = (myNode, currLevel)
-#                      
-#                 anchorCount += 1
-#                  
-#         # Return my root bookmark
-#         return parentStack[0][0]
+
+class DocxImportError(Exception):
     
-    def getPages(self):
-        '''
-        Returns the PageNodes for this document.
-        '''
-        myPages = []
+    def __init__(self, origEx, traceback):
+        Exception.__init__(self)
+        self.message = 'Docx import error:\n' + str(origEx) + '\n' + traceback
         
-        pages = self._html.xpath("//*[@class='pageNumber']")
-        if pages is not None:
-            for p in pages:
-                myPages.append(p.text_content())
-    #             if 'pageNumber' in p:
-    #                 myPages.append(self._generateParagraphHTMLNode(p, 0)[0].text_content())
-         
-        return myPages
+    def __repr__(self):
+        return self.message
     
-#     def _getNumberingDict(self, zip):
-#         '''
-#         Returns a nested dictionary that looks like the following:
-#         
-#         {numId : {levelId : {"format" : "decimal|bullet", "start" : 0}, levelId : {...}, ...}}
-#         '''
-#         myDict = {}
-#         
-#         if 'word/numbering.xml' in zip.namelist():
-#             # Get the numbering XML
-#             numberingFile = zip.open('word/numbering.xml', 'r')
-#             numXML = etree.parse(numberingFile)
-#             numberingFile.close()
-#             
-#             # Get all numberings and get the abstract element they refer to
-#             # (pointless indirection in my opinion)
-#             nums = numXML.findall('./{0}num'.format(w_NS))
-#             for e in nums:
-#                 abstractId = e.find('./{0}abstractNumId'.format(w_NS)).attrib['{0}val'.format(w_NS)]
-#                 abstractNum = numXML.find('./{0}abstractNum[@{0}abstractNumId=\''.format(w_NS) + abstractId + '\']')
-#                 
-#                 # Get list of levels in that particular element
-#                 levels = abstractNum.findall('./{0}lvl'.format(w_NS))
-#                 levelDicts = {}
-#                 for l in levels:
-#                     key = l.attrib['{0}ilvl'.format(w_NS)]
-#                     levelDicts[key] = {}
-#                     format = l.find('./{0}numFmt'.format(w_NS)).attrib['{0}val'.format(w_NS)]
-#                     
-#                     if l.find('./{0}start'.format(w_NS)):
-#                         levelDicts[key]['start'] = l.find('./{0}start'.format(w_NS)).attrib['{0}val'.format(w_NS)]
-#                     else:
-#                         levelDicts[key]['start'] = 1
-#                     
-#                     #start = l.find('./{0}start'.format(w_NS)).attrib['{0}val'.format(w_NS)]
-#                     levelDicts[key]['format'] = format
-#                 
-#                 key = e.attrib['{0}numId'.format(w_NS)]
-#                 myDict[key] = levelDicts
-#                 
-#         return myDict
+    def __str(self):
+        return self.message

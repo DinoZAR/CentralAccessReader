@@ -3,30 +3,39 @@ Created on Mar 3, 2013
 
 @author: Spencer Graffe
 '''
-print 'Starting!'
-import os
-# import zipfile
-# from lxml import etree
-from lxml import html as HTML
-# from threading import Thread
-# from src.threadpool import Pool
-from src.misc import program_path, temp_path
-from src.docx.importer import DocxDocument
-# from src.docx.paragraph import parseParagraph, parseTable
 
-#testPath = program_path('Tutorial.docx')
-testPath = r'W:\Nifty Prose Articulator\test_files\Chs 6-11.docx'
-
-doc = DocxDocument(testPath)
-
-f = open(r'C:\Users\GraffeS\Desktop\more tests.html', 'wb')
-contents = HTML.tostring(doc.getMainPage())
-f.write(contents)
-f.close()
-
-print doc.getHeadings()
-print doc.getPages()
-print 'Done!'
+# Just to protect this module when using the process pool
+if __name__ == '__main__':
+    print 'Starting!'
+    import sys
+    import os
+    sys.path.append(os.path.abspath('..'))
+    
+    # import zipfile
+    # from lxml import etree
+    from lxml import html as HTML
+    # from threading import Thread
+    # from src.threadpool import Pool
+    from src.misc import program_path, temp_path
+    from src.docx.importer import DocxDocument
+    # from src.docx.paragraph import parseParagraph, parseTable
+    
+    testPath = program_path('Tutorial.docx')
+    #testPath = r'W:\Nifty Prose Articulator\test_files\Chs 6-11.docx'
+    
+    doc = DocxDocument(testPath)
+    
+    f = open(r'C:\Users\GraffeS\Desktop\more tests.html', 'wb')
+    contents = doc.getMainPage()
+    f.write(contents)
+    f.close()
+    
+    if doc.getError():
+        raise doc.getError()
+    
+    print doc.getHeadings()
+    print doc.getPages()
+    print 'Done!'
 
 # def run_test(numThreads):
 #     
@@ -164,6 +173,3 @@ print 'Done!'
 #     print 'Done!'
 # 
 # 
-# # Just to protect this module when using the process pool
-# if __name__ == '__main__':
-#     pass
