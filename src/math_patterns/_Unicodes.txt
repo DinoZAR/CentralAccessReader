@@ -9,6 +9,10 @@ tilde = mi("~") -> 'tilde,'
 times = mi("&#8901;") -> 'times,'
 times = mi("&#59791;") -> 'times,'
 
+fourrootsym = mo("&#8732;") -> 'the fourth root of'
+cuberootsym = mo("&#8731;") -> 'the cube root of'
+squarerrotsym = mo("&#8730;") -> 'the square root of'
+
 // Parentheses, Brackets, Braces, and Bars
 closeBrace = mo("}") -> 'close brace,'
 closeBracket = mo("]") -> ', close bracket,'

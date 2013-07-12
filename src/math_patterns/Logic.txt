@@ -124,7 +124,12 @@ import _BordersSlashes.txt
 
 import _Trig.txt
 
-// Powers and Primes
+// Products and Unions
+
+import _Integrals.txt
+
+//Powers and Primes
+
 import _PowersPrimes.txt
 
 // Syntax Quirks
@@ -164,10 +169,6 @@ backPrimes = mmultiscripts(? ? ? ?) -> '{4} {1}'
 limit = munderover(mrow(l i m) mrow(? ? ?) ?) -> 'the limit as {4}, approaches {6}, of'
 limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4}, of'
 
-// Products and Unions
-
-import _Integrals.txt
-
 
 // ------------------------------------------------------------------------------
 // Parenthetical Expressions

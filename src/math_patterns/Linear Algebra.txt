@@ -133,11 +133,7 @@ dubsub = msub( + mrow( + comma + )) -> '{1} double subscript {2} comma {4}'
 // Trigonometry-Specific
 //---------------------------------------------------------------
 
-import _Trig.txt
-
-// Powers and Primes
-
-import _PowersPrimes.txt
+import _Trig.txt// Products and Unionsimport _Integrals.txt//Powers and Primesimport _PowersPrimes.txt
 
 // Syntax Quirks
 doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'
@@ -174,10 +170,6 @@ backPrimes = mmultiscripts(? ? ? ?) -> '{4} {1}'
 
 limit = munderover(mrow(l i m) mrow(? ? ?) ?) -> 'the limit as {4}, approaches {6}, of'
 limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4}, of'
-
-// Products and Unions
-
-import _Integrals.txt
 
 
 

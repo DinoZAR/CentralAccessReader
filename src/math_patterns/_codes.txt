@@ -316,6 +316,8 @@ precedes = mi("&#8826;") -> 'precedes,'
 proportional = mi("&#8733;") -> 'proportional to,'
 proportional = mo("&#8733;") -> 'proportional to,'
 
+semicolon = mi(";") -> 'semicolon'
+
 squareImage = mi("&#8849;") -> 'is a square image of or equal to,'
 
 squareOriginal = mi("&#8850;") -> 'is a square original of or equal to,'
@@ -623,3 +625,5 @@ ellipsis = mo("&#8943;") -> 'ellipsis,'
 verticalEllipsis = mi("&#8942;") -> 'vertical ellipsis,'
 
 verticalEllipsis = mo("&#8942;") -> 'vertical ellipsis,'
+
+blankSpace = minus minus -> 'blank'

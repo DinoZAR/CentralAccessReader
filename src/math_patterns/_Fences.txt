@@ -14,6 +14,7 @@ fencedOC = mfenced<open="{",close="">(+) -> 'open curly brace, {1},'
 
 fencedABS = mfenced<open="|",close="|",separators="|">(mrow(+) mrow(+) mrow(+)) -> 'vertical bar, {1}, vertical bar, {2}, vertical bar, {3}, vertical bar,'
 fencedABS = mfenced<open="|",close="|",separators="|">(mrow(+) mrow(+)) -> 'vertical bar, {1}, vertical bar, {2}, vertical bar,'
+fencedABS = mfenced<open="|",close="|">(+) -> 'vertical bar, {1}, vertical bar,'
 fencedCVB = mfenced<open="",close="|">(+) -> '{1}, vertical bar'
 fencedOVB = mfenced<open="|",close="">(+) -> 'vertical bar, {1},'
 
