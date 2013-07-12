@@ -6,7 +6,7 @@ Use this script to profile things
 @author: Spencer Graffe
 '''
 from src.docx.importer import DocxDocument
-from src.Sandbox import run_test
+#from src.Sandbox import run_test
 import cProfile
 import pstats
 
@@ -20,7 +20,7 @@ if __name__ == '__main__':
         print ' --', percent, '--'
     
     #cProfile.run('DocxDocument(testFile, progress)', filename=statSave)
-    cProfile.run('run_test(12)', filename=statSave)
+    cProfile.run('from src import Sandbox', filename=statSave)
     myStats = pstats.Stats(statSave)
     
     # Organize my stats by different criteria

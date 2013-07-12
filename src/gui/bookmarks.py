@@ -11,7 +11,7 @@ class BookmarkNode(object):
     page navigation.
     '''
     
-    def __init__(self, parent, name, anchorId=-1):
+    def __init__(self, parent, name, anchorId='-1'):
         self.children = []
         self.parent = parent
         self.name = name

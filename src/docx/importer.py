@@ -8,7 +8,9 @@ from lxml import etree
 from lxml import html as HTML
 import os
 import urllib
-from multiprocessing import Process, Pool
+import re
+from threading import Thread
+from src.threadpool import Pool
 from src.gui.bookmarks import BookmarkNode
 from src.misc import program_path, temp_path
 from src.docx.paragraph import parseParagraph, parseTable, heirarchyStyles
@@ -31,9 +33,7 @@ def convert_paragraph_to_html(paraId, elem, otherData):
     elif elem.tag == '{0}tbl'.format(w_NS):
         return (paraId, parseTable(elem, otherData))
     
-#         if len(newPara['data']) > 0:
-#             self.paragraphData.append(newPara)
-    
+    return None
 
 class DocxDocument(object):
     '''
@@ -60,24 +60,21 @@ class DocxDocument(object):
             progressCallback(0)
         
         # Start saving images to my import folder in the background
-        saveImagesThread = Process(target=self._saveImages)
+        saveImagesThread = Thread(target=self._saveImages)
         saveImagesThread.start()
         
-        # Start a thread pool to parse all of the paragraphs in there
-        threadPool = Pool()
-        
         # .docx is just a zip file
-        self.zip = zipfile.ZipFile(docxFilePath, 'r')
+        zip = zipfile.ZipFile(docxFilePath, 'r')
         
         # Get the other random data I will need to parse my paragraphs
         otherData = {}
-        otherData['rels'] = self._getRels(self.zip)
-        otherData['styles'] = self._getStyles(self.zip)
-        otherData['paraStyles'] = self._getParaStyles(self.otherData['styles'])
-        #otherData['numbering'] = self._getNumberingDict(self.zip)
+        otherData['rels'] = self._getRels(zip)
+        otherData['styles'] = self._getStyles(zip)
+        otherData['paraStyles'] = self._getParaStyles(otherData['styles'])
+        #otherData['numbering'] = self._getNumberingDict(zip)
         
         # Open my main document file
-        document = self.zip.open('word/document.xml', 'r')
+        document = zip.open('word/document.xml', 'r')
         tree = etree.parse(document)
         document.close()
         root = tree.getroot()
@@ -91,30 +88,29 @@ class DocxDocument(object):
         self.numCompleted = 0
         
         # Queue up all of my paragraphs to my thread pool
+        threadPool = Pool()
         idCounter = 0
         for p in paragraphs:
+            
             if checkCancelFunction:
                 if checkCancelFunction():
                     break
                 
-            threadPool.apply_async(convert_paragraph_to_html, (idCounter, p, otherData), callback=self._appendParagraphResult)
+            threadPool.addTask(convert_paragraph_to_html, self._appendParagraphResult, args=(idCounter, p, otherData)) 
             idCounter += 1
             
         print 'All paragraphs queued! Waiting for them to finish...'
-        threadPool.close()
         threadPool.join()
         
         print 'Putting together HTML...'
-        html = HTML.Element('html')
+        self._html = HTML.Element('html')
         head = HTML.Element('head')
         body = HTML.Element('body')
-        html.append(head)
-        html.append(body)
+        self._html.append(head)
+        self._html.append(body)
         
         self._prepareHead(head)
         self._prepareBody(body)
-        
-        self._html = etree.tostring(html)
         
         print 'Waiting for image saving thread to finish...'
         saveImagesThread.join()
@@ -126,9 +122,11 @@ class DocxDocument(object):
         Callback used by thread pool to post results of their computation into
         the paragraph data structure.
         '''
-        id = result[0]
-        data = result[1]
-        self.paragraphData[id] = data
+        if result is not None:
+            id = result[0]
+            data = result[1]
+            if len(data) > 0 or len(data.text_content()) > 0:
+                self.paragraphData[id] = data
          
     def _getRels(self, zip):
         relFile = zip.open('word/_rels/document.xml.rels', 'r')
@@ -208,7 +206,8 @@ class DocxDocument(object):
     def _prepareBody(self, body):
         sortedParas = sorted(self.paragraphData.iteritems(), key=lambda x: x[0])
         for p in sortedParas:
-            pass
+            if p[1] is not None:
+                body.append(p[1])
 
     def _saveImages(self):
          
@@ -237,7 +236,7 @@ class DocxDocument(object):
         zip.close()
              
     def getMainPage(self):
-        return self._html
+        return HTML.tostring(self._html)
     
     def getHeadings(self):
         '''
@@ -248,54 +247,87 @@ class DocxDocument(object):
         lastNode = parentStack[0]
         currLevel = -1
         anchorCount = 1
-         
-        # The paragraphs are just a bunch of dictionaries
-        for p in self.paragraphData:
-             
-            if 'style' in p:
-                if p['style'] in heirarchyStyles:
-                    currLevel = heirarchyStyles[p['style']]
+        
+        
+        # Get every heading element in the document
+        headingElements = self._html.xpath(r'//h1 | //h2 | //h3 | //h4 | //h5') 
+        
+        for heading in headingElements:
+            currLevel = int(re.search('[0-9]+', heading.tag).group(0))
+            
+            # Add last node inserted as parent if it is logical to do so
+            if lastNode[1] < currLevel:
+                parentStack.append(lastNode)
+            
+            # Pop off unsuitable parents
+            while True:
+                if parentStack[-1][1] >= currLevel:
+                    parentStack.pop()
                 else:
-                    currLevel = -1
+                    break
+            
+            # Make my bookmark and stuff
+            if len(parentStack) > 0:
+                myNode = BookmarkNode(parentStack[-1][0], heading.text_content(), anchorId=str(anchorCount))
+                lastNode = (myNode, currLevel)
             else:
-                currLevel = -1
-         
-            # Create a bookmark if it is an actual hierarchical piece of content  
-            if currLevel > 0:
-                 
-                # Add last node inserted as parent if it is logical to do so
-                if lastNode[1] < currLevel:
-                    parentStack.append(lastNode)
-                     
-                # Pop off unsuitable parents
-                while True:
-                    if parentStack[-1][1] >= currLevel:
-                        parentStack.pop()
-                    else:
-                        break
-                     
-                # Make my BookmarkNode and stuff
-                if len(parentStack) > 0:
-                    myNode = BookmarkNode(parentStack[-1][0], self._generateParagraphHTMLNode(p, 0)[0].text_content(), anchorId=str(anchorCount))
-                    lastNode = (myNode, currLevel)
-                else:
-                    myNode = BookmarkNode(lastNode[0], self._generateParagraphHTMLNode(p, 0)[0].text_content(), anchorId=str(anchorCount))
-                    lastNode = (myNode, currLevel)
-                     
-                anchorCount += 1
-                 
-        # Return my root bookmark
+                myNode = BookmarkNode(lastNode[0], heading.text_content(), anchorId=str(anchorCount))
+                lastNode = (myNode, currLevel)
+                
+            anchorCount += 1
+        
         return parentStack[0][0]
+        
+#         # The paragraphs are just a bunch of dictionaries
+#         for p in self.paragraphData:
+#              
+#             if 'style' in p:
+#                 if p['style'] in heirarchyStyles:
+#                     currLevel = heirarchyStyles[p['style']]
+#                 else:
+#                     currLevel = -1
+#             else:
+#                 currLevel = -1
+#          
+#             # Create a bookmark if it is an actual hierarchical piece of content  
+#             if currLevel > 0:
+#                  
+#                 # Add last node inserted as parent if it is logical to do so
+#                 if lastNode[1] < currLevel:
+#                     parentStack.append(lastNode)
+#                      
+#                 # Pop off unsuitable parents
+#                 while True:
+#                     if parentStack[-1][1] >= currLevel:
+#                         parentStack.pop()
+#                     else:
+#                         break
+#                      
+#                 # Make my BookmarkNode and stuff
+#                 if len(parentStack) > 0:
+#                     myNode = BookmarkNode(parentStack[-1][0], self._generateParagraphHTMLNode(p, 0)[0].text_content(), anchorId=str(anchorCount))
+#                     lastNode = (myNode, currLevel)
+#                 else:
+#                     myNode = BookmarkNode(lastNode[0], self._generateParagraphHTMLNode(p, 0)[0].text_content(), anchorId=str(anchorCount))
+#                     lastNode = (myNode, currLevel)
+#                      
+#                 anchorCount += 1
+#                  
+#         # Return my root bookmark
+#         return parentStack[0][0]
     
     def getPages(self):
         '''
         Returns the PageNodes for this document.
         '''
         myPages = []
-         
-        for p in self.paragraphData:
-            if 'pageNumber' in p:
-                myPages.append(self._generateParagraphHTMLNode(p, 0)[0].text_content())
+        
+        pages = self._html.xpath("//*[@class='pageNumber']")
+        if pages is not None:
+            for p in pages:
+                myPages.append(p.text_content())
+    #             if 'pageNumber' in p:
+    #                 myPages.append(self._generateParagraphHTMLNode(p, 0)[0].text_content())
          
         return myPages
     

@@ -127,7 +127,7 @@ def parseParagraph(elem, otherData):
             parseData['data'].append(hyperlinkData)
     
     # Generate the HTML from the parse data
-    htmlContent = _generateParagraphHTMLNode(parseData, 0)[0]
+    htmlContent = _generateParagraphHTMLNode(parseData)
                 
     return htmlContent
 
@@ -297,27 +297,21 @@ def _convertOMMLToMathML(ommlNode):
     
     return mathml
  
-def _generateParagraphHTMLNode(p, anchorId):
+def _generateParagraphHTMLNode(p):
     '''
     From a paragraph dictionary, create the HTML for it, and whether the
     anchorID needs to be increased:
     (htmlELement, boolean)
     '''
     pRoot = None
-    incrementAnchorId = False
      
     # Figure out what my root HTML will be
     level = -1
     if 'style' in p:
         if p['style'] in heirarchyStyles:
             level = heirarchyStyles[p['style']]
-            incrementAnchorId = True
              
     pRoot = HTML.Element(htmlLevels[level])
-     
-    # Set the id for bookmark navigation
-    if level >= 0:
-        pRoot.set('id', str(anchorId))
      
     # Loop through the content in the paragraph
     currTextNode = pRoot
@@ -371,7 +365,7 @@ def _generateParagraphHTMLNode(p, anchorId):
         pRoot.set('class', 'pageNumber')
      
     # Return what I got
-    return (pRoot, incrementAnchorId)
+    return pRoot
 
 def _generateTableHTMLNode(t):
     '''
