@@ -5,13 +5,15 @@ Created on Apr 18, 2013
 '''
 import zipfile
 from lxml import etree
+from lxml import objectify
 from lxml import html as HTML
 import os
 import urllib
 import re
 from multiprocessing import Process
 from Queue import Queue, Empty
-from src.threadpool import Pool
+#from src.threadpool import Pool
+from src.threadmap import ThreadMapper
 from src.gui.bookmarks import BookmarkNode
 from src.misc import program_path, temp_path
 from src.docx.paragraph import parseParagraph, parseTable, heirarchyStyles
@@ -21,27 +23,19 @@ ROOT_PATH = program_path('src/docx')
 w_NS = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
 r_NS = '{http://schemas.openxmlformats.org/package/2006/relationships}'
 
-def convert_paragraph_to_html(paraId, elem, otherData):
+def convert_paragraph_to_html(elem, otherData):
     '''
     WARNING: Should only be called by the thread pools that are in the
     DocxDocument class. There is a reason why this is removed and isolated.
     
     Converts a Docx <p> XML element string into a HTML element. Returns the 
     tuple (id, htmlElementString) when done.
-    '''
-    print 'Deserializing my inputs'
-    # Deserialize all of my elements into DOM objects
-    elem = etree.fromstring(elem)
-    otherData['rels'] = [etree.fromstring(f) for f in otherData['rels']]
-    otherData['styles'] = [etree.fromstring(f) for f in otherData['styles']]
-#     for k in otherData['paraStyles'].keys():
-#         otherData['paraStyles'] = etree.fromstring(otherData['paraStyles']) 
-    
+    ''' 
     print 'Parsing paragraph'
     if elem.tag == '{0}p'.format(w_NS):
-        return (paraId, HTML.tostring(parseParagraph(elem, otherData)))
+        return HTML.tostring(parseParagraph(elem, otherData))
     elif elem.tag == '{0}tbl'.format(w_NS):
-        return (paraId, HTML.tostring(parseTable(elem, otherData)))
+        return HTML.tostring(parseTable(elem, otherData))
     
     return None
 
@@ -114,51 +108,63 @@ class DocxDocument(object):
         
         # Open my main document file
         document = zip.open('word/document.xml', 'r')
-        tree = etree.parse(document)
+        tree = objectify.parse(document)
         document.close()
         root = tree.getroot()
         
         # Get all of the paragraphs elements in my docx
         paragraphs = root.findall('./{0}body/*'.format(w_NS))
-        self.paragraphData = {}
+        self.paragraphData = []
         
         # Keep track of my progress
         self.numParagraphs = len(paragraphs)
         self.numCompleted = 0
         
-        # Queue up all of my paragraphs to my thread pool
-        threadPool = Pool()
-        idCounter = 0
-        for p in paragraphs:
+        # Get my multithreaded mapper on my paragraphs
+        tm = ThreadMapper(paragraphs, convert_paragraph_to_html, args=(otherData,), progressHook=progressCallback, cancelHook=checkCancelFunction)
+        tm.start()
+        tm.join()
+        
+        self._error = None
+        
+        if tm.success():
+            self.paragraphData = tm.results()
+            print 'Paragraph results:', self.paragraphData
             
-            if checkCancelFunction is not None:
-                if checkCancelFunction():
-                    break
-                
-            threadPool.addTask(convert_paragraph_to_html, self._appendParagraphResult, args=(idCounter, etree.tostring(p), otherData)) 
-            idCounter += 1
-        
-        # After all paragraphs have been queued, just check for cancel
-        print 'All paragraphs queued! Waiting for them to finish...'
-        interrupted = False
-        while True:
-            if checkCancelFunction is not None:
-                if checkCancelFunction():
-                    threadPool.stop()
-                    interrupted = True
-                    break
-            if not threadPool.hasTasks():
-                break
-        
-        # Check that I didn't get any errors
-        self._error = threadPool.getErrors()
-        if self._error:
-            interrupted = True
-            self._error = self._error[0]
-        
-        # If I haven't been interrupted at this point, construct HTML
-        if not interrupted:
-            threadPool.join()
+            
+#         threadPool = Pool()
+#         idCounter = 0
+#         
+#         for p in paragraphs:
+#             
+#             if checkCancelFunction is not None:
+#                 if checkCancelFunction():
+#                     break
+#                 
+#             threadPool.addTask(convert_paragraph_to_html, self._appendParagraphResult, args=(idCounter, etree.tostring(p), otherData)) 
+#             idCounter += 1
+#         
+#         # After all paragraphs have been queued, just check for cancel
+#         print 'All paragraphs queued! Waiting for them to finish...'
+#         interrupted = False
+#         while True:
+#             if checkCancelFunction is not None:
+#                 if checkCancelFunction():
+#                     threadPool.stop()
+#                     interrupted = True
+#                     break
+#             if not threadPool.hasTasks():
+#                 break
+#         
+#         # Check that I didn't get any errors
+#         self._error = threadPool.getErrors()
+#         if self._error:
+#             interrupted = True
+#             self._error = self._error[0]
+#         
+#         # If I haven't been interrupted at this point, construct HTML
+#         if not interrupted:
+#             threadPool.join()
         
             print 'Putting together HTML...'
             self._html = HTML.Element('html')
@@ -169,6 +175,14 @@ class DocxDocument(object):
             
             self._prepareHead(head)
             self._prepareBody(body)
+        
+        else:
+            # Set the error as the first error I encountered
+            self._error = tm.errors()
+            if len(self._error) > 0:
+                self._error = self._error[0]
+            else:
+                self._error = None
         
         print 'Waiting for image saving thread to finish...'
         saveImagesThread.join()
@@ -254,17 +268,17 @@ class DocxDocument(object):
          
     def _getRels(self, zip):
         relFile = zip.open('word/_rels/document.xml.rels', 'r')
-        myRels = etree.parse(relFile)
+        myRels = objectify.parse(relFile)
         myRels = myRels.findall('./{0}Relationship'.format(r_NS))
         relFile.close()
-        return [etree.tostring(f) for f in myRels]
+        return myRels
      
     def _getStyles(self, zip):
         stylesFile = zip.open('word/styles.xml', 'r')
-        myStyles = etree.parse(stylesFile)
+        myStyles = objectify.parse(stylesFile)
         myStyles = myStyles.findall('./{0}style'.format(w_NS))
         stylesFile.close()
-        return [etree.tostring(f) for f in myStyles]
+        return myStyles
      
     def _getParaStyles(self, styles):
         '''
@@ -273,10 +287,9 @@ class DocxDocument(object):
         '''
         myDict = {}
         for s in styles:
-            sElem = etree.fromstring(s)
-            query = sElem.find('./{0}name'.format(w_NS))
+            query = s.find('./{0}name'.format(w_NS))
             if query != None:
-                key = sElem.get('{0}styleId'.format(w_NS))
+                key = s.get('{0}styleId'.format(w_NS))
                 value = query.get('{0}val'.format(w_NS))
                 myDict[key] = value
         return myDict
@@ -329,10 +342,10 @@ class DocxDocument(object):
         head.append(css)
         
     def _prepareBody(self, body):
-        sortedParas = sorted(self.paragraphData.iteritems(), key=lambda x: x[0])
-        for p in sortedParas:
-            if p[1] is not None:
-                body.append(p[1])
+        #sortedParas = sorted(self.paragraphData.iteritems(), key=lambda x: x[0])
+        for p in self.paragraphData:
+            if p is not None:
+                body.append(HTML.fromstring(p))
                 
         # Get all of the headings and add anchor ids to them
         headings = body.xpath('//h1 | //h2 | //h3 | //h4 | //h5 | //h6')
@@ -352,3 +365,7 @@ class DocxImportError(Exception):
     
     def __str(self):
         return self.message
+
+
+if __name__ == '__main__':
+    pass
