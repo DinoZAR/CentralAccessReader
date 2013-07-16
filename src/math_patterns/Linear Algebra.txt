@@ -1,0 +1,195 @@
+//  _     _                       
+// | |   (_)_ __   ___  __ _ _ __ 
+// | |   | | '_ \./ _ \/ _` | '__|
+// | |___| |_| | |  __/ (_| | |   
+// |__/ \|_| | |_|\___\_| |_|_|_ __ __ _ 
+//   / _ \ | |/ _` |/ _ \ '_ \| '__/ _` |
+//  / ___ \| | (_| |  __/ |_) | | | (_| |
+// /_/   \_\_|\__, |\___|_.__/|_|  \__,_|
+//            |___/                      
+//                                                   
+// --------------
+// Order Matters!
+// --------------
+//
+// The MathML parser is entirely sequential. Once it finds all cases of the
+// current pattern and combines the different pattern's elements into singular
+// entities, the pattern is no longer used in later matching. This means you
+// must order patterns correctly to produce results you expect.
+//
+// -----------------
+// Expected Ordering
+// -----------------
+//
+// In order for patterns to match correctly, you should have patterns grouped
+// and have those groups ordered in the following way: 
+//
+// 1. Symbol Code (like variables and Unicode)
+// 2. Fraction-Based (like derivatives)
+// 3. Over-Under (like sums and integrals)
+// 4. Parenthetical Expressions (like square roots or things in parenthesis)
+// 5. Generic Fallbacks (like fractions, superscripting, and subscripting)
+// ------------------------------------------------------------------------------
+// Symbol Code
+// ------------------------------------------------------------------------------
+
+import _codes.txt
+
+import _Numbers.txt
+
+// Unicodes and MathML codes for operators
+slash = divideBack -> ', backslash,'
+slash = divide -> ', slash,'
+times = timesCross -> 'cross,'
+diamond = mi("&#8900;") -> 'diamond'
+identical = mi("&#8801;") -> 'identical'
+plus = mo("+") -> 'plus'
+summation = mi("&#8721;") -> 'summation'
+tilde = mo("&#732;") -> 'not'
+tilde = mo("~") -> 'not'
+tilde = mi("~") -> 'not'
+times = mi("&#8901;") -> 'dot'
+times = mi("&#59791;") -> 'dot'
+
+// Parentheses, Brackets, Braces, and Bars
+closeBrace = mo("}") -> 'right curly bracket'
+closeBracket = mo("]") -> 'right square bracket'
+closeParen = mo(")") -> 'right parentheses'
+leftAngleBracket = mi("&#9001;") -> 'left angle bracket'
+leftAngleBracket = mo("&#9001;") -> 'left angle bracket'
+openBrace = mo("{") -> 'left curly bracket'
+openBracket = mo("[") -> 'left square bracket'
+rightAngleBracket = mi("&#9002;") -> 'right angle bracket'
+rightAngleBracket = mo("&#9002;") -> 'right angle bracket'
+bullet = mi("&#8226;") -> 'dot'
+bullet = bullet -> 'dot'
+dot = mo("&#775;") -> 'dot'
+dot = mi("&#183;") -> 'dot'
+perpendicular = mi("&#8869;") -> 'up tack'
+square = mi("&#9633;") -> 'white square'
+
+// Logic
+and = mo("&#8743;") -> 'wedge (and)'
+because = mo("&#8757;") -> 'because'
+compliment = mi("&#8705;") -> 'is a compliment of'
+containsNormalSubgroup = mi("&#8883;") -> 'contains as normal subgroup'
+exists = mo("&#8707;") -> 'there exists'
+factorial = mo("!") -> 'exclamation point'
+forAll = mo("&#8704;") -> 'Upside-down A'
+greaterThan = mo("&gt;") -> 'greater than'
+greaterThan = mi("&gt;") -> 'greater than'
+isElement = mo("&#8712;") -> 'element'
+isNotElement = mo("&#8713;") -> 'is not an element of'
+lessThan = mo("&lt;") -> 'less than'
+lessThan = mi("&lt;") -> 'less than'
+not = mo("&#172;") -> 'not'
+or = mo("&#8744;") -> 'wedge (or)'
+properSubsetRight = mo("&#8834;") -> 'subset'
+properSubsetLeft = mo("&#8835;") -> 'horseshoe'
+therefore = mo("&#8756;") -> 'therefore'
+
+e [variable] = mi("e") -> '"e"'
+i [variable] = mi("i") -> '"i"'
+z [variable] = mi("z") -> '"z"'
+
+bbcapR = mi("&#8477;") -> 'blackboard cap R'
+
+infinityLogic = infinity -> 'lemniscate'
+
+
+// ------------------------------------------------------------------------------
+// Logic-based
+// ------------------------------------------------------------------------------
+barWedge = munder(or bar) -> 'bar wedge'
+existsOne = exists factorial -> 'backwards E followed by exclamation'
+intersection = munderover(intersection mrow() mrow()) -> 'intersection'
+notExist = menclose(exists) -> 'backwards E with slash'
+parallelBars = verticalBar verticalBar -> 'parallel bars'
+quadBars = mover(identical bar) -> 'quadruple bars'
+quadBars = munder(identical bar) -> 'quadruple bars'
+union = munderover(union mrow() mrow()) -> 'union'
+
+// Strikes and Slashes
+import _Vocab.txt
+
+import _BordersSlashes.txt
+
+dubsub = msub( + mrow( + comma + )) -> '{1} double subscript {2} comma {4}'
+
+//---------------------------------------------------------------
+// Trigonometry-Specific
+//---------------------------------------------------------------
+
+import _Trig.txt
+import _Integrals.txt
+import _PowersPrimes.txt
+
+// Syntax Quirks
+doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'
+doubleBarSyn = munder(munder(mrow(+) bar) bar) -> '{1} over double bar'
+doubleDagger = dagger dagger -> 'double dagger'
+
+
+// ------------------------------------------------------------------------------
+// Fraction-based
+// ------------------------------------------------------------------------------
+integral = msub([integral] ?) -> '{1} sub {2} of,'
+
+
+// ------------------------------------------------------------------------------
+// Conditions for arrows based on over or under
+// ------------------------------------------------------------------------------
+overBothArrow = munder(? [arrow]) -> '{1}, over {2},'
+underBothArrow = mover(? [arrow]) -> '{1}, under {2},'
+overUnderArrowB = munderover(rightArrow mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
+overUnderArrowB = munderover(leftArrow mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
+overUnderArrowB = munderover(bothArrow mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
+overUnderArrowB = munderover(rightHarpoon mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
+
+
+// ------------------------------------------------------------------------------
+// Under-Over, Integrals, Products, and Summations
+// ------------------------------------------------------------------------------
+backPrimes = mmultiscripts(? ? ? ?) -> '{4} {1}'
+
+// Limits
+limit = munderover(mrow(l i m) mrow(? ? ?) ?) -> 'the limit as {4}, approaches {6}, of'
+limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4}, of'
+
+
+// ------------------------------------------------------------------------------
+// Parenthetical Expressions
+// ------------------------------------------------------------------------------
+cuberoot = mroot(mrow(+) mrow(three)) -> 'the cube root of {1},'
+squareRoot = mroot(mrow(+) mrow(two)) -> 'the square root of {1},'
+fourthRoot = mroot(mrow(+) mrow(four)) -> 'the fourth root of {1},'
+rootPowers = mroot(mrow(+) mrow(+)) -> 'the {2} root of {1},'
+squareRoot = msqrt(+) -> 'the square root of {1},'
+
+leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left superscript {2},'
+leftSub = msup( mrow() mrow(?)) -> 'left subscript {1},'
+leftSup = msub( mrow() mrow(?)) -> 'left superscript {1},'
+
+// ------------------------------------------------------------------------------
+// Matrices
+// ------------------------------------------------------------------------------
+matrix = mrow(mtable(#)) -> 'matrix {1}'
+matrix = mtable(#) -> 'matrix {1}'
+matrixPar = mfenced(mrow(mtable(+))) -> 'matrix {1}'
+tableColumn = mtd(+) -> '{1},'
+tableRow = mtr(+) -> 'row, {1}'
+detMat = d e t matrixPar -> 'determinant of the {4}'
+detMat = d e t matrix -> 'determinant of the {4}'
+determ = d e t -> 'determinant of the square matrix'
+
+
+// ------------------------------------------------------------------------------
+// Generic Fallbacks, Final Collectors
+// ------------------------------------------------------------------------------
+
+fencedABS = mfenced<open="|",close="|">(+) -> 'determinant of the square matrix {1},'
+
+//import _SoftFractions.txt
+import _Fractions.txt
+import _Fences.txt
+import _Final.txt
