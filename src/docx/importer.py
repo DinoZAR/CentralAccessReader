@@ -10,6 +10,7 @@ from lxml import html as HTML
 import os
 import urllib
 import traceback
+from threading import Thread
 from PyQt4.QtCore import QThread, pyqtSignal, QUrl
 from src.gui.bookmarks import BookmarkNode
 from src.misc import program_path, app_data_path, temp_path, REPORT_BUG_URL
@@ -69,7 +70,6 @@ def clean_XML_input(input):
         input = re.sub(r"[\x01-\x1F\x7F]", "", input)  
               
     return input.decode('utf8')
-
 
 class DocxImporterThread(QThread):
     '''
