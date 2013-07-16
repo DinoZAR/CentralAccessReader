@@ -466,9 +466,19 @@ class DocxDocument(object):
                 
                 # Column contents
                 if child.tag == '{0}tc'.format(w_NS):
-                    # Get the paragraph in there
-                    myP = child.find('./{0}p'.format(w_NS))
-                    rowData['columns'].append(self._parseParagraph(myP))
+                    
+                    # Get the paragraphs and tables in there
+                    stuff = child.findall('./*')
+                    colData = []
+                    for s in stuff:
+                        if s.tag == '{0}p'.format(w_NS):
+                            newPara = self._parseParagraph(s)
+                            if len(newPara['data']) > 0:
+                                colData.append(newPara)
+                        elif s.tag == '{0}tbl'.format(w_NS):
+                            colData.append(self._parseTable(s))
+                    
+                    rowData['columns'].append(colData)
                     
             parseData['rows'].append(rowData)
                     
@@ -590,8 +600,12 @@ class DocxDocument(object):
             
             for c in r['columns']:
                 cRoot = etree.SubElement(rRoot, 'td')
-                cRoot.append(self._generateParagraphHTMLNode(c, 0)[0])
                 
+                for item in c:
+                    if item['type'] == 'paragraph':
+                        cRoot.append(self._generateParagraphHTMLNode(item, 0)[0])
+                    elif item['type'] == 'table':
+                        cRoot.append(self._generateTableHTMLNode(item))
         return tRoot
     
     def _generateParagraphHTMLNode(self, p, anchorId):
