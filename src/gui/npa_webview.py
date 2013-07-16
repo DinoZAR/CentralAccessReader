@@ -35,29 +35,38 @@ class NPAWebView(QWebView):
         self.linkClicked.connect(self.myLinkClicked)
         
     def dragEnterEvent(self, e):
-        print 'I\'m bringing something into CAR!'
         if e.mimeData().hasUrls:
-            e.accept()
+            url = unicode(e.mimeData().urls()[0].toLocalFile())
+            ext = os.path.splitext(url)[1]
+            if ext == '.docx' or ext == '.doc':
+                e.setDropAction(Qt.CopyAction)
+                e.accept()
+            else:
+                e.ignore()
         else:
             e.ignore()
             
-    def dragMoveEvent(self, event):
-        print 'Moving the drag-n-drop item!'
-        if event.mimeData().hasUrls:
-            event.setDropAction(Qt.CopyAction)
-            event.accept()
+    def dragMoveEvent(self, e):
+        if e.mimeData().hasUrls:
+            url = unicode(e.mimeData().urls()[0].toLocalFile())
+            ext = os.path.splitext(url)[1]
+            if ext == '.docx' or ext == '.doc':
+                e.setDropAction(Qt.CopyAction)
+                e.accept()
+            else:
+                e.ignore()
         else:
-            event.ignore()
+            e.ignore()
             
     def dropEvent(self, e):
-        print 'Dropping the cargo!'
         if e.mimeData().hasUrls:
             e.setDropAction(Qt.CopyAction)
             e.accept()
             url = unicode(e.mimeData().urls()[0].toLocalFile())
-            
             if os.path.splitext(url)[1] == '.docx':
                 self.mainWindow.openDocx(url)
+            elif os.path.splitext(url)[1] == '.doc':
+                self.mainWindow.showDocNotSupported()
         
     def wheelEvent(self, event):
         modifiers = QApplication.keyboardModifiers()

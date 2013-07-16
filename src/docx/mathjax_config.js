@@ -1,5 +1,6 @@
 MathJax.Ajax.timeout = 1000;  // 1 second rather than 15 seconds
 MathJax.Hub.Config({
+	messageStyle: 'none',
 	"HTML-CSS": {
 		imageFont: null
 	}

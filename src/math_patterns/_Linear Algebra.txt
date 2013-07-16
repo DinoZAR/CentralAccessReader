@@ -1,11 +1,11 @@
-//  _     _                       
-// | |   (_)_ __   ___  __ _ _ __ 
-// | |   | | '_ \./ _ \/ _` | '__|
-// | |___| |_| | |  __/ (_| | |   
-// |__/ \|_| | |_|\___\_| |_|_|_ __ __ _ 
-//   / _ \ | |/ _` |/ _ \ '_ \| '__/ _` |
-//  / ___ \| | (_| |  __/ |_) | | | (_| |
-// /_/   \_\_|\__, |\___|_.__/|_|  \__,_|
+//  _     _                       
+// | |   (_)_ __   ___  __ _ _ __ 
+// | |   | | '_ \./ _ \/ _` | '__|
+// | |___| |_| | |  __/ (_| | |   
+// |__/ \|_| | |_|\___\_| |_|_|_ __ __ _ 
+//   / _ \ | |/ _` |/ _ \ '_ \| '__/ _` |
+//  / ___ \| | (_| |  __/ |_) | | | (_| |
+// /_/   \_\_|\__, |\___|_.__/|_|  \__,_|
 //            |___/                      
 //                                                   
 // --------------
@@ -33,14 +33,20 @@
 // Symbol Code
 // ------------------------------------------------------------------------------
 
+
 import _codes.txt
 
 import _Numbers.txt
 
 // Unicodes and MathML codes for operators
+
+
 slash = divideBack -> ', backslash,'
+
 slash = divide -> ', slash,'
+
 times = timesCross -> 'cross,'
+
 diamond = mi("&#8900;") -> 'diamond'
 identical = mi("&#8801;") -> 'identical'
 plus = mo("+") -> 'plus'
@@ -50,6 +56,7 @@ tilde = mo("~") -> 'not'
 tilde = mi("~") -> 'not'
 times = mi("&#8901;") -> 'dot'
 times = mi("&#59791;") -> 'dot'
+
 
 // Parentheses, Brackets, Braces, and Bars
 closeBrace = mo("}") -> 'right curly bracket'
@@ -70,23 +77,24 @@ square = mi("&#9633;") -> 'white square'
 
 // Logic
 and = mo("&#8743;") -> 'wedge (and)'
-because = mo("&#8757;") -> 'because'
+because = mo("&#8757;") -> 'upside-down triple dot'
 compliment = mi("&#8705;") -> 'is a compliment of'
 containsNormalSubgroup = mi("&#8883;") -> 'contains as normal subgroup'
-exists = mo("&#8707;") -> 'there exists'
+exists = mo("&#8707;") -> 'Backwards E'
 factorial = mo("!") -> 'exclamation point'
 forAll = mo("&#8704;") -> 'Upside-down A'
 greaterThan = mo("&gt;") -> 'greater than'
 greaterThan = mi("&gt;") -> 'greater than'
-isElement = mo("&#8712;") -> 'element'
+isElement = mo("&#8712;") -> 'element sign'
 isNotElement = mo("&#8713;") -> 'is not an element of'
 lessThan = mo("&lt;") -> 'less than'
 lessThan = mi("&lt;") -> 'less than'
-not = mo("&#172;") -> 'not'
+not = mo("&#172;") -> 'not sign'
 or = mo("&#8744;") -> 'wedge (or)'
 properSubsetRight = mo("&#8834;") -> 'subset'
 properSubsetLeft = mo("&#8835;") -> 'horseshoe'
-therefore = mo("&#8756;") -> 'therefore'
+therefore = mo("&#8756;") -> 'triple dot'
+
 
 e [variable] = mi("e") -> '"e"'
 i [variable] = mi("i") -> '"i"'
@@ -94,7 +102,8 @@ z [variable] = mi("z") -> '"z"'
 
 bbcapR = mi("&#8477;") -> 'blackboard cap R'
 
-infinityLogic = infinity -> 'lemniscate'
+// Other symbols
+
 
 
 // ------------------------------------------------------------------------------
@@ -113,16 +122,16 @@ union = munderover(union mrow() mrow()) -> 'union'
 import _Vocab.txt
 
 import _BordersSlashes.txt
-
+
+// Linear
 dubsub = msub( + mrow( + comma + )) -> '{1} double subscript {2} comma {4}'
+
 
 //---------------------------------------------------------------
 // Trigonometry-Specific
 //---------------------------------------------------------------
 
-import _Trig.txt
-import _Integrals.txt
-import _PowersPrimes.txt
+import _Trig.txt// Products and Unionsimport _Integrals.txt//Powers and Primesimport _PowersPrimes.txt
 
 // Syntax Quirks
 doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'
@@ -134,6 +143,9 @@ doubleDagger = dagger dagger -> 'double dagger'
 // Fraction-based
 // ------------------------------------------------------------------------------
 integral = msub([integral] ?) -> '{1} sub {2} of,'
+
+// Other symbols
+infinityLogic = infinity -> 'lemniscate'
 
 
 // ------------------------------------------------------------------------------
@@ -153,43 +165,39 @@ overUnderArrowB = munderover(rightHarpoon mrow(+) mrow(+)) -> '{2}, above {1}, s
 backPrimes = mmultiscripts(? ? ? ?) -> '{4} {1}'
 
 // Limits
+
 limit = munderover(mrow(l i m) mrow(? ? ?) ?) -> 'the limit as {4}, approaches {6}, of'
 limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4}, of'
+
 
 
 // ------------------------------------------------------------------------------
 // Parenthetical Expressions
 // ------------------------------------------------------------------------------
-cuberoot = mroot(mrow(+) mrow(three)) -> 'the cube root of {1},'
-squareRoot = mroot(mrow(+) mrow(two)) -> 'the square root of {1},'
-fourthRoot = mroot(mrow(+) mrow(four)) -> 'the fourth root of {1},'
-rootPowers = mroot(mrow(+) mrow(+)) -> 'the {2} root of {1},'
-squareRoot = msqrt(+) -> 'the square root of {1},'
-
-leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left superscript {2},'
-leftSub = msup( mrow() mrow(?)) -> 'left subscript {1},'
-leftSup = msub( mrow() mrow(?)) -> 'left superscript {1},'
+cuberoot = mroot(mrow(+) mrow(three)) -> 'the cube root of {1},'squareRoot = mroot(mrow(+) mrow(two)) -> 'the square root of {1},'fourthRoot = mroot(mrow(+) mrow(four)) -> 'the fourth root of {1},'rootPowers = mroot(mrow(+) mrow(+)) -> 'the {2} root of {1},'squareRoot = msqrt(+) -> 'the square root of {1},'
+leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left superscript {2},'leftSub = msup( mrow() mrow(?)) -> 'left subscript {1},'leftSup = msub( mrow() mrow(?)) -> 'left superscript {1},'
 
 // ------------------------------------------------------------------------------
 // Matrices
 // ------------------------------------------------------------------------------
+detMat = d e t mfenced(mrow(mtable(#))) -> 'determinant of the matrix {4} end matrix'
+detMat = d e t mrow(mtable(#)) -> 'determinant of the matrix {4} end matrix'
 matrix = mrow(mtable(#)) -> 'matrix {1}'
 matrix = mtable(#) -> 'matrix {1}'
 matrixPar = mfenced(mrow(mtable(+))) -> 'matrix {1}'
 tableColumn = mtd(+) -> '{1},'
 tableRow = mtr(+) -> 'row, {1}'
-detMat = d e t matrixPar -> 'determinant of the {4}'
-detMat = d e t matrix -> 'determinant of the {4}'
-determ = d e t -> 'determinant of the square matrix'
 
+determ = d e t -> 'determinant of the square matrix'
 
 // ------------------------------------------------------------------------------
 // Generic Fallbacks, Final Collectors
 // ------------------------------------------------------------------------------
-
-fencedABS = mfenced<open="|",close="|">(+) -> 'determinant of the square matrix {1},'
-
-//import _SoftFractions.txt
+//import _SoftFractions.txt
 import _Fractions.txt
+
+fencedABS = mfenced<open="|",close="|">(+) -> 'determinant of the square matrix {1},'
+
 import _Fences.txt
+
 import _Final.txt

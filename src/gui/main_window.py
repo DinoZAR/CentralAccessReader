@@ -620,6 +620,8 @@ class MainWindow(QtGui.QMainWindow):
             loaded = False
             while not loaded:
                 QtGui.qApp.processEvents()
+                progress = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetMathTypesetProgress', [])).toInt()
+                self.progressDialog.setValue(progress[0])
                 loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsMathTypeset', [])).toBool()
                     
         self.progressDialog.hide()
@@ -628,6 +630,11 @@ class MainWindow(QtGui.QMainWindow):
     def showOpenDocxDialog(self):
         filePath = QtGui.QFileDialog.getOpenFileName(self, 'Open Docx...',os.path.join(os.path.expanduser('~'), 'Documents'),'(*.docx)')
         self.openDocx(filePath)
+        
+    def showDocNotSupported(self):
+        result = QtGui.QMessageBox.information(self, 'CAR does not support 1997-2003 Word document', 
+                                               'Sorry, this is a 1997-2003 Word file than we don\'t support. Open it in Microsoft Word 2007 or later and save it as "Word Document."' 
+                                               )
             
     def openTutorial(self):
         self.openDocx(misc.program_path('Tutorial.docx'))
