@@ -39,17 +39,17 @@ limit = l i m -> 'limit'
 
 ampersand = mi("&amp;") -> 'ampersand,'
 
-approxEqual = mi("&#8771;") -> 'is approximately equal to,'
+approxEqual = mi("&#8771;") -> 'is approximately equal to'
 
-approxEqualTilde = mi("&#8773;") -> 'is approximately equal to,'
+approxEqualTilde = mi("&#8773;") -> 'is approximately equal to'
 
-approxEqualTilde = mo("&#8773;") -> 'is approximately equal to,'
+approxEqualTilde = mo("&#8773;") -> 'is approximately equal to'
 
 apostrophe = mi("'") -> 'apostrophe'
 
-approxEqual = mi("&#8776;") -> 'is approximately equal to,'
+approxEqual = mi("&#8776;") -> 'is approximately equal to'
 
-approxEqual = mo("&#8776;") -> 'is approximately equal to,'
+approxEqual = mo("&#8776;") -> 'is approximately equal to'
 
 at = mi("@") -> 'at'
 
@@ -71,9 +71,9 @@ coproduct [integral] = mi("&#8720;") -> 'coproduct,'
 
 coproduct [integral] = mo("&#8720;") -> 'coproduct,'
 
-composition = mi("&#8728;") -> 'composition of,'
+composition = mi("&#8728;") -> 'composition of'
 
-dagger = mi("&#8224;") -> 'dagger,'
+dagger = mi("&#8224;") -> 'dagger'
 
 divideBack = mo("&#247;") -> 'divided by,'
 
@@ -85,44 +85,44 @@ dollarSign = mi("$") -> 'dollar sign,'
 
 equals = mo("=") -> 'equals'
 
-equivalent = mi("&#8764;") -> 'is equivalent to,'
+equivalent = mi("&#8764;") -> 'is equivalent to'
 
-greaterThanOrEqual = mi("&#8805;") -> 'is greater than or equal to,'
+greaterThanOrEqual = mi("&#8805;") -> 'is greater than or equal to'
 
-greaterThanOrEqual = mo("&#8805;") -> 'is greater than or equal to,'
+greaterThanOrEqual = mo("&#8805;") -> 'is greater than or equal to'
 
-lessThanOrEqual = mi("&#8804;") -> ' is less than or equal to,'
+lessThanOrEqual = mi("&#8804;") -> ' is less than or equal to'
 
-lessThanOrEqual = mo("&#8804;") -> ' is less than or equal to,'
+lessThanOrEqual = mo("&#8804;") -> ' is less than or equal to'
 
 minus = mo("-") -> 'minus'
 
 minus = mo("&#x2212;") -> 'minus'
 
-minusPlus = mi("&#8723;") -> 'minus or plus,'
+minusPlus = mi("&#8723;") -> 'minus or plus'
 
-minusPlus = mo("&#8723;") -> 'minus or plus,'
+minusPlus = mo("&#8723;") -> 'minus or plus'
 
-muchLessThan = mi("&#8810;") -> 'is much less than,'
+muchLessThan = mi("&#8810;") -> 'is much less than'
 
-muchLessThan = mo("&#8810;") -> 'is much less than,'
+muchLessThan = mo("&#8810;") -> 'is much less than'
 
-muchGreaterThan = mi("&#8811;") -> 'is much greater than,'
+muchGreaterThan = mi("&#8811;") -> 'is much greater than'
 
-muchGreaterThan = mo("&#8811;") -> 'is much greater than,'
+muchGreaterThan = mo("&#8811;") -> 'is much greater than'
 
-minus = mo("&#8722;") -> 'minus,'
+minus = mo("&#8722;") -> 'minus'
 
-notEqual = mi("&#8800;") -> 'is not equal to,'
-notEqual = mo("&#8800;") -> 'is not equal to,'
+notEqual = mi("&#8800;") -> 'is not equal to'
+notEqual = mo("&#8800;") -> 'is not equal to'
 
-percent = mi("%") -> 'percent,'
-plusMinus = mo("&#xB1;") -> 'plus or minus,'
-product [integral] = mi("&#8719;") -> 'product,'
+percent = mi("%") -> 'percent'
+plusMinus = mo("&#xB1;") -> 'plus or minus'
+product [integral] = mi("&#8719;") -> 'product'
 
 questionMark = mi("?") -> 'question mark'
 
-product [integral] = mo("&#8719;") -> 'product,'
+product [integral] = mo("&#8719;") -> 'product'
 times = mo("*") -> 'times'
 times = mi("*") -> 'times'
 
@@ -315,6 +315,8 @@ precedes = mi("&#8826;") -> 'precedes,'
 
 proportional = mi("&#8733;") -> 'proportional to,'
 proportional = mo("&#8733;") -> 'proportional to,'
+
+semicolon = mi(";") -> 'semicolon'
 
 squareImage = mi("&#8849;") -> 'is a square image of or equal to,'
 
@@ -623,3 +625,5 @@ ellipsis = mo("&#8943;") -> 'ellipsis,'
 verticalEllipsis = mi("&#8942;") -> 'vertical ellipsis,'
 
 verticalEllipsis = mo("&#8942;") -> 'vertical ellipsis,'
+
+blankSpace = minus minus -> 'blank'

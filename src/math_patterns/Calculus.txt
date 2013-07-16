@@ -1,10 +1,10 @@
-//    ___     ___     ___    ___     ___     ___    ___     ___   
-//   /\\\\   /\\\\   /\\\\  /\\\\   /\\\\   /\\\\  /\\\\   /\\\\  
-//  /::\\\\ /##\\\\ /://// /##\\\\ /:////_ /#//// /:////_ /##\\\\ 
-// /:/\:\\\\##\#\\\\://// /#/\#\\\\:///\\\\#//// /:///\\\\\#\#\\\\
-// \:\\\/////\##////:\\\\ \#\\\////:\/:////#\\\\ \:\/:////#\#\////
-//  \:\\\\   /#//// \:\\\\ \#\\\\  \:://// \#\\\\ \:://// \##//// 
-//   \////   \////   \////  \////   \////   \////  \////   \////  
+//    ___    ___    ___    ___    ___    ___    ___    ___   
+//   /\  \  /\\\\  /\__\  /\\\\  /\__\  /\\\\  /\__\  /\\\\  
+//  /::\  \/##\\\\/:/  / /##\\\\/:/ _/_/#//// /:/ _/_/##\\\\ 
+// /:/\:\__\#\#\\\\/__/ /#/\#\\\\/_/\__\//// /:/_/\__\#\#\\\\
+// \:\ \/__/\##////\  \ \#\\\////\/:/  /\\\\ \:\/:/  /\#\////
+//  \:\__\  /#////\:\__\ \#\\\\ \::/  /\#\\\\ \::/  /\##//// 
+//   \/__/  \////  \/__/  \////  \/__/  \////  \/__/  \////  
 //                                                                          
 // --------------
 // Order Matters!
@@ -139,12 +139,15 @@ import _FunctionsLimits.txt
 // Parenthetical Expressions
 // ------------------------------------------------------------------------------
 absoluteValue = verticalBar + verticalBar -> 'absolute value {2} end absolute'
-cuberoot = mroot(mrow(+) mrow(three)) -> 'the cube root of {1}'
-squareRoot = mroot(mrow(+) mrow(two)) -> 'the square root of {1}'
-fourthRoot = mroot(mrow(+) mrow(four)) -> 'the fourth root of {1}'
-rootPowers = mroot(mrow(+) mrow(+)) -> 'the {2} root of {1}'
-squareRoot = msqrt(+) -> 'the square root of {1}'
+cuberoot = mroot(mrow(+) mrow(three)) -> 'the cube root of {1},'
+squareRoot = mroot(mrow(+) mrow(two)) -> 'the square root of {1},'
+fourthRoot = mroot(mrow(+) mrow(four)) -> 'the fourth root of {1},'
+rootPowers = mroot(mrow(+) mrow(+)) -> 'the {2} root of {1},'
+squareRoot = msqrt(+) -> 'the square root of {1},'
 
+leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left superscript {2},'
+leftSub = msup( mrow() mrow(?)) -> 'left subscript {1},'
+leftSup = msub( mrow() mrow(?)) -> 'left superscript {1},'
 
 // ------------------------------------------------------------------------------
 // Matrices
@@ -166,6 +169,10 @@ tableRow = mtr(+) -> 'row, {1}'
 leftSubSup = mmultiscipts(mrow(+) ? mrow(+) mrow(+)) -> 'left subscript {2}, left superscript {3}, {1}'
 
 import _Fractions.txt
+
+fencedABS = mfenced<open="|",close="|",separators="|">(mrow(+) mrow(+) mrow(+)) -> 'vertical bar, {1}, vertical bar, {2}, vertical bar, {3}, vertical bar,'
+fencedABS = mfenced<open="|",close="|",separators="|">(mrow(+) mrow(+)) -> 'vertical bar, {1}, vertical bar, {2}, vertical bar,'
+fencedABS = mfenced<open="|",close="|">(+) -> 'absolute value of, {1}, end absolute,'
 
 import _Fences.txt
 

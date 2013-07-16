@@ -1,9 +1,9 @@
 //   ________                             __                 
-//  /  _____/  ____  ____   _____   _____/  |________ ___.__.
-// /   \  ____/ __ \/  _ \ /     \_/ __ \   __\_  __ <   |  |
-// \    \_\  \  ___(  <_> )  Y Y  \  ___/|  |  |  | \/\___  |
-//  \______  /\___  >____/|__|_|  /\___  >__|  |__|   / ____|
-//         \/     \/            \/     \/             \/     
+//  /  _____/  ____  ____   _____   _____/  |________ ___ __
+// /   \  ____/ __ \/  _ \ /     \_/ __ \   __\_  __ \   |  |
+// \    \_\  \  ___(  (_) )  Y Y  \  ___/|  |  |  | \/\___  |
+//  \______  /\___  \____/\  |_|  /\____\|__|  |__|   / ____/
+//         \/     \/       \/   \/                    \/     
 //
 // --------------
 // Order Matters!
@@ -60,7 +60,12 @@ import _BordersSlashes.txt
 
 import _Trig.txt
 
-// Powers and Primes
+// Products and Unions
+
+import _Integrals.txt
+
+//Powers and Primes
+
 import _PowersPrimes.txt
 
 // Syntax Quirks
@@ -90,10 +95,23 @@ underBothArrow = mover(? bar) -> 'the line segment {1},'
 underBothArrow = mover(? arc) -> 'the arc {1},'
 underBothArrow = mover(? leftArrow) -> 'the directed line segment {1},'
 underBothArrow = mover(? rightArrow) -> 'the directed line segment {1},'
-thePoint = p colon openParen ? comma ? closeParen -> 'the point {4}, {6},'
-thePoint = p openParen ? comma ? closeParen -> 'the point {3}, {5},'
-thePoint = openParen ? comma ? closeParen -> 'the point {2}, {4},'
-thePoint = openParen ? comma ? comma ? closeParen -> 'the point {2}, {4}, {6}'
+thePoint = p colon openParen + comma + closeParen -> 'the point {4}, {6},'
+thePoint = p openParen + comma + closeParen -> 'the point {3}, {5},'
+thePoint = openParen + comma + closeParen -> 'the point {2}, {4},'
+thePoint = openParen + comma + comma ? closeParen -> 'the point {2}, {4}, {6}'
+
+thePoint = p colon mfenced<open="(",close=")">(mrow( + comma + )) -> 'the point {3}, {5},'thePoint = p mfenced<open="(",close=")">(mrow( + comma + )) -> 'the point {2}, {4},'
+thePoint = mfenced<open="(",close=")">(mrow( + comma + comma + )) -> 'the point {1}, {3}, {5},'
+thePoint = mfenced<open="(",close=")">(mrow( + comma + )) -> 'the point {1}, {3},'
+
+thePoint = p colon openBrace + closeBrace -> 'the set {4},'
+thePoint = p openBrace + closeBrace -> 'the set {3},'
+thePoint = openBrace + closeBrace -> 'the set {2},'
+
+thePoint = p colon mfenced<open="{",close="}">(mrow(+)) -> 'the set {3},'
+thePoint = p mfenced<open="{",close="}">(mrow(+)) -> 'the set {2},'
+thePoint = mfenced<open="{",close="}">(mrow(+)) -> 'the set {1},'
+
 
 // Postulates (do we want these?)
 angleangleside = a a s -> 'angle angle side'
@@ -128,19 +146,21 @@ backPrimes = mmultiscripts(? ? ? ?) -> '{4} {1}'
 limit = munderover(mrow(l i m) mrow(? ? ?) ?) -> 'the limit as {4}, approaches {6}, of'
 limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4}, of'
 
-// Products and Unions
 
-import _Integrals.txt
-
 
 // ------------------------------------------------------------------------------
 // Parenthetical Expressions
 // ------------------------------------------------------------------------------
 absoluteValue = verticalBar + verticalBar -> 'absolute value {2} end absolute'
-cuberoot = mroot(mrow(+) mrow(three)) -> 'the cube root of {1}'
-rootPowers = mroot(mrow(+) mrow(+)) -> 'the {2} root of {1}'
-squareRoot = msqrt(+) -> 'the square root of {1}'
-
+cuberoot = mroot(mrow(+) mrow(three)) -> 'the cube root of {1},'
+squareRoot = mroot(mrow(+) mrow(two)) -> 'the square root of {1},'
+fourthRoot = mroot(mrow(+) mrow(four)) -> 'the fourth root of {1},'
+rootPowers = mroot(mrow(+) mrow(+)) -> 'the {2} root of {1},'
+squareRoot = msqrt(+) -> 'the square root of {1},'
+
+leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left superscript {2},'
+leftSub = msup( mrow() mrow(?)) -> 'left subscript {1},'
+leftSup = msub( mrow() mrow(?)) -> 'left superscript {1},'
 
 // ------------------------------------------------------------------------------
 // Matrices
@@ -159,6 +179,10 @@ tableRow = mtr(+) -> 'row, {1}'
 //import _SoftFractions.txt
 
 import _Fractions.txt
+
+fencedABS = mfenced<open="|",close="|",separators="|">(mrow(+) mrow(+) mrow(+)) -> 'vertical bar, {1}, vertical bar, {2}, vertical bar, {3}, vertical bar,'
+fencedABS = mfenced<open="|",close="|",separators="|">(mrow(+) mrow(+)) -> 'vertical bar, {1}, vertical bar, {2}, vertical bar,'
+fencedABS = mfenced<open="|",close="|">(+) -> 'absolute value of, {1}, end absolute,'
 
 import _Fences.txt
 

@@ -1,8 +1,8 @@
 //
-//  ___  ____   __   ____  ____  ___  ____  ____  ___  ___ 
-// / __)(_  _) /__\ (_  _)(_  _)/ __)(_  _)(_  _)/ __)/ __)
-// \__ \  )(  /(__)\  )(   _)(_ \__ \  )(   _)(_( (__ \__ \
-// (___/ (__)(__)(__)(__) (____)(___/ (__) (____)\___)(___/
+//  ___ ____  __  ____ ____ ___ ____ ____ ___ ___ 
+// / __)_  _)/__\(_  _)_  _) __)_  _)_  _) __) __)
+// \__ \ )( /(__)\ )(  _)(_\__ \ )(  _)(( (__\__ \
+// (___/(__)__)(__)__)(____)___/(__)(____)___)___/
 //
 // --------------
 // Order Matters!
@@ -59,7 +59,12 @@ import _BordersSlashes.txt
 
 import _Trig.txt
 
-// Powers and Primes
+// Products and Unions
+
+import _Integrals.txt
+
+//Powers and Primes
+
 import _PowersPrimes.txt
 
 // Syntax Quirks
@@ -113,19 +118,20 @@ backPrimes = mmultiscripts(? ? ? ?) -> '{4} {1}'
 limit = munderover(mrow(l i m) mrow(? ? ?) ?) -> 'the limit as {4}, approaches {6}, of'
 limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4}, of'
 
-// Products and Unions
-
-import _Integrals.txt
-
 
 // ------------------------------------------------------------------------------
 // Parenthetical Expressions
 // ------------------------------------------------------------------------------
 absoluteValue = verticalBar + verticalBar -> 'absolute value {2} end absolute'
-cuberoot = mroot(mrow(+) mrow(three)) -> 'the cube root of {1}'
-rootPowers = mroot(mrow(+) mrow(+)) -> 'the {2} root of {1}'
-squareRoot = msqrt(+) -> 'the square root of {1}'
+cuberoot = mroot(mrow(+) mrow(three)) -> 'the cube root of {1},'
+squareRoot = mroot(mrow(+) mrow(two)) -> 'the square root of {1},'
+fourthRoot = mroot(mrow(+) mrow(four)) -> 'the fourth root of {1},'
+rootPowers = mroot(mrow(+) mrow(+)) -> 'the {2} root of {1},'
+squareRoot = msqrt(+) -> 'the square root of {1},'
 
+leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left superscript {2},'
+leftSub = msup( mrow() mrow(?)) -> 'left subscript {1},'
+leftSup = msub( mrow() mrow(?)) -> 'left superscript {1},'
 
 // ------------------------------------------------------------------------------
 // Matrices

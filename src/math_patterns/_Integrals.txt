@@ -166,7 +166,7 @@ integralSyn = msubsup(integralCW) -> 'the {1} of'
 integralSyn = integralCW mrow(+) -> 'the {1} of {2}'
 
 integralSyn = msubsup(volumeIntegral mrow(+) mrow(+)) -> 'the {1} from {2}, to {3}, of'
-integralSyn = msubsup(volumeIntegral mrow(+) mrow()) -> 'the {1} from {2}, of'
+integralSyn = msubsup(volumeIntegral mrow(+) ?) -> 'the {1} from {2}, of'
 integralSyn = msubsup(volumeIntegral mrow() mrow(+)) -> 'the {1} to {2}, of'
 integralSyn = msubsup(volumeIntegral mrow(+)) -> 'the {1} from {2}, of'
 integralSyn = msubsup(volumeIntegral) -> 'the {1} of'
