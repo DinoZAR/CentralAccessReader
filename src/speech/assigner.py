@@ -168,8 +168,10 @@ class Assigner(object):
         i = 0
         def myProgressCallback(percent):
             if progressCallback:
-                p = int(percent * (float(i) / len(element)))
-                progressCallback(p)
+                p = (float(i) / len(element)) * 100.0
+                p += (1.0 / len(element)) * percent
+                print 'P is', p
+                progressCallback(int(p))
         
         for child in element:
             
