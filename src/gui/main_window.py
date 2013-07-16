@@ -613,6 +613,8 @@ class MainWindow(QtGui.QMainWindow):
             loaded = False
             while not loaded:
                 QtGui.qApp.processEvents()
+                progress = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetMathTypesetProgress', [])).toInt()
+                self.progressDialog.setValue(progress[0])
                 loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsMathTypeset', [])).toBool()
                     
         self.progressDialog.hide()

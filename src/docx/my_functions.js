@@ -10,6 +10,7 @@ var startFromSearch = false;
 
 // Detect when MathJax is done messing around with the MathML
 var finishedMathTypeset = false;
+var mathTypeSetProgress = 0;
 MathJax.Hub.Queue(function () {
 	finishedMathTypeset = true;
 });
@@ -48,6 +49,14 @@ function IsPageLoaded() {
 // Returns true when MathJax is done typesetting the math equations
 function IsMathTypeset() {
 	return finishedMathTypeset;
+}
+
+// Returns the typeset progress from MathJax. Returns an integer from 0-100.
+MathJax.Hub.processMessage = function (state, type) {
+	mathTypeSetProgress = Math.floor((state.i/state.scripts.length) * 50);
+}
+function GetMathTypesetProgress() {
+	return mathTypeSetProgress * 2;
 }
 
 // Used in page navigation to move to an anchor point with specific id
