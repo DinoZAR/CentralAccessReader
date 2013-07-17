@@ -27,16 +27,12 @@ def main():
     
     doc = DocxDocument(testPath, progressHook=printProgress)
     
-    f = open(r'C:\Users\GraffeS\Desktop\more tests.html', 'wb')
-    contents = doc.getMainPage()
-    f.write(contents)
-    f.close()
+    with open(r'C:\Users\GraffeS\Desktop\more tests.html', 'wb') as f:
+        contents = doc.getMainPage()
+        f.write(contents)
     
-#     if doc.getError():
-#         raise doc.getError()
-    
-    print doc.getHeadings()
-    print doc.getPages()
+    print 'Headings:', doc.getHeadings()
+    print 'Pages:', doc.getPages()
     print 'Done!'
 
 # Just to protect this module when using the process pool

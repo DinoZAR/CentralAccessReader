@@ -9,13 +9,11 @@ from lxml import html as HTML
 import os
 import urllib
 import re
+from cStringIO import StringIO
 from threading import Thread
-from Queue import Queue, Empty
-#from src.threadpool import Pool
-from src.threadmap import ThreadMapper
 from src.gui.bookmarks import BookmarkNode
 from src.misc import program_path, temp_path
-from src.docx.paragraph import parseParagraph, parseTable, heirarchyStyles
+from src.docx.paragraph import parseParagraph, parseTable
 
 ROOT_PATH = program_path('src/docx')
 
@@ -30,9 +28,8 @@ def save_images(docxPath, importPath):
     for f in z.namelist():
         if f.find('word/media/') == 0:
             # Extract it to my import folder
-            imageFile = open(importPath + '/images/' + f.replace('word/media/', ''), 'wb')
-            imageFile.write(z.read(f))
-            imageFile.close()
+            with open(importPath + '/images/' + f.replace('word/media/', ''), 'wb') as imageFile:
+                imageFile.write(z.read(f))
      
     z.close()
 
@@ -53,8 +50,6 @@ class DocxDocument(object):
         '''
         Generates the document structure from the .docx file.
         '''
-        
-        self.docxFilePath = docxFilePath
         self.importFolder = temp_path('import')
         
         if progressHook is not None:
@@ -73,13 +68,19 @@ class DocxDocument(object):
                     print e
         else:
             os.makedirs(self.importFolder + '/images')
+            
+        print 'Starting the save images thread...'
         
         # Start saving images to my import folder in the background
-        saveImagesThread = Thread(target=save_images, args=(self.docxFilePath, self.importFolder))
+        saveImagesThread = Thread(target=save_images, args=(docxFilePath, self.importFolder))
         saveImagesThread.start()
         
         # .docx is just a zip file
-        docxZip = zipfile.ZipFile(docxFilePath, 'r')
+        docxZip = None
+        with open(docxFilePath, 'rb') as docx:
+            docxZip = zipfile.ZipFile(StringIO(docx.read()), 'r')
+        
+        print 'Getting my other data...'
         
         # Get the other random data I will need to parse my paragraphs
         otherData = {}
@@ -89,18 +90,24 @@ class DocxDocument(object):
         otherData['paraStyles'] = self._getParaStyles(otherData['styles'])
         #otherData['numbering'] = self._getNumberingDict(docxZip)
         
+        print 'Opening my document file...'
+        
         # Open my main document file
-        document = docxZip.open('word/document.xml', 'r')
-        tree = etree.parse(document)
-        document.close()
+        with docxZip.open('word/document.xml', 'r') as document:
+            tree = etree.parse(document)
         root = tree.getroot()
         
         # Get all of the paragraphs elements in my docx
         paragraphs = root.findall('./{0}body/*'.format(w_NS))
         self.paragraphData = []
         
+        print 'Converting paragraphs...'
+        
         # Keep track of my progress while I convert all of the said paragraphs
+        # Also, only report whole number changes, just in case if the progress
+        # hook is expensive
         interrupted = False
+        lastProgress = -1
         i = 0
         for p in paragraphs:
             if cancelHook is not None:
@@ -110,7 +117,10 @@ class DocxDocument(object):
             self.paragraphData.append(self._convert_paragraph_to_html(p, otherData))
             i += 1
             if progressHook is not None:
-                progressHook(int(float(i) / len(paragraphs) * 100.0))
+                progress = int(float(i) / len(paragraphs) * 100.0)
+                if progress != lastProgress:
+                    progressHook(progress)
+                    lastProgress = progress
         
         # Put together the HTML for the document if I wasn't interrupted
         if not interrupted:
@@ -125,13 +135,7 @@ class DocxDocument(object):
             self._prepareBody(body)
         
         else:
-            # Set the error as the first error I encountered
             print 'I was interrupted'
-#             self._error = tm.errors()
-#             if len(self._error) > 0:
-#                 self._error = self._error[0]
-#             else:
-#                 self._error = None
         
         print 'Waiting for image saving thread to finish...'
         saveImagesThread.join()
@@ -192,13 +196,6 @@ class DocxDocument(object):
                 myPages.append(p.text_content())
          
         return myPages
-    
-    def getError(self):
-        '''
-        Returns a DocxImportError object if the import process encountered an
-        exception. Otherwise, it returns None.
-        '''
-        return self._error
     
     def _convert_paragraph_to_html(self, elem, otherData):
         '''
@@ -317,18 +314,6 @@ class DocxDocument(object):
         for h in headings:
             h.set('id', str(anchorCount))
             anchorCount += 1
-
-class DocxImportError(Exception):
-    
-    def __init__(self, origEx, traceback):
-        Exception.__init__(self)
-        self.message = 'Docx import error:\n' + str(origEx) + '\n' + traceback
-        
-    def __repr__(self):
-        return self.message
-    
-    def __str(self):
-        return self.message
 
 
 if __name__ == '__main__':

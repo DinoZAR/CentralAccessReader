@@ -35,7 +35,6 @@ from src.mathml import pattern_editor
 from src.speech.assigner import Assigner, PrepareSpeechThread
 from src.speech.worker import SpeechWorker
 from src.docx.thread import DocxImporterThread
-from src.docx.importer import DocxImportError
 from src.updater import GetUpdateThread, RunUpdateInstallerThread, SETUP_FILE, SETUP_TEMP_FILE, run_update_installer, is_update_downloaded, save_server_version_to_temp
 from src import misc
 
@@ -557,18 +556,13 @@ class MainWindow(QtGui.QMainWindow):
             self.docxImporterThread.start()
         
     def reportProgressOpenDocx(self, percent):
-        self.progressDialog.setValue(percent)
+        self.progressDialog.setValue(percent - 1)
         
     def reportTextOpenDocx(self, text):
         self.progressDialog.setLabelText(text)
         
     def reportErrorOpenDocx(self, exception, tb):
         if isinstance(exception, MathTypeParseError):
-            out = misc.prepare_bug_report(tb, self.configuration, detailMessage=exception.message)
-            dialog = BugReporter(out)
-            dialog.exec_()
-        elif isinstance(exception, DocxImportError):
-            print 'Trying to get DocxImportError traceback'
             out = misc.prepare_bug_report(tb, self.configuration, detailMessage=exception.message)
             dialog = BugReporter(out)
             dialog.exec_()

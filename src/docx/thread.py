@@ -5,7 +5,7 @@ Created on Jul 10, 2013
 '''
 import traceback
 from PyQt4.QtCore import QThread, pyqtSignal
-from src.docx.importer import DocxDocument, DocxImportError
+from src.docx.importer import DocxDocument
 
 class DocxImporterThread(QThread):
     '''
@@ -36,18 +36,10 @@ class DocxImporterThread(QThread):
         try:
             self._docx = DocxDocument(self._filePath, myProgressCallback, myCheckCancel)
             
-            error = self._docx.getError()
-            if error is not None:
-                raise error
-            
             if not self._stop:
                 self._html = self._docx.getMainPage()
                 self._bookmarks = self._docx.getHeadings()
                 self._pages = self._docx.getPages()
-        
-        except DocxImportError as ex1:
-            print 'ERROR: The .docx document didn\'t import.'
-            self.reportError.emit(ex1, ex1.message)
             
         except Exception as ex2:
             print 'ERROR: The .docx document didn\'t import.'

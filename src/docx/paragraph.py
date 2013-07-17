@@ -9,8 +9,7 @@ from lxml import etree
 from lxml import html as HTML
 from src.mathtype.parser import parseWMF, MathTypeParseError
 from src.misc import program_path, temp_path, REPORT_BUG_URL
-
-from profilehooks import profile
+from cStringIO import StringIO
 
 # The path to this particular module
 ROOT_PATH = program_path('src/docx')
@@ -168,7 +167,6 @@ def _parseOMML(elem, parentData):
     data['data'] = _convertOMMLToMathML(elem)
     parentData['data'].append(data)
 
-
 def _parseObject(elem, parentData, otherData):
     # Only do something to it if the object is MathType
     query = elem.find('{0}OLEObject[@ProgID="Equation.DSMT4"]'.format(o_NS))
@@ -190,7 +188,6 @@ def _parseObject(elem, parentData, otherData):
         # that another function is moving the image over there
         imagePath = os.path.join(IMPORT_FOLDER, os.path.normpath('images/' + filename))
         imageType = os.path.splitext(imagePath)[1].lower()
-        imageFile = None
 #         try:
 #             # Try to get the image already exported
 #             imageFile = open(imagePath, 'r')
@@ -200,11 +197,12 @@ def _parseObject(elem, parentData, otherData):
 #                 # Don't bother with that one. Use the other instead
 #                 imageFile = otherData['zip'].open('word/media/' + filename, 'r')
 #         except Exception:
-        imageFile = otherData['zip'].open('word/media/' + filename, 'r')
+        with otherData['zip'].open('word/media/' + filename, 'r') as imageFile:
+            imageBuffer = StringIO(imageFile.read())
         
         try:
             if imageType == '.wmf':
-                data['data'] = parseWMF(imageFile, debug=False)
+                data['data'] = parseWMF(imageBuffer, debug=False)
                 parentData['math'] = data
                 
         except Exception as ex:

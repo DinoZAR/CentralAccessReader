@@ -63,8 +63,6 @@ def parseWMF(wmfFile, debug=False):
     
     The file should already be opened for binary reading.
     '''
-    wmfString = wmfFile.read()
-    wmfString = StringIO.StringIO(wmfString)
     try:
         # Keep reading until I find the first instance of the AppsMFCC tag. This is
         # the embedded comment tag that holds my MathType stuff
@@ -74,7 +72,7 @@ def parseWMF(wmfFile, debug=False):
         found = False
         try:
             while not done:
-                nextByte = wmfString.read(1)
+                nextByte = wmfFile.read(1)
                 testString += nextByte
                 if len(nextByte) == 0:
                     found = False
@@ -93,15 +91,15 @@ def parseWMF(wmfFile, debug=False):
             if debug: print
             
             # Grab all of the other data in the comment header (even most I won't need)
-            commentHeader = struct.unpack('<HII', wmfString.read(10))
+            commentHeader = struct.unpack('<HII', wmfFile.read(10))
             if debug: print 'Comment Header:', commentHeader
             
-            signature = getNullTermString(wmfString, debug)
+            signature = getNullTermString(wmfFile, debug)
             if debug: print 'Signature:', signature
             
             # If the signature is something like "Design Science, Inc.", then it is MTEF
             if signature == 'Design Science, Inc.':
-                return parseMTEF(wmfString.read(commentHeader[2]), debug)
+                return parseMTEF(wmfFile.read(commentHeader[2]), debug)
         
         else:
             
@@ -121,8 +119,8 @@ def parseWMF(wmfFile, debug=False):
         if not os.path.exists(os.path.dirname(savePath)):
             os.makedirs(os.path.dirname(savePath))
         saveFile = open(savePath, 'wb')
-        wmfString.seek(0)
-        saveFile.write(wmfString.read())
+        wmfFile.seek(0)
+        saveFile.write(wmfFile.read())
         saveFile.close()
             
         raise MathTypeParseError(savePath, traceback.format_exc())
