@@ -6,7 +6,7 @@ Use this script to profile things
 @author: Spencer Graffe
 '''
 from src.docx.importer import DocxDocument
-#from src.Sandbox import run_test
+from src import Sandbox
 import cProfile
 import pstats
 
@@ -19,13 +19,14 @@ if __name__ == '__main__':
     def progress(percent):
         print ' --', percent, '--'
     
-    #cProfile.run('DocxDocument(testFile, progress)', filename=statSave)
-    cProfile.run('from src import Sandbox', filename=statSave)
+    cProfile.run('DocxDocument(testFile)', filename=statSave)
+    #cProfile.run('Sandbox.main()', filename=statSave)
     myStats = pstats.Stats(statSave)
     
     # Organize my stats by different criteria
     myStats.sort_stats('cumulative', 'name')
     #myStats.sort_stats('time', 'name')
     
+    #myStats.print_stats('nifty-prose-articulator')
     myStats.print_stats()
     

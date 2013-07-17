@@ -10,6 +10,8 @@ from lxml import html as HTML
 from src.mathtype.parser import parseWMF, MathTypeParseError
 from src.misc import program_path, temp_path, REPORT_BUG_URL
 
+from profilehooks import profile
+
 # The path to this particular module
 ROOT_PATH = program_path('src/docx')
 IMPORT_FOLDER = temp_path('import')
@@ -165,7 +167,8 @@ def _parseOMML(elem, parentData):
     data = {'type' : 'math'}
     data['data'] = _convertOMMLToMathML(elem)
     parentData['data'].append(data)
-    
+
+
 def _parseObject(elem, parentData, otherData):
     # Only do something to it if the object is MathType
     query = elem.find('{0}OLEObject[@ProgID="Equation.DSMT4"]'.format(o_NS))
@@ -188,18 +191,16 @@ def _parseObject(elem, parentData, otherData):
         imagePath = os.path.join(IMPORT_FOLDER, os.path.normpath('images/' + filename))
         imageType = os.path.splitext(imagePath)[1].lower()
         imageFile = None
-        while True:
-            try:
-                imageFile = open(imagePath, 'rb')
-                
-                # Make sure I can get something from it. If I don't get anything
-                # then the one writing the file hasn't closed the handle.
-                stuff = imageFile.read(1)
-                
-                if len(stuff) == 1:
-                    break
-            except Exception:
-                pass
+#         try:
+#             # Try to get the image already exported
+#             imageFile = open(imagePath, 'r')
+#             stuff = imageFile.read(1)
+#             imageFile.seek(0)
+#             if len(stuff) == 1:
+#                 # Don't bother with that one. Use the other instead
+#                 imageFile = otherData['zip'].open('word/media/' + filename, 'r')
+#         except Exception:
+        imageFile = otherData['zip'].open('word/media/' + filename, 'r')
         
         try:
             if imageType == '.wmf':

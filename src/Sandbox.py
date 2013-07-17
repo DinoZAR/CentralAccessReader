@@ -4,8 +4,7 @@ Created on Mar 3, 2013
 @author: Spencer Graffe
 '''
 
-# Just to protect this module when using the process pool
-if __name__ == '__main__':
+def main():
     print 'Starting!'
     import sys
     import os
@@ -20,23 +19,30 @@ if __name__ == '__main__':
     from src.docx.importer import DocxDocument
     # from src.docx.paragraph import parseParagraph, parseTable
     
-    testPath = program_path('Tutorial.docx')
-    #testPath = r'W:\Nifty Prose Articulator\test_files\Chs 6-11.docx'
+    #testPath = program_path('Tutorial.docx')
+    testPath = r'W:\Nifty Prose Articulator\test_files\Chs 6-11.docx'
     
-    doc = DocxDocument(testPath)
+    def printProgress(percent):
+        print ' --', percent, '--'
+    
+    doc = DocxDocument(testPath, progressHook=printProgress)
     
     f = open(r'C:\Users\GraffeS\Desktop\more tests.html', 'wb')
     contents = doc.getMainPage()
     f.write(contents)
     f.close()
     
-    if doc.getError():
-        raise doc.getError()
+#     if doc.getError():
+#         raise doc.getError()
     
     print doc.getHeadings()
     print doc.getPages()
     print 'Done!'
 
+# Just to protect this module when using the process pool
+if __name__ == '__main__':
+    main()
+    
 # def run_test(numThreads):
 #     
 #     # Load in the paragraphs from docx file, like the Tutorial
