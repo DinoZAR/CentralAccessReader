@@ -1,53 +1,74 @@
 '''
-Created on June 14, 2013
+Created on Jul 17, 2013
+
+Same PatternTree structure and everything as before, but faster.
 
 @author: Spencer Graffe
 '''
 import re
-import copy
+cimport pattern_tree
 
-class PatternTree(object):
-
-    VARIABLE = 1
-    CATEGORY = 2
-    XML = 3
-    TEXT = 4
-    WILDCARD = 5
+WILDCARD_TOKENS = ['?', '+', '#']
     
-    WILDCARD_TOKENS = ['?', '+', '#']
-    
-    def __init__(self, name, parent=None, nodeType=3):
+cdef class MatchResult:
+    cdef public int match
+    cdef public PatternTree next
+    def __init__(self, isMatch, nextNode):
+        self.match = isMatch
+        self.next = nextNode
         
-        # Data general to the tree structure
+cdef class GatherResult:
+    cdef public PatternTree next
+    cdef public list extends
+    cdef public list removes
+    def __init__(self, next, extendList, removeList):
+        self.next = next
+        self.extends = extendList
+        self.removes = removeList
+
+cdef class PatternTree:
+
+    cdef public PatternTree previous
+    cdef public PatternTree next
+    cdef public PatternTree parent
+    cdef public list children
+    
+    cdef public int type
+    cdef public unicode name
+    cdef public dict attributes
+    cdef public list categories
+    cdef public unicode output
+    
+    def __init__(self, name, parent=None, nodeType=pattern_tree.pattern_tree.XML):
+        
         self.previous = None
         self.next = None
-        self.children = []
         self.parent = parent
-
+        self.children = []
+        
         # Update other nodes correctly if a parent was said
         if parent != None:
             parent.addChild(self)
-                
-        # Data specific to the pattern
+        
         self.type = nodeType
-        self.name = name
+        self.name = unicode(name)
         self.attributes = {}
         self.categories = []
-        self.output = ''
+        self.output = u''
         
-    def isExpression(self):
-        if self.type == PatternTree.VARIABLE:
+    cpdef int isExpressions(self):
+        if self.type == pattern_tree.VARIABLE:
             return True
-        elif self.type == PatternTree.CATEGORY:
+        elif self.type == pattern_tree.CATEGORY:
             return True
-        elif self.type == PatternTree.XML:
+        elif self.type == pattern_tree.XML:
             return False
-        elif self.type == PatternTree.TEXT:
+        elif self.type == pattern_tree.TEXT:
             return True
-        elif self.type == PatternTree.WILDCARD:
+        elif self.type == pattern_tree.WILDCARD:
             return True
-    
-    def isMatch(self, other):
+            
+    cpdef MatchResult isMatch(self, PatternTree other):
         '''
         Checks to see if this node, the pattern, matches other. If there is a
         match, it will return the next node to look for in the other pattern.
@@ -55,31 +76,36 @@ class PatternTree(object):
         
         The next node will always be the next sibling of other.
         '''
+        cdef int parentIsVisible
+        cdef MatchResult matchData
+        cdef PatternTree currSelf
+        cdef PatternTree currOther
+        cdef PatternTree curr
         
-        # See if the parent is a Variable. If it is, only allow matches for XML,
+        # See if the parent is a Variable. If it is, only allow matches for pattern_tree.XML,
         # since those nodes will need to be reparsed
         parentIsVariable = False
         if other.parent != None:
-            if other.parent.type == PatternTree.VARIABLE:
+            if other.parent.type == pattern_tree.VARIABLE:
                 parentIsVariable = True
         
         # Do the test for whatever type this is
-        if self.type == PatternTree.VARIABLE:
+        if self.type == pattern_tree.VARIABLE:
             if parentIsVariable:
-                return (False, [])
+                return MatchResult(False, None)
             if self.type == other.type:
                 if self.name == other.name:
-                    return (True, other.next)
+                    return MatchResult(True, other.next)
                 else:
-                    return (False, other.next)
+                    return MatchResult(False, other.next)
 
-        elif self.type == PatternTree.CATEGORY:
+        elif self.type == pattern_tree.CATEGORY:
             if parentIsVariable:
-                return (False, [])
+                return MatchResult(False, None)
             if self.name in other.categories:
-                return (True, other.next)
+                return MatchResult(True, other.next)
 
-        elif self.type == PatternTree.XML:
+        elif self.type == pattern_tree.XML:
             if self.type == other.type:
                 if self.name == other.name:
                     
@@ -89,9 +115,9 @@ class PatternTree(object):
                         for k in self.attributes.keys():
                             if k in other.attributes:
                                 if self.attributes[k] != other.attributes[k]:
-                                    return (False, None) 
+                                    return MatchResult(False, None) 
                             else:
-                                return (False, None)
+                                return MatchResult(False, None)
                     
                     # Check all of the children and make sure they're good
                     if len(self.children) > 0:
@@ -99,101 +125,103 @@ class PatternTree(object):
                         currSelf = self.getFirstChild()
                         while True:
                             if currOther == None:
-                                return (False, None)
-                            data = currSelf.isMatch(currOther)
-                            if not data[0]:
-                                return (False, None)
-                            currOther = data[1]
+                                return MatchResult(False, None)
+                            matchData = currSelf.isMatch(currOther)
+                            if not matchData.match:
+                                return MatchResult(False, None)
+                            currOther = matchData.next
                             currSelf = currSelf.next
                             if currSelf == None:
                                 
                                 # If I have more stuff in other, then not match
                                 if currOther != None:
-                                    return (False, None)
+                                    return MatchResult(False, None)
                                 else:
-                                    return (True, other.next)
+                                    return MatchResult(True, other.next)
                         
                     else:
-                        return (True, other.next)
+                        return MatchResult(True, other.next)
 
-        elif self.type == PatternTree.TEXT:
+        elif self.type == TEXT:
             if parentIsVariable:
-                return (False, [])
+                return MatchResult(False, None)
             if self.type == other.type:
                 if self.name == other.name:
-                    return (True, other.next)
+                    return MatchResult(True, other.next)
 
-        elif self.type == PatternTree.WILDCARD:
+        elif self.type == WILDCARD:
             if parentIsVariable:
-                return (False, [])
+                return MatchResult(False, None)
             if self.name == '?':
-                return (True, other.next)
+                return MatchResult(True, other.next)
             
             # Keep going until the pattern after this matches. If there is no
             # pattern after this, then it is all of them. However, there must be
             # at least 1 node.
             elif self.name == '+' or self.name == '#':
                 if other == None:
-                    return (False, None)
+                    return MatchResult(False, None)
                 curr = other.next
                 while True:
                     if curr == None:
-                        return (True, curr)
+                        return MatchResult(True, curr)
                     if self.next != None:
-                        if self.next.isMatch(curr)[0]:
-                            return (True, curr)
+                        if self.next.isMatch(curr).match:
+                            return MatchResult(True, curr)
                     curr = curr.next
                         
-        return (False, None)
-
-    def gather(self, other):
+        return MatchResult(False, None)
+        
+    cpdef GatherResult gather(self, PatternTree other):
         '''
         Mutates the other so that it turns into a single expression representing
         itself. It may steal the other's siblings to collect the expressions
         necessary.
         '''
-        if self.type == PatternTree.VARIABLE:
-            # The other should stay the same, so leave it alone
-            return (other.next, [other], [])
+        cdef GatherResult data
+        cdef PatternTree curr
+        cdef PatternTree newNode
         
-        elif self.type == PatternTree.CATEGORY:
+        if self.type == pattern_tree.VARIABLE:
             # The other should stay the same, so leave it alone
-            return (other.next, [other], [])
+            return GatherResult(other.next, [other], [])
         
-        elif self.type == PatternTree.XML:
-            
+        elif self.type == pattern_tree.CATEGORY:
+            # The other should stay the same, so leave it alone
+            return GatherResult(other.next, [other], [])
+        
+        elif self.type == pattern_tree.XML:
             # Gather the stuff inside it
             curr = other.getFirstChild()
             nodes = []
             removes = []
             for c in self.children:
                 data = c.gather(curr)
-                nodes.extend(data[1])
-                removes.extend(data[2])
-                curr = data[0]
+                nodes.extend(data.extends)
+                removes.extend(data.removes)
+                curr = data.next
             
             removes.extend([other])
-            
-            return (other.next, nodes, removes)
+            return GatherResult(other.next, nodes, removes)
         
-        elif self.type == PatternTree.TEXT:
+        elif self.type == TEXT:
             # The other should stay the same, so leave it alone
-            return (other.next, [other], [])
+            return GatherResult(other.next, [other], [])
         
-        elif self.type == PatternTree.WILDCARD:
+        elif self.type == WILDCARD:
             
-            if self.name == '?':
+            if self.name == u'?':
                 # Create a ? node in its place and put the replaced node
                 # under it
-                newNode = PatternTree('?')
-                newNode.type = PatternTree.WILDCARD
+                newNode = PatternTree(u'?')
+                newNode.type = WILDCARD
                 
                 other.parent.insertBefore(newNode, other)
                 newNode.addChild(other) # This will effectively move it
                 
-                return (newNode.next, [newNode], [])
+                return GatherResult(newNode.next, [newNode], [])
             
-            elif self.name == '+' or self.name == '#':
+            elif self.name == u'+' or self.name == u'#':
                 # Create a + or # node in its place, but this time, steal
                 # siblings after other until the next pattern matches or until
                 # all of them are taken
@@ -204,33 +232,33 @@ class PatternTree(object):
                 newNode.addChild(other) # This will effectively move it
                 
                 # Progressively take siblings after it and put it under itself
-                current = newNode.next
+                curr = newNode.next
                 while True:
                     
-                    if current == None:
+                    if curr == None:
                         break
                     
                     if self.next != None:
-                        data = self.next.isMatch(current)
-                        if data[0]:
+                        data = self.next.isMatch(curr)
+                        if data.next:
                             break
                         
                     # Move it into the new node
-                    newNode.addChild(current)
-                    current = newNode.next
+                    newNode.addChild(curr)
+                    curr = newNode.next
                         
-                return (newNode.next, [newNode], [])
-    
-    def getChildren(self):
+                return GatherResult(newNode.next, [newNode], [])
+                
+    cpdef list getChildren(self):
         return self.children
-
-    def getFirstChild(self):
+        
+    cpdef PatternTree getFirstChild(self):
         if len(self.children) > 0:
             return self.children[0]
         else:
             return None
-        
-    def getExpressions(self):
+            
+    cpdef list getExpressions(self):
         '''
         Gets a list of expressions that are from this tree. Depending on what
         kind of node it is, it will provide different expressions that count
@@ -239,41 +267,37 @@ class PatternTree(object):
         Because some of the expressions may include itself, the nodes are not
         disconnected from their parents.
         '''
-        if self.type == PatternTree.VARIABLE:
+        if self.type == pattern_tree.VARIABLE:
             return [self]
         
-        elif self.type == PatternTree.CATEGORY:
+        elif self.type == pattern_tree.CATEGORY:
             return [] # It doesn't make sense to have anything here
         
-        elif self.type == PatternTree.XML:
+        elif self.type == pattern_tree.XML:
             exprs = []
             for c in self.children:
                 exprs.extend(c.getExpressions())
             return exprs
         
-        elif self.type == PatternTree.TEXT:
+        elif self.type == TEXT:
             return [self]
         
-        elif self.type == PatternTree.WILDCARD:
+        elif self.type == WILDCARD:
             return [self]
-        
-    def addChild(self, newNode):
+            
+    cpdef object addChild(self, PatternTree newNode):
         '''
         Adds a child to the tree. If the child was under a different parent, it
         will be removed from there and be moved under this node.
         '''
         self.insertChild(newNode, len(self.children))
-            
-    def insertChild(self, newNode, index = 0):
+        return None
+        
+    cpdef object insertChild(self, PatternTree newNode, int index):
         '''
         Inserts a child into the tree. By default, it inserts it at the
         beginning.
         '''
-        
-        # Check if it is already in there. If it is, raise an error
-        if newNode in self.children:
-            raise ValueError('Child already exists in parent.')
-        
         # Disconnect it to make sure it has renounced its previous life.
         # I have to do this so that I don't make copies and have ambiguous
         # parent references.
@@ -294,19 +318,18 @@ class PatternTree(object):
                 newNode.next = self.children[index + 1]
                 self.children[index - 1].next = newNode
                 self.children[index + 1].previous = newNode
-                
-    def insertBefore(self, newNode, beforeNode):
+        
+        return None        
+        
+    cpdef object insertBefore(self, PatternTree newNode, PatternTree beforeNode):
         '''
         Inserts the new node before the child reference called beforeNode
         '''
-        try:
-            index = self.children.index(beforeNode)
-        except Exception:
-            raise ValueError('Before node does not exist.')
-        
+        index = self.children.index(beforeNode)
         self.insertChild(newNode, index)
+        return None
         
-    def getNext(self, includeChildren=True):
+    cpdef PatternTree getNext(self, int includeChildren=True):
         '''
         Gets the next node after this in depth-first order. This means it
         will return the first child of this first, unless includeChildren is
@@ -323,14 +346,17 @@ class PatternTree(object):
             return self.parent.getNext(includeChildren=False)
 
         return None
-    
-    def getOutput(self):
+        
+    cpdef unicode getOutput(self):
         '''
         Gets the speech output from this node.
         '''
-        out = ''
+        cdef unicode out
+        cdef int i
+        cdef int num
         
-        if self.type == PatternTree.VARIABLE:
+        out = u''
+        if self.type == pattern_tree.VARIABLE:
             # This one is fun. Get a list of all of the expression indices to
             # replace with
             expressionIndices = re.split(r'(\{[0-9]+\})', self.output)
@@ -338,8 +364,8 @@ class PatternTree(object):
             # Remove the empty ones
             i = 0
             while i < len(expressionIndices):
-                if expressionIndices[i] == '':
-                    expressionIndices.remove('')
+                if expressionIndices[i] == u'':
+                    expressionIndices.remove(u'')
                     i = 0
                 else:
                     i += 1
@@ -348,43 +374,40 @@ class PatternTree(object):
             for c in expressionIndices:
                 if c.find(r'{') != -1:
                     # Must generate speech from child object number refers to
-                    num = int(c.replace('{', '').replace('}', '').strip()) - 1
+                    num = int(c.replace(u'{', u'').replace(u'}', u'').strip()) - 1
                     out += self.children[num].getOutput()
                 else:
                     out += c
             
-        elif self.type == PatternTree.CATEGORY:
+        elif self.type == pattern_tree.CATEGORY:
             for c in self.children:
                 out += c.getOutput()
             
-        elif self.type == PatternTree.XML:
-            out += '[ERROR]'
+        elif self.type == pattern_tree.XML:
+            out += u'[ERROR]'
             
-        elif self.type == PatternTree.TEXT:
+        elif self.type == TEXT:
             out += self.name
             
-        elif self.type == PatternTree.WILDCARD:
+        elif self.type == WILDCARD:
             
-            if self.name == '?':
+            if self.name == u'?':
                 out += self.getFirstChild().getOutput()
             
-            elif self.name == '+':
+            elif self.name == u'+':
                 for c in self.children:
                     out += c.getOutput() + ' '
                 out = out[:-1]
                 
-            elif self.name == '#':
+            elif self.name == u'#':
                 # Make output numbered
-                for i in range(len(self.children)):
-                    out += ', ' + str(i + 1) + ', ' + self.children[i].getOutput() + ' '
+                for index in range(len(self.children)):
+                    out += u', ' + unicode(index + 1) + u', ' + self.children[index].getOutput() + u' '
                 out = out[:-1]
         
-        else:
-            raise TypeError('PatternTree type not recognized: ' + str(self.type))
-        
         return out
-
-    def disconnect(self):
+        
+    cpdef object disconnect(self):
         '''
         Essentially, it removes itself from existence from its parents and
         siblings. It will make connections around itself so that tree isn't
@@ -408,7 +431,9 @@ class PatternTree(object):
         self.previous = None
         self.next = None
         
-    def copyData(self, other):
+        return None
+        
+    cpdef object copyData(self, PatternTree other):
         '''
         Copies all of the attributes of this node to the other node, mutating it
         to look like this node. The major difference is that the other node
@@ -419,72 +444,87 @@ class PatternTree(object):
         other.attributes = self.attributes
         other.categories = self.categories
         other.output = self.output
-    
-    def _getTypeString(self):
-        if self.type == PatternTree.VARIABLE:
-            return 'Variable'
-        elif self.type == PatternTree.CATEGORY:
-            return 'Category'
-        elif self.type == PatternTree.XML:
-            return 'XML'
-        elif self.type == PatternTree.TEXT:
-            return 'Text'
-        elif self.type == PatternTree.WILDCARD:
-            return 'WILDCARD'
         
-    def _createIndent(self, num):
-        out = ''
-        for i in range(num):
-            out += '     '
+        return None
+        
+    cdef unicode _getTypeString(self):
+        if self.type == pattern_tree.VARIABLE:
+            return u'Variable'
+        elif self.type == pattern_tree.CATEGORY:
+            return u'Category'
+        elif self.type == pattern_tree.XML:
+            return u'pattern_tree.XML'
+        elif self.type == TEXT:
+            return u'Text'
+        elif self.type == WILDCARD:
+            return u'WILDCARD'
+        
+    cdef unicode _createIndent(self, int num):
+        cdef unicode out
+        cdef int i
+        out = u''
+        i = 0
+        while i < num:
+            out += u'    '
+            i += 1
+        
         return out
-
-    def dump(self, indent=0):
+        
+    cpdef unicode dump(self, int indent=0):
         '''
         Prints out some debug on this thing
         '''
+        cdef unicode out
+        
         out = self._createIndent(indent) + self.name
-        out += ' (' + self._getTypeString() + ')'
+        out += u' (' + self._getTypeString() + u')'
         
         if self.attributes != None:
             if len(self.attributes.keys()) > 0:
-                out += ' <'
+                out += u' <'
                 for a in self.attributes.keys():
-                    out += a + ' = \"' + self.attributes[a] + '\", '
+                    out += a + u' = \"' + self.attributes[a] + u'\", '
                 out = out[:-2] 
-                out += '>'
+                out += u'>'
         
         if len(self.categories) > 0:
-            out += ' ['
+            out += u' ['
             for c in self.categories:
-                out += c + ', '
+                out += c + u', '
             out = out[:-2]  # Remove trailing comma
-            out += ']'
-            
+            out += u']'
+        
         if len(self.output) > 0:
-            out += ' -> ' + self.output
+            out += u' -> ' + self.output
         
         if len(self.children) > 0:
-            out += ' {'
+            out += u' {'
             for c in self.children:
-                out += '\n' + c.dump(indent + 1)
-            out += '\n' + self._createIndent(indent) + '}'
+                out += u'\n' + c.dump(indent + 1)
+            out += u'\n' + self._createIndent(indent) + u'}'
             
         return out
-
+        
     def __str__(self):
+        return self.dump()
+    
+    def __unicode__(self):
         return self.dump()
     
     def __repr__(self):
         return str(id(self)) + ': ' + self.dump()
 
 def convertDOMToPatternTree(elem, parent=None):
+    cdef unicode name
+    cdef PatternTree myTree
+    cdef unicode myText
     
-    name = elem.tag
+    name = unicode(elem.tag)
     if '}' in elem.tag:
-        name = elem.tag.split('}')[1]  # Remove the namespace
+        name = unicode(elem.tag.split('}')[1])  # Remove the namespace
     
     myTree = PatternTree(name, parent)
-    myTree.type = PatternTree.XML
+    myTree.type = pattern_tree.XML
     
     # Add in the attributes
     myTree.attributes = {}
@@ -496,18 +536,17 @@ def convertDOMToPatternTree(elem, parent=None):
         myText = removeGarbageWhitespace(unicode(elem.text))
         if len(myText) > 0:
             textNode = PatternTree(myText, myTree)
-            textNode.type = PatternTree.TEXT
+            textNode.type = pattern_tree.TEXT
 
     # Convert all children            
     for child in elem:
         convertDOMToPatternTree(child, myTree)
         
     return myTree
-
-
-def removeGarbageWhitespace(s):
+    
+cdef unicode removeGarbageWhitespace(unicode s):
     '''
     Removes all of the characters from the string that I consider to be
     garbage, which are spaces, carraige returns, and line feeds.
     '''
-    return s.replace(' ', '').replace('\n', '').replace('\r', '')
+    return s.replace(u' ', u'').replace(u'\n', u'').replace(u'\r', u'')

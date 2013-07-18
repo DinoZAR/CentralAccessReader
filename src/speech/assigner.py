@@ -7,7 +7,7 @@ import traceback
 from HTMLParser import HTMLParser
 from lxml import etree, html
 from PyQt4.QtCore import QMutex, QThread, pyqtSignal
-from src.mathml.tts import MathTTS
+from src.mathml_fast.tts import MathTTS
 from src.speech.math_parser_thread import MathParserThread
 
 # Namespace for XHTML
