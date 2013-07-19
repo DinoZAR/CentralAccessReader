@@ -523,6 +523,7 @@ class MainWindow(QtGui.QMainWindow):
         if len(filePath) > 0:
             
             from src.docx.thread import DocxImporterThread
+            from src.gui.document_load_progress import DocumentLoadProgressDialog
              
             # Create my .docx importer thread
             self.docxImporterThread = DocxImporterThread(filePath)
@@ -531,17 +532,16 @@ class MainWindow(QtGui.QMainWindow):
             self.docxImporterThread.finished.connect(self.finishOpenDocx)
             
             #Show a progress dialog
-            self.progressDialog.setWindowModality(Qt.WindowModal)
-            self.progressDialog.setWindowTitle('Opening Word document...')
+            self.progressDialog = DocumentLoadProgressDialog()
             self.progressDialog.setLabelText('Reading ' + os.path.basename(str(filePath)) + '...')
-            self.progressDialog.setValue(0)
+            self.progressDialog.setProgress(0)
             self.progressDialog.canceled.connect(self.docxImporterThread.stop)
             self.progressDialog.show()
            
             self.docxImporterThread.start()
         
     def reportProgressOpenDocx(self, percent):
-        self.progressDialog.setValue(percent - 1)
+        self.progressDialog.setProgress(percent - 1)
         
     def reportTextOpenDocx(self, text):
         self.progressDialog.setLabelText(text)
@@ -604,10 +604,10 @@ class MainWindow(QtGui.QMainWindow):
             while not loaded:
                 QtGui.qApp.processEvents()
                 progress = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetMathTypesetProgress', [])).toInt()
-                self.progressDialog.setValue(progress[0])
+                self.progressDialog.setProgress(progress[0])
                 loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsMathTypeset', [])).toBool()
                     
-        self.progressDialog.hide()
+        self.progressDialog.close()
         self.stopDocumentLoad = False
         
     def showOpenDocxDialog(self):
