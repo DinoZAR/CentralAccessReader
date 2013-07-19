@@ -7,9 +7,7 @@ structures used in the database.
 Author: Spencer Graffe
 '''
 
-
 import os
-from src.mathml_fast import database_parser
 from src.mathml_fast cimport pattern_tree
 from src.mathml_fast.pattern_tree cimport PatternTree
 import HTMLParser
@@ -21,9 +19,6 @@ htmlParser = HTMLParser.HTMLParser()
 # ------------------------------------------------------------------------------
 # User Functions : These are what other programmers should be using
 # ------------------------------------------------------------------------------
-
-def parse(inputString, filePath):
-	return database_parser.parse(inputString, filePath)
 
 def convertToPatternTree(databasePattern):
 	'''

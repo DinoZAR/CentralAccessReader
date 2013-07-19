@@ -5,6 +5,7 @@ Created on Jan 25, 2013
 '''
 
 import xml.etree.ElementTree as ET
+import database_parser
 import database
 from parser import transform
 from pattern_tree import convertDOMToPatternTree
@@ -20,7 +21,7 @@ class MathTTS():
         contents = databaseFile.read()
         databaseFile.close()
         
-        self.parserTree = database.parse(contents, initialDatabaseFile)
+        self.parserTree = database_parser.parse(contents, initialDatabaseFile)
         
     def parse(self, mathmlString, stageSink=None):
         root = ET.fromstring(mathmlString)
