@@ -26,6 +26,20 @@ class DocumentLoadProgressDialog(QDialog):
     def setProgress(self, percent):
         self.ui.progressBar.setValue(percent)
         
+    def disableCancel(self):
+        '''
+        Disables the cancel button. It's useful when you are at a part that is
+        either dangerous, bad, or impossible to exit from.
+        '''
+        self.ui.cancelButton.setEnabled(False)
+        
+    def enableCancel(self):
+        '''
+        Enables the cancel button. If you disabled it before and now want it
+        enabled, use this function.
+        '''
+        self.ui.cancelButton.setEnabled(True)
+        
     def _cancel(self):
         '''
         Reports to everyone that the operation was canceled and closes itself.
