@@ -24,13 +24,14 @@ def transform(tree, pattern, gotMatchFlag=None):
                 gotMatchFlag[:] = [True]
             
             alreadyVisited = True
+            
             start = _transformNode(start, pattern)
             if start.parent == None:
                 # Update reference tree reference to the new, replaced node
                 returnNode = start
         else:
             alreadyVisited = False
-            
+        
         start = start.getNext()
         
     return returnNode
@@ -65,6 +66,7 @@ cpdef PatternTree _transformNode(PatternTree start, PatternTree pattern):
     '''
     cdef GatherResult gatherData
     cdef PatternTree newNode
+    cdef PatternTree curr
     
     curr = start
     nodes = []
@@ -75,7 +77,7 @@ cpdef PatternTree _transformNode(PatternTree start, PatternTree pattern):
         nodes.extend(gatherData.extends)
         removes.extend(gatherData.removes)
         curr = gatherData.next
-
+        
     # Create Variable node
     newNode = PatternTree(pattern.name)
     newNode.type = pattern_tree.VARIABLE
@@ -83,6 +85,7 @@ cpdef PatternTree _transformNode(PatternTree start, PatternTree pattern):
     newNode.output = pattern.output
     newNode.attributes = None
     newNode.children = []
+    
     
     # Move the new children under the new node
     if start.parent != None:

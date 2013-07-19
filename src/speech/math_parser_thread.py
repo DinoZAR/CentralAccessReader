@@ -18,6 +18,7 @@ class MathParserThread(QThread):
         QThread.__init__(self)
         self._mathTTS = mathTTS
         self._mathQueue = []
+        self._mathCount = 0
     
     def run(self):
         while True:
@@ -30,6 +31,7 @@ class MathParserThread(QThread):
                     self.queueLock.unlock()
                     
                     self.mathTTSLock.lock()
+                    self._mathCount += 1
                     prose = self._mathTTS.parse(math[1]['mathml'])
                     self.mathTTSLock.unlock()
                     

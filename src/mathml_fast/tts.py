@@ -25,11 +25,13 @@ class MathTTS():
     def parse(self, mathmlString, stageSink=None):
         root = ET.fromstring(mathmlString)
         mathTree = convertDOMToPatternTree(root)
-        
+                
+        i = 0
         for p in self.parserTree['patterns']:
+            i += 1
             pattern = database.convertToPatternTree(p)
             mathTree = transform(mathTree, pattern)
-    
+            
         myString = mathTree.getOutput()
         
         return myString

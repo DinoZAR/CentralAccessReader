@@ -13,34 +13,17 @@ import re
 WILDCARD_TOKENS = ['?', '+', '#']
     
 cdef class MatchResult:
-#     cdef public int match
-#     cdef public PatternTree next
     def __init__(self, isMatch, nextNode):
         self.match = isMatch
         self.next = nextNode
         
 cdef class GatherResult:
-#     cdef public PatternTree next
-#     cdef public list extends
-#     cdef public list removes
     def __init__(self, next, extendList, removeList):
         self.next = next
         self.extends = extendList
         self.removes = removeList
 
 cdef class PatternTree:
-
-#     cdef public PatternTree previous
-#     cdef public PatternTree next
-#     cdef public PatternTree parent
-#     cdef public list children
-#     
-#     cdef public int type
-#     cdef public unicode name
-#     cdef public dict attributes
-#     cdef public list categories
-#     cdef public unicode output
-    
     def __init__(self, name, parent=None, nodeType=XML):
         
         self.previous = None
@@ -180,7 +163,8 @@ cdef class PatternTree:
         itself. It may steal the other's siblings to collect the expressions
         necessary.
         '''
-        cdef GatherResult data
+        cdef GatherResult gatherData
+        cdef MatchResult matchData
         cdef PatternTree curr
         cdef PatternTree newNode
         
@@ -198,10 +182,10 @@ cdef class PatternTree:
             nodes = []
             removes = []
             for c in self.children:
-                data = c.gather(curr)
-                nodes.extend(data.extends)
-                removes.extend(data.removes)
-                curr = data.next
+                gatherData = c.gather(curr)
+                nodes.extend(gatherData.extends)
+                removes.extend(gatherData.removes)
+                curr = gatherData.next
             
             removes.extend([other])
             return GatherResult(other.next, nodes, removes)
@@ -211,7 +195,6 @@ cdef class PatternTree:
             return GatherResult(other.next, [other], [])
         
         elif self.type == WILDCARD:
-            
             if self.name == u'?':
                 # Create a ? node in its place and put the replaced node
                 # under it
@@ -237,18 +220,18 @@ cdef class PatternTree:
                 curr = newNode.next
                 while True:
                     
-                    if curr == None:
+                    if not isinstance(curr, PatternTree):
                         break
                     
-                    if self.next != None:
-                        data = self.next.isMatch(curr)
-                        if data.next:
+                    if self.next is not None:
+                        matchData = self.next.isMatch(curr)
+                        if matchData.match:
                             break
                         
                     # Move it into the new node
                     newNode.addChild(curr)
                     curr = newNode.next
-                        
+                    
                 return GatherResult(newNode.next, [newNode], [])
                 
     cpdef list getChildren(self):

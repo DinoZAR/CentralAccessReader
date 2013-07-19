@@ -176,7 +176,6 @@ class Assigner(object):
             
             # Check to see if I need to stop abruptly
             if checkCancelFunction:
-                print ' '
                 if checkCancelFunction():
                     break
             

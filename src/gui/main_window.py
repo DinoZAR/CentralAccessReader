@@ -564,7 +564,6 @@ class MainWindow(QtGui.QMainWindow):
         print 'Finishing up...'
         
         if self.docxImporterThread.isSuccessful():
-            print 'Import was a success'
             url = misc.temp_path('import')
             baseUrl = QUrl.fromLocalFile(url)
             
