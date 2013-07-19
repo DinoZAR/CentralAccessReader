@@ -579,6 +579,7 @@ class MainWindow(QtGui.QMainWindow):
             # Set the content views and prepare assigner
             docxHtml = self.docxImporterThread.getHTML()
             self.assigner.prepare(docxHtml)
+            self.ui.webView.loadProgress.connect(self.progressDialog.setProgress)
             self.ui.webView.setHtml(docxHtml, baseUrl)
             
             # Get and set the bookmarks
@@ -612,6 +613,7 @@ class MainWindow(QtGui.QMainWindow):
                 self.progressDialog.setProgress(progress[0])
                 loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsMathTypeset', [])).toBool()
                     
+        self.progressDialog.enableCancel()
         self.progressDialog.close()
         self.stopDocumentLoad = False
         
