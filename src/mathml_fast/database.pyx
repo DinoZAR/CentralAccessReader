@@ -10,8 +10,8 @@ Author: Spencer Graffe
 import ply.lex as lex
 import ply.yacc as yacc
 import os
-cimport pattern_tree
-from pattern_tree cimport PatternTree
+from src.mathml_fast cimport pattern_tree
+from src.mathml_fast.pattern_tree cimport PatternTree
 import HTMLParser
 
 WILDCARD_TOKENS = ['?', '+', '#']

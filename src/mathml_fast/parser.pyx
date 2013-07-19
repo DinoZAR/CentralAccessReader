@@ -4,9 +4,8 @@ Created on Jul 17, 2013
 @author: Spencer Graffe
 '''
 import copy
-from pattern_tree import PatternTree, MatchResult, GatherResult, VARIABLE, CATEGORY, XML, TEXT, WILDCARD
-from pattern_tree cimport PatternTree, MatchResult, GatherResult 
-
+from src.mathml_fast cimport pattern_tree
+from src.mathml_fast.pattern_tree cimport PatternTree, MatchResult, GatherResult
 
 def transform(tree, pattern, gotMatchFlag=None):
     '''
@@ -79,7 +78,7 @@ cpdef PatternTree _transformNode(PatternTree start, PatternTree pattern):
 
     # Create Variable node
     newNode = PatternTree(pattern.name)
-    newNode.type = VARIABLE
+    newNode.type = pattern_tree.VARIABLE
     newNode.categories = pattern.categories
     newNode.output = pattern.output
     newNode.attributes = None

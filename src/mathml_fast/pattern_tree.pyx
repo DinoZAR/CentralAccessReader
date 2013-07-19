@@ -6,8 +6,9 @@ Same PatternTree structure and everything as before, but faster.
 @author: Spencer Graffe
 '''
 import re
-cimport pattern_tree
-from pattern_tree cimport VARIABLE, CATEGORY, XML, TEXT, WILDCARD
+
+# cdef enum PatternType:
+#     VARIABLE, CATEGORY, XML, TEXT, WILDCARD
 
 WILDCARD_TOKENS = ['?', '+', '#']
     
