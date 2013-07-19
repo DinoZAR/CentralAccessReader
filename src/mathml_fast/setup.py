@@ -10,7 +10,8 @@ import numpy as np
 
 # Make sure these are in least-dependent order
 ext_modules = [Extension('parser', ['parser.pyx']),
-               Extension('pattern_tree', ['pattern_tree.pyx'])]
+               Extension('pattern_tree', ['pattern_tree.pyx']),
+               Extension('database', ['database.pyx'])]
 setup(
       name = 'MathML Parser',
       cmdclass = {'build_ext' : build_ext},

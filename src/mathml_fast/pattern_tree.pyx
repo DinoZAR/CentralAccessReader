@@ -7,20 +7,21 @@ Same PatternTree structure and everything as before, but faster.
 '''
 import re
 cimport pattern_tree
+from pattern_tree cimport VARIABLE, CATEGORY, XML, TEXT, WILDCARD
 
 WILDCARD_TOKENS = ['?', '+', '#']
     
 cdef class MatchResult:
-    cdef public int match
-    cdef public PatternTree next
+#     cdef public int match
+#     cdef public PatternTree next
     def __init__(self, isMatch, nextNode):
         self.match = isMatch
         self.next = nextNode
         
 cdef class GatherResult:
-    cdef public PatternTree next
-    cdef public list extends
-    cdef public list removes
+#     cdef public PatternTree next
+#     cdef public list extends
+#     cdef public list removes
     def __init__(self, next, extendList, removeList):
         self.next = next
         self.extends = extendList
@@ -28,18 +29,18 @@ cdef class GatherResult:
 
 cdef class PatternTree:
 
-    cdef public PatternTree previous
-    cdef public PatternTree next
-    cdef public PatternTree parent
-    cdef public list children
+#     cdef public PatternTree previous
+#     cdef public PatternTree next
+#     cdef public PatternTree parent
+#     cdef public list children
+#     
+#     cdef public int type
+#     cdef public unicode name
+#     cdef public dict attributes
+#     cdef public list categories
+#     cdef public unicode output
     
-    cdef public int type
-    cdef public unicode name
-    cdef public dict attributes
-    cdef public list categories
-    cdef public unicode output
-    
-    def __init__(self, name, parent=None, nodeType=pattern_tree.pattern_tree.XML):
+    def __init__(self, name, parent=None, nodeType=XML):
         
         self.previous = None
         self.next = None
@@ -57,15 +58,15 @@ cdef class PatternTree:
         self.output = u''
         
     cpdef int isExpressions(self):
-        if self.type == pattern_tree.VARIABLE:
+        if self.type == VARIABLE:
             return True
-        elif self.type == pattern_tree.CATEGORY:
+        elif self.type == CATEGORY:
             return True
-        elif self.type == pattern_tree.XML:
+        elif self.type == XML:
             return False
-        elif self.type == pattern_tree.TEXT:
+        elif self.type == TEXT:
             return True
-        elif self.type == pattern_tree.WILDCARD:
+        elif self.type == WILDCARD:
             return True
             
     cpdef MatchResult isMatch(self, PatternTree other):
@@ -82,15 +83,15 @@ cdef class PatternTree:
         cdef PatternTree currOther
         cdef PatternTree curr
         
-        # See if the parent is a Variable. If it is, only allow matches for pattern_tree.XML,
+        # See if the parent is a Variable. If it is, only allow matches for XML,
         # since those nodes will need to be reparsed
         parentIsVariable = False
         if other.parent != None:
-            if other.parent.type == pattern_tree.VARIABLE:
+            if other.parent.type == VARIABLE:
                 parentIsVariable = True
         
         # Do the test for whatever type this is
-        if self.type == pattern_tree.VARIABLE:
+        if self.type == VARIABLE:
             if parentIsVariable:
                 return MatchResult(False, None)
             if self.type == other.type:
@@ -99,13 +100,13 @@ cdef class PatternTree:
                 else:
                     return MatchResult(False, other.next)
 
-        elif self.type == pattern_tree.CATEGORY:
+        elif self.type == CATEGORY:
             if parentIsVariable:
                 return MatchResult(False, None)
             if self.name in other.categories:
                 return MatchResult(True, other.next)
 
-        elif self.type == pattern_tree.XML:
+        elif self.type == XML:
             if self.type == other.type:
                 if self.name == other.name:
                     
@@ -182,15 +183,15 @@ cdef class PatternTree:
         cdef PatternTree curr
         cdef PatternTree newNode
         
-        if self.type == pattern_tree.VARIABLE:
+        if self.type == VARIABLE:
             # The other should stay the same, so leave it alone
             return GatherResult(other.next, [other], [])
         
-        elif self.type == pattern_tree.CATEGORY:
+        elif self.type == CATEGORY:
             # The other should stay the same, so leave it alone
             return GatherResult(other.next, [other], [])
         
-        elif self.type == pattern_tree.XML:
+        elif self.type == XML:
             # Gather the stuff inside it
             curr = other.getFirstChild()
             nodes = []
@@ -267,13 +268,13 @@ cdef class PatternTree:
         Because some of the expressions may include itself, the nodes are not
         disconnected from their parents.
         '''
-        if self.type == pattern_tree.VARIABLE:
+        if self.type == VARIABLE:
             return [self]
         
-        elif self.type == pattern_tree.CATEGORY:
+        elif self.type == CATEGORY:
             return [] # It doesn't make sense to have anything here
         
-        elif self.type == pattern_tree.XML:
+        elif self.type == XML:
             exprs = []
             for c in self.children:
                 exprs.extend(c.getExpressions())
@@ -356,7 +357,7 @@ cdef class PatternTree:
         cdef int num
         
         out = u''
-        if self.type == pattern_tree.VARIABLE:
+        if self.type == VARIABLE:
             # This one is fun. Get a list of all of the expression indices to
             # replace with
             expressionIndices = re.split(r'(\{[0-9]+\})', self.output)
@@ -379,11 +380,11 @@ cdef class PatternTree:
                 else:
                     out += c
             
-        elif self.type == pattern_tree.CATEGORY:
+        elif self.type == CATEGORY:
             for c in self.children:
                 out += c.getOutput()
             
-        elif self.type == pattern_tree.XML:
+        elif self.type == XML:
             out += u'[ERROR]'
             
         elif self.type == TEXT:
@@ -448,16 +449,16 @@ cdef class PatternTree:
         return None
         
     cdef unicode _getTypeString(self):
-        if self.type == pattern_tree.VARIABLE:
+        if self.type == VARIABLE:
             return u'Variable'
-        elif self.type == pattern_tree.CATEGORY:
+        elif self.type == CATEGORY:
             return u'Category'
-        elif self.type == pattern_tree.XML:
-            return u'pattern_tree.XML'
+        elif self.type == XML:
+            return u'XML'
         elif self.type == TEXT:
             return u'Text'
         elif self.type == WILDCARD:
-            return u'WILDCARD'
+            return u'Wildcard'
         
     cdef unicode _createIndent(self, int num):
         cdef unicode out
@@ -524,7 +525,7 @@ def convertDOMToPatternTree(elem, parent=None):
         name = unicode(elem.tag.split('}')[1])  # Remove the namespace
     
     myTree = PatternTree(name, parent)
-    myTree.type = pattern_tree.XML
+    myTree.type = XML
     
     # Add in the attributes
     myTree.attributes = {}
@@ -536,7 +537,7 @@ def convertDOMToPatternTree(elem, parent=None):
         myText = removeGarbageWhitespace(unicode(elem.text))
         if len(myText) > 0:
             textNode = PatternTree(myText, myTree)
-            textNode.type = pattern_tree.TEXT
+            textNode.type = TEXT
 
     # Convert all children            
     for child in elem:

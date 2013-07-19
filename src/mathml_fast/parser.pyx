@@ -4,8 +4,8 @@ Created on Jul 17, 2013
 @author: Spencer Graffe
 '''
 import copy
-from pattern_tree import PatternTree, MatchResult, GatherResult
-from pattern_tree cimport VARIABLE, CATEGORY, XML, TEXT, WILDCARD, PatternTree 
+from pattern_tree import PatternTree, MatchResult, GatherResult, VARIABLE, CATEGORY, XML, TEXT, WILDCARD
+from pattern_tree cimport PatternTree, MatchResult, GatherResult 
 
 
 def transform(tree, pattern, gotMatchFlag=None):

@@ -10,8 +10,11 @@ Author: Spencer Graffe
 import ply.lex as lex
 import ply.yacc as yacc
 import os
-from pattern_tree import PatternTree, VARIABLE, CATEGORY, XML, TEXT, WILDCARD, WILDCARD_TOKENS
+cimport pattern_tree
+from pattern_tree cimport PatternTree
 import HTMLParser
+
+WILDCARD_TOKENS = ['?', '+', '#']
 
 htmlParser = HTMLParser.HTMLParser()
 
@@ -280,7 +283,7 @@ def convertToPatternTree(databasePattern):
 	'''
 	expressions = databasePattern['expressions']
 	myTree = PatternTree(databasePattern['variable']['value'])
-	myTree.type = VARIABLE
+	myTree.type = pattern_tree.VARIABLE
 	if 'categories' in databasePattern:
 		myTree.categories = databasePattern['categories']['value']
 	myTree.output = unicode(databasePattern['output'])
@@ -296,16 +299,16 @@ def _convertExpressions(tree, expressions):
 			
 		if ex['type'] == 'variable':
 			newChild = PatternTree(ex['value'], tree)
-			newChild.type = VARIABLE
+			newChild.type = pattern_tree.VARIABLE
 				
 		elif ex['type'] == 'categories':
 			newChild = PatternTree('<categories>', tree)
-			newChild.type = CATEGORY
+			newChild.type = pattern_tree.CATEGORY
 			newChild.categories = ex['value']
 				
 		elif ex['type'] == 'xml':
 			newChild = PatternTree(ex['value'], tree)
-			newChild.type = XML
+			newChild.type = pattern_tree.XML
 			newChild.attributes = {}
 			if len(ex['attributes']) > 0:
 				for attr in ex['attributes']:
@@ -317,8 +320,8 @@ def _convertExpressions(tree, expressions):
 		elif ex['type'] == 'literal':
 			if ex['value'] in WILDCARD_TOKENS:
 				newChild = PatternTree(ex['value'], tree)
-				newChild.type = WILDCARD
+				newChild.type = pattern_tree.WILDCARD
 				
 			else:
 				newChild = PatternTree(htmlParser.unescape(ex['value'][1:-1]), tree)
-				newChild.type = TEXT
+				newChild.type = pattern_tree.TEXT
