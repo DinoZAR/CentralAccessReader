@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace\nifty-prose-articulator\src\forms/document_load_progress.ui'
 #
-# Created: Fri Jul 19 14:14:21 2013
+# Created: Fri Jul 19 15:54:21 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,16 +27,14 @@ class Ui_DocumentLoadProgressDialog(object):
     def setupUi(self, DocumentLoadProgressDialog):
         DocumentLoadProgressDialog.setObjectName(_fromUtf8("DocumentLoadProgressDialog"))
         DocumentLoadProgressDialog.setWindowModality(QtCore.Qt.ApplicationModal)
-        DocumentLoadProgressDialog.resize(411, 81)
+        DocumentLoadProgressDialog.resize(443, 77)
         font = QtGui.QFont()
         font.setPointSize(12)
         DocumentLoadProgressDialog.setFont(font)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/document_open.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         DocumentLoadProgressDialog.setWindowIcon(icon)
-        DocumentLoadProgressDialog.setModal(True)
         self.verticalLayout = QtGui.QVBoxLayout(DocumentLoadProgressDialog)
-        self.verticalLayout.setSpacing(10)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.label = QtGui.QLabel(DocumentLoadProgressDialog)
         self.label.setObjectName(_fromUtf8("label"))
