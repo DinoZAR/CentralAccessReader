@@ -189,7 +189,8 @@ determ = d e t -> 'determinant of the square matrix'
 
 fencedABS = mfenced<open="|",close="|">(+) -> 'determinant of the square matrix {1},'
 
-//import _SoftFractions.txt
+import _SoftFractions.txt
+import _Dollars.txt
 import _Fractions.txt
 import _Fences.txt
 import _Final.txt

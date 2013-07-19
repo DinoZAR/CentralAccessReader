@@ -163,9 +163,9 @@ tableRow = mtr(+) -> 'row, {1}'
 // Generic Fallbacks, Final Collectors
 // ------------------------------------------------------------------------------
 
-//import _SoftFractions.txt
+import _SoftFractions.txt
 
-//import _Dollars.txt
+import _Dollars.txt
 leftSubSup = mmultiscipts(mrow(+) ? mrow(+) mrow(+)) -> 'left subscript {2}, left superscript {3}, {1}'
 
 import _Fractions.txt
