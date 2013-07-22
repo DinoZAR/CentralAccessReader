@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace\nifty-prose-articulator\src\forms/mainwindow.ui'
 #
-# Created: Mon Jul 22 09:09:44 2013
+# Created: Mon Jul 22 10:01:03 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -456,7 +456,7 @@ class Ui_MainWindow(object):
         self.saveToMP3Button.setToolTip(_translate("MainWindow", "Save All To MP3 (Ctrl+Shift+S)", None))
         self.zoomInButton.setToolTip(_translate("MainWindow", "Zoom In (Ctrl+=)", None))
         self.zoomOutButton.setToolTip(_translate("MainWindow", "Zoom Out (Ctrl+-)", None))
-        self.zoomResetButton.setToolTip(_translate("MainWindow", "Reset Zoom (Ctrl+Shift+_)", None))
+        self.zoomResetButton.setToolTip(_translate("MainWindow", "Reset Zoom (Ctrl+Backspace)", None))
         self.label_2.setText(_translate("MainWindow", "Volume:", None))
         self.label.setText(_translate("MainWindow", "Rate:", None))
         self.rateSlider.setToolTip(_translate("MainWindow", "Rate", None))
@@ -501,7 +501,7 @@ class Ui_MainWindow(object):
         self.actionZoom_Out.setText(_translate("MainWindow", "Zoom Out", None))
         self.actionZoom_Out.setShortcut(_translate("MainWindow", "Ctrl+-", None))
         self.actionReset_Zoom.setText(_translate("MainWindow", "Reset Zoom", None))
-        self.actionReset_Zoom.setShortcut(_translate("MainWindow", "Ctrl+Shift+_", None))
+        self.actionReset_Zoom.setShortcut(_translate("MainWindow", "Ctrl+Backspace", None))
 
 from PyQt4 import QtWebKit
 import resource_rc

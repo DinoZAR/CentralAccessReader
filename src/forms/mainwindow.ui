@@ -466,7 +466,7 @@
             <item>
              <widget class="QPushButton" name="zoomResetButton">
               <property name="toolTip">
-               <string>Reset Zoom (Ctrl+Shift+_)</string>
+               <string>Reset Zoom (Ctrl+Backspace)</string>
               </property>
               <property name="text">
                <string/>
@@ -984,7 +984,7 @@
     <string>Reset Zoom</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+_</string>
+    <string>Ctrl+Backspace</string>
    </property>
   </action>
  </widget>
