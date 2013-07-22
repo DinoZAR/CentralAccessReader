@@ -204,6 +204,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.saveToMP3Button.clicked.connect(self.saveMP3All)
         self.ui.zoomInButton.clicked.connect(self.zoomIn)
         self.ui.zoomOutButton.clicked.connect(self.zoomOut)
+        self.ui.zoomResetButton.clicked.connect(self.zoomReset)
         
         # Main Menu
         # File
@@ -217,6 +218,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.actionStop.triggered.connect(self.stopSpeech)
         self.ui.actionZoom_In.triggered.connect(self.zoomIn)
         self.ui.actionZoom_Out.triggered.connect(self.zoomOut)
+        self.ui.actionReset_Zoom.triggered.connect(self.zoomReset)
         self.ui.actionSearch.triggered.connect(self.toggleSearchBar)
         
         # Settings
@@ -459,7 +461,7 @@ class MainWindow(QtGui.QMainWindow):
             self.progressDialog.setWindowModality(Qt.WindowModal)
             self.progressDialog.setWindowTitle('Saving to MP3...')
             self.progressDialog.setLabelText('Generating speech...')
-            self.progressDialog.setValue(0)
+            self.progressDialog.setProgress(0)
             self.progressDialog.show()
             QtGui.qApp.processEvents()
             
@@ -470,7 +472,7 @@ class MainWindow(QtGui.QMainWindow):
             
             # Get the progress of the thing from the speech thread
             def myOnProgress(percent):
-                self.progressDialog.setValue(percent)
+                self.progressDialog.setProgress(percent)
                 QtGui.qApp.processEvents()
                 
             def myOnProgressLabel(newLabel):
@@ -503,6 +505,9 @@ class MainWindow(QtGui.QMainWindow):
     
     def zoomOut(self):
         self.ui.webView.zoomOut()
+        
+    def zoomReset(self):
+        self.ui.webView.zoomReset()
             
 #     def openHTML(self):
 #         fileName = QtGui.QFileDialog.getOpenFileName(self, 'Open HTML...','./tests','(*.html)')
@@ -523,6 +528,7 @@ class MainWindow(QtGui.QMainWindow):
         if len(filePath) > 0:
             
             from src.docx.thread import DocxImporterThread
+            from src.gui.document_load_progress import DocumentLoadProgressDialog
              
             # Create my .docx importer thread
             self.docxImporterThread = DocxImporterThread(filePath)
@@ -531,17 +537,16 @@ class MainWindow(QtGui.QMainWindow):
             self.docxImporterThread.finished.connect(self.finishOpenDocx)
             
             #Show a progress dialog
-            self.progressDialog.setWindowModality(Qt.WindowModal)
-            self.progressDialog.setWindowTitle('Opening Word document...')
+            self.progressDialog = DocumentLoadProgressDialog()
             self.progressDialog.setLabelText('Reading ' + os.path.basename(str(filePath)) + '...')
-            self.progressDialog.setValue(0)
+            self.progressDialog.setProgress(0)
             self.progressDialog.canceled.connect(self.docxImporterThread.stop)
             self.progressDialog.show()
            
             self.docxImporterThread.start()
         
     def reportProgressOpenDocx(self, percent):
-        self.progressDialog.setValue(percent - 1)
+        self.progressDialog.setProgress(percent - 1)
         
     def reportTextOpenDocx(self, text):
         self.progressDialog.setLabelText(text)
@@ -564,6 +569,11 @@ class MainWindow(QtGui.QMainWindow):
         print 'Finishing up...'
         
         if self.docxImporterThread.isSuccessful():
+            
+            # Disable the cancel in the progress thing, since we can't cancel
+            # here anyways
+            self.progressDialog.disableCancel()
+            
             url = misc.temp_path('import')
             baseUrl = QUrl.fromLocalFile(url)
             
@@ -574,6 +584,7 @@ class MainWindow(QtGui.QMainWindow):
             # Set the content views and prepare assigner
             docxHtml = self.docxImporterThread.getHTML()
             self.assigner.prepare(docxHtml)
+            self.ui.webView.loadProgress.connect(self.progressDialog.setProgress)
             self.ui.webView.setHtml(docxHtml, baseUrl)
             
             # Get and set the bookmarks
@@ -604,10 +615,11 @@ class MainWindow(QtGui.QMainWindow):
             while not loaded:
                 QtGui.qApp.processEvents()
                 progress = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetMathTypesetProgress', [])).toInt()
-                self.progressDialog.setValue(progress[0])
+                self.progressDialog.setProgress(progress[0])
                 loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsMathTypeset', [])).toBool()
                     
-        self.progressDialog.hide()
+        self.progressDialog.enableCancel()
+        self.progressDialog.close()
         self.stopDocumentLoad = False
         
     def showOpenDocxDialog(self):
@@ -764,32 +776,42 @@ class MainWindow(QtGui.QMainWindow):
         # install it)
         from src.gui.update_prompt import UpdatePromptDialog
         
-        if is_update_downloaded():
-            question = UpdatePromptDialog(self)
-            question.setText('Update has already downloaded. Want to install it?')
-            result = question.exec_()
-            
-            if result == QtGui.QMessageBox.Yes:
-                run_update_installer()
-                self.app.exit(0)
-        
-        else:
-            question = UpdatePromptDialog(self)
-            result = question.exec_()
-        
-            if result == QtGui.QMessageBox.Yes:
+        try:
+            if is_update_downloaded():
+                question = UpdatePromptDialog(self)
+                question.setText('Update has already downloaded. Want to install it?')
+                result = question.exec_()
                 
-                from src.gui.download_progress import DownloadProgressWidget
+                if result == QtGui.QMessageBox.Yes:
+                    run_update_installer()
+                    self.app.exit(0)
+            
+            else:
+                question = UpdatePromptDialog(self)
+                result = question.exec_()
+            
+                if result == QtGui.QMessageBox.Yes:
+                    
+                    from src.gui.download_progress import DownloadProgressWidget
+                    
+                    # Create the widget for the download right below the content view
+                    self.updateDownloadProgress = DownloadProgressWidget(self)
+                    self.updateDownloadProgress.setUrl(SETUP_FILE)
+                    self.updateDownloadProgress.setDestination(SETUP_TEMP_FILE)
                 
-                # Create the widget for the download right below the content view
-                self.updateDownloadProgress = DownloadProgressWidget(self)
-                self.updateDownloadProgress.setUrl(SETUP_FILE)
-                self.updateDownloadProgress.setDestination(SETUP_TEMP_FILE)
-            
-                self.updateDownloadProgress.downloadFinished.connect(self.finishUpdateDownload)
-                self.ui.webViewLayout.addWidget(self.updateDownloadProgress, stretch=0)
-            
-                self.updateDownloadProgress.startDownload()
+                    self.updateDownloadProgress.downloadFinished.connect(self.finishUpdateDownload)
+                    self.ui.webViewLayout.addWidget(self.updateDownloadProgress, stretch=0)
+                
+                    self.updateDownloadProgress.startDownload()
+                    
+        except Exception as e:
+            # Generate a bug report for it
+            import traceback
+            from misc import prepare_bug_report
+            from src.gui.bug_reporter import BugReporter
+            out = prepare_bug_report(traceback.format_exc(), self.configuration)
+            dialog = BugReporter(out)
+            dialog.exec_()
             
     def finishUpdateDownload(self, success):
         '''

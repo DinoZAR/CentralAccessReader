@@ -94,24 +94,28 @@ class DownloadThread(QThread):
         self._url = ''
         self._dest = ''
         self._stop = False
+        self._lastPercent = -1
         
     def run(self):
         self._stop = False
             
         destFile = open(self._dest, 'wb')
         
-        def reportProgress(percent):
-            self.downloadProgress.emit(percent)
+        def reportHook(percent):
+            # I'm doing this to minimize the number of signals sent
+            if percent != self._lastPercent:
+                self.downloadProgress.emit(percent)
+                self._lastPercent = percent
                         
         response = urllib2.urlopen(self._url)
-        contents = self.chunkRead(response, reportProgress)
+        contents = self.chunkRead(response, reportHook)
             
         if not self._stop:
             destFile.write(contents)
         
         destFile.close()
             
-    def chunkRead(self, response, reportProgress, chunkSize=8192):
+    def chunkRead(self, response, reportHook, chunkSize=8192):
         size = int(response.info().getheader('Content-Length').strip())
         numBytes = 0
         contents = ''
@@ -127,7 +131,7 @@ class DownloadThread(QThread):
                 break
             
             contents += chunk
-            reportProgress(int(float(numBytes) / size * 100.0))
+            reportHook(int(float(numBytes) / size * 100.0))
         
         return contents
     

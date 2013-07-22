@@ -1,5 +1,6 @@
 vertical = v e r t i c a l -> 'vertical'
 horizontal = h o r i z o n t a l -> 'horizontal'
+coordinate = c o o r d i n a t e -> 'coordinate'
 
 add = a d d -> 'add'
 add = A d d -> 'add'
@@ -114,3 +115,12 @@ quarter = q u a r t e r -> 'quarter'
 
 degrees = degree F -> '{1} Fahrenheit'
 degrees = degree C -> '{1} Celsius'
+
+top = t o p -> 'top'
+up = u p -> 'up'
+bottom = b o t t o m -> 'bottom'
+bot = b o t -> 'bot'
+low = l o w -> 'low'
+lcd = L C D -> 'l c d'
+
+by = b y -> 'by'

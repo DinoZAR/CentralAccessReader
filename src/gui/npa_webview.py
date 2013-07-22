@@ -14,6 +14,9 @@ class NPAWebView(QWebView):
     '''
     This subclass is meant to override some of the mouse behavior, most notably the zoom feature.
     '''
+    
+    ZOOM_LEVELS = [.25, .5, .75, 1, 1.25, 1.5, 2, 3, 4, 5, 7, 9, 12]
+    DEFAULT_ZOOM_INDEX = 3
 
     def __init__(self, mainWindow, parent=None):
         '''
@@ -22,7 +25,7 @@ class NPAWebView(QWebView):
         QWebView.__init__(self, parent)
         self.mainWindow = mainWindow
         self.setAcceptDrops(True)
-        self.myZoomFactor = 1.0
+        self._zoomIndex = self.DEFAULT_ZOOM_INDEX
         
         self.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
         
@@ -73,16 +76,16 @@ class NPAWebView(QWebView):
         if modifiers and Qt.ControlModifier:
             # Zoom the window
             if event.delta() > 0:
-                self.myZoomFactor -= 0.1
-                if self.myZoomFactor < 0.2:
-                    self.myZoomFactor = 0.2
-                self.setZoomFactor(self.myZoomFactor)
+                self._zoomIndex -= 1
+                if self._zoomIndex < 0:
+                    self._zoomIndex = 0
+                self.setZoomFactor(self.ZOOM_LEVELS[self._zoomIndex])
                 self.update()
             else:
-                self.myZoomFactor += 0.1
-                if self.myZoomFactor > 20.0:
-                    self.myZoomFactor = 20.0
-                self.setZoomFactor(self.myZoomFactor)
+                self._zoomIndex += 1
+                if self._zoomIndex >= len(self.ZOOM_LEVELS):
+                    self._zoomIndex = len(self.ZOOM_LEVELS) - 1
+                self.setZoomFactor(self.ZOOM_LEVELS[self._zoomIndex])
                 self.update()
         else:
             # Otherwise, just scroll it
@@ -105,31 +108,49 @@ class NPAWebView(QWebView):
         event.ignore()
         
     def getZoom(self):
-        return self.myZoomFactor
+        '''
+        Gets the current zoom factor of my web view
+        '''
+        return self.ZOOM_LEVELS[self._zoomIndex]
         
     def setZoom(self, newZoom):
-        self.myZoomFactor = newZoom
-        self.setZoomFactor(newZoom)
+        '''
+        Sets the zoom level that most closely matches my levels
+        '''
+        deltas = []
+        for i in range(len(self.ZOOM_LEVELS)):
+            deltas.append((i, abs(self.ZOOM_LEVELS[i] - newZoom)))
+        deltas = sorted(deltas, key=lambda x : x[1])
+        self._zoomIndex = deltas[0][0]
+        self.setZoomFactor(self.ZOOM_LEVELS[self._zoomIndex])
         self.update()
         
     def zoomIn(self):
         '''
         Called by application to zoom the view in.
         '''
-        self.myZoomFactor += 0.1
-        if self.myZoomFactor > 20.0:
-            self.myZoomFactor = 20.0
-        self.setZoomFactor(self.myZoomFactor)
+        self._zoomIndex += 1
+        if self._zoomIndex > len(self.ZOOM_LEVELS):
+            self._zoomIndex = len(self.ZOOM_LEVELS) - 1
+        self.setZoomFactor(self.ZOOM_LEVELS[self._zoomIndex])
         self.update()
     
     def zoomOut(self):
         '''
         Called by application to zoom the view out.
         '''
-        self.myZoomFactor -= 0.1
-        if self.myZoomFactor < 0.2:
-            self.myZoomFactor = 0.2
-        self.setZoomFactor(self.myZoomFactor)
+        self._zoomIndex -= 1
+        if self._zoomIndex < 0:
+            self._zoomIndex = 0
+        self.setZoomFactor(self.ZOOM_LEVELS[self._zoomIndex])
+        self.update()
+        
+    def zoomReset(self):
+        '''
+        Called by application to reset the zoom factor to 1.0
+        '''
+        self._zoomIndex = self.DEFAULT_ZOOM_INDEX
+        self.setZoomFactor(self.ZOOM_LEVELS[self._zoomIndex])
         self.update()
         
     def myLinkClicked(self, url):

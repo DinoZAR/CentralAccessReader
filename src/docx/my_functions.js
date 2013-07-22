@@ -72,15 +72,19 @@ function GotoPageAnchor(anchorName) {
 function ScrollToHighlight(isInstant) {
 	isInstant = typeof isInstant !== 'undefined' ? isInstant : false;
 	
+    // Calculate the top offset making it the top 1/6 of the document viewport.
+    // This will scale correctly for different zoom sizes
+    var myOffset = window.innerHeight * (1.0 / 6.0)
+    
 	var myDuration = 800;
 	if (isInstant) {
 		myDuration = 0;
 	}
 	if (highlightLine != null) {
-		$.scrollTo(highlightLine.parentNode, {duration: myDuration, offset: {top: -120}});
+		$.scrollTo(highlightLine.parentNode, {duration: myDuration, offset: {top: -myOffset}});
 	}
 	else {
-		$.scrollTo(highlight.parentNode, {duration: myDuration, offset: {top: -120}});
+		$.scrollTo(highlight.parentNode, {duration: myDuration, offset: {top: -myOffset}});
 	}
 }
 
