@@ -204,6 +204,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.saveToMP3Button.clicked.connect(self.saveMP3All)
         self.ui.zoomInButton.clicked.connect(self.zoomIn)
         self.ui.zoomOutButton.clicked.connect(self.zoomOut)
+        self.ui.zoomResetButton.clicked.connect(self.zoomReset)
         
         # Main Menu
         # File
@@ -217,6 +218,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.actionStop.triggered.connect(self.stopSpeech)
         self.ui.actionZoom_In.triggered.connect(self.zoomIn)
         self.ui.actionZoom_Out.triggered.connect(self.zoomOut)
+        self.ui.actionReset_Zoom.triggered.connect(self.zoomReset)
         self.ui.actionSearch.triggered.connect(self.toggleSearchBar)
         
         # Settings
@@ -323,7 +325,7 @@ class MainWindow(QtGui.QMainWindow):
             pass
         
         self.prepareSpeechThread = PrepareSpeechThread(self.assigner, self.configuration, selectedHTML, 80)
-        self.prepareSpeechThread.reportHook.connect(self.reportProgressPlaySpeech)
+        self.prepareSpeechThread.reportProgress.connect(self.reportProgressPlaySpeech)
         self.prepareSpeechThread.finished.connect(self.finishPlaySpeech)
         self.ui.actionStop.triggered.connect(self.prepareSpeechThread.stop)
         self.ui.pauseButton.clicked.connect(self.prepareSpeechThread.stop)
@@ -459,7 +461,7 @@ class MainWindow(QtGui.QMainWindow):
             self.progressDialog.setWindowModality(Qt.WindowModal)
             self.progressDialog.setWindowTitle('Saving to MP3...')
             self.progressDialog.setLabelText('Generating speech...')
-            self.progressDialog.setValue(0)
+            self.progressDialog.setProgress(0)
             self.progressDialog.show()
             QtGui.qApp.processEvents()
             
@@ -470,7 +472,7 @@ class MainWindow(QtGui.QMainWindow):
             
             # Get the progress of the thing from the speech thread
             def myOnProgress(percent):
-                self.progressDialog.setValue(percent)
+                self.progressDialog.setProgress(percent)
                 QtGui.qApp.processEvents()
                 
             def myOnProgressLabel(newLabel):
@@ -503,6 +505,9 @@ class MainWindow(QtGui.QMainWindow):
     
     def zoomOut(self):
         self.ui.webView.zoomOut()
+        
+    def zoomReset(self):
+        self.ui.webView.zoomReset()
             
 #     def openHTML(self):
 #         fileName = QtGui.QFileDialog.getOpenFileName(self, 'Open HTML...','./tests','(*.html)')
@@ -527,7 +532,7 @@ class MainWindow(QtGui.QMainWindow):
              
             # Create my .docx importer thread
             self.docxImporterThread = DocxImporterThread(filePath)
-            self.docxImporterThread.reportHook.connect(self.reportProgressOpenDocx)
+            self.docxImporterThread.reportProgress.connect(self.reportProgressOpenDocx)
             self.docxImporterThread.reportError.connect(self.reportErrorOpenDocx)
             self.docxImporterThread.finished.connect(self.finishOpenDocx)
             

@@ -132,5 +132,13 @@ class NPAWebView(QWebView):
         self.setZoomFactor(self.myZoomFactor)
         self.update()
         
+    def zoomReset(self):
+        '''
+        Called by application to reset the zoom factor to 1.0
+        '''
+        self.myZoomFactor = 1.0
+        self.setZoomFactor(self.myZoomFactor)
+        self.update()
+        
     def myLinkClicked(self, url):
         webbrowser.open_new(str(url.toString()))

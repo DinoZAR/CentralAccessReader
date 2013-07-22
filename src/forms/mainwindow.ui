@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1113</width>
+    <width>1200</width>
     <height>673</height>
    </rect>
   </property>
@@ -279,11 +279,11 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>885</width>
+             <width>947</width>
              <height>69</height>
             </rect>
            </property>
-           <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,0,0,0,1,0">
+           <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,0,0,0,0,1,0">
             <property name="spacing">
              <number>0</number>
             </property>
@@ -339,7 +339,7 @@
             <item>
              <widget class="QPushButton" name="speechSettingsButton">
               <property name="toolTip">
-               <string>Speech Settings</string>
+               <string>Speech Settings (F1)</string>
               </property>
               <property name="text">
                <string/>
@@ -362,7 +362,7 @@
             <item>
              <widget class="QPushButton" name="colorSettingsButton">
               <property name="toolTip">
-               <string>Highlighting, Colors, and Fonts Settings</string>
+               <string>Highlighting, Colors, and Fonts Settings (F2)</string>
               </property>
               <property name="text">
                <string/>
@@ -451,6 +451,29 @@
               <property name="icon">
                <iconset resource="resource.qrc">
                 <normaloff>:/icons/icons/zoom_out.png</normaloff>:/icons/icons/zoom_out.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>50</width>
+                <height>50</height>
+               </size>
+              </property>
+              <property name="flat">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="zoomResetButton">
+              <property name="toolTip">
+               <string>Reset Zoom (Ctrl+Shift+_)</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="resource.qrc">
+                <normaloff>:/icons/icons/zoom_fit_best.png</normaloff>:/icons/icons/zoom_fit_best.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -564,6 +587,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="getUpdateButton">
+              <property name="toolTip">
+               <string>Update Available!</string>
+              </property>
               <property name="text">
                <string>Update Available!</string>
               </property>
@@ -712,7 +738,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1113</width>
+     <width>1200</width>
      <height>21</height>
     </rect>
    </property>
@@ -753,6 +779,7 @@
     <addaction name="separator"/>
     <addaction name="actionZoom_In"/>
     <addaction name="actionZoom_Out"/>
+    <addaction name="actionReset_Zoom"/>
     <addaction name="separator"/>
     <addaction name="actionSearch"/>
    </widget>
@@ -946,6 +973,18 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+-</string>
+   </property>
+  </action>
+  <action name="actionReset_Zoom">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icons/zoom_fit_best_small.png</normaloff>:/icons/icons/zoom_fit_best_small.png</iconset>
+   </property>
+   <property name="text">
+    <string>Reset Zoom</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+_</string>
    </property>
   </action>
  </widget>
