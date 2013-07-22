@@ -119,11 +119,15 @@ def is_update_downloaded():
     '''
     # Check the version number in my temp and the version number on the server.
     # If they are the same, then my update has downloaded. Otherwise, no.
-    versionHere = get_version_number(VERSION_TEMP)
-    versionThere = urllib2.urlopen(VERSION_THERE)
-    versionThere = float(re.search(r'[0-9]+.[0-9]+', versionThere.read()).group(0))
-    
-    return versionHere == versionThere
+    try:
+        versionHere = get_version_number(VERSION_TEMP)
+        versionThere = urllib2.urlopen(VERSION_THERE)
+        versionThere = float(re.search(r'[0-9]+.[0-9]+', versionThere.read()).group(0))
+        return versionHere == versionThere
+    except IOError:
+        return False
+    except Exception as e:
+        raise e
     
 def get_version_number(versionFile):
     f = open(versionFile, 'r')

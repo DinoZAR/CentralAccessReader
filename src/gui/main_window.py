@@ -323,7 +323,7 @@ class MainWindow(QtGui.QMainWindow):
             pass
         
         self.prepareSpeechThread = PrepareSpeechThread(self.assigner, self.configuration, selectedHTML, 80)
-        self.prepareSpeechThread.reportProgress.connect(self.reportProgressPlaySpeech)
+        self.prepareSpeechThread.reportHook.connect(self.reportProgressPlaySpeech)
         self.prepareSpeechThread.finished.connect(self.finishPlaySpeech)
         self.ui.actionStop.triggered.connect(self.prepareSpeechThread.stop)
         self.ui.pauseButton.clicked.connect(self.prepareSpeechThread.stop)
@@ -527,7 +527,7 @@ class MainWindow(QtGui.QMainWindow):
              
             # Create my .docx importer thread
             self.docxImporterThread = DocxImporterThread(filePath)
-            self.docxImporterThread.reportProgress.connect(self.reportProgressOpenDocx)
+            self.docxImporterThread.reportHook.connect(self.reportProgressOpenDocx)
             self.docxImporterThread.reportError.connect(self.reportErrorOpenDocx)
             self.docxImporterThread.finished.connect(self.finishOpenDocx)
             
@@ -771,32 +771,42 @@ class MainWindow(QtGui.QMainWindow):
         # install it)
         from src.gui.update_prompt import UpdatePromptDialog
         
-        if is_update_downloaded():
-            question = UpdatePromptDialog(self)
-            question.setText('Update has already downloaded. Want to install it?')
-            result = question.exec_()
-            
-            if result == QtGui.QMessageBox.Yes:
-                run_update_installer()
-                self.app.exit(0)
-        
-        else:
-            question = UpdatePromptDialog(self)
-            result = question.exec_()
-        
-            if result == QtGui.QMessageBox.Yes:
+        try:
+            if is_update_downloaded():
+                question = UpdatePromptDialog(self)
+                question.setText('Update has already downloaded. Want to install it?')
+                result = question.exec_()
                 
-                from src.gui.download_progress import DownloadProgressWidget
+                if result == QtGui.QMessageBox.Yes:
+                    run_update_installer()
+                    self.app.exit(0)
+            
+            else:
+                question = UpdatePromptDialog(self)
+                result = question.exec_()
+            
+                if result == QtGui.QMessageBox.Yes:
+                    
+                    from src.gui.download_progress import DownloadProgressWidget
+                    
+                    # Create the widget for the download right below the content view
+                    self.updateDownloadProgress = DownloadProgressWidget(self)
+                    self.updateDownloadProgress.setUrl(SETUP_FILE)
+                    self.updateDownloadProgress.setDestination(SETUP_TEMP_FILE)
                 
-                # Create the widget for the download right below the content view
-                self.updateDownloadProgress = DownloadProgressWidget(self)
-                self.updateDownloadProgress.setUrl(SETUP_FILE)
-                self.updateDownloadProgress.setDestination(SETUP_TEMP_FILE)
-            
-                self.updateDownloadProgress.downloadFinished.connect(self.finishUpdateDownload)
-                self.ui.webViewLayout.addWidget(self.updateDownloadProgress, stretch=0)
-            
-                self.updateDownloadProgress.startDownload()
+                    self.updateDownloadProgress.downloadFinished.connect(self.finishUpdateDownload)
+                    self.ui.webViewLayout.addWidget(self.updateDownloadProgress, stretch=0)
+                
+                    self.updateDownloadProgress.startDownload()
+                    
+        except Exception as e:
+            # Generate a bug report for it
+            import traceback
+            from misc import prepare_bug_report
+            from src.gui.bug_reporter import BugReporter
+            out = prepare_bug_report(traceback.format_exc(), self.configuration)
+            dialog = BugReporter(out)
+            dialog.exec_()
             
     def finishUpdateDownload(self, success):
         '''

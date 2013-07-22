@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace\nifty-prose-articulator\src\forms/download_progress.ui'
 #
-# Created: Tue Jul 09 17:00:29 2013
+# Created: Mon Jul 22 08:31:29 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_DownloadProgressWidget(object):
     def setupUi(self, DownloadProgressWidget):
         DownloadProgressWidget.setObjectName(_fromUtf8("DownloadProgressWidget"))
-        DownloadProgressWidget.resize(435, 32)
+        DownloadProgressWidget.resize(735, 32)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/update_down_arrow.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         DownloadProgressWidget.setWindowIcon(icon)
