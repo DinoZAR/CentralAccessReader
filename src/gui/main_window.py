@@ -27,6 +27,7 @@ class MainWindow(QtGui.QMainWindow):
     # TTS control signals
     startPlayback = pyqtSignal()
     stopPlayback = pyqtSignal()
+    startQueuing = pyqtSignal()
     addToQueue = pyqtSignal(str, str)
     doneQueuing = pyqtSignal()
     
@@ -103,13 +104,7 @@ class MainWindow(QtGui.QMainWindow):
             message.exec_()
         
         # TTS states
-        self.ttsPlaying = False
-        self.stopSpeech = True
-        self.isFirst = False
-        self.hasWorded = False;
-        self.lastElement = ['', -1, '', -1]
-        self.repeat = False
-        self.repeatText = ' '
+        self.resetTTSStates()
         
         # This class is used for assigning the different parts of the content
         # to a specific method of how to speak it
@@ -118,12 +113,14 @@ class MainWindow(QtGui.QMainWindow):
         # Set up my speech driver and start it
         self.speechThread = SpeechWorker()
         
+        self.speechThread.onStart.connect(self.onStart)
         self.speechThread.onWord.connect(self.onWord)
         self.speechThread.onEndStream.connect(self.onEndStream)
         self.speechThread.onFinish.connect(self.onSpeechFinished)   
         
         self.startPlayback.connect(self.speechThread.startPlayback)
         self.stopPlayback.connect(self.speechThread.stopPlayback)
+        self.startQueuing.connect(self.speechThread.startQueuing)
         self.addToQueue.connect(self.speechThread.addToQueue)
         self.doneQueuing.connect(self.speechThread.doneQueuing)
         self.changeVolume.connect(self.speechThread.setVolume)
@@ -301,30 +298,16 @@ class MainWindow(QtGui.QMainWindow):
         # Stop whatever the speech thread may be saying
         self.stopPlayback.emit()
         
-        # Wait for the speech to quit completely
-        while self.ttsPlaying:
-            QtGui.qApp.processEvents()
-        
         # Get the selected HTML
         self.javascriptMutex.lock()
         selectedHTML = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetSelectionHTML', [])).toString())
         self.javascriptMutex.unlock()
         
         # Reset the TTS states
-        self.isFirst = True
-        self.lastElement = ['', -1, '', -1]
-        self.ttsPlaying = True
+        self.resetTTSStates()
         self.setSettingsEnableState(False)
         
-        # Start the TTS engine
-        self.startPlayback.emit()
-        
-        # Show the prepare speech progress widget
-#         self.prepareSpeechProgress.setProgress(0)
-#         self.prepareSpeechProgress.show()
-        
         # Prepare the speech for the TTS using a thread
-        # Make it only report up to 80%
         try:
             # Stop it if I hadn't already
             self.prepareSpeechThread.stop()
@@ -332,89 +315,78 @@ class MainWindow(QtGui.QMainWindow):
         except AttributeError:
             pass
         
-        self.prepareSpeechThread = PrepareSpeechThread(self.assigner, self.configuration, selectedHTML, self.addToQueue, self.doneQueuing)
-        self.prepareSpeechThread.finished.connect(self.finishPlaySpeech)
+        speechSignals = {'startPlayback' : self.startPlayback,
+                         'startQueuing' : self.startQueuing,
+                         'addToQueue' : self.addToQueue,
+                         'doneQueuing' : self.doneQueuing}
+        
+        self.prepareSpeechThread = PrepareSpeechThread(self.assigner, self.configuration, selectedHTML, speechSignals)
         self.ui.actionStop.triggered.connect(self.prepareSpeechThread.stop)
         self.ui.pauseButton.clicked.connect(self.prepareSpeechThread.stop)
         self.prepareSpeechThread.start()
         
-    def finishPlaySpeech(self):
+        print 'window: Spawned prepare speech successfully'
+    
+    def stopSpeech(self):
+        self.stopPlayback.emit()
+        self.setSettingsEnableState(True)
         
-#         if self.prepareSpeechThread.isSuccessful():
-#             outputList = self.prepareSpeechThread.getOutputList()
-#             
-#             if len(outputList) > 0:
-#                 
-#                 # Add my words to the queue
-#                 # Make the progress go from 80%-100%
-#                 i = 0
-#                 for o in outputList:
-#                     self.addToQueue.emit(o[0], o[1])
-#                     i += 1
-#                     self.prepareSpeechProgress.setProgress(80 + (float(i) / len(outputList)) * 20.0)
-#                     QtGui.qApp.processEvents()
-#         
-        self.prepareSpeechProgress.hide()
+    def resetTTSStates(self):
+        self.ttsStates = {'lastElement' : ['', -1, '', -1], 
+                          'hasWorded' : False,
+                          'isFirst' : True}
+    
+    def onStart(self, offset, length, label, stream, word):
+        print 'window: OnStart'
+        self.javascriptMutex.lock()
+        self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SetBeginning', [self.configuration.highlight_line_enable, str(label)]))
+        self.javascriptMutex.unlock()
         
     def onWord(self, offset, length, label, stream, word):
         self.hasWorded = True
-        
-        if self.isFirst:
-            self.isFirst = False
-            self.javascriptMutex.lock()
-            self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SetBeginning', [self.configuration.highlight_line_enable, str(label)]))
-            self.javascriptMutex.unlock()
+        print 'window: OnWord'
+        lastElement = self.ttsStates['lastElement']
         
         if label == 'text':
-            if (self.lastElement[3] != stream) and (self.lastElement[3] >= 0):
+            if (lastElement[3] != stream) and (lastElement[3] >= 0):
                 self.javascriptMutex.lock()
-                self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
+                self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(lastElement[2])]))
                 self.javascriptMutex.unlock()
             self.javascriptMutex.lock()
             self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightWord', [self.configuration.highlight_line_enable, offset, length, unicode(word)]))
             self.javascriptMutex.unlock()
-            self.isFirst = False
+            
         elif label == 'math':
-            if not self.isFirst:
-                if label != self.lastElement[2] or stream != self.lastElement[3] and (self.lastElement[3] >= 0):
+            if not self.ttsStates['isFirst']:
+                if label != lastElement[2] or stream != lastElement[3] and (lastElement[3] >= 0):
                     self.javascriptMutex.lock()
-                    self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
+                    self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(lastElement[2])]))
                     self.javascriptMutex.unlock()
-            else:
-                self.isFirst = False
+                    
         elif label == 'image':
-            if not self.isFirst:
-                if label != self.lastElement[2] or stream != self.lastElement[3] and (self.lastElement[3] >= 0):
+            if not self.ttsStates['isFirst']:
+                if label != lastElement[2] or stream != lastElement[3] and (lastElement[3] >= 0):
                     self.javascriptMutex.lock()
-                    self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
+                    self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(lastElement[2])]))
                     self.javascriptMutex.unlock()
-            else:
-                self.isFirst = False
         else:
             print 'ERROR: I don\'t know what this label refers to for highlighting:', label
         
-        self.lastElement = [offset, length, label, stream]
+        self.ttsStates['lastElement'] = [offset, length, label, stream]
+        self.ttsStates['isFirst'] = False
         
     def onEndStream(self, stream, label):
+        print 'window: OnEndStream'
 #         if (not self.hasWorded) and (label == 'text') and (not self.isFirst):
 #             self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightWord', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
-        self.hasWorded = False
-        self.isFirst = False
         
     def onSpeechFinished(self):
+        print 'window: OnSpeechFinished'
         self.javascriptMutex.lock()
         self.ui.webView.page().mainFrame().evaluateJavaScript('ClearAllHighlights()')
         self.javascriptMutex.unlock()
-        self.isFirst = False
-        self.ttsPlaying = False
-        self.lastElement = ['', -1, '', -1]
         self.setSettingsEnableState(True)
-        
-    def stopSpeech(self):
-        self.isFirst = False
-        self.stopPlayback.emit()
-        self.ttsPlaying = False
-        self.setSettingsEnableState(True)
+        self.resetTTSStates()
             
     def changeSpeechRate(self, value):
         self.configuration.rate = value

@@ -9,6 +9,7 @@ from lxml import etree, html
 from PyQt4.QtCore import QMutex, QThread, pyqtSignal
 from src.mathml_fast.tts import MathTTS
 from src.speech.math_parser_thread import MathParserThread
+import time
 
 # Namespace for XHTML
 html_NS = '{http://www.w3.org/1999/xhtml}'
@@ -21,21 +22,25 @@ class PrepareSpeechThread(QThread):
     '''
     reportProgress = pyqtSignal(int)
     
-    def __init__(self, assigner, configuration, htmlToConvert, addToQueueSignal, doneQueuingSignal):
+    def __init__(self, assigner, configuration, htmlToConvert, speechSignals):
         QThread.__init__(self)
         self._assigner = assigner
         self._config = configuration
-        self._html = htmlToConvert
+        self._html = html.fromstring(htmlToConvert)
         self._stop = False
-        self._addToQueue = addToQueueSignal
-        self._doneQueuing = doneQueuingSignal
+        self._startQueuing = speechSignals['startQueuing']
+        self._addToQueue = speechSignals['addToQueue']
+        self._doneQueuing = speechSignals['doneQueuing']
         
     def run(self):
-        for speech in self._assigner.getSpeech(self._html, self._config):
-            self._addToQueue(speech[0], speech[1])
+        self._startQueuing.emit()
+        for speech in self._assigner.generateSpeech(self._html, self._config):
+            self._addToQueue.emit(speech[0], speech[1])
             if self._stop:
                 break
+            QThread.yieldCurrentThread()
         self._doneQueuing.emit()
+        print 'Prepare speech thread done!'
         
     def stop(self):
         print 'Stopping preparer...'
