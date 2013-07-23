@@ -28,6 +28,7 @@ class MainWindow(QtGui.QMainWindow):
     startPlayback = pyqtSignal()
     stopPlayback = pyqtSignal()
     addToQueue = pyqtSignal(str, str)
+    doneQueuing = pyqtSignal()
     
     # TTS setting signals
     changeVolume = pyqtSignal(float)
@@ -124,6 +125,7 @@ class MainWindow(QtGui.QMainWindow):
         self.startPlayback.connect(self.speechThread.startPlayback)
         self.stopPlayback.connect(self.speechThread.stopPlayback)
         self.addToQueue.connect(self.speechThread.addToQueue)
+        self.doneQueuing.connect(self.speechThread.doneQueuing)
         self.changeVolume.connect(self.speechThread.setVolume)
         self.changeRate.connect(self.speechThread.setRate)
         self.changeVoice.connect(self.speechThread.setVoice)
@@ -308,12 +310,18 @@ class MainWindow(QtGui.QMainWindow):
         selectedHTML = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetSelectionHTML', [])).toString())
         self.javascriptMutex.unlock()
         
-        # Disable my other widgets
+        # Reset the TTS states
+        self.isFirst = True
+        self.lastElement = ['', -1, '', -1]
+        self.ttsPlaying = True
         self.setSettingsEnableState(False)
         
+        # Start the TTS engine
+        self.startPlayback.emit()
+        
         # Show the prepare speech progress widget
-        self.prepareSpeechProgress.setProgress(0)
-        self.prepareSpeechProgress.show()
+#         self.prepareSpeechProgress.setProgress(0)
+#         self.prepareSpeechProgress.show()
         
         # Prepare the speech for the TTS using a thread
         # Make it only report up to 80%
@@ -321,53 +329,41 @@ class MainWindow(QtGui.QMainWindow):
             # Stop it if I hadn't already
             self.prepareSpeechThread.stop()
             self.prepareSpeechThread.wait()
-        except Exception:
+        except AttributeError:
             pass
         
-        self.prepareSpeechThread = PrepareSpeechThread(self.assigner, self.configuration, selectedHTML, 80)
-        self.prepareSpeechThread.reportProgress.connect(self.reportProgressPlaySpeech)
+        self.prepareSpeechThread = PrepareSpeechThread(self.assigner, self.configuration, selectedHTML, self.addToQueue, self.doneQueuing)
         self.prepareSpeechThread.finished.connect(self.finishPlaySpeech)
         self.ui.actionStop.triggered.connect(self.prepareSpeechThread.stop)
         self.ui.pauseButton.clicked.connect(self.prepareSpeechThread.stop)
-        
         self.prepareSpeechThread.start()
-    
-    def reportProgressPlaySpeech(self, percent):
-        self.prepareSpeechProgress.setProgress(percent)
         
     def finishPlaySpeech(self):
         
-        if self.prepareSpeechThread.isSuccessful():
-            outputList = self.prepareSpeechThread.getOutputList()
-            
-            if len(outputList) > 0:
-                
-                # Add my words to the queue
-                # Make the progress go from 80%-100%
-                i = 0
-                for o in outputList:
-                    self.addToQueue.emit(o[0], o[1])
-                    i += 1
-                    self.prepareSpeechProgress.setProgress(80 + (float(i) / len(outputList)) * 20.0)
-                    QtGui.qApp.processEvents()
-                
-                # Start the highlighter at the beginning
-                self.javascriptMutex.lock()
-                self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SetBeginning', [self.configuration.highlight_line_enable, outputList[0][1]]))
-                self.javascriptMutex.unlock()
-                
-                self.isFirst = True
-                self.lastElement = ['', -1, '', -1]
-                
-                self.ttsPlaying = True
-                self.setSettingsEnableState(False)
-                
-                self.startPlayback.emit()
-        
+#         if self.prepareSpeechThread.isSuccessful():
+#             outputList = self.prepareSpeechThread.getOutputList()
+#             
+#             if len(outputList) > 0:
+#                 
+#                 # Add my words to the queue
+#                 # Make the progress go from 80%-100%
+#                 i = 0
+#                 for o in outputList:
+#                     self.addToQueue.emit(o[0], o[1])
+#                     i += 1
+#                     self.prepareSpeechProgress.setProgress(80 + (float(i) / len(outputList)) * 20.0)
+#                     QtGui.qApp.processEvents()
+#         
         self.prepareSpeechProgress.hide()
         
     def onWord(self, offset, length, label, stream, word):
         self.hasWorded = True
+        
+        if self.isFirst:
+            self.isFirst = False
+            self.javascriptMutex.lock()
+            self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SetBeginning', [self.configuration.highlight_line_enable, str(label)]))
+            self.javascriptMutex.unlock()
         
         if label == 'text':
             if (self.lastElement[3] != stream) and (self.lastElement[3] >= 0):

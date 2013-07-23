@@ -157,6 +157,9 @@ class SpeechWorker(QThread):
         self._outputList.append([unicode(text),unicode(label)])
         self.queueLock.unlock()
         
+    def doneQueuing(self):
+        self.ttsEngine.doneQueuing()
+        
     def connect_signals(self, mainWindow):
         mainWindow.startPlayback.connect(self.startPlayback)
         mainWindow.stopPlayback.connect(self.stopPlayback)

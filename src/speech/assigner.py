@@ -21,33 +21,25 @@ class PrepareSpeechThread(QThread):
     '''
     reportProgress = pyqtSignal(int)
     
-    def __init__(self, assigner, configuration, htmlToConvert, maxPercent):
+    def __init__(self, assigner, configuration, htmlToConvert, addToQueueSignal, doneQueuingSignal):
         QThread.__init__(self)
         self._assigner = assigner
         self._config = configuration
         self._html = htmlToConvert
-        self._outputList = []
         self._stop = False
-        self._max = maxPercent
+        self._addToQueue = addToQueueSignal
+        self._doneQueuing = doneQueuingSignal
         
     def run(self):
-        def myProgressCallback(percent):
-            self.reportProgress.emit(int(percent / 100.0 * self._max))
-            
-        def myCheckCancel():
-            return self._stop
-        
-        self._outputList = self._assigner.getSpeech(self._html, self._config, myProgressCallback, myCheckCancel)
+        for speech in self._assigner.getSpeech(self._html, self._config):
+            self._addToQueue(speech[0], speech[1])
+            if self._stop:
+                break
+        self._doneQueuing.emit()
         
     def stop(self):
         print 'Stopping preparer...'
         self._stop = True
-        
-    def isSuccessful(self):
-        return not self._stop
-    
-    def getOutputList(self):
-        return self._outputList
             
 class Assigner(object):
     '''
@@ -98,23 +90,6 @@ class Assigner(object):
             
             i += 1
     
-    def getSpeech(self, htmlContent, configuration, progressCallback=None, checkCancelFunction=None):
-        '''
-        Returns a list of utterances to say the HTML content in the following 
-        format:
-        
-        [[text, label], [text, label], ...]
-        '''
-        if progressCallback:
-            progressCallback(0)
-        
-        htmlDom = html.fromstring(htmlContent)
-        
-        if progressCallback:
-            progressCallback(3)
-            
-        return self._recursiveGetSpeech(htmlDom, configuration, progressCallback, checkCancelFunction)
-    
     def setMathDatabase(self, filePath):
         '''
         Sets the math database it uses to parse the MathML to the one specified
@@ -138,51 +113,28 @@ class Assigner(object):
         self._maths[mathData[0]] = mathData[1]
         self._mathsLock.unlock()
         
-    def _recursiveGetSpeech(self, element, configuration, progressCallback=None, checkCancelFunction=None):
-        
-        # Use recursion to handle it.
-        myList = []
+    def generateSpeech(self, element, configuration):
         
         if element.text != None:
-            myList.append([element.text, 'text'])
+            yield [element.text, 'text']
         
         if element.tag == 'img':
-            
             altText = element.get('alt')
             if altText == None:
                 altText = ' '
             
             if configuration.tag_image:
-                    myList.append(['Image. ' + altText + '. End image.', 'image'])
+                    yield ['Image. ' + altText + '. End image.', 'image']
             else:
                 if len(altText.strip()) > 0:
-                    myList.append([altText, 'image'])
+                    yield [altText, 'image']
                 else:
-                    myList.append(['Image.', 'image'])
+                    yield ['Image.', 'image']
             if element.tail != None:
-                myList.append([element.tail, 'text'])
-        
-        
-        # Make up my own progress callback function, which I will transform
-        # into the actual progress I will report
-        i = 0
-        def myProgressCallback(percent):
-            if progressCallback:
-                p = (float(i) / len(element)) * 100.0
-                p += (1.0 / len(element)) * percent
-                progressCallback(int(p))
+                yield [element.tail, 'text']
         
         for child in element:
-            
-            # Check to see if I need to stop abruptly
-            if checkCancelFunction:
-                if checkCancelFunction():
-                    break
-            
-            i += 1
-            
             testTag = child.tag.split('}')[-1]
-            
             if testTag == 'span':
                 if child.get('class') == 'MathJax':
                     # See if the MathML already got parsed. Otherwise, generate
@@ -199,39 +151,35 @@ class Assigner(object):
                         self._mathsLock.unlock()
                     
                     if configuration.tag_math:
-                        myList.append(['Math. ' + mathOutput + '. End math.', 'math'])
+                        yield ['Math. ' + mathOutput + '. End math.', 'math']
                     else:
-                        myList.append([mathOutput, 'math'])
+                        yield [mathOutput, 'math']
                 else:
-                    myList.extend(self._recursiveGetSpeech(child, configuration, myProgressCallback, checkCancelFunction))
+                    for speech in self.generateSpeech(child, configuration):
+                        yield speech
                         
             elif testTag == 'img':
-                
                 altText = child.get('alt')
                 if altText == None:
                     altText = ' '
                     
                 if configuration.tag_image:
-                    myList.append(['Image. ' + altText + '. End image.', 'image'])
+                    yield ['Image. ' + altText + '. End image.', 'image']
                 else:
                     if len(altText.strip()) > 0:
-                        myList.append([altText, 'image'])
+                        yield [altText, 'image']
                     else:
-                        myList.append(['Image.', 'image'])
+                        yield ['Image.', 'image']
                 if child.tail != None:
-                    myList.append([child.tail, 'text'])
+                    yield [child.tail, 'text']
                     
             elif testTag == 'script':
                 # Don't do anything
                 pass
             
             else:
-                myList.extend(self._recursiveGetSpeech(child, configuration, myProgressCallback, checkCancelFunction))
+                for speech in self.generateSpeech(child, configuration):
+                    yield speech
                 
         if element.tail != None:
-            myList.append([element.tail, 'text'])
-        
-        if progressCallback:
-            progressCallback(100)
-            
-        return myList
+            yield [element.tail, 'text']
