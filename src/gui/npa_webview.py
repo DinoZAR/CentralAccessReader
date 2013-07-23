@@ -130,7 +130,7 @@ class NPAWebView(QWebView):
         Called by application to zoom the view in.
         '''
         self._zoomIndex += 1
-        if self._zoomIndex > len(self.ZOOM_LEVELS):
+        if self._zoomIndex >= len(self.ZOOM_LEVELS):
             self._zoomIndex = len(self.ZOOM_LEVELS) - 1
         self.setZoomFactor(self.ZOOM_LEVELS[self._zoomIndex])
         self.update()

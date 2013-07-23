@@ -61,18 +61,12 @@ class SpeechWorker(QThread):
         self.ttsEngine.setVoice(self._voice)
         
         while True:
-#             if self._running:
-#                 self.queueLock.lock()
-#                 for o in self._outputList:
-#                     self.ttsEngine.add(text=o[0], label=o[1])
-#                     QThread.yieldCurrentThread()
-#                 self._outputList = []
-#                 self.queueLock.unlock()
             if self._isChange:
                 self.ttsEngine.setVolume(self._volume)
                 self.ttsEngine.setRate(self._rate)
                 self.ttsEngine.setVoice(self._voice)
                 self._isChange = False
+            QThread.yieldCurrentThread()
         
         return
     
