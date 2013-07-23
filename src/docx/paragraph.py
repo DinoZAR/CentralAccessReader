@@ -241,7 +241,7 @@ def _parseRow(elem, parentData, otherData):
     for child in elem:
         # Text
         if child.tag == '{0}t'.format(w_NS):
-            data['text'] = clean_XML_input(child.text.encode('utf-8'))
+            data['text'] = unicode(child.text)
         
         # Image or some drawing
         if child.tag == '{0}drawing'.format(w_NS):
@@ -271,7 +271,7 @@ def _parseImage(elem, parentData, otherData):
         for rel in otherData['rels']:
             if rel.get('Id') == id:
                 filename = os.path.split(rel.get('Target'))[1]
-                data['filename'] = clean_XML_input(filename)
+                data['filename'] = unicode(filename)
                 break
             
         # Get the description text for the image
@@ -279,7 +279,7 @@ def _parseImage(elem, parentData, otherData):
         if query != None:
             altText = query.get('descr')
             if altText != None:
-                data['altText'] = clean_XML_input(altText)
+                data['altText'] = unicode(altText)
             
         # Append this to the parent data
         parentData['image'] = data
