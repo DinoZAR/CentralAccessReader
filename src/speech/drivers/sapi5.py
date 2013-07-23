@@ -22,9 +22,7 @@ class SAPI5Driver(object):
     
     def __init__(self):
         self._queue = {}
-        self._unqueued = {}
-        self._isQueuing = False
-        self._isFinishReported = True
+        self._speechGenerator = None
         self._isFirstSpeech = True
         
         self._rate = 5   # Between -10 to 10
@@ -36,7 +34,6 @@ class SAPI5Driver(object):
         
         # Used for callback functions
         self._delegator = {'onStart' : [], 'onWord' : [], 'onEndStream' : [], 'onFinish' : []}
-        
         self._speechCounter = 0
         
         self._running = False
@@ -86,42 +83,31 @@ class SAPI5Driver(object):
             myList.append([myItem.GetDescription(), myItem.Id])
         
         return myList
-    
-    def startQueuing(self):
-        '''
-        Flags that we are starting to queue content. Therefore, the driver
-        should start listening for speech objects being queued.
-        '''
-        # Clean up what we were doing before, if any
-        self.queueLock.lock()
-        self._queue = {}
-        self._unqueued = {}
-        self.queueLock.unlock()
         
-        self._isFirstSpeech = True
-        self._isFinishReported = False
-        self._isQueuing = True
-        
-    def add(self, text, label):
-        print 'driver: Adding speech to queue'
-        if self._isQueuing:
-            self.queueLock.lock()
-            self._speechCounter += 1
-            self._unqueued[self._speechCounter] = [text, label, 0]
-            self.queueLock.unlock()
-        
-    def doneQueuing(self):
+#     def add(self, text, label):
+#         if self._isQueuing:
+#             self.queueLock.lock()
+#             print 'driver: Adding speech to queue'
+#             self._speechCounter += 1
+#             self._unqueued[self._speechCounter] = [text, label, 0]
+#             self.queueLock.unlock()
+
+    def setSpeechGenerator(self, gen):
         '''
-        Flags the TTS engine that the last of the speech has been queued report
-        that it is finished when it plays the rest of the content.
+        Sets the speech generator for speech playback. The generator is a Python
+        generator object or iterable that returns tuples of the following:
+        (text, label)
         '''
-        self._isQueuing = False
+        #print 'driver: setting the speech generator'
+        self._speechGenerator = gen
+        self._speechCounter = 0
     
     def start(self):
         '''
         Starts the TTS engine.
         '''
         self._running = True
+        self._isFirstSpeech = True
             
         # Run the loop that continually pumps messages during run
         thread.start_new_thread(self.runLoop, ())
@@ -138,7 +124,7 @@ class SAPI5Driver(object):
         listening for instructions.
         '''
         
-        print 'Starting SAPI5 loop...'
+        #print 'Starting SAPI5 loop...'
         
         self.queueLock.lock()
         self._queue = {}
@@ -163,17 +149,14 @@ class SAPI5Driver(object):
         self.advisor = win32com.client.WithEvents(self._voice, SAPIEventSink)
         self.advisor.setDriver(self)
         
-        # This will always be running throughout the life of the application
-        # unless the application wants to change drivers
-        while self._running:
+        # Run the TTS playback
+        for speech in self._speechGenerator:
+            #print 'driver: queuing speech to voice'
+            self._queue[self._speechCounter] = [speech[0], speech[1], None]
+            self._queue[self._speechCounter][2] = self._voice.Speak(self._queue[self._speechCounter][0], 1)
+            self._speechCounter += 1
             
-            # Queue up speech if I haven't already
-            for k in sorted(self._unqueued):
-                # Make the _voice say this asynchronously
-                self._queue[k] = self._unqueued[k]
-                self._queue[k][2] = self._voice.Speak(self._queue[k][0], 1)
-            self._unqueued = {}
-            
+            # Check if my settings have changed
             if self._settingsChanged:
                 self._voice.Volume = self._volume
                 self._voice.Rate = self._rate
@@ -181,29 +164,36 @@ class SAPI5Driver(object):
                     self._voice.Voice = self.voiceTokenFromId(self._voiceId)
                 self._settingsChanged = False
             
-            if self._stop:
-                print 'driver: Emptying out queue in SAPI voice'
-                # Use this empty message to completely clear queue
-                self._voice.Speak('', 3) # SPF_PURGEBEFORESPEAK
-                
-                print 'driver: Flushing queue'
-                self.queueLock.lock()
-                self._queue = {}
-                self._unqueued = {}
-                self.queueLock.unlock()
-                
-                self._stop = False
-            
-            if len(self._queue) == 0 and not self._isQueuing and not self._isFinishReported:
-                print 'driver: Publishing OnFinish'
-                for c in self._delegator['onFinish']:
-                    c[1]()
-                
-                self._isFinishReported = True
-            
             pythoncom.PumpWaitingMessages()
+            
+            # Check if I am being interrupted
+            if not self._running:
+                break
+    
+        # Spin until everything is done
+        while len(self._queue) > 0 and self._running:
+            
+            # Check if my settings have changed
+            if self._settingsChanged:
+                self._voice.Volume = self._volume
+                self._voice.Rate = self._rate
+                if len(self._voiceId) > 0:
+                    self._voice.Voice = self.voiceTokenFromId(self._voiceId)
+                self._settingsChanged = False
+                
+            pythoncom.PumpWaitingMessages()
+                
+        # Use this empty message to completely clear queue
+        #print 'driver: Emptying out queue in SAPI voice'
+        self._voice.Speak('', 3) # SPF_PURGEBEFORESPEAK
+            
+        #print 'driver: Publishing OnFinish'
+        for c in self._delegator['onFinish']:
+            c[1]()
+            
+        pythoncom.PumpWaitingMessages()
         
-        print 'SAPI5 driver done!'
+        #print 'SAPI5 driver done!'
         
         return
         
@@ -211,12 +201,6 @@ class SAPI5Driver(object):
         '''
         Stops the TTS playback. The TTS engine will still be running in the
         background
-        '''
-        self._stop = True
-        
-    def quit(self):
-        '''
-        Stops the TTS engine entirely
         '''
         self._running = False
         
@@ -298,44 +282,47 @@ class SAPI5Driver(object):
             
     def handle_onWord(self, stream, pos, char, length):
         
-        print 'driver: OnWord!'
+        #print 'driver: OnWord!'
         
         # Get the _queue item associated with the stream
-        i = 0
+        i = -1
         self.queueLock.lock()
         for k in self._queue.keys():
             if self._queue[k][2] == stream:
                 i = k
                 break
-        word = self._queue[i][0][char:char+length]
-        self.queueLock.unlock()
         
-        # Publish onStart if it is so
-        if self._isFirstSpeech:
-            for c in self._delegator['onStart']:
-                print 'driver: Publishing onStart'
-                c[1](char, length, self._queue[i][1], stream, word)
-            self._isFirstSpeech = False
-        
-        # Publish onWord
-        for c in self._delegator['onWord']:
-            print 'driver: Publishing onWord'
-            c[1](char, length, self._queue[i][1], stream, word)
+        if i >= 0:
+            word = self._queue[i][0][char:char+length]
+            self.queueLock.unlock()
+            
+            # Publish onStart if it is so
+            myIsFirst = self._isFirstSpeech
+            if self._isFirstSpeech:
+                for c in self._delegator['onStart']:
+                    #print 'driver: Publishing onStart'
+                    c[1](char, length, self._queue[i][1], stream, word)
+                self._isFirstSpeech = False
+            
+            # Publish onWord
+            for c in self._delegator['onWord']:
+                #print 'driver: Publishing onWord'
+                c[1](char, length, self._queue[i][1], stream, word, myIsFirst)
         
     
     def handle_onEndStream(self, stream, pos):
-        print 'driver: OnEndStream!'
+        #print 'driver: OnEndStream!'
         # Figure out what stream ended and remove it from my queue
         i = 0
-        print 'driver: OnEndStream, obtaining queue lock'
+        #print 'driver: OnEndStream, obtaining queue lock'
         self.queueLock.lock()
-        print 'driver: OnEndStream, got lock!'
+        #print 'driver: OnEndStream, got lock!'
         for k in self._queue.keys():
             if self._queue[k][2] == stream:
                 
                 # Tell all of the people that a stream ended
                 for c in self._delegator['onEndStream']:
-                    print 'driver: Publishing onEndStream callbacks'
+                    #print 'driver: Publishing onEndStream callbacks'
                     c[1](stream, self._queue[k][1])
                     
                 del self._queue[k]

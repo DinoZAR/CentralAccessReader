@@ -4,6 +4,7 @@ Created on Jan 21, 2013
 @author: Spencer
 '''
 import os
+from lxml import html
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt, QUrl, QMutex, pyqtSignal
 from PyQt4.QtWebKit import QWebPage, QWebInspector, QWebSettings
@@ -27,9 +28,7 @@ class MainWindow(QtGui.QMainWindow):
     # TTS control signals
     startPlayback = pyqtSignal()
     stopPlayback = pyqtSignal()
-    startQueuing = pyqtSignal()
-    addToQueue = pyqtSignal(str, str)
-    doneQueuing = pyqtSignal()
+    setSpeechGenerator = pyqtSignal(object)
     
     # TTS setting signals
     changeVolume = pyqtSignal(float)
@@ -116,13 +115,11 @@ class MainWindow(QtGui.QMainWindow):
         self.speechThread.onStart.connect(self.onStart)
         self.speechThread.onWord.connect(self.onWord)
         self.speechThread.onEndStream.connect(self.onEndStream)
-        self.speechThread.onFinish.connect(self.onSpeechFinished)   
+        self.speechThread.onFinish.connect(self.onSpeechFinished)
         
         self.startPlayback.connect(self.speechThread.startPlayback)
         self.stopPlayback.connect(self.speechThread.stopPlayback)
-        self.startQueuing.connect(self.speechThread.startQueuing)
-        self.addToQueue.connect(self.speechThread.addToQueue)
-        self.doneQueuing.connect(self.speechThread.doneQueuing)
+        self.setSpeechGenerator.connect(self.speechThread.setSpeechGenerator)
         self.changeVolume.connect(self.speechThread.setVolume)
         self.changeRate.connect(self.speechThread.setRate)
         self.changeVoice.connect(self.speechThread.setVoice)
@@ -298,6 +295,12 @@ class MainWindow(QtGui.QMainWindow):
         # Stop whatever the speech thread may be saying
         self.stopPlayback.emit()
         
+        # Show a preparation dialog under the Play button.
+        # Set the progress to 33%
+        self.prepareSpeechProgress.show()
+        self.prepareSpeechProgress.setProgress(33)
+        QtGui.qApp.processEvents()
+        
         # Get the selected HTML
         self.javascriptMutex.lock()
         selectedHTML = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetSelectionHTML', [])).toString())
@@ -307,25 +310,18 @@ class MainWindow(QtGui.QMainWindow):
         self.resetTTSStates()
         self.setSettingsEnableState(False)
         
-        # Prepare the speech for the TTS using a thread
-        try:
-            # Stop it if I hadn't already
-            self.prepareSpeechThread.stop()
-            self.prepareSpeechThread.wait()
-        except AttributeError:
-            pass
+        # Set progress to 67%
+        self.prepareSpeechProgress.setProgress(67)
+        QtGui.qApp.processEvents()
         
-        speechSignals = {'startPlayback' : self.startPlayback,
-                         'startQueuing' : self.startQueuing,
-                         'addToQueue' : self.addToQueue,
-                         'doneQueuing' : self.doneQueuing}
+        # Convert the html to DOM
+        root = html.fromstring(selectedHTML)
         
-        self.prepareSpeechThread = PrepareSpeechThread(self.assigner, self.configuration, selectedHTML, speechSignals)
-        self.ui.actionStop.triggered.connect(self.prepareSpeechThread.stop)
-        self.ui.pauseButton.clicked.connect(self.prepareSpeechThread.stop)
-        self.prepareSpeechThread.start()
+        # Set the speech generator and start playback
+        self.setSpeechGenerator.emit(self.assigner.generateSpeech(root, self.configuration))
+        self.startPlayback.emit()
         
-        print 'window: Spawned prepare speech successfully'
+        self.prepareSpeechProgress.hide()
     
     def stopSpeech(self):
         self.stopPlayback.emit()
@@ -333,18 +329,15 @@ class MainWindow(QtGui.QMainWindow):
         
     def resetTTSStates(self):
         self.ttsStates = {'lastElement' : ['', -1, '', -1], 
-                          'hasWorded' : False,
-                          'isFirst' : True}
+                          'hasWorded' : False}
     
     def onStart(self, offset, length, label, stream, word):
-        print 'window: OnStart'
         self.javascriptMutex.lock()
         self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SetBeginning', [self.configuration.highlight_line_enable, str(label)]))
         self.javascriptMutex.unlock()
         
-    def onWord(self, offset, length, label, stream, word):
+    def onWord(self, offset, length, label, stream, word, isFirst):
         self.hasWorded = True
-        print 'window: OnWord'
         lastElement = self.ttsStates['lastElement']
         
         if label == 'text':
@@ -357,14 +350,14 @@ class MainWindow(QtGui.QMainWindow):
             self.javascriptMutex.unlock()
             
         elif label == 'math':
-            if not self.ttsStates['isFirst']:
+            if not isFirst:
                 if label != lastElement[2] or stream != lastElement[3] and (lastElement[3] >= 0):
                     self.javascriptMutex.lock()
                     self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(lastElement[2])]))
                     self.javascriptMutex.unlock()
                     
         elif label == 'image':
-            if not self.ttsStates['isFirst']:
+            if not isFirst:
                 if label != lastElement[2] or stream != lastElement[3] and (lastElement[3] >= 0):
                     self.javascriptMutex.lock()
                     self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(lastElement[2])]))
@@ -373,15 +366,13 @@ class MainWindow(QtGui.QMainWindow):
             print 'ERROR: I don\'t know what this label refers to for highlighting:', label
         
         self.ttsStates['lastElement'] = [offset, length, label, stream]
-        self.ttsStates['isFirst'] = False
         
     def onEndStream(self, stream, label):
-        print 'window: OnEndStream'
+        pass
 #         if (not self.hasWorded) and (label == 'text') and (not self.isFirst):
 #             self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightWord', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
         
     def onSpeechFinished(self):
-        print 'window: OnSpeechFinished'
         self.javascriptMutex.lock()
         self.ui.webView.page().mainFrame().evaluateJavaScript('ClearAllHighlights()')
         self.javascriptMutex.unlock()
@@ -810,12 +801,12 @@ class MainWindow(QtGui.QMainWindow):
             
     def setSettingsEnableState(self, isEnable):
         '''
-        Disables or enables the TTS sliders depending on whether we are playing
-        back right now or not.
+        Disables or enables the other widgets that shouldn't be active during
+        TTS playback.
         '''
         if not isEnable:
-            self.ui.rateSlider.setEnabled(False)
-            self.ui.volumeSlider.setEnabled(False)
+            #self.ui.rateSlider.setEnabled(False)
+            #self.ui.volumeSlider.setEnabled(False)
             self.ui.colorSettingsButton.setEnabled(False)
             self.ui.speechSettingsButton.setEnabled(False)
             self.ui.saveToMP3Button.setEnabled(False)
@@ -835,8 +826,8 @@ class MainWindow(QtGui.QMainWindow):
             for w in self.searchWidgets:
                 w.setEnabled(False)
         else:
-            self.ui.rateSlider.setEnabled(True)
-            self.ui.volumeSlider.setEnabled(True)
+            #self.ui.rateSlider.setEnabled(True)
+            #self.ui.volumeSlider.setEnabled(True)
             self.ui.colorSettingsButton.setEnabled(True)
             self.ui.speechSettingsButton.setEnabled(True)
             self.ui.saveToMP3Button.setEnabled(True)

@@ -33,14 +33,16 @@ class PrepareSpeechThread(QThread):
         self._doneQueuing = speechSignals['doneQueuing']
         
     def run(self):
+        print 'preparer: started queuing'
         self._startQueuing.emit()
         for speech in self._assigner.generateSpeech(self._html, self._config):
+            print 'preparer: Queuing some speech'
             self._addToQueue.emit(speech[0], speech[1])
             if self._stop:
                 break
             QThread.yieldCurrentThread()
         self._doneQueuing.emit()
-        print 'Prepare speech thread done!'
+        print 'perparer: done!'
         
     def stop(self):
         print 'Stopping preparer...'

@@ -14,7 +14,7 @@ from src.misc import temp_path, program_path
 class SpeechWorker(QThread):
     
     onStart = pyqtSignal(int, int, str, int, str)
-    onWord = pyqtSignal(int, int, str, int, str)
+    onWord = pyqtSignal(int, int, str, int, str, bool)
     onEndStream = pyqtSignal(int, str)
     onFinish = pyqtSignal()
     onProgress = pyqtSignal(int)
@@ -26,7 +26,7 @@ class SpeechWorker(QThread):
         QThread.__init__(self)
         
         self._outputList = []
-        self._running = False
+        self._running = True
         
         self._volume = 100
         self._rate = 50
@@ -41,8 +41,8 @@ class SpeechWorker(QThread):
         def myOnStart(offset, length, label, stream, word):
             self.onStart.emit(offset, length, label, stream, word)
         
-        def myOnWord(offset, length, label, stream, word):
-            self.onWord.emit(offset, length, label, stream, word)
+        def myOnWord(offset, length, label, stream, word, isFirst):
+            self.onWord.emit(offset, length, label, stream, word, isFirst)
         
         def myOnEndStream(stream, label):
             self.onEndStream.emit(stream, label)
@@ -60,16 +60,14 @@ class SpeechWorker(QThread):
         self.ttsEngine.setRate(self._rate)
         self.ttsEngine.setVoice(self._voice)
         
-        self.ttsEngine.start()
-        
         while True:
-            if self._running:
-                self.queueLock.lock()
-                for o in self._outputList:
-                    self.ttsEngine.add(text=o[0], label=o[1])
-                self._outputList = []
-                self.queueLock.unlock()
-            
+#             if self._running:
+#                 self.queueLock.lock()
+#                 for o in self._outputList:
+#                     self.ttsEngine.add(text=o[0], label=o[1])
+#                     QThread.yieldCurrentThread()
+#                 self._outputList = []
+#                 self.queueLock.unlock()
             if self._isChange:
                 self.ttsEngine.setVolume(self._volume)
                 self.ttsEngine.setRate(self._rate)
@@ -78,13 +76,12 @@ class SpeechWorker(QThread):
         
         return
     
-    
     def startPlayback(self):
-        self._running = True
+        print 'worker: Trying to start TTS'
+        self.ttsEngine.start()
     
     def stopPlayback(self):
         print 'worker: Trying to stop TTS'
-        self._running = False
         self.ttsEngine.stop()
             
     def stopMP3(self):
@@ -155,11 +152,8 @@ class SpeechWorker(QThread):
         print 'worker: Flagging TTS, starting to queue'
         self.ttsEngine.startQueuing()
     
-    def addToQueue(self, text, label):
-        print 'worker: Queuing speech to TTS'
-        self.queueLock.lock()
-        self._outputList.append([unicode(text),unicode(label)])
-        self.queueLock.unlock()
+    def setSpeechGenerator(self, gen):
+        self.ttsEngine.setSpeechGenerator(gen)
         
     def doneQueuing(self):
         print 'worker: Flagging TTS, done queuing'
