@@ -563,6 +563,10 @@ class MainWindow(QtGui.QMainWindow):
             out = misc.prepare_bug_report(tb, self.configuration)
             dialog = BugReporter(out)
             dialog.exec_()
+            
+        if self.progressDialog is not None:
+            self.progressDialog.enableCancel()
+            self.progressDialog.close()
         
     def finishOpenDocx(self):
         
