@@ -259,7 +259,7 @@ class DocxDocument(object):
          
         mathjaxConfig = HTML.Element('script')
         mathjaxConfig.set('type', 'text/x-mathjax-config')
-        scriptFile = open(os.path.join(ROOT_PATH, 'mathjax_config.js'))
+        scriptFile = open(program_path('src/mathjax_config.js'), 'r')
         contents = scriptFile.read()
         scriptFile.close()
         mathjaxConfig.text = contents
@@ -280,15 +280,22 @@ class DocxDocument(object):
         jqueryScrollTo.attrib['type'] = 'text/javascript'
         jqueryScrollTo.attrib['src'] = 'file:' + urllib.pathname2url(program_path('jquery.scrollTo-1.4.3.1-min.js'))
          
-        myScripts = HTML.Element('script')
-        myScripts.set('language', 'javascript')
-        myScripts.set('type', 'text/javascript')
-         
-        scriptFile = open(os.path.join(ROOT_PATH, 'my_functions.js'), 'r')
+        highlighterNormalScript = HTML.Element('script')
+        highlighterNormalScript.set('language', 'javascript')
+        highlighterNormalScript.set('type', 'text/javascript')
+        scriptFile = open(program_path('src/highlighter_normal.js'), 'r')
         contents = scriptFile.read()
         scriptFile.close()
-        myScripts.text = contents
-         
+        highlighterNormalScript.text = contents
+        
+        highlighterStreamScript = HTML.Element('script')
+        highlighterStreamScript.set('language', 'javascript')
+        highlighterStreamScript.set('type', 'text/javascript')
+        scriptFile = open(program_path('src/highlighter_stream.js'), 'r')
+        contents = scriptFile.read()
+        scriptFile.close()
+        highlighterStreamScript.text = contents
+        
         css = HTML.Element('link')
         css.attrib['rel'] = 'stylesheet'
         css.attrib['type'] = 'text/css'
@@ -299,7 +306,8 @@ class DocxDocument(object):
         head.append(jqueryScript)
         head.append(jqueryUIScript)
         head.append(jqueryScrollTo)
-        head.append(myScripts)
+        head.append(highlighterNormalScript)
+        head.append(highlighterStreamScript)
         head.append(css)
         
     def _prepareBody(self, body):

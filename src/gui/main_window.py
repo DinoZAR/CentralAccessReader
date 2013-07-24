@@ -29,6 +29,7 @@ class MainWindow(QtGui.QMainWindow):
     startPlayback = pyqtSignal()
     stopPlayback = pyqtSignal()
     setSpeechGenerator = pyqtSignal(object)
+    noMoreSpeech = pyqtSignal()
     
     # TTS setting signals
     changeVolume = pyqtSignal(float)
@@ -116,10 +117,12 @@ class MainWindow(QtGui.QMainWindow):
         self.speechThread.onWord.connect(self.onWord)
         self.speechThread.onEndStream.connect(self.onEndStream)
         self.speechThread.onFinish.connect(self.onSpeechFinished)
+        self.speechThread.requestMoreSpeech.connect(self.sendMoreSpeech)
         
         self.startPlayback.connect(self.speechThread.startPlayback)
         self.stopPlayback.connect(self.speechThread.stopPlayback)
         self.setSpeechGenerator.connect(self.speechThread.setSpeechGenerator)
+        self.noMoreSpeech.connect(self.speechThread.noMoreSpeech)
         self.changeVolume.connect(self.speechThread.setVolume)
         self.changeRate.connect(self.speechThread.setRate)
         self.changeVoice.connect(self.speechThread.setVoice)
@@ -295,33 +298,21 @@ class MainWindow(QtGui.QMainWindow):
         # Stop whatever the speech thread may be saying
         self.stopPlayback.emit()
         
-        # Show a preparation dialog under the Play button.
-        # Set the progress to 33%
-        self.prepareSpeechProgress.show()
-        self.prepareSpeechProgress.setProgress(33)
-        QtGui.qApp.processEvents()
-        
-        # Get the selected HTML
-        self.javascriptMutex.lock()
-        selectedHTML = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetSelectionHTML', [])).toString())
-        self.javascriptMutex.unlock()
-        
         # Reset the TTS states
         self.resetTTSStates()
         self.setSettingsEnableState(False)
         
-        # Set progress to 67%
-        self.prepareSpeechProgress.setProgress(67)
-        QtGui.qApp.processEvents()
+        # Set the beginning of the streamer
+        self.javascriptMutex.lock()
+        contents = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SetStreamBeginning', [])).toString())
+        self.javascriptMutex.unlock()
         
-        # Convert the html to DOM
-        root = html.fromstring(selectedHTML)
+        # Convert the HTML to DOM
+        root = html.fromstring(contents)
         
         # Set the speech generator and start playback
         self.setSpeechGenerator.emit(self.assigner.generateSpeech(root, self.configuration))
         self.startPlayback.emit()
-        
-        self.prepareSpeechProgress.hide()
     
     def stopSpeech(self):
         self.stopPlayback.emit()
@@ -332,11 +323,14 @@ class MainWindow(QtGui.QMainWindow):
                           'hasWorded' : False}
     
     def onStart(self, offset, length, label, stream, word):
+        #print 'window: OnStart'
         self.javascriptMutex.lock()
         self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SetBeginning', [self.configuration.highlight_line_enable, str(label)]))
         self.javascriptMutex.unlock()
         
     def onWord(self, offset, length, label, stream, word, isFirst):
+        
+        #print 'window: OnWord'
         self.hasWorded = True
         lastElement = self.ttsStates['lastElement']
         
@@ -368,16 +362,40 @@ class MainWindow(QtGui.QMainWindow):
         self.ttsStates['lastElement'] = [offset, length, label, stream]
         
     def onEndStream(self, stream, label):
+        #print 'window: OnEndStream'
         pass
 #         if (not self.hasWorded) and (label == 'text') and (not self.isFirst):
 #             self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightWord', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
         
     def onSpeechFinished(self):
+        #print 'window: OnSpeechFinished'
         self.javascriptMutex.lock()
         self.ui.webView.page().mainFrame().evaluateJavaScript('ClearAllHighlights()')
         self.javascriptMutex.unlock()
         self.setSettingsEnableState(True)
         self.resetTTSStates()
+        
+    def sendMoreSpeech(self):
+        '''
+        This is response from requestMoreSpeech from the SpeechWorker thread.
+        It will either get more speech for the TTS and send it, or tell it that
+        no more speech is available.
+        '''
+        #print 'window: Trying to send more speech'
+        hasMoreSpeech = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HasMoreElements', [])).toBool()
+        if hasMoreSpeech:
+            nextContent = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('StreamNextElement', [])).toString())
+            #print 'window: next content,', [nextContent]
+            
+            elem = None
+            if len(nextContent) > 0:
+                elem = html.fromstring(nextContent)
+            else:
+                elem = html.Element('p')
+                
+            self.setSpeechGenerator.emit(self.assigner.generateSpeech(elem, self.configuration))
+        else:
+            self.noMoreSpeech.emit()
             
     def changeSpeechRate(self, value):
         self.configuration.rate = value
@@ -480,7 +498,7 @@ class MainWindow(QtGui.QMainWindow):
 
     def openDocx(self, filePath):
         '''
-        Opens a .docx file. It will span a progress bar and run the task in the
+        Opens a .docx file. It will spawn a progress bar and run the task in the
         background to prevent GUI from freezing up.
         '''
         filePath = str(filePath)
@@ -495,7 +513,7 @@ class MainWindow(QtGui.QMainWindow):
             self.docxImporterThread.reportError.connect(self.reportErrorOpenDocx)
             self.docxImporterThread.finished.connect(self.finishOpenDocx)
             
-            #Show a progress dialog
+            # Show a progress dialog
             self.progressDialog = DocumentLoadProgressDialog()
             self.progressDialog.setLabelText('Reading ' + os.path.basename(str(filePath)) + '...')
             self.progressDialog.setProgress(0)
@@ -545,6 +563,7 @@ class MainWindow(QtGui.QMainWindow):
             QWebSettings.clearMemoryCaches()
             
             # Set the content views and prepare assigner
+            self.progressDialog.setLabelText('Loading content into view...')
             docxHtml = self.docxImporterThread.getHTML()
             self.assigner.prepare(docxHtml)
             self.ui.webView.loadProgress.connect(self.progressDialog.setProgress)
@@ -566,7 +585,6 @@ class MainWindow(QtGui.QMainWindow):
             self.lastDocumentFilePath = self.docxImporterThread.getFilePath()
                     
             # Wait until the document has completely loaded
-            self.progressDialog.setLabelText('Loading content into view...')
             loaded = False
             while not loaded:
                 QtGui.qApp.processEvents()
@@ -584,6 +602,15 @@ class MainWindow(QtGui.QMainWindow):
         self.progressDialog.enableCancel()
         self.progressDialog.close()
         self.stopDocumentLoad = False
+        
+        # DEBUG PURPOSES
+        # Check to see if streaming the next content will work good.
+#         print 'Checking if streaming works as planned'
+#         myStuff = 'GARP'
+#         self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SetStreamBeginning', []))
+#         while self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HasMoreElements', [])).toBool():
+#             myStuff = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetNextElement', [])).toString())
+#             print 'Next:', [myStuff]
         
     def showOpenDocxDialog(self):
         filePath = QtGui.QFileDialog.getOpenFileName(self, 'Open Docx...',os.path.join(os.path.expanduser('~'), 'Documents'),'(*.docx)')

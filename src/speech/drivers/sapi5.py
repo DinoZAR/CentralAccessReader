@@ -3,11 +3,12 @@ Created on Jul 22, 2013
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtCore import QMutex
 import win32com.client
 import pythoncom
 import win32event
 import thread
+from threading import Lock
+import time
 
 from src.speech.drivers.SapiCOM import SpVoice, SpFileStream
 
@@ -15,12 +16,13 @@ class SAPI5Driver(object):
     '''
     Used in interfacing with SAPI 5.
     '''
-    queueLock = QMutex()
+    queueLock = Lock()
+    generatorLock = Lock()
     
     # Static variable used to generate unique ids for new callbacks
     CALLBACK_GEN = 1
     
-    def __init__(self):
+    def __init__(self, requestSpeechHook=None):
         self._queue = {}
         self._speechGenerator = None
         self._isFirstSpeech = True
@@ -38,6 +40,9 @@ class SAPI5Driver(object):
         
         self._running = False
         self._stop = False
+        self._grabbingSpeech = False
+        self._alreadyRequestedSpeech = False
+        self._requestSpeechHook = requestSpeechHook
         
     def setRate(self, rate):
         '''
@@ -99,8 +104,9 @@ class SAPI5Driver(object):
         (text, label)
         '''
         #print 'driver: setting the speech generator'
+        self.generatorLock.acquire()
         self._speechGenerator = gen
-        self._speechCounter = 0
+        self.generatorLock.release()
     
     def start(self):
         '''
@@ -108,6 +114,8 @@ class SAPI5Driver(object):
         '''
         self._running = True
         self._isFirstSpeech = True
+        self._grabbingSpeech = True
+        self._alreadyRequestedSpeech = True
             
         # Run the loop that continually pumps messages during run
         thread.start_new_thread(self.runLoop, ())
@@ -123,13 +131,12 @@ class SAPI5Driver(object):
         The main loop of the SAPI driver. It runs as a server, constantly
         listening for instructions.
         '''
+        ##print 'Starting SAPI5 loop...'
         
-        #print 'Starting SAPI5 loop...'
-        
-        self.queueLock.lock()
+        self.queueLock.acquire()
         self._queue = {}
         self._unqueued = {}
-        self.queueLock.unlock()
+        self.queueLock.release()
         
         pythoncom.CoInitialize()
         
@@ -138,7 +145,7 @@ class SAPI5Driver(object):
         self._voice.EventInterests = 33790 # SVEAllEvents
         self._voice.AlertBoundary = 64 # SVEPhoneme
         
-        # Set the characteristics of the _voice
+        # Set the characteristics of the voice
         if len(self._voiceId) > 0:
             self._voice.Voice = self.voiceTokenFromId(self._voiceId)
         
@@ -149,29 +156,45 @@ class SAPI5Driver(object):
         self.advisor = win32com.client.WithEvents(self._voice, SAPIEventSink)
         self.advisor.setDriver(self)
         
-        # Run the TTS playback
-        for speech in self._speechGenerator:
-            #print 'driver: queuing speech to voice'
-            self._queue[self._speechCounter] = [speech[0], speech[1], None]
-            self._queue[self._speechCounter][2] = self._voice.Speak(self._queue[self._speechCounter][0], 1)
-            self._speechCounter += 1
+        while self._grabbingSpeech and self._running:
             
-            # Check if my settings have changed
-            if self._settingsChanged:
-                self._voice.Volume = self._volume
-                self._voice.Rate = self._rate
-                if len(self._voiceId) > 0:
-                    self._voice.Voice = self.voiceTokenFromId(self._voiceId)
-                self._settingsChanged = False
+            # Get everything that is in the speech generator, if anything
+            self.generatorLock.acquire()
+            if self._speechGenerator is not None:
+                for speech in self._speechGenerator:
+                    #print 'driver: queuing speech to voice', speech
+                    self._queue[self._speechCounter] = [speech[0], speech[1], None]
+                    self._queue[self._speechCounter][2] = self._voice.Speak(self._queue[self._speechCounter][0], 1)
+                    self._speechCounter += 1
+                    
+                    # Check if my settings have changed
+                    if self._settingsChanged:
+                        self._voice.Volume = self._volume
+                        self._voice.Rate = self._rate
+                        if len(self._voiceId) > 0:
+                            self._voice.Voice = self.voiceTokenFromId(self._voiceId)
+                        self._settingsChanged = False
+                    
+                    # Check if I am being interrupted
+                    if not self._running:
+                        break
+                    
+                    pythoncom.PumpWaitingMessages()
+                
+                self._speechGenerator = None
+                self._alreadyRequestedSpeech = False
+                
+                #print 'driver: queue contents', self._queue
+                
+            self.generatorLock.release()
             
-            pythoncom.PumpWaitingMessages()
-            
-            # Check if I am being interrupted
-            if not self._running:
-                break
-    
-        # Spin until everything is done
-        while len(self._queue) > 0 and self._running:
+            # Request for more speech if I haven't already
+            if not self._alreadyRequestedSpeech:
+                self._alreadyRequestedSpeech = True
+                if self._requestSpeechHook is not None:
+                    #print 'driver: requesting more speech'
+                    self._requestSpeechHook()
+                    #time.sleep(0.1)
             
             # Check if my settings have changed
             if self._settingsChanged:
@@ -181,6 +204,12 @@ class SAPI5Driver(object):
                     self._voice.Voice = self.voiceTokenFromId(self._voiceId)
                 self._settingsChanged = False
                 
+            pythoncom.PumpWaitingMessages()
+            
+        #print 'driver: done grabbing speech'
+            
+        # Spin until all of my speech is done
+        while len(self._queue) > 0 and self._running:
             pythoncom.PumpWaitingMessages()
                 
         # Use this empty message to completely clear queue
@@ -202,7 +231,16 @@ class SAPI5Driver(object):
         Stops the TTS playback. The TTS engine will still be running in the
         background
         '''
+        #print 'driver: stopping TTS'
+        self._grabbingSpeech = False
         self._running = False
+        
+    def noMoreSpeech(self):
+        '''
+        Flags the TTS that it won't be expecting any more speech.
+        '''
+        #print 'driver: flagging no more speech'
+        self._grabbingSpeech = False
         
     def speakToWavFile(self, wavFilePath, outputList, progressCallback, checkStopFunction):
         '''
@@ -286,7 +324,6 @@ class SAPI5Driver(object):
         
         # Get the _queue item associated with the stream
         i = -1
-        self.queueLock.lock()
         for k in self._queue.keys():
             if self._queue[k][2] == stream:
                 i = k
@@ -294,19 +331,18 @@ class SAPI5Driver(object):
         
         if i >= 0:
             word = self._queue[i][0][char:char+length]
-            self.queueLock.unlock()
             
             # Publish onStart if it is so
             myIsFirst = self._isFirstSpeech
             if self._isFirstSpeech:
+                #print 'driver: Publishing onStart'
                 for c in self._delegator['onStart']:
-                    #print 'driver: Publishing onStart'
                     c[1](char, length, self._queue[i][1], stream, word)
                 self._isFirstSpeech = False
             
             # Publish onWord
+            #print 'driver: Publishing onWord'
             for c in self._delegator['onWord']:
-                #print 'driver: Publishing onWord'
                 c[1](char, length, self._queue[i][1], stream, word, myIsFirst)
         
     
@@ -314,9 +350,7 @@ class SAPI5Driver(object):
         #print 'driver: OnEndStream!'
         # Figure out what stream ended and remove it from my queue
         i = 0
-        #print 'driver: OnEndStream, obtaining queue lock'
-        self.queueLock.lock()
-        #print 'driver: OnEndStream, got lock!'
+        self.queueLock.acquire()
         for k in self._queue.keys():
             if self._queue[k][2] == stream:
                 
@@ -327,7 +361,7 @@ class SAPI5Driver(object):
                     
                 del self._queue[k]
                 break
-        self.queueLock.unlock()
+        self.queueLock.release()
     
     def disconnect(self, handle):
         '''
