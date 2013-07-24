@@ -48,8 +48,10 @@ summation = mi("&#8721;") -> 'summation'
 tilde = mo("&#732;") -> 'not'
 tilde = mo("~") -> 'not'
 tilde = mi("~") -> 'not'
+times = mi("&#8727;") -> 'dot'
 times = mi("&#8901;") -> 'dot'
 times = mi("&#59791;") -> 'dot'
+
 
 // Parentheses, Brackets, Braces, and Bars
 closeBrace = mo("}") -> 'right curly bracket'
