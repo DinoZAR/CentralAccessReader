@@ -15,6 +15,10 @@ from cStringIO import StringIO
 ROOT_PATH = program_path('src/docx')
 IMPORT_FOLDER = temp_path('import')
 
+# This dictionary holds image file extensions that must be converted to another
+# image type because the WebView doesn't support displaying it
+IMAGE_TRANSLATION = {'.emf' : '.png'}
+
 # Get my OMML to MathML stylesheet compiled
 ommlXSLTPath = os.path.join(ROOT_PATH, 'OMMLToMathML.xsl')
 
@@ -267,10 +271,15 @@ def _parseImage(elem, parentData, otherData):
         id = query.get('{0}embed'.format(rel_NS))
                     
         # See which filename it refers to and create a valid one
-        filename = ''
         for rel in otherData['rels']:
             if rel.get('Id') == id:
                 filename = os.path.split(rel.get('Target'))[1]
+                
+                # Check to see if this is an image I need to convert later. If 
+                # so, change the file extension to match the converted file
+                if os.path.splitext(filename)[1] in IMAGE_TRANSLATION:
+                    filename = os.path.splitext(filename)[0] + IMAGE_TRANSLATION[os.path.splitext(filename)[1]]
+                    
                 data['filename'] = unicode(filename)
                 break
             
