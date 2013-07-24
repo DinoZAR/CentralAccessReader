@@ -1,6 +1,5 @@
 var highlight = null; // The highlighter element that has the highlighted content.
 var highlightLine = null; // The highlighter element that has the whole line that will be highlighted
-var lastElement = null;
 var beginOffset = 0;
 var lastHeadingElement = null;
 var startFromHeading = false;
@@ -339,16 +338,6 @@ function GetSelectionRange() {
 			range.selectNodeContents(DeepestChild(lastHeadingElement))
 			range.startOffset = 0;
 		}
-		// Start from highlight, if it was a search or something
-		// Just a little too buggy right now
-		//else if (startFromSearch == true) {
-		//	console.debug('Start from last search...');
-		//	ClearAllHighlights();
-		//	range = document.createRange();
-		//	console.debug('- The text from search: ' + lastSearchElement.data.toString());
-		//	console.debug('- Parent: ' + lastSearchElement.parentNode.nodeName);
-		//	range.setStart(lastSearchElement, lastSearchOffset);
-		//}
 		else {
 			// Get the first deepest child in the document and go from there
 			range = window.getSelection();

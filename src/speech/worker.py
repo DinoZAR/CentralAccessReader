@@ -13,12 +13,18 @@ from src.misc import temp_path, program_path
 
 class SpeechWorker(QThread):
     
+    # TTS
     onStart = pyqtSignal(int, int, str, int, str)
     onWord = pyqtSignal(int, int, str, int, str, bool)
     onEndStream = pyqtSignal(int, str)
     onFinish = pyqtSignal()
+    
+    # MP3 Creation
     onProgress = pyqtSignal(int)
     onProgressLabel = pyqtSignal(str)
+    
+    # Streaming
+    requestMoreSpeech = pyqtSignal()
     
     queueLock = QMutex()
     
@@ -39,18 +45,25 @@ class SpeechWorker(QThread):
     def run(self):
         
         def myOnStart(offset, length, label, stream, word):
+            print 'worker: OnStart'
             self.onStart.emit(offset, length, label, stream, word)
         
         def myOnWord(offset, length, label, stream, word, isFirst):
+            print 'worker: OnWord'
             self.onWord.emit(offset, length, label, stream, word, isFirst)
         
         def myOnEndStream(stream, label):
+            print 'worker: OnEndStream'
             self.onEndStream.emit(stream, label)
         
         def myOnFinish():
+            print 'worker: OnFinish'
             self.onFinish.emit()
+            
+        def mySpeechRequestHook():
+            self.requestMoreSpeech.emit()
         
-        self.ttsEngine = driver.get_driver()
+        self.ttsEngine = driver.get_driver(mySpeechRequestHook)
         self.ttsEngine.connect('onStart', myOnStart)
         self.ttsEngine.connect('onWord', myOnWord)
         self.ttsEngine.connect('onFinish', myOnFinish)
@@ -142,20 +155,17 @@ class SpeechWorker(QThread):
     def getVoiceList(self):
         return self.ttsEngine.getVoiceList()
     
-    def startQueuing(self):
-        print 'worker: Flagging TTS, starting to queue'
-        self.ttsEngine.startQueuing()
-    
     def setSpeechGenerator(self, gen):
         self.ttsEngine.setSpeechGenerator(gen)
         
-    def doneQueuing(self):
-        print 'worker: Flagging TTS, done queuing'
-        self.ttsEngine.doneQueuing()
+    def noMoreSpeech(self):
+        '''
+        Flags the TTS engine that no more speech is to be given. The TTS is free
+        to close now.
+        '''
+        self.ttsEngine.noMoreSpeech()
         
     def connect_signals(self, mainWindow):
         mainWindow.startPlayback.connect(self.startPlayback)
         mainWindow.stopPlayback.connect(self.stopPlayback)
         mainWindow.addToQueue.connect(self.addToQueue)
-        
-        
