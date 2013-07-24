@@ -259,7 +259,7 @@ class DocxDocument(object):
          
         mathjaxConfig = HTML.Element('script')
         mathjaxConfig.set('type', 'text/x-mathjax-config')
-        scriptFile = open(os.path.join(ROOT_PATH, 'mathjax_config.js'))
+        scriptFile = open(program_path('src/mathjax_config.js'), 'r')
         contents = scriptFile.read()
         scriptFile.close()
         mathjaxConfig.text = contents
@@ -284,7 +284,7 @@ class DocxDocument(object):
         myScripts.set('language', 'javascript')
         myScripts.set('type', 'text/javascript')
          
-        scriptFile = open(os.path.join(ROOT_PATH, 'my_functions.js'), 'r')
+        scriptFile = open(program_path('src/highlighter_normal.js'), 'r')
         contents = scriptFile.read()
         scriptFile.close()
         myScripts.text = contents
