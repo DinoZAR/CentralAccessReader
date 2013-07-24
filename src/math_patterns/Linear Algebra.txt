@@ -56,7 +56,7 @@ times = mi("&#59791;") -> 'dot'
 // Parentheses, Brackets, Braces, and Bars
 closeBrace = mo("}") -> 'right curly bracket'
 closeBracket = mo("]") -> 'right square bracket'
-closeParen = mo(")") -> 'right parentheses'
+closeParen = mo(")") -> 'close parentheses'
 leftAngleBracket = mi("&#9001;") -> 'left angle bracket'
 leftAngleBracket = mo("&#9001;") -> 'left angle bracket'
 openBrace = mo("{") -> 'left curly bracket'
