@@ -194,7 +194,7 @@ class SAPI5Driver(object):
                 if self._requestSpeechHook is not None:
                     #print 'driver: requesting more speech'
                     self._requestSpeechHook()
-                    time.sleep(0.1)
+                    #time.sleep(0.1)
             
             # Check if my settings have changed
             if self._settingsChanged:

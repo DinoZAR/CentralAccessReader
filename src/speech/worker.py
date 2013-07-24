@@ -45,19 +45,19 @@ class SpeechWorker(QThread):
     def run(self):
         
         def myOnStart(offset, length, label, stream, word):
-            print 'worker: OnStart'
+            #print 'worker: OnStart'
             self.onStart.emit(offset, length, label, stream, word)
         
         def myOnWord(offset, length, label, stream, word, isFirst):
-            print 'worker: OnWord'
+            #print 'worker: OnWord'
             self.onWord.emit(offset, length, label, stream, word, isFirst)
         
         def myOnEndStream(stream, label):
-            print 'worker: OnEndStream'
+            #print 'worker: OnEndStream'
             self.onEndStream.emit(stream, label)
         
         def myOnFinish():
-            print 'worker: OnFinish'
+            #print 'worker: OnFinish'
             self.onFinish.emit()
             
         def mySpeechRequestHook():

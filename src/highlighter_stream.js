@@ -4,9 +4,10 @@ var lastStreamElement = null;
 // Gives me the beginning to work with
 function SetStreamBeginning() {
     range = GetSelectionRange();
-    lastStreamElement = DeepestChild(range.startContainer);
+    lastStreamElement = range.startContainer;
     myRange = document.createRange();
     myRange.selectNode(lastStreamElement);
+    myRange.setStart(lastStreamElement, range.startOffset);
     return GetHTMLSource(myRange);
 }
 

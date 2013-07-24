@@ -60,7 +60,7 @@ function GetMathTypesetProgress() {
 
 // Used in page navigation to move to an anchor point with specific id
 function GotoPageAnchor(anchorName) {
-	console.debug("GotoPageAnchor()");
+	//console.debug("GotoPageAnchor()");
 	element_to_scroll_to = document.getElementById(anchorName);
 	startFromHeading = true;
 	lastHeadingElement = element_to_scroll_to;
@@ -91,7 +91,7 @@ function ScrollToHighlight(isInstant) {
 // If after is true, it will find word after current. Otherwise, search for text before.
 // Returns true if it found something, false if it didn't
 function SearchForText(myText, after, wholeWord, matchCase) {
-	console.debug('SearchForText()');
+	//console.debug('SearchForText()');
 	if (after) {
 		return SearchTextForward(myText, wholeWord, matchCase, false);
 	}
@@ -229,7 +229,7 @@ function SearchTextForward(myText, wholeWord, matchCase, alreadyWrapped) {
 // Returns a range that has the range of selection, whether that is the user or
 // automatic
 function GetSelectionRange() {
-	console.debug('GetSelectionRange()');
+	//console.debug('GetSelectionRange()');
 
 	var range = window.getSelection();
 	if (!range.isCollapsed) {
@@ -260,7 +260,7 @@ function GetSelectionRange() {
 			range = newRange;
 		}
 		else {
-			console.debug('Switching around the start and end nodes.');
+			//console.debug('Switching around the start and end nodes.');
 			if (range.anchorNode === range.focusNode) {
 				// Switch around the offsets if needed
 				var newRange = document.createRange()
@@ -273,30 +273,30 @@ function GetSelectionRange() {
 					newRange.setEnd(range.focusNode, range.focusOffset);
 				}
 				range = newRange;
-				console.debug('Range here: ' + GetHTMLSource(range) + ' [start node: ' + range.startContainer.toString() + '] [end node: ' + range.endContainer.toString() + ']');
+				//console.debug('Range here: ' + GetHTMLSource(range) + ' [start node: ' + range.startContainer.toString() + '] [end node: ' + range.endContainer.toString() + ']');
 			}
 			else {
 				var newRange = document.createRange();
 				newRange.setStart(range.anchorNode, range.anchorOffset);
 				newRange.setEnd(range.focusNode, range.focusOffset);
 				range = newRange;
-				console.debug('Range here: ' + GetHTMLSource(range) + ' [start node: ' + range.startContainer.toString() + '] [end node: ' + range.endContainer.toString() + ']');
+				//console.debug('Range here: ' + GetHTMLSource(range) + ' [start node: ' + range.startContainer.toString() + '] [end node: ' + range.endContainer.toString() + ']');
 			}
 		}
 		
-		console.debug('Range here: ' + GetHTMLSource(range) + ' [start node: ' + range.startContainer.toString() + '] [end node: ' + range.endContainer.toString() + ']');
+		//console.debug('Range here: ' + GetHTMLSource(range) + ' [start node: ' + range.startContainer.toString() + '] [end node: ' + range.endContainer.toString() + ']');
 		
 		// Move start forward so that it removes the whitespace
 		if ((range.startContainer.nodeName == '#text')) {
-			console.debug('Skipping #text node with whitespace...');
+			//console.debug('Skipping #text node with whitespace...');
 			var whitespaceRegex = /\s+/g;
 			var sub = range.startContainer.data;
-			console.debug('Substring is: ' + sub);
+			//console.debug('Substring is: ' + sub);
 			sub = sub.substring(range.startOffset);
-			console.debug('Substring is: ' + sub);
+			//console.debug('Substring is: ' + sub);
 			var result = whitespaceRegex.exec(sub);
 			if (result != null) {
-				console.debug('Skipping #text node with whitespace...');
+				//console.debug('Skipping #text node with whitespace...');
 				if (result.index == 0) {
 					range.setStart(range.startContainer, whitespaceRegex.lastIndex + range.startOffset);
 				}
@@ -306,7 +306,7 @@ function GetSelectionRange() {
 		// If the start turns out to be the body, alter the start so that it points at the
 		// deepest node in child that's referred to by the offset
 		if (range.startContainer.nodeName == 'BODY') {
-			console.debug('Moving start to deepest element in offset of body');
+			//console.debug('Moving start to deepest element in offset of body');
 			myNode = DeepestChild(document.body.childNodes[range.startOffset], false);
 			range.setStart(myNode, 0);
 		}
@@ -316,7 +316,7 @@ function GetSelectionRange() {
 		var startEq = GetEquation(range.startContainer);
 		var endEq = GetEquation(range.endContainer);
 		if ($(startEq).is($(endEq)) && (startEq != null)) {
-			console.debug('Equation: ' + startEq.nodeName + ', class name: ' + startEq.className);
+			//console.debug('Equation: ' + startEq.nodeName + ', class name: ' + startEq.className);
 			range.selectNode(startEq);
 			range.setStart(startEq, 0);
 		}
@@ -324,16 +324,16 @@ function GetSelectionRange() {
 		// If I am starting at a paragraph with absolutely nothing in it, move to the
 		// next element
 		if ((range.startContainer.nodeName == 'P') && (range.startContainer.hasChildNodes())) {
-			console.debug('Moving off of a completely empty paragraph');
+			//console.debug('Moving off of a completely empty paragraph');
 			range.setStart(NextElement(range.startContainer), 0);
 		}
 		
-		console.debug('Range here: ' + GetHTMLSource(range));
+		//console.debug('Range here: ' + GetHTMLSource(range));
 	}
 	else {
 		// Start from the heading, if applicable
 		if (startFromHeading == true) {
-			console.debug('Starting from heading...');
+			//console.debug('Starting from heading...');
 			range = document.createRange();
 			range.selectNodeContents(DeepestChild(lastHeadingElement))
 			range.startOffset = 0;
@@ -352,8 +352,8 @@ function GetSelectionRange() {
 		
 		range.setEnd(lastElement, lastElement.length);
 		
-		console.debug('My last element: ' + lastElement.toString());
-		console.debug('My selection range: ' + range.toString());
+		//console.debug('My last element: ' + lastElement.toString());
+		//console.debug('My selection range: ' + range.toString());
 	}
 	
 	// Clear the highlighting in it, if any.
@@ -370,7 +370,7 @@ function GetSelectionRange() {
 
 // Gets the HTML content of my selection and returns it
 function GetSelectionHTML() {
-	console.debug("GetSelectionHTML()");
+	//console.debug("GetSelectionHTML()");
 	var range = GetSelectionRange();
 	return GetHTMLSource(range);
 }
@@ -385,7 +385,7 @@ function GetHTMLSource(range) {
 
 // Sets the beginning to start the speech. It will start at beginning if no selection was made.
 function SetBeginning(doLine, elementType) {
-	console.debug("SetBeginning()");
+	//console.debug("SetBeginning()");
 	var range = GetSelectionRange();
 	
 	// Reset heading states
@@ -424,7 +424,7 @@ function SetBeginning(doLine, elementType) {
 
 // Move the highlight to the next element that should be highlighted 
 function HighlightNextElement(doLine, elementType, lastElementType) {
-	console.debug("HighlightNextElement()");
+	//console.debug("HighlightNextElement()");
 	// Clear the line highlight first to make this process easier
 	ClearLineHighlight();
 	
@@ -441,11 +441,11 @@ function HighlightNextElement(doLine, elementType, lastElementType) {
 			if (elementType == lastElementType) {
 				if ((origParent != next.parentNode) && (next.nodeName == "#text")) {
 					if ($.trim(next.data) == "") {
-						console.debug("Encountered empty text. Skipping...");
+						//console.debug("Encountered empty text. Skipping...");
 						next = NextElement(next);
 					}
 					else {
-						console.debug("Got unique parent and node stuff");
+						//console.debug("Got unique parent and node stuff");
 						done = true;
 					}
 				}
@@ -454,9 +454,9 @@ function HighlightNextElement(doLine, elementType, lastElementType) {
 				}
 			}
 			else if (next.nodeName == "#text") {
-				console.debug("Got text!");
+				//console.debug("Got text!");
 				if ($.trim(next.data) == "") {
-					console.debug("Encountered empty text. Skipping...");
+					//console.debug("Encountered empty text. Skipping...");
 					next = NextElement(next);
 				}
 				else {
@@ -464,16 +464,16 @@ function HighlightNextElement(doLine, elementType, lastElementType) {
 				}
 			}
 			else {
-				console.debug("Nothing in the stuff...");
+				//console.debug("Nothing in the stuff...");
 				next = NextElement(next);
 			}
 		}
 		range = document.createRange()
 		range.setStart(next, 0);
 		range.setEnd(next, 1);
-		console.debug("New next: " + next.toString());
+		//console.debug("New next: " + next.toString());
 		if (next.nodeName == "#text") {
-			console.debug("Text!" + next.data + ", " + next.data.length.toString());
+			//console.debug("Text!" + next.data + ", " + next.data.length.toString());
 		}
 	}
 	else if (elementType == "image") {
@@ -515,7 +515,7 @@ function HighlightNextElement(doLine, elementType, lastElementType) {
 // Highlights a word in the current element based on the offset and length from
 // the TTS driver. This function will handle the offsets from the selection.
 function HighlightWord(doLine, offset, length, word) {
-	console.debug("HighlightWord()");
+	//console.debug("HighlightWord()");
 	
 	// Get the parent element from the highlight from which we do these calculations
 	var p = GetHighlightParent();
@@ -526,8 +526,8 @@ function HighlightWord(doLine, offset, length, word) {
 	ClearAllHighlights();
 	var t = $(p).contents()[childNum];
 	
-	console.debug('t: ' + t.data.toString());
-	console.debug('word: ' + word);
+	//console.debug('t: ' + t.data.toString());
+	//console.debug('word: ' + word);
 	
 	while (t.data.indexOf(word) < 0) {
 		// Generate a highlight 
@@ -553,7 +553,7 @@ function HighlightWord(doLine, offset, length, word) {
 
 // Returns the equation node if node is inside an equation.
 function GetEquation(node) {	
-	console.debug("GetEquation()");
+	//console.debug("GetEquation()");
 	var myNode = node
 
 	// Check to see if this node is an equation
@@ -574,7 +574,7 @@ function GetEquation(node) {
 
 // Returns a range that has the next word or element
 function GetNextWord(node, offset) {
-	console.debug("GetNextWord()");
+	//console.debug("GetNextWord()");
 	var needToGoToNext = false;
 	
 	// See if it is an equation
@@ -596,7 +596,7 @@ function GetNextWord(node, offset) {
 	else if (node.nodeName == "#text"){
 		range = document.createRange();
 		
-		console.debug("Content: <start>" + node.data + "<end><offset>" + offset.toString() + "<length>" + node.data.length.toString());
+		//console.debug("Content: <start>" + node.data + "<end><offset>" + offset.toString() + "<length>" + node.data.length.toString());
 		
 		// Adjust end if they exceed the length of the data
 		if ((offset + 1) >= node.data.length) {
@@ -623,7 +623,7 @@ function GetNextWord(node, offset) {
 
 // Clears the highlight of where it was before.
 function ClearHighlight() {
-	console.debug("ClearHighlight()");
+	//console.debug("ClearHighlight()");
 	// Replace the highlight node with my contents
 	var p = highlight.parentNode;
 
@@ -638,7 +638,7 @@ function ClearHighlight() {
 
 // Clears the line highlight
 function ClearLineHighlight() {
-	console.debug("ClearLineHighlight()");
+	//console.debug("ClearLineHighlight()");
 	if (highlightLine != null) {
 
 		var p = highlightLine.parentNode;

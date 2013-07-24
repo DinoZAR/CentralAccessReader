@@ -323,14 +323,14 @@ class MainWindow(QtGui.QMainWindow):
                           'hasWorded' : False}
     
     def onStart(self, offset, length, label, stream, word):
-        print 'window: OnStart'
+        #print 'window: OnStart'
         self.javascriptMutex.lock()
         self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SetBeginning', [self.configuration.highlight_line_enable, str(label)]))
         self.javascriptMutex.unlock()
         
     def onWord(self, offset, length, label, stream, word, isFirst):
         
-        print 'window: OnWord'
+        #print 'window: OnWord'
         self.hasWorded = True
         lastElement = self.ttsStates['lastElement']
         
@@ -362,12 +362,13 @@ class MainWindow(QtGui.QMainWindow):
         self.ttsStates['lastElement'] = [offset, length, label, stream]
         
     def onEndStream(self, stream, label):
-        print 'window: OnEndStream'
+        #print 'window: OnEndStream'
+        pass
 #         if (not self.hasWorded) and (label == 'text') and (not self.isFirst):
 #             self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightWord', [self.configuration.highlight_line_enable, str(label), str(self.lastElement[2])]))
         
     def onSpeechFinished(self):
-        print 'window: OnSpeechFinished'
+        #print 'window: OnSpeechFinished'
         self.javascriptMutex.lock()
         self.ui.webView.page().mainFrame().evaluateJavaScript('ClearAllHighlights()')
         self.javascriptMutex.unlock()
