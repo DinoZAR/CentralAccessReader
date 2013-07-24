@@ -503,61 +503,61 @@ zeta [variable] = mi("&#950;") -> 'zeta'
 
 
 
-Alpha [variable] = mi("&#913;") -> 'alpha'
+Alpha [variable] = mi("&#913;") -> 'cap alpha'
 
-Beta [variable] = mi("&#914;") -> 'beta'
+Beta [variable] = mi("&#914;") -> 'cap beta'
 
-Chi [variable] = mi("&#935;") -> 'chi'
+Chi [variable] = mi("&#935;") -> 'cap chi'
 
-Delta [variable] = mi("&#916;") -> 'delta'
+Delta [variable] = mi("&#916;") -> 'cap delta'
 
-Epsilon [variable] = mi("&#917;") -> 'epsilon'
+Epsilon [variable] = mi("&#917;") -> 'cap epsilon'
 
-Eta [variable] = mi("&#919;") -> 'eta'
+Eta [variable] = mi("&#919;") -> 'cap eta'
 
-Gamma [variable] = mi("&#915;") -> 'gamma'
+Gamma [variable] = mi("&#915;") -> 'cap gamma'
 
-Iota [variable] = mi("&#921;") -> 'iota'
+Iota [variable] = mi("&#921;") -> 'cap iota'
 
-Kappa [variable] = mi("&#922;") -> 'kappa'
+Kappa [variable] = mi("&#922;") -> 'cap kappa'
 
-Lambda [variable] = mi("&#923;") -> 'lambda'
+Lambda [variable] = mi("&#923;") -> 'cap lambda'
 
-Mu [variable] = mi("&#924;") -> 'mu'
+Mu [variable] = mi("&#924;") -> 'cap mu'
 
-Nu [variable] = mi("&#925;") -> 'nu'
+Nu [variable] = mi("&#925;") -> 'cap nu'
 
-Omega [variable] = mi("&#937;") -> 'omega'
+Omega [variable] = mi("&#937;") -> 'cap omega'
 
-Omicron [variable] = mi("&#927;") -> 'omicron'
+Omicron [variable] = mi("&#927;") -> 'cap omicron'
 
-Phi [variable] = mi("&#934;") -> 'phi'
+Phi [variable] = mi("&#934;") -> 'cap phi'
 
-Pi [variable] = mi("&#928;") -> 'pi'
+Pi [variable] = mi("&#928;") -> 'cap pi'
 
-PiBig [variable] = mo("&#8719;") -> 'big pi'
+PiBig [variable] = mo("&#8719;") -> 'cap big pi'
 
-PiBigFlipped = mo("&#8720;") -> 'flipped big pi'
+PiBigFlipped = mo("&#8720;") -> 'cap flipped big pi'
 
-Psi [variable] = mi("&#936;") -> 'psi'
+Psi [variable] = mi("&#936;") -> 'cap psi'
 
-Rho [variable] = mi("&#929;") -> 'rho'
+Rho [variable] = mi("&#929;") -> 'cap rho'
 
-Sigma [variable] = mi("&#931;") -> 'sigma'
+Sigma [variable] = mi("&#931;") -> 'cap sigma'
 
-SigmaBig = mo("&#8721;") -> 'sigma'
+SigmaBig = mo("&#8721;") -> 'cap sigma'
 
-Tau [variable] = mi("&#932;") -> 'tau'
+Tau [variable] = mi("&#932;") -> 'cap tau'
 
-Theta [variable] = mi("&#920;") -> 'theta'
+Theta [variable] = mi("&#920;") -> 'cap theta'
 
-Upsilon [variable] = mi("&#933;") -> 'upsilon'
+Upsilon [variable] = mi("&#933;") -> 'cap upsilon'
 
-UpsilonHook [vaiable] = mi("&#978;") -> 'upsilon with hook'
+UpsilonHook [vaiable] = mi("&#978;") -> 'cap upsilon with hook'
 
-Xi [variable] = mi("&#926;") -> 'xi'
+Xi [variable] = mi("&#926;") -> 'cap xi'
 
-Zeta [variable] = mi("&#918;") -> 'zeta'
+Zeta [variable] = mi("&#918;") -> 'cap zeta'
 
 
 //Rarely used symbols
