@@ -38,6 +38,8 @@ class SpeechWorker(QThread):
         self._rate = 50
         self._voice = ''
         
+        self._ttsCreated = False
+        
         self._stopMP3Creation = False
         
         self._isChange = False
@@ -72,6 +74,8 @@ class SpeechWorker(QThread):
         self.ttsEngine.setVolume(self._volume)
         self.ttsEngine.setRate(self._rate)
         self.ttsEngine.setVoice(self._voice)
+        
+        self._ttsCreated = True
         
         while True:
             if self._isChange:
@@ -153,6 +157,9 @@ class SpeechWorker(QThread):
         self._isChange = True
         
     def getVoiceList(self):
+        # Wait until the TTS is created before attempting what I want to do next
+        while not self._ttsCreated:
+            pass
         return self.ttsEngine.getVoiceList()
     
     def setSpeechGenerator(self, gen):
