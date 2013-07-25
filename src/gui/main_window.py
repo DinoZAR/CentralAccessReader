@@ -267,6 +267,11 @@ class MainWindow(QtGui.QMainWindow):
         
         # Update the math database to use
         self.changeMathDatabase.emit(self.configuration.math_database)
+        try:
+            if self.document is not None:
+                self.assigner.prepare(self.document.getMainPage())
+        except AttributeError:
+            pass
         
         # Update main window sliders to match
         self.ui.rateSlider.setValue(self.configuration.rate)
