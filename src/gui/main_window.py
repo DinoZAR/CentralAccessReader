@@ -6,7 +6,7 @@ Created on Jan 21, 2013
 import os
 import re
 from lxml import html
-from lxml.etree import ParserError
+from lxml.etree import ParserError, XMLSyntaxError
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt, QUrl, QMutex, pyqtSignal
 from PyQt4.QtWebKit import QWebPage, QWebInspector, QWebSettings
@@ -315,7 +315,11 @@ class MainWindow(QtGui.QMainWindow):
         self.javascriptMutex.unlock()
         
         # Convert the HTML to DOM
-        root = html.fromstring(contents)
+        root = None
+        try:
+            root = html.fromstring(contents)
+        except XMLSyntaxError:
+            root = html.Element('p')
         
         # Set the speech generator and start playback
         self.setSpeechGenerator.emit(self.assigner.generateSpeech(root, self.configuration))
