@@ -443,9 +443,8 @@ class MainWindow(QtGui.QMainWindow):
             QtGui.qApp.processEvents()
             
             # Get my speech output list
-            outputList = []
-            selectedHTML = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetSelectionHTML', [])).toString()
-            outputList = self.assigner.getSpeech(unicode(selectedHTML), self.configuration)
+            selectedHTML = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetSelectionHTML', [])).toString())
+            speechGenerator = self.assigner.generateSpeech(html.fromstring(selectedHTML), self.configuration)
             
             # Get the progress of the thing from the speech thread
             def myOnProgress(percent):
@@ -459,7 +458,7 @@ class MainWindow(QtGui.QMainWindow):
             self.speechThread.onProgress.connect(myOnProgress)
             self.speechThread.onProgressLabel.connect(myOnProgressLabel)
             self.progressDialog.canceled.connect(self.speechThread.stopMP3)
-            self.speechThread.saveToMP3(fileName, outputList)
+            self.speechThread.saveToMP3(fileName, speechGenerator)
             
             # Just hide it so that we can use it later
             self.progressDialog.hide()

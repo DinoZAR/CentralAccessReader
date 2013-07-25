@@ -97,7 +97,7 @@ class SpeechWorker(QThread):
     def mp3Interrupted(self):
         return self._stopMP3Creation
             
-    def saveToMP3(self, mp3Path, outputList):
+    def saveToMP3(self, mp3Path, speechGenerator):
         
         self._stopMP3Creation = False
         
@@ -111,7 +111,7 @@ class SpeechWorker(QThread):
         wavSavePath = temp_path('tmp.wav')
         
         self.onProgressLabel.emit('Speaking into WAV...')
-        self.ttsEngine.speakToWavFile(wavSavePath, outputList, myOnProgress, myIsStop)
+        self.ttsEngine.speakToWavFile(wavSavePath, speechGenerator, myOnProgress, myIsStop)
         
         if not self._stopMP3Creation:
             # Then convert it to MP3
