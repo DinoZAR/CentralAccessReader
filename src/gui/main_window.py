@@ -392,8 +392,8 @@ class MainWindow(QtGui.QMainWindow):
         hasMoreSpeech = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HasMoreElements', [])).toBool()
         if hasMoreSpeech:
             nextContent = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('StreamNextElement', [])).toString())
-            print 'window: next content,', [nextContent]
             
+            # Create the HTML DOM from content
             elem = None
             if len(nextContent) > 0:
                 try:
@@ -408,8 +408,7 @@ class MainWindow(QtGui.QMainWindow):
             else:
                 elem = html.Element('p')
             
-            print 'window: element,', html.tostring(elem, pretty_print=True)
-                
+            # Create and send the speech generator
             self.setSpeechGenerator.emit(self.assigner.generateSpeech(elem, self.configuration))
         else:
             self.noMoreSpeech.emit()
