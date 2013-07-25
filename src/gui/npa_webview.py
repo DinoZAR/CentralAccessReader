@@ -67,6 +67,8 @@ class NPAWebView(QWebView):
             e.accept()
             url = unicode(e.mimeData().urls()[0].toLocalFile())
             if os.path.splitext(url)[1] == '.docx':
+                self.mainWindow.activateWindow()
+                self.mainWindow.raise_()
                 self.mainWindow.openDocx(url)
             elif os.path.splitext(url)[1] == '.doc':
                 self.mainWindow.showDocNotSupported()
