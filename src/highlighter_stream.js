@@ -3,6 +3,7 @@ var lastStreamElement = null;
 // DEBUG PURPOSES
 // Gives me the beginning to work with
 function SetStreamBeginning() {
+    console.debug('SetStreamBeginning()');
     range = GetSelectionRange();
     lastStreamElement = range.startContainer;
     myRange = document.createRange();
@@ -37,6 +38,7 @@ function StreamNextElement() {
 }
 
 function HasMoreElements() {
+    console.debug('HasMoreElements()');
     if (lastStreamElement == null) {
         return false;
     }

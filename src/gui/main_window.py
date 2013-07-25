@@ -7,6 +7,7 @@ import os
 import re
 from lxml import html
 from lxml.etree import ParserError, XMLSyntaxError
+from HTMLParser import HTMLParser
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt, QUrl, QMutex, pyqtSignal
 from PyQt4.QtWebKit import QWebPage, QWebInspector, QWebSettings
@@ -404,7 +405,8 @@ class MainWindow(QtGui.QMainWindow):
                     isMatch = re.search(r'<.+>', nextContent)
                     if isMatch is None:
                         elem = html.Element('p')
-                        elem.text = nextContent
+                        h = HTMLParser()
+                        elem.text = h.unescape(nextContent)
                     else:
                         elem = html.fromstring(nextContent)
                 except ParserError as e:
