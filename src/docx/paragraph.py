@@ -17,7 +17,7 @@ IMPORT_FOLDER = temp_path('import')
 
 # This dictionary holds image file extensions that must be converted to another
 # image type because the WebView doesn't support displaying it
-IMAGE_TRANSLATION = {'.emf' : '.png'}
+#IMAGE_TRANSLATION = {'.emf' : '.png'}
 
 # Get my OMML to MathML stylesheet compiled
 ommlXSLTPath = os.path.join(ROOT_PATH, 'OMMLToMathML.xsl')
@@ -277,8 +277,8 @@ def _parseImage(elem, parentData, otherData):
                 
                 # Check to see if this is an image I need to convert later. If 
                 # so, change the file extension to match the converted file
-                if os.path.splitext(filename)[1] in IMAGE_TRANSLATION:
-                    filename = os.path.splitext(filename)[0] + IMAGE_TRANSLATION[os.path.splitext(filename)[1]]
+                #if os.path.splitext(filename)[1] in IMAGE_TRANSLATION:
+                #    filename = os.path.splitext(filename)[0] + IMAGE_TRANSLATION[os.path.splitext(filename)[1]]
                     
                 data['filename'] = unicode(filename)
                 break

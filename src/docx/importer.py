@@ -6,7 +6,7 @@ Created on Apr 18, 2013
 import zipfile
 from lxml import etree
 from lxml import html as HTML
-from PIL import Image
+#from PIL import Image
 from cStringIO import StringIO
 import os
 import urllib
@@ -15,7 +15,7 @@ from cStringIO import StringIO
 from threading import Thread
 from src.gui.bookmarks import BookmarkNode
 from src.misc import program_path, temp_path
-from src.docx.paragraph import parseParagraph, parseTable, IMAGE_TRANSLATION
+from src.docx.paragraph import parseParagraph, parseTable #, IMAGE_TRANSLATION
 
 ROOT_PATH = program_path('src/docx')
 
@@ -38,13 +38,13 @@ def save_images(docxPath, importPath, cancelHook=None):
             # Extract it to my import folder
             savePath = importPath + '/images/' + f.replace('word/media/', '')
             with open(savePath, 'wb') as imageFile:
-                if os.path.splitext(savePath)[1] in IMAGE_TRANSLATION:
-                    contents = z.read(f)
-                    myFile = StringIO(contents)
-                    convertFile = Image.open(myFile)
-                    convertFile.save(os.path.splitext(savePath)[0] + IMAGE_TRANSLATION[os.path.splitext(savePath)[1]])
-                else:
-                    imageFile.write(z.read(f))
+#                 if os.path.splitext(savePath)[1] in IMAGE_TRANSLATION:
+#                     contents = z.read(f)
+#                     myFile = StringIO(contents)
+#                     convertFile = Image.open(myFile)
+#                     convertFile.save(os.path.splitext(savePath)[0] + IMAGE_TRANSLATION[os.path.splitext(savePath)[1]])
+#                 else:
+                imageFile.write(z.read(f))
      
     z.close()
 
