@@ -194,15 +194,15 @@ horizontalBracketDown = mo("&#9140;") -> 'horizontal bracket opening downward,'
 
 horizontalBracketUp = mo("&#9141;") -> 'horizontal bracket opening upward,'
 
-leftSquareBracket = mi("&#12314;") -> 'left square bracket,'
+leftSquareBracket = mi("&#12314;") -> 'open square bracket,'
 
-leftSquareBracket = mo("&#12314;") -> 'left square bracket,'
+leftSquareBracket = mo("&#12314;") -> 'open square bracket,'
 
 openParen = mo("(") -> 'open parentheses,'
 
-rightSquareBracket = mi("&#12315;") -> 'right square bracket,'
+rightSquareBracket = mi("&#12315;") -> 'close square bracket,'
 
-rightSquareBracket = mo("&#12315;") -> 'right square bracket,'
+rightSquareBracket = mo("&#12315;") -> 'close square bracket,'
 
 verticalBar = mi("|") -> 'vertical bar,'
 
