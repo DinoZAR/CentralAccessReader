@@ -4,6 +4,7 @@ Created on Jan 21, 2013
 @author: Spencer
 '''
 import os
+import re
 from lxml import html
 from lxml.etree import ParserError
 from PyQt4 import QtGui
@@ -386,16 +387,23 @@ class MainWindow(QtGui.QMainWindow):
         hasMoreSpeech = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HasMoreElements', [])).toBool()
         if hasMoreSpeech:
             nextContent = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('StreamNextElement', [])).toString())
-            #print 'window: next content,', [nextContent]
+            print 'window: next content,', [nextContent]
             
             elem = None
             if len(nextContent) > 0:
                 try:
-                    elem = html.fromstring(nextContent)
+                    isMatch = re.search(r'<.+>', nextContent)
+                    if isMatch is None:
+                        elem = html.Element('p')
+                        elem.text = nextContent
+                    else:
+                        elem = html.fromstring(nextContent)
                 except ParserError as e:
                     elem = html.Element('p')
             else:
                 elem = html.Element('p')
+            
+            print 'window: element,', html.tostring(elem, pretty_print=True)
                 
             self.setSpeechGenerator.emit(self.assigner.generateSpeech(elem, self.configuration))
         else:
