@@ -43,6 +43,8 @@ import _Numbers.txt
 slash = divideBack -> ', back slash,'
 slash = divide -> ', forward slash,'
 
+cross = timesCross -> 'cross'
+
 diamond = mi("&#8900;") -> 'diamond'
 identical = mi("&#8801;") -> 'triple bars'
 plus = mo("+") -> 'plus sign'
