@@ -127,6 +127,83 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChang
         outString += 'Name: "' + d.replace(DIST_DIRECTORY, '{app}\\') + '"'
         outString += '\n'
 
+    outString += r'''
+[UninstallDelete]
+Type: files; Name: "{app}\src\math_patterns\*"
+
+[Code]
+
+/////////////////////////////////////////////////////////////////////
+function GetUninstallString(): String;
+var
+  sUninstPath: String;
+  sUninstallString: String;
+begin
+  sUninstPath := ExpandConstant('Software\Microsoft\Windows\CurrentVersion\Uninstall\{#emit SetupSetting("AppId")}_is1');
+  sUninstallString := '';
+  if not RegQueryStringValue(HKLM, sUninstPath, 'UninstallString', sUninstallString) then
+    RegQueryStringValue(HKCU, sUninstPath, 'UninstallString', sUninstallString);
+  Result := sUninstallString;
+end;
+
+
+/////////////////////////////////////////////////////////////////////
+function IsUpgrade(): Boolean;
+begin
+  Result := (GetUninstallString() <> '');
+end;
+
+
+/////////////////////////////////////////////////////////////////////
+function UninstallOldVersion(): Integer;
+var
+  sUninstallString: String;
+  iResultCode: Integer;
+begin
+// Return Values:
+// 1 - uninstall string is empty
+// 2 - error executing the UnInstallString
+// 3 - successfully executed the UnInstallString
+
+  // default return value
+  Result := 0;
+
+  // get the uninstall string of the old app
+  sUninstallString := GetUninstallString();
+  if sUninstallString <> '' then begin
+    sUninstallString := RemoveQuotes(sUninstallString);
+    if Exec(sUninstallString, '/SILENT /NORESTART /SUPPRESSMSGBOXES','', SW_HIDE, ewWaitUntilTerminated, iResultCode) then
+      Result := 3
+    else
+      Result := 2;
+  end else
+    Result := 1;
+end;
+
+/////////////////////////////////////////////////////////////////////
+procedure CurStepChanged(CurStep: TSetupStep);
+begin
+  if (CurStep=ssInstall) then
+  begin
+    if (IsUpgrade()) then
+    begin
+      UninstallOldVersion();
+    end;
+  end;
+end;
+
+/////////////////////////////////////////////////////////////////////
+function PrepareToInstall(var NeedsRestart: Boolean): String;
+begin
+  if IsUpgrade() then begin
+    UninstallOldVersion();
+  end;
+  NeedsRestart := False;
+  Result := '';
+end;
+
+'''
+
     # Write it out to file
     f = open(INNO_SETUP_SCRIPT, 'w')
     f.write(outString)
