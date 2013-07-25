@@ -5,6 +5,7 @@ Created on Jan 21, 2013
 '''
 import os
 from lxml import html
+from lxml.etree import ParserError
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt, QUrl, QMutex, pyqtSignal
 from PyQt4.QtWebKit import QWebPage, QWebInspector, QWebSettings
@@ -389,7 +390,10 @@ class MainWindow(QtGui.QMainWindow):
             
             elem = None
             if len(nextContent) > 0:
-                elem = html.fromstring(nextContent)
+                try:
+                    elem = html.fromstring(nextContent)
+                except ParserError as e:
+                    elem = html.Element('p')
             else:
                 elem = html.Element('p')
                 
