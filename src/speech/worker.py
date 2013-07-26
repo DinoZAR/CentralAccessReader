@@ -38,6 +38,8 @@ class SpeechWorker(QThread):
         self._rate = 50
         self._voice = ''
         
+        self._ttsCreated = False
+        
         self._stopMP3Creation = False
         
         self._isChange = False
@@ -73,6 +75,8 @@ class SpeechWorker(QThread):
         self.ttsEngine.setRate(self._rate)
         self.ttsEngine.setVoice(self._voice)
         
+        self._ttsCreated = True
+        
         while True:
             if self._isChange:
                 self.ttsEngine.setVolume(self._volume)
@@ -97,7 +101,7 @@ class SpeechWorker(QThread):
     def mp3Interrupted(self):
         return self._stopMP3Creation
             
-    def saveToMP3(self, mp3Path, outputList):
+    def saveToMP3(self, mp3Path, speechGenerator):
         
         self._stopMP3Creation = False
         
@@ -111,7 +115,7 @@ class SpeechWorker(QThread):
         wavSavePath = temp_path('tmp.wav')
         
         self.onProgressLabel.emit('Speaking into WAV...')
-        self.ttsEngine.speakToWavFile(wavSavePath, outputList, myOnProgress, myIsStop)
+        self.ttsEngine.speakToWavFile(wavSavePath, speechGenerator, myOnProgress, myIsStop)
         
         if not self._stopMP3Creation:
             # Then convert it to MP3
@@ -153,6 +157,9 @@ class SpeechWorker(QThread):
         self._isChange = True
         
     def getVoiceList(self):
+        # Wait until the TTS is created before attempting what I want to do next
+        while not self._ttsCreated:
+            pass
         return self.ttsEngine.getVoiceList()
     
     def setSpeechGenerator(self, gen):

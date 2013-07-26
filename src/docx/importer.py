@@ -6,6 +6,8 @@ Created on Apr 18, 2013
 import zipfile
 from lxml import etree
 from lxml import html as HTML
+#from PIL import Image
+from cStringIO import StringIO
 import os
 import urllib
 import re
@@ -13,22 +15,35 @@ from cStringIO import StringIO
 from threading import Thread
 from src.gui.bookmarks import BookmarkNode
 from src.misc import program_path, temp_path
-from src.docx.paragraph import parseParagraph, parseTable
+from src.docx.paragraph import parseParagraph, parseTable #, IMAGE_TRANSLATION
 
 ROOT_PATH = program_path('src/docx')
 
 w_NS = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
 r_NS = '{http://schemas.openxmlformats.org/package/2006/relationships}'
 
-def save_images(docxPath, importPath):
+def save_images(docxPath, importPath, cancelHook=None):
      
     # Open a zip file of my docx file
     z = zipfile.ZipFile(docxPath, 'r')
  
     for f in z.namelist():
+        
+        # Check for cancel
+        if cancelHook is not None:
+            if cancelHook():
+                break
+        
         if f.find('word/media/') == 0:
             # Extract it to my import folder
-            with open(importPath + '/images/' + f.replace('word/media/', ''), 'wb') as imageFile:
+            savePath = importPath + '/images/' + f.replace('word/media/', '')
+            with open(savePath, 'wb') as imageFile:
+#                 if os.path.splitext(savePath)[1] in IMAGE_TRANSLATION:
+#                     contents = z.read(f)
+#                     myFile = StringIO(contents)
+#                     convertFile = Image.open(myFile)
+#                     convertFile.save(os.path.splitext(savePath)[0] + IMAGE_TRANSLATION[os.path.splitext(savePath)[1]])
+#                 else:
                 imageFile.write(z.read(f))
      
     z.close()
@@ -72,7 +87,7 @@ class DocxDocument(object):
         print 'Starting the save images thread...'
         
         # Start saving images to my import folder in the background
-        saveImagesThread = Thread(target=save_images, args=(docxFilePath, self.importFolder))
+        saveImagesThread = Thread(target=save_images, args=(docxFilePath, self.importFolder, cancelHook))
         saveImagesThread.start()
         
         # .docx is just a zip file

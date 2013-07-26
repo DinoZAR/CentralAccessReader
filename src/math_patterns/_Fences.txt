@@ -6,11 +6,11 @@ fencedRS = mfenced<open="[",close="">(+) -> 'open square bracket, {1},'
 
 fencedOPCP = mfenced<open="(",close=")">(+) -> 'open parentheses {1} closed parentheses'
 
-fencedOCCC = mfenced<open="{",close="}",separators="|">(mrow(+) mrow(+) mrow(+)) -> 'open curly brace, {1}, vertical bar, {2}, vertical bar, {3}, closed curly brace,'
-fencedOCCC = mfenced<open="{",close="}",separators="|">(mrow(+) mrow(+)) -> 'open curly brace, {1}, vertical bar, {2}, closed curly brace,'
-fencedOCCC = mfenced<open="{",close="}">(+) -> 'open curly brace, {1}, closed curly brace,'
-fencedCC = mfenced<open="",close="}">(+) -> '{1}, closed curly brace,'
-fencedOC = mfenced<open="{",close="">(+) -> 'open curly brace, {1},'
+fencedOCCC = mfenced<open="{",close="}",separators="|">(mrow(+) mrow(+) mrow(+)) -> 'open curly bracket, {1}, vertical bar, {2}, vertical bar, {3}, closed curly bracket,'
+fencedOCCC = mfenced<open="{",close="}",separators="|">(mrow(+) mrow(+)) -> 'open curly bracket, {1}, vertical bar, {2}, closed curly bracket,'
+fencedOCCC = mfenced<open="{",close="}">(+) -> 'open curly bracket, {1}, closed curly bracket,'
+fencedCC = mfenced<open="",close="}">(+) -> '{1}, closed curly bracket,'
+fencedOC = mfenced<open="{",close="">(+) -> 'open curly bracket, {1},'
 
 fencedABS = mfenced<open="|",close="|",separators="|">(mrow(+) mrow(+) mrow(+)) -> 'vertical bar, {1}, vertical bar, {2}, vertical bar, {3}, vertical bar,'
 fencedABS = mfenced<open="|",close="|",separators="|">(mrow(+) mrow(+)) -> 'vertical bar, {1}, vertical bar, {2}, vertical bar,'

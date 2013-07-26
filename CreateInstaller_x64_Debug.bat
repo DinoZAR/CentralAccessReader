@@ -45,8 +45,9 @@ XCOPY src\lame_64.exe "dist\Central Access Reader\src\" /D /Y /Q
 
 :: Grabbing JavaScript functions
 echo Copying JavaScript functions and configurations
-XCOPY src\docx\mathjax_config.js "dist\Central Access Reader\src\docx\" /D /Y /Q
-XCOPY src\docx\my_functions.js "dist\Central Access Reader\src\docx\" /D /Y /Q
+XCOPY src\mathjax_config.js "dist\Central Access Reader\src\" /D /Y /Q
+XCOPY src\highlighter_normal.js "dist\Central Access Reader\src\" /D /Y /Q
+XCOPY src\highlighter_stream.js "dist\Central Access Reader\src\" /D /Y /Q
 
 :: Get the OMML to MathML XSLT
 echo Copying OMML to MathML XSLT...
@@ -59,6 +60,10 @@ XCOPY Tutorial.docx "dist\Central Access Reader\" /D /Y /Q
 :: Get the version file
 echo Copying version file...
 XCOPY version.txt "dist\Central Access Reader\" /D /Y /Q
+
+:: Get the batch file to run CAR
+echo Copying CAR runner...
+XCOPY RunCARFromUpdate.bat "dist\Central Access Reader\" /D /Y /Q
 
 :: Create the Inno Setup script
 echo Creating Inno Setup script...

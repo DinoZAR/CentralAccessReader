@@ -36,7 +36,7 @@ class Configuration(object):
         self.tag_math = False
         
         # Math database
-        self.math_database = pattern_databases()['General']
+        self.math_database = 'General'
         
         # Highlighter settings
         self.highlight_text_enable = True
@@ -139,7 +139,7 @@ class Configuration(object):
             else:
                 self.tag_math = False
             
-            self.math_database = configDOM.xpath('/Configuration/MathDatabase')[0].text
+            self.math_database = os.path.splitext(os.path.basename(configDOM.xpath('/Configuration/MathDatabase')[0].text))[0]
                 
             # Highlighter Settings
             self.highlight_text_enable = int(configDOM.xpath('/Configuration/EnableTextHighlight')[0].text)

@@ -15,6 +15,12 @@ from cStringIO import StringIO
 ROOT_PATH = program_path('src/docx')
 IMPORT_FOLDER = temp_path('import')
 
+# This dictionary holds image file extensions that must be converted to another
+# image type because the WebView doesn't support displaying it
+#IMAGE_TRANSLATION = {'.emf' : '.png'}
+
+CHARACTER_TRANSLATION = [(unichr(8208), '-')]
+
 # Get my OMML to MathML stylesheet compiled
 ommlXSLTPath = os.path.join(ROOT_PATH, 'OMMLToMathML.xsl')
 
@@ -110,7 +116,7 @@ def parseParagraph(elem, otherData):
             text = ''
             textNodes = child.xpath('w:r/w:t', namespaces={'w': w_NS[1:-1]})
             for t in textNodes:
-                text += t.text
+                text += _replaceWithWebFriendly(t.text)
             hyperlinkData['text'] = text
                 
             # Get the link URL from the rels
@@ -157,6 +163,19 @@ def parseTable(elem, otherData):
     htmlContent = _generateTableHTMLNode(parseData)
                 
     return htmlContent
+
+def _replaceWithWebFriendly(s):
+    '''
+    Replaces characters in the string with characters that are friendly for
+    display in QWebView.
+    '''
+    print 'paragraph: before;', [s]
+    myS = s
+    for t in CHARACTER_TRANSLATION:
+        myS = myS.replace(t[0], t[1])
+    
+    print 'paragraph: replace;', [myS]
+    return myS
 
 def _parseOMMLPara(elem, parentData):
     mathRoot = elem[0]  # Get the first child
@@ -241,7 +260,7 @@ def _parseRow(elem, parentData, otherData):
     for child in elem:
         # Text
         if child.tag == '{0}t'.format(w_NS):
-            data['text'] = unicode(child.text)
+            data['text'] = _replaceWithWebFriendly(unicode(child.text))
         
         # Image or some drawing
         if child.tag == '{0}drawing'.format(w_NS):
@@ -267,10 +286,15 @@ def _parseImage(elem, parentData, otherData):
         id = query.get('{0}embed'.format(rel_NS))
                     
         # See which filename it refers to and create a valid one
-        filename = ''
         for rel in otherData['rels']:
             if rel.get('Id') == id:
                 filename = os.path.split(rel.get('Target'))[1]
+                
+                # Check to see if this is an image I need to convert later. If 
+                # so, change the file extension to match the converted file
+                #if os.path.splitext(filename)[1] in IMAGE_TRANSLATION:
+                #    filename = os.path.splitext(filename)[0] + IMAGE_TRANSLATION[os.path.splitext(filename)[1]]
+                    
                 data['filename'] = unicode(filename)
                 break
             

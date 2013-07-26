@@ -76,7 +76,7 @@ class SpeechSettings(QtGui.QDialog):
         keys = sorted(databases.keys())
         self.ui.mathDatabaseComboBox.blockSignals(True)
         for k in keys:
-            self.ui.mathDatabaseComboBox.addItem(k, userData=databases[k])
+            self.ui.mathDatabaseComboBox.addItem(k, userData=k)
             
         if len(self.configuration.math_database) > 0:
             i = self.ui.mathDatabaseComboBox.findData(self.configuration.math_database)

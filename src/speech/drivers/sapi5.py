@@ -242,7 +242,7 @@ class SAPI5Driver(object):
         #print 'driver: flagging no more speech'
         self._grabbingSpeech = False
         
-    def speakToWavFile(self, wavFilePath, outputList, progressCallback, checkStopFunction):
+    def speakToWavFile(self, wavFilePath, speechGenerator, progressCallback, checkStopFunction):
         '''
         This is a separate function that runs on a different thread.
         This will not return until it has completely written the speech to the
@@ -278,6 +278,11 @@ class SAPI5Driver(object):
         # Voice events for updating the progress thing
         advisor = win32com.client.WithEvents(self._voice, SAPIEventSink)
         advisor.setDriver(self)
+        
+        # Create the output list from generator so we can track its progress
+        outputList = []
+        for speech in speechGenerator:
+            outputList.append(speech)
         
         for i in range(len(outputList)):
             progressCallback(int(float(i) / len(outputList) * 100.0 - 1))

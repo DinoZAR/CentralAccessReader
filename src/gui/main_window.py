@@ -4,7 +4,10 @@ Created on Jan 21, 2013
 @author: Spencer
 '''
 import os
+import re
 from lxml import html
+from lxml.etree import ParserError, XMLSyntaxError
+from HTMLParser import HTMLParser
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt, QUrl, QMutex, pyqtSignal
 from PyQt4.QtWebKit import QWebPage, QWebInspector, QWebSettings
@@ -264,7 +267,12 @@ class MainWindow(QtGui.QMainWindow):
         self.changeVoice.emit(self.configuration.voice)
         
         # Update the math database to use
-        self.changeMathDatabase.emit(self.configuration.math_database)
+        self.changeMathDatabase.emit(misc.pattern_databases()[self.configuration.math_database])
+        try:
+            if self.document is not None:
+                self.assigner.prepare(self.document.getMainPage())
+        except AttributeError:
+            pass
         
         # Update main window sliders to match
         self.ui.rateSlider.setValue(self.configuration.rate)
@@ -308,7 +316,11 @@ class MainWindow(QtGui.QMainWindow):
         self.javascriptMutex.unlock()
         
         # Convert the HTML to DOM
-        root = html.fromstring(contents)
+        root = None
+        try:
+            root = html.fromstring(contents)
+        except XMLSyntaxError:
+            root = html.Element('p')
         
         # Set the speech generator and start playback
         self.setSpeechGenerator.emit(self.assigner.generateSpeech(root, self.configuration))
@@ -385,14 +397,24 @@ class MainWindow(QtGui.QMainWindow):
         hasMoreSpeech = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HasMoreElements', [])).toBool()
         if hasMoreSpeech:
             nextContent = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('StreamNextElement', [])).toString())
-            #print 'window: next content,', [nextContent]
             
+            # Create the HTML DOM from content
             elem = None
             if len(nextContent) > 0:
-                elem = html.fromstring(nextContent)
+                try:
+                    isMatch = re.search(r'<.+>', nextContent)
+                    if isMatch is None:
+                        elem = html.Element('p')
+                        h = HTMLParser()
+                        elem.text = h.unescape(nextContent)
+                    else:
+                        elem = html.fromstring(nextContent)
+                except ParserError as e:
+                    elem = html.Element('p')
             else:
                 elem = html.Element('p')
-                
+            
+            # Create and send the speech generator
             self.setSpeechGenerator.emit(self.assigner.generateSpeech(elem, self.configuration))
         else:
             self.noMoreSpeech.emit()
@@ -443,9 +465,8 @@ class MainWindow(QtGui.QMainWindow):
             QtGui.qApp.processEvents()
             
             # Get my speech output list
-            outputList = []
-            selectedHTML = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetSelectionHTML', [])).toString()
-            outputList = self.assigner.getSpeech(unicode(selectedHTML), self.configuration)
+            selectedHTML = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetSelectionHTML', [])).toString())
+            speechGenerator = self.assigner.generateSpeech(html.fromstring(selectedHTML), self.configuration)
             
             # Get the progress of the thing from the speech thread
             def myOnProgress(percent):
@@ -459,7 +480,7 @@ class MainWindow(QtGui.QMainWindow):
             self.speechThread.onProgress.connect(myOnProgress)
             self.speechThread.onProgressLabel.connect(myOnProgressLabel)
             self.progressDialog.canceled.connect(self.speechThread.stopMP3)
-            self.speechThread.saveToMP3(fileName, outputList)
+            self.speechThread.saveToMP3(fileName, speechGenerator)
             
             # Just hide it so that we can use it later
             self.progressDialog.hide()
