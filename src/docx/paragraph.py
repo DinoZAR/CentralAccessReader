@@ -17,7 +17,7 @@ IMPORT_FOLDER = temp_path('import')
 
 # This dictionary holds image file extensions that must be converted to another
 # image type because the WebView doesn't support displaying it
-#IMAGE_TRANSLATION = {'.emf' : '.png'}
+IMAGE_TRANSLATION = {'.emf' : '.png'}
 
 CHARACTER_TRANSLATION = [(unichr(8208), '-')]
 
@@ -169,12 +169,9 @@ def _replaceWithWebFriendly(s):
     Replaces characters in the string with characters that are friendly for
     display in QWebView.
     '''
-    print 'paragraph: before;', [s]
     myS = s
     for t in CHARACTER_TRANSLATION:
         myS = myS.replace(t[0], t[1])
-    
-    print 'paragraph: replace;', [myS]
     return myS
 
 def _parseOMMLPara(elem, parentData):
@@ -292,8 +289,8 @@ def _parseImage(elem, parentData, otherData):
                 
                 # Check to see if this is an image I need to convert later. If 
                 # so, change the file extension to match the converted file
-                #if os.path.splitext(filename)[1] in IMAGE_TRANSLATION:
-                #    filename = os.path.splitext(filename)[0] + IMAGE_TRANSLATION[os.path.splitext(filename)[1]]
+                if os.path.splitext(filename)[1] in IMAGE_TRANSLATION:
+                    filename = os.path.splitext(filename)[0] + IMAGE_TRANSLATION[os.path.splitext(filename)[1]]
                     
                 data['filename'] = unicode(filename)
                 break
