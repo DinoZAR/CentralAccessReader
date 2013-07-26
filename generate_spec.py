@@ -35,7 +35,7 @@ exe = EXE(pyz,
     
     outString+= r'''
           strip=None,
-          upx=True,
+          upx=False,
           icon=os.path.normpath('src/forms/icons/CAR_Logo.ico') )
 coll = COLLECT(exe,
 			   Tree(os.path.abspath('src/forms/icons')),

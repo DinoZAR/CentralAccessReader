@@ -61,6 +61,10 @@ XCOPY Tutorial.docx "dist\Central Access Reader\" /D /Y /Q
 echo Copying version file...
 XCOPY version.txt "dist\Central Access Reader\" /D /Y /Q
 
+:: Get the batch file to run CAR
+echo Copying CAR runner...
+XCOPY RunCARFromUpdate.bat "dist\Central Access Reader\" /D /Y /Q
+
 :: Create the Inno Setup script
 echo Creating Inno Setup script...
 python generate_inno_setup_script.py 64

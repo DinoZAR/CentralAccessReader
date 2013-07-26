@@ -2,7 +2,7 @@
 # -*- mode: python -*-
 
 a = Analysis(['src/main.py'],
-             pathex=['W:\\Nifty Prose Articulator\\workspace\\nifty-prose-articulator'],
+             pathex=['C:\\Users\\GraffeS\\Desktop\\workspace\\nifty-prose-articulator'],
              hiddenimports=[],
              hookspath=None)
 			 
@@ -14,7 +14,7 @@ exe = EXE(pyz,
           debug=False,
           console=False,
           strip=None,
-          upx=True,
+          upx=False,
           icon=os.path.normpath('src/forms/icons/CAR_Logo.ico') )
 coll = COLLECT(exe,
 			   Tree(os.path.abspath('src/forms/icons')),
