@@ -48,7 +48,6 @@ class SAPI5Driver(object):
         '''
         Sets the _rate of the _voice,  a value between 0-100
         '''
-        # 200 BPM = 0
         self._rate = int((rate / 5.0) - 10)
         self._settingsChanged = True
         
@@ -210,6 +209,13 @@ class SAPI5Driver(object):
             
         # Spin until all of my speech is done
         while len(self._queue) > 0 and self._running:
+            # Check if my settings have changed
+            if self._settingsChanged:
+                self._voice.Volume = self._volume
+                self._voice.Rate = self._rate
+                if len(self._voiceId) > 0:
+                    self._voice.Voice = self.voiceTokenFromId(self._voiceId)
+                self._settingsChanged = False
             pythoncom.PumpWaitingMessages()
                 
         # Use this empty message to completely clear queue
