@@ -1,7 +1,15 @@
+/**
+ * Stream functions (so far, just for TTS)
+ * 
+ * @author Spencer Graffe
+ */
+
 var lastStreamElement = null;
 
-// DEBUG PURPOSES
-// Gives me the beginning to work with
+/**
+ * DEBUG PURPOSES
+ * Gives me a beginning to work with.
+ */
 function SetStreamBeginning() {
     console.debug('SetStreamBeginning()');
     range = GetSelectionRange();
@@ -12,8 +20,10 @@ function SetStreamBeginning() {
     return GetHTMLSource(myRange);
 }
 
-// Gets the next element content to read. Returns a string representing the
-// HTML content.
+/**
+ * Gets the next element content to read. Returns a string representing the
+ * HTML content. 
+ */
 function StreamNextElement() {
     console.debug('StreamNextElement()');
     lastStreamElement = NextElement(lastStreamElement);
@@ -37,6 +47,10 @@ function StreamNextElement() {
     }
 }
 
+/**
+ * Returns whether there are more elements to stream.
+ * @returns {Boolean}
+ */
 function HasMoreElements() {
     //console.debug('HasMoreElements()');
     if (lastStreamElement == null) {

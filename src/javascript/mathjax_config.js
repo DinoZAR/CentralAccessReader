@@ -5,6 +5,6 @@ MathJax.Hub.Config({
 		imageFont: null
 	}
 });
-MathJax.Hub.Register.StartupHook("HTML-CSS Jax Startup",function () {
+MathJax.Hub.Register.StartupHook("HTML-CSS Jax Startup", function () {
           MathJax.OutputJax["HTML-CSS"].Font.timeout = 500; // shorter than 5 second font timeout
 });

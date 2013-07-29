@@ -294,22 +294,19 @@ class DocxDocument(object):
         jqueryScrollTo = HTML.Element('script')
         jqueryScrollTo.attrib['type'] = 'text/javascript'
         jqueryScrollTo.attrib['src'] = 'file:' + urllib.pathname2url(program_path('jquery.scrollTo-1.4.3.1-min.js'))
-         
-        highlighterNormalScript = HTML.Element('script')
-        highlighterNormalScript.set('language', 'javascript')
-        highlighterNormalScript.set('type', 'text/javascript')
-        scriptFile = open(program_path('src/highlighter_normal.js'), 'r')
-        contents = scriptFile.read()
-        scriptFile.close()
-        highlighterNormalScript.text = contents
         
-        highlighterStreamScript = HTML.Element('script')
-        highlighterStreamScript.set('language', 'javascript')
-        highlighterStreamScript.set('type', 'text/javascript')
-        scriptFile = open(program_path('src/highlighter_stream.js'), 'r')
-        contents = scriptFile.read()
-        scriptFile.close()
-        highlighterStreamScript.text = contents
+        # Get all of my own JavaScripts into the document
+        javascriptFiles = [f for f in os.listdir(program_path('src/javascript/')) 
+                           if os.path.isfile(os.path.join(program_path('src/javascript/'), f)) and
+                           os.path.splitext(os.path.join(program_path('src/javascript/'), f))[1] == '.js']
+        javascriptElements = []
+        for f in javascriptFiles:
+            elem = HTML.Element('script')
+            elem.set('language', 'javascript')
+            elem.set('type', 'text/javascript')
+            with open(os.path.join(program_path('src/javascript/'), f), 'r') as jsFile:
+                elem.text = jsFile.read()
+            javascriptElements.append(elem)
         
         css = HTML.Element('link')
         css.attrib['rel'] = 'stylesheet'
@@ -321,8 +318,8 @@ class DocxDocument(object):
         head.append(jqueryScript)
         head.append(jqueryUIScript)
         head.append(jqueryScrollTo)
-        head.append(highlighterNormalScript)
-        head.append(highlighterStreamScript)
+        for elem in javascriptElements:
+            head.append(elem)
         head.append(css)
         
     def _prepareBody(self, body):
