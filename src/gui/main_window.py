@@ -335,14 +335,14 @@ class MainWindow(QtGui.QMainWindow):
                           'hasWorded' : False}
     
     def onStart(self, offset, length, label, stream, word):
-        #print 'window: OnStart'
+        print 'window: OnStart;', offset, length, label, stream, word
         self.javascriptMutex.lock()
         self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SetBeginning', [self.configuration.highlight_line_enable, str(label)]))
         self.javascriptMutex.unlock()
         
     def onWord(self, offset, length, label, stream, word, isFirst):
         
-        #print 'window: OnWord'
+        print 'window: OnWord; offset', offset, ',length', length, ', label', label, ', stream', stream, ', word', word, ', isFirst', isFirst
         self.hasWorded = True
         lastElement = self.ttsStates['lastElement']
         

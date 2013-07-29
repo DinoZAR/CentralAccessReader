@@ -39,7 +39,7 @@ $(function() {
   
 // Returns true when the document has been completely loaded, except MathJax
 function IsPageLoaded() {
-    console.debug("IsPageLoaded()");
+    //console.debug("IsPageLoaded()");
 	if (document.readyState === 'interactive') {
 		return true;
 	}
@@ -48,7 +48,7 @@ function IsPageLoaded() {
 
 // Returns true when MathJax is done typesetting the math equations
 function IsMathTypeset() {
-    console.debug("IsMathTypeset()");
+    //console.debug("IsMathTypeset()");
 	return finishedMathTypeset;
 }
 
@@ -57,13 +57,13 @@ MathJax.Hub.processMessage = function (state, type) {
 	mathTypeSetProgress = Math.floor((state.i/state.scripts.length) * 50);
 }
 function GetMathTypesetProgress() {
-    console.debug("GetMathTypesetProgress()");
+    //console.debug("GetMathTypesetProgress()");
 	return mathTypeSetProgress * 2;
 }
 
 // Used in page navigation to move to an anchor point with specific id
 function GotoPageAnchor(anchorName) {
-	console.debug("GotoPageAnchor()");
+	//console.debug("GotoPageAnchor()");
 	element_to_scroll_to = document.getElementById(anchorName);
 	startFromHeading = true;
 	lastHeadingElement = element_to_scroll_to;
@@ -72,7 +72,7 @@ function GotoPageAnchor(anchorName) {
 
 // Scrolls the view to where the highlight is
 function ScrollToHighlight(isInstant) {
-    console.debug("ScrollToHighlight()");
+    //console.debug("ScrollToHighlight()");
 	isInstant = typeof isInstant !== 'undefined' ? isInstant : false;
 	
     // Calculate the top offset making it the top 1/6 of the document viewport.
@@ -95,7 +95,7 @@ function ScrollToHighlight(isInstant) {
 // If after is true, it will find word after current. Otherwise, search for text before.
 // Returns true if it found something, false if it didn't
 function SearchForText(myText, after, wholeWord, matchCase) {
-	console.debug('SearchForText()');
+	//console.debug('SearchForText()');
 	if (after) {
 		return SearchTextForward(myText, wholeWord, matchCase, false);
 	}
@@ -105,7 +105,7 @@ function SearchForText(myText, after, wholeWord, matchCase) {
 }
 
 function SearchTextBackward(myText, wholeWord, matchCase, alreadyWrapped) {
-    console.debug('SearchTextBackward()');
+    //console.debug('SearchTextBackward()');
 	var currentNode = null;
 	if (!(highlight === null)) {
 		currentNode = PreviousElement(highlight);
@@ -175,7 +175,7 @@ function SearchTextBackward(myText, wholeWord, matchCase, alreadyWrapped) {
 }
 
 function SearchTextForward(myText, wholeWord, matchCase, alreadyWrapped) {
-    console.debug('SearchTextForward()');
+    //console.debug('SearchTextForward()');
 	// Determing the starting point
 	var currentNode = null;
 	if (!(highlight === null)) {
@@ -236,12 +236,12 @@ function SearchTextForward(myText, wholeWord, matchCase, alreadyWrapped) {
 // automatic
 function GetSelectionRange() {
 	console.debug('GetSelectionRange()');
-
 	var range = window.getSelection();
+    
 	if (!range.isCollapsed) {
 		range = window.getSelection();
 		
-		if (range.anchorNode.compareDocumentPosition(range.focusNode) & Node.DOCUMENT_POSITION_PRECEDING) {
+		if (range.anchorNode.compareDocumentPosition(range.focusNode) && Node.DOCUMENT_POSITION_PRECEDING) {
 			var newRange = document.createRange();
 			
 			var startNode = range.focusNode;
@@ -253,6 +253,7 @@ function GetSelectionRange() {
 			// get the last child of the start and swap it with
 			// the end node. Yea, it is that weird.
 			if (startNode == range.anchorNode.parentNode) {
+                console.debug('Swapping last child of start with end node.');
 				swapNode = endNode;
 				swapOffset = endOffset;
 				endNode = DeepestChild(startNode, true);
@@ -294,7 +295,7 @@ function GetSelectionRange() {
 		
 		// Move start forward so that it removes the whitespace
 		if ((range.startContainer.nodeName == '#text')) {
-			console.debug('Skipping #text node with whitespace...');
+			console.debug('Checking #text node if it only has whitespace...');
 			var whitespaceRegex = /\s+/g;
 			var sub = range.startContainer.data;
 			console.debug('Substring is: ' + sub);
@@ -329,7 +330,7 @@ function GetSelectionRange() {
 		
 		// If I am starting at a paragraph with absolutely nothing in it, move to the
 		// next element
-		if ((range.startContainer.nodeName == 'P') && (range.startContainer.hasChildNodes())) {
+		if ((range.startContainer.nodeName == 'P') && !(range.startContainer.hasChildNodes())) {
 			console.debug('Moving off of a completely empty paragraph');
 			range.setStart(NextElement(range.startContainer), 0);
 		}
@@ -358,7 +359,7 @@ function GetSelectionRange() {
 		
 		range.setEnd(lastElement, lastElement.length);
 		
-		console.debug('My last element: ' + lastElement.toString());
+		console.debug('My last element: ' + lastElement.toString() + ', ' + $(lastElement).text());
 		console.debug('My selection range: ' + range.toString());
 	}
 	
@@ -383,7 +384,7 @@ function GetSelectionHTML() {
 
 // Takes a Range object and extracts the HTML content as text
 function GetHTMLSource(range) {
-    console.debug("GetHTMLSource()");
+    //console.debug("GetHTMLSource()");
     var clonedSelection = range.cloneContents();
 	div = document.createElement('div');
     div.appendChild(clonedSelection);
@@ -620,7 +621,6 @@ function GetNextWord(node, offset) {
 		
 		return [range, needToGoToNext, false];
 	}
-	
 	else {
 		var range = document.createRange();
 		range.selectNode(DeepestChild(node, false));
@@ -637,7 +637,6 @@ function ClearHighlight() {
 	InsertAllChildNodes(p, highlight);
 
 	// Cleanup the highlight and its reference
-	p.normalize();
 	p.removeChild(highlight);
 	p.normalize();
 	highlight = null;
@@ -655,7 +654,6 @@ function ClearLineHighlight() {
 		// Recapture my highlight element reference
 		highlight = document.getElementById("npaHighlight");
 
-		p.normalize();
 		p.removeChild(highlightLine);
 		p.normalize();
 		highlightLine = null;
@@ -866,7 +864,7 @@ function GetChildIndex(elem) {
 }
 
 function ElementInViewport(el) {
-  console.debug('ElementInViewport()');
+  //console.debug('ElementInViewport()');
   var top = el.offsetTop;
   var left = el.offsetLeft;
   var width = el.offsetWidth;

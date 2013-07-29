@@ -38,7 +38,7 @@ function StreamNextElement() {
 }
 
 function HasMoreElements() {
-    console.debug('HasMoreElements()');
+    //console.debug('HasMoreElements()');
     if (lastStreamElement == null) {
         return false;
     }
