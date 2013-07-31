@@ -111,12 +111,9 @@ function HighlightNextWord(doLine, word, wordOffset, wordLength) {
 function HighlightNextImage(doLine) {
 	//console.debug('HighlightNextImage()');
 	var reference = GetReferencePoint();
-	var elem = reference.element;
+	var elem = DeepestChild(reference.element);
 	
 	ResetHeadingStates();
-	
-	// Move to the element after it
-	//elem = NextElement(elem);
 	
 	// Search until I get an image
 	while (true) {
@@ -165,9 +162,6 @@ function HighlightNextMath(doLine) {
 	var elem = reference.element;
 	
 	ResetHeadingStates();
-	
-	// Move to the element after it
-	//elem = NextElement(elem);
 	
 	// Search until I get a math equation
 	while (true) {
