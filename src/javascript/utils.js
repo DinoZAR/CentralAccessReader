@@ -18,11 +18,12 @@ function GetSelectionRange() {
     if (range.collapsed) {
         // Start from beginning or last navigated heading
         if (startFromHeading) { 
-            range.selectNodeContents(DeepestChild(lastHeadingElement))
+            range.selectNodeContents(DeepestChild(lastHeadingElement));
             range.startOffset = 0;
         }
         else {
-            SetRangeToEntireDocument(range);
+            range = GetRangeToEntireDocument();
+            //console.debug('Range here: ' + GetHTMLSource(range));
         }
     }
     else {
@@ -39,6 +40,27 @@ function GetSelectionRange() {
 }
 
 /**
+ * Gets the HTML content of my selection and returns it. 
+ */
+function GetSelectionHTML() {
+	console.debug("GetSelectionHTML()");
+	var range = GetSelectionRange();
+	return GetHTMLSource(range);
+}
+
+/**
+ * Takes a Range object and extracts the HTML content as text.
+ * @param range 
+ */
+function GetHTMLSource(range) {
+    //console.debug("GetHTMLSource()");
+    var clonedSelection = range.cloneContents();
+	div = document.createElement('div');
+    div.appendChild(clonedSelection);
+    return div.innerHTML;
+}
+
+/**
  * Moves the start of the range after any beginning whitespace.
  * @param range 
  */
@@ -50,9 +72,9 @@ function MoveRangeAfterWhitespace(range) {
         sub = sub.substring(range.startOffset);
         console.debug('Substring is: ' + sub);
         var result = whitespaceRegex.exec(sub);
-        if (result != null) {
+        if (result !== null) {
             console.debug('Skipping #text node with whitespace...');
-            if (result.index == 0) {
+            if (result.index === 0) {
                 range.setStart(range.startContainer, whitespaceRegex.lastIndex + range.startOffset);
             }
         }
@@ -80,7 +102,7 @@ function MoveRangeStartToDeepestInBody(range) {
 function SurroundMathEquation(range) {
     startEq = GetEquation(range.startContainer);
     endEq = GetEquation(range.endContainer);
-    if ($(startEq).is($(endEq)) && (startEq != null)) {
+    if ($(startEq).is($(endEq)) && (startEq !== null)) {
         console.debug('Equation: ' + startEq.nodeName + ', class name: ' + startEq.className);
         range.selectNode(startEq);
         range.setStart(startEq, 0);
@@ -115,7 +137,7 @@ function SetUserSelection(range) {
 function ConvertUserSelectionToRange() {
     range = window.getSelection();
     newRange = document.createRange();
-    if (!range.isCollapsed()) {
+    if (!range.isCollapsed) {
         newRange.setStart(range.anchorNode, range.anchorOffset);
         newRange.setEnd(range.focusNode, range.focusOffset);
         
@@ -123,7 +145,7 @@ function ConvertUserSelectionToRange() {
         if (newRange.startContainer.compareDocumentPosition(newRange.endContainer) && Node.DOCUMENT_POSITION_PRECEDING) {
             temp = newRange.startContainer;
             tempOffset = newRange.startOffset;
-            newRange.setStart(newRange.endContainer newRange.endOffset);
+            newRange.setStart(newRange.endContainer, newRange.endOffset);
             newRange.setEnd(temp, tempOffset);
         }
         
@@ -141,15 +163,16 @@ function ConvertUserSelectionToRange() {
 }
 
 /**
- * Sets the range to the entire document.
+ * Gets the range of the entire document.
  * @param range 
  */
-function SetRangeToEntireDocument(range) {
+function GetRangeToEntireDocument() {
     r = window.getSelection();
     r.selectAllChildren(document.body);
     range = document.createRange();
-    range.setStart(r.focusNode, r.focusOffset);
-    range.setEnd(r.anchorNode, r.anchorOffset);
+    range.setStart(r.anchorNode, r.anchorOffset);
+    range.setEnd(r.focusNode, r.focusOffset);
+    return range;
 }
 
 /*******************************************************************************
@@ -167,11 +190,15 @@ function InsertAllChildNodes(parent, node) {
 	
 	var currentNode = contents.firstChild;
 	
-	while(currentNode != null) {
+	while(currentNode !== null) {
 		var nodeCopy = currentNode.cloneNode(true);
 		parent.insertBefore(nodeCopy, node);
 		currentNode = currentNode.nextSibling;
 	}
+	
+	r = document.createRange();
+	r.selectNode(parent);
+	console.debug('Contents inside parent: ' + GetHTMLSource(r));
 }
 
 /**
@@ -182,8 +209,8 @@ function InsertAllChildNodes(parent, node) {
 function PreviousElement(elem) {
     console.debug("PreviousElement()");
 	var prev = elem.previousSibling;
-	if (prev == null) {
-		if (elem.parentNode == null) {
+	if (prev === null) {
+		if (elem.parentNode === null) {
 			return null;
 		}
 		else {
@@ -201,10 +228,10 @@ function PreviousElement(elem) {
  * @param elem 
  */
 function NextElement(elem) {
-    console.debug("NextElement()");
+    //console.debug("NextElement()");
 	var next = elem.nextSibling;
-	if (next == null) {
-		if (elem.parentNode == null) {
+	if (next === null) {
+		if (elem.parentNode === null) {
 			return null;
 		}
 		else {
@@ -224,10 +251,10 @@ function NextElement(elem) {
  * @param isLast
  */
 function DeepestChild(parent, isLast) {
-    console.debug("DeepestChild()");
+    //console.debug("DeepestChild()");
 	isLast = typeof isLast !== 'undefined' ? isLast : false;
 	
-	if (parent.childNodes.length == 0) {
+	if (parent.childNodes.length === 0) {
 		return parent;
 	}
 	else {
@@ -246,13 +273,15 @@ function DeepestChild(parent, isLast) {
  * Gets the child index of the element in its parent.
  * @param elem
  */
-function GetChildIndex(elem) {
+function GetChildIndex(el) {
     console.debug('GetChildIndex()');
 	var i = 0;
-	while ((elem = elem.previousSibling) != null) {
+    var myElem = el.previousSibling;
+	while (myElem !== null) {
+        myElem = myElem.previousSibling;
 		i++;
 	}
-	return i-1;
+	return i;
 }
 
 /**
@@ -285,16 +314,16 @@ function ElementInViewport(el) {
  * @param node 
  */
 function GetEquation(node) {	
-	console.debug("GetEquation()");
-	var myNode = node
+	//console.debug("GetEquation()");
+	var myNode = node;
 
 	// Check to see if this node is an equation
 	if (myNode.className == "mathmlEquation") {
 		return myNode;
 	}
 
-	while (myNode.parentNode != null) {
-		myNode = myNode.parentNode
+	while (myNode.parentNode !== null) {
+		myNode = myNode.parentNode;
 
 		// Check to see if it is an equation by checking its class
 		if (myNode.className == "mathmlEquation") {

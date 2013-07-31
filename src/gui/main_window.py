@@ -335,39 +335,52 @@ class MainWindow(QtGui.QMainWindow):
                           'hasWorded' : False}
     
     def onStart(self, offset, length, label, stream, word):
-        print 'window: OnStart;', offset, length, label, stream, word
+        #print 'window: OnStart;', offset, length, label, stream, word
         self.javascriptMutex.lock()
-        self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SetBeginning', [self.configuration.highlight_line_enable, str(label)]))
+        self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('StartHighlighting', []))
         self.javascriptMutex.unlock()
+#         self.javascriptMutex.lock()
+#         self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SetBeginning', [self.configuration.highlight_line_enable, str(label)]))
+#         self.javascriptMutex.unlock()
         
     def onWord(self, offset, length, label, stream, word, isFirst):
-        
-        print 'window: OnWord; offset', offset, ',length', length, ', label', label, ', stream', stream, ', word', word, ', isFirst', isFirst
+        #print 'window: OnWord; offset', offset, ',length', length, ', label', label, ', stream', stream, ', word', [word], ', isFirst', isFirst
         self.hasWorded = True
         lastElement = self.ttsStates['lastElement']
         
         if label == 'text':
-            if (lastElement[3] != stream) and (lastElement[3] >= 0):
-                self.javascriptMutex.lock()
-                self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(lastElement[2])]))
-                self.javascriptMutex.unlock()
             self.javascriptMutex.lock()
-            self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightWord', [self.configuration.highlight_line_enable, offset, length, unicode(word)]))
+            self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextWord', [self.configuration.highlight_line_enable, unicode(word), offset, length]))
             self.javascriptMutex.unlock()
+#             if (lastElement[3] != stream) and (lastElement[3] >= 0):
+#                 self.javascriptMutex.lock()
+#                 self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(lastElement[2])]))
+#                 self.javascriptMutex.unlock()
+#             self.javascriptMutex.lock()
+#             self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightWord', [self.configuration.highlight_line_enable, offset, length, unicode(word)]))
+#             self.javascriptMutex.unlock()
             
         elif label == 'math':
-            if not isFirst:
-                if label != lastElement[2] or stream != lastElement[3] and (lastElement[3] >= 0):
-                    self.javascriptMutex.lock()
-                    self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(lastElement[2])]))
-                    self.javascriptMutex.unlock()
+            if label != lastElement[2] or stream != lastElement[3] and (lastElement[3] >= 0):
+                self.javascriptMutex.lock()
+                self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextMath', [self.configuration.highlight_line_enable]))
+                self.javascriptMutex.unlock()
+#             if not isFirst:
+#                 if label != lastElement[2] or stream != lastElement[3] and (lastElement[3] >= 0):
+#                     self.javascriptMutex.lock()
+#                     self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(lastElement[2])]))
+#                     self.javascriptMutex.unlock()
                     
         elif label == 'image':
-            if not isFirst:
-                if label != lastElement[2] or stream != lastElement[3] and (lastElement[3] >= 0):
-                    self.javascriptMutex.lock()
-                    self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(lastElement[2])]))
-                    self.javascriptMutex.unlock()
+            if label != lastElement[2] or stream != lastElement[3] and (lastElement[3] >= 0):
+                self.javascriptMutex.lock()
+                self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextImage', [self.configuration.highlight_line_enable]))
+                self.javascriptMutex.unlock()
+#             if not isFirst:
+#                 if label != lastElement[2] or stream != lastElement[3] and (lastElement[3] >= 0):
+#                     self.javascriptMutex.lock()
+#                     self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextElement', [self.configuration.highlight_line_enable, str(label), str(lastElement[2])]))
+#                     self.javascriptMutex.unlock()
         else:
             print 'ERROR: I don\'t know what this label refers to for highlighting:', label
         
@@ -381,9 +394,14 @@ class MainWindow(QtGui.QMainWindow):
         
     def onSpeechFinished(self):
         #print 'window: OnSpeechFinished'
+#         self.javascriptMutex.lock()
+#         self.ui.webView.page().mainFrame().evaluateJavaScript('ClearAllHighlights()')
+#         self.javascriptMutex.unlock()
+        
         self.javascriptMutex.lock()
-        self.ui.webView.page().mainFrame().evaluateJavaScript('ClearAllHighlights()')
+        self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('StopHighlighting', []))
         self.javascriptMutex.unlock()
+        
         self.setSettingsEnableState(True)
         self.resetTTSStates()
         

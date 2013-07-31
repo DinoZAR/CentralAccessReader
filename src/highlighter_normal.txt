@@ -159,15 +159,6 @@ function GetSelectionHTML() {
 	return GetHTMLSource(range);
 }
 
-// Takes a Range object and extracts the HTML content as text
-function GetHTMLSource(range) {
-    //console.debug("GetHTMLSource()");
-    var clonedSelection = range.cloneContents();
-	div = document.createElement('div');
-    div.appendChild(clonedSelection);
-    return div.innerHTML;
-}
-
 // Sets the beginning to start the speech. It will start at beginning if no selection was made.
 function SetBeginning(doLine, elementType) {
 	console.debug("SetBeginning()");
@@ -296,6 +287,7 @@ function HighlightNextElement(doLine, elementType, lastElementType) {
 	// Scroll to the element containing the highlight
 	ScrollToHighlight();
 }
+
 
 // Highlights a word in the current element based on the offset and length from
 // the TTS driver. This function will handle the offsets from the selection.

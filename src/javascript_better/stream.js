@@ -14,7 +14,10 @@ function SetStreamBeginning() {
     range = GetSelectionRange();
     lastStreamElement = range.startContainer;
     myRange = document.createRange();
-    myRange.selectNode(DeepestChild(lastStreamElement));
+    myRange.setStart(lastStreamElement, range.startOffset);
+    myRange.setEndAfter(lastStreamElement);
+    //myRange.selectNode(DeepestChild(lastStreamElement));
+    console.debug('SetStreamBeginning() ' + GetHTMLSource(myRange));
     return GetHTMLSource(myRange);
 }
 

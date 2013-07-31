@@ -274,7 +274,7 @@ class DocxDocument(object):
          
         mathjaxConfig = HTML.Element('script')
         mathjaxConfig.set('type', 'text/x-mathjax-config')
-        scriptFile = open(program_path('src/mathjax_config.js'), 'r')
+        scriptFile = open(program_path('src/javascript_better/mathjax_config.jsconfig'), 'r')
         contents = scriptFile.read()
         scriptFile.close()
         mathjaxConfig.text = contents
@@ -296,15 +296,15 @@ class DocxDocument(object):
         jqueryScrollTo.attrib['src'] = 'file:' + urllib.pathname2url(program_path('jquery.scrollTo-1.4.3.1-min.js'))
         
         # Get all of my own JavaScripts into the document
-        javascriptFiles = [f for f in os.listdir(program_path('src/javascript/')) 
-                           if os.path.isfile(os.path.join(program_path('src/javascript/'), f)) and
-                           os.path.splitext(os.path.join(program_path('src/javascript/'), f))[1] == '.js']
+        javascriptFiles = [f for f in os.listdir(program_path('src/javascript_better/')) 
+                           if os.path.isfile(os.path.join(program_path('src/javascript_better/'), f)) and
+                           os.path.splitext(os.path.join(program_path('src/javascript_better/'), f))[1] == '.js']
         javascriptElements = []
         for f in javascriptFiles:
             elem = HTML.Element('script')
             elem.set('language', 'javascript')
             elem.set('type', 'text/javascript')
-            with open(os.path.join(program_path('src/javascript/'), f), 'r') as jsFile:
+            with open(os.path.join(program_path('src/javascript_better/'), f), 'r') as jsFile:
                 elem.text = jsFile.read()
             javascriptElements.append(elem)
         
