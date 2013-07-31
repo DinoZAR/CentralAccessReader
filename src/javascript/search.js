@@ -142,7 +142,7 @@ function SearchTextForward(myText, wholeWord, matchCase, alreadyWrapped) {
 	}
 	
 	while (true) {
-		if (currentNode.nodeType == 3) {
+		if (currentNode.nodeType == TEXT_NODE) {
 			var index = -1;
 			if (matchCase == true) {
 				index = currentNode.data.search(re);

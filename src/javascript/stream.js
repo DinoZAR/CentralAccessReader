@@ -10,11 +10,13 @@ var lastStreamElement = null;
  * Gives me a beginning to work with.
  */
 function SetStreamBeginning() {
-    console.debug('SetStreamBeginning()');
+    //console.debug('SetStreamBeginning()');
     range = GetSelectionRange();
     lastStreamElement = range.startContainer;
     myRange = document.createRange();
-    myRange.selectNode(DeepestChild(lastStreamElement));
+    myRange.setStart(lastStreamElement, range.startOffset);
+    myRange.setEndAfter(lastStreamElement);
+    highlightBeginOffset = range.startOffset;
     return GetHTMLSource(myRange);
 }
 

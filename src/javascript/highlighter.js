@@ -1,310 +1,299 @@
-/**
+/*
  * Highlighter Functions
  * 
  * @author Spencer Graffe
  */
+
 var highlight = null;
 var highlightLine = null;
-var beginOffset = 0;
+var isHighlighting = false;
+var highlightBeginOffset = 0;
+var isFirstHighlight = false;
 
 /**
- * Sets the beginning for the highlighter and the content streaming.
- * @param doLine
- * @param elementType
+ * Flags that the highlighter can start.
  */
-function SetBeginning(doLine, elementType) {
-	console.debug('SetBeginning()');
-    range = GetSelectionRange();
-    
-    // Reset some states
-    ResetHeadingStates();
-    ResetSearchStates();
-    
-    SelectFirstElement(range, elementType);
-    
-    console.debug('New range: ' + GetHTMLSource(range));
-    
-    // Set and scroll to highlight
-    SetHighlight(range, doLine);
-    ScrollToHighlight();
-    
-    // Clear the user selection
-    window.getSelection().empty();
+function StartHighlighting() {
+	//console.debug('StartHighlighting()');
+	isHighlighting = true;
+	isFirstHighlight = true;
 }
 
 /**
- * Selects the first element present in the range. This is useful to set the
- * beginning.
- * @param range
- * @param elementType
+ * Flags that the highlighter should not be highlighting anymore.
  */
-function SelectFirstElement(range, elementType) {
-	console.debug('SelectFirstElement()');
-	myElem = range.startContainer;
-	
-	// Keep trying to grab the next element until the element types match up
-	while (true) {
-		if (myElem === null) {
-			break;
-		}
-		
-		if (elementType == 'text') {
-			if (myElem.nodeName == '#text') {
-				break;
-			}
-		}
-		else if (elementType == 'math') {
-			eq = GetEquation(myElem);
-			if (eq != null) {
-				myElem = eq;
-				beginOffset = 0;
-				break;
-			}
-		}
-		else if (elementType == 'image') {
-			if (myElem.nodeName == 'IMG') {
-				beginOffset = 0;
-				break;
-			}
-		}
-		
-		// If nothing could break the loop, get the next element
-		myElem = NextElement(myElem);
-	}
-	
-	range.selectNode(DeepestChild(myElem));
+function StopHighlighting() {
+	//console.debug('StopHighlighting()');
+	isHighlighting = false;
+	isFirstHighlight = false;
+	ClearAllHighlights();
 }
 
 /**
- * Move the highlight to the next element that should be highlighted.
- * @param doLine
- * @param elementType
- * @param lastElementType
- */
-function HighlightNextElement(doLine, elementType, lastElementType) {
-	console.debug("HighlightNextElement()");
-	ClearLineHighlight();
-	
-	var range = null;
-	var next = null;
-	
-	if (elementType == 'text') {
-		range = HighlightNextText(lastElementType);
-	}
-	else if (elementType == 'image') {
-		range = HighlightNextImage(lastElementType);
-	}
-	else if (elementType == 'math') {
-		range = HighlightNextMath(lastElementType);
-	}
-	else {
-		alert('The highlighter does not recognize the element type: ' + elementType + '.');
-	}
-	
-	// See if I actually got anything next. Otherwise, clear all highlighting.
-	if (range == null) {
-		ClearAllHighlights();
-	}
-	else {
-		SetHighlight(range, doLine);
-		//ScrollToHighlight();
-	}
-	
-	// Reset beginning offset
-	beginOffset = 0;
-}
-
-/**
- * Highlights the next text element.
- * @param doLine
- * @param lastElementType
- */
-function HighlightNextText(lastElementType) {
-	console.debug('HighlightNextText()');
-	range = null;
-	
-	// Keep getting the next text element until the parent has changed.
-	var origParent = highlight.parentNode;
-	next = NextElement(highlight);
-	var done = false;
-	while (!done) {
-		if (lastElementType == 'text') {
-			if ((origParent != next.parentNode) && (next.nodeName == "#text")) {
-				if ($.trim(next.data) == "") {
-					console.debug("Encountered empty text. Skipping...");
-					next = NextElement(next);
-				}
-				else {
-					console.debug("Got unique parent and node stuff");
-					done = true;
-				}
-			}
-			else {
-				next = NextElement(next);
-			}
-		}
-		else if (next.nodeName == "#text") {
-			console.debug("Got text!");
-			if ($.trim(next.data) == "") {
-				console.debug("Encountered empty text. Skipping...");
-				next = NextElement(next);
-			}
-			else {
-				done = true;
-			}
-		}
-		else {
-			console.debug("Nothing in the stuff...");
-			next = NextElement(next);
-		}
-	}
-	range = document.createRange()
-    range.selectNode(DeepestChild(next))
-	//range.setStart(next, 0);
-	//range.setEnd(next, 1);
-//	console.debug("New next: " + next.toString());
-//	if (next.nodeName == "#text") {
-//		console.debug("Text!" + next.data + ", " + next.data.length.toString());
-//	}
-	return range;
-}
-
-/**
- * Highlights the next image element.
- * @param lastElementType
- * @returns
- */
-function HighlightNextImage(lastElementType) {
-	console.debug('HighlightNextImage()');
-	range = null;
-	next = NextElement(highlight);
-	while (next.nodeName != "IMG") {
-		next = NextElement(next);
-		if (next === null) {
-			break;
-		}
-	}
-	if (next != null) {
-		range = document.createRange();
-		range.selectNode(next);
-	}
-	return range;
-}
-
-/**
- * Highlights the next math element.
- * @param lastElementType
- * @returns
- */
-function HighlightNextMath(lastElementType) {
-	console.debug('HighlightNextMath()');
-	range = null;
-	next = NextElement(highlight);
-	while (GetEquation(next) === null) {
-		next = NextElement(next);
-		if (next === null) {
-			break;
-		}
-	}
-	if (next != null) {
-		range = document.createRange();
-		range.selectNode(GetEquation(next));
-	}
-	return range;
-}
-
-/**
- * Highlights a word in the current element based on the offset and length from
- * the TTS driver. This function will handle the offsets from the selection.
+ * Highlights the next word.
  * 
  * @param doLine
- * @param offset
- * @param length
+ * @param lastElementType
  * @param word
+ * @param wordOffset
+ * @param wordLength
  */
-function HighlightWord(doLine, offset, length, word) {
-	console.debug("HighlightWord()");
+function HighlightNextWord(doLine, word, wordOffset, wordLength) {
+	//console.debug('HighlightNextWord()');
+	var reference = GetReferencePoint();
+	var elem = reference.element;
+	var startOffset = reference.offset;
+	var needScroll = false;
 	
-	// Get the parent element from the highlight from which we do these 
-	// calculations
-	var p = GetHighlightParent();
-	var childNum = GetHighlightChildIndex();
-    
-    var r = document.createRange();
-    r.selectNode(p)
-	console.debug('Child number: ' + childNum.toString());
-	console.debug('Parent: ' + GetHTMLSource(r));
+	ResetHeadingStates();
 	
-	// Check to see if the text we want is in the parent. Otherwise, keep moving
-	// to the next text element until we find it
-	ClearAllHighlights();
-    console.debug('Parent: ' + GetHTMLSource(r));
-    console.debug('Length of parent: ' + $(p).contents().length.toString());
-    if (childNum >= $(p).contents().length) {
-        childNum = $(p).contents().length - 1;
-    }
-	var t = $(p).contents()[childNum];
-	
-	console.debug('What is t? ' + t.toString());
-	console.debug('t: ' + t.data.toString());
-	console.debug('word: ' + word);
-	
-	while (t.data.indexOf(word) < 0) {
-		// Generate a highlight 
-		var range = document.createRange();
-		range.selectNode($(p).contents()[childNum]);
-		SetHighlight(range, doLine);
+	// Search for a text node that has the word I want.
+	while (true) {
 		
-		// Highlight the next text element. We are still searching for the text
-		// we want.
-		HighlightNextElement(doLine, 'text', 'text');
-		p = GetHighlightParent();
-		childNum = GetHighlightChildIndex();
-		ClearAllHighlights();
-		t = $(p).contents()[childNum];
+		// Stop if I don't have anymore
+		if (elem === null) {
+			break;
+		}
+		
+		// Check that my word offset is at or ahead of the start offset.
+		// Otherwise, this may mean a different word in a different place.
+		if ((wordOffset + highlightBeginOffset) >= (startOffset - word.length)) {
+			// Check the node's properties
+			if (elem.nodeType === Node.TEXT_NODE) {
+				// Check if my proposed offset and length are within my text 
+				// element
+				if ((wordOffset + wordLength) <= elem.data.length) {
+					// See if the word is even in there
+					if (elem.data.indexOf(word) >= 0) {
+						// Check if it is not inside an equation
+						if (IsInsideEquation(elem) !== true) {
+							break;
+						}
+					}
+				}
+			}
+		}
+		
+		startOffset = 0;
+		needScroll = true;
+		
+		highlightBeginOffset = 0;
+		
+		// If element fails test, try the next one
+		elem = NextElement(elem);
 	}
 	
-	// Create range and select that text
-	var range = document.createRange();
-	range.setStart(t, offset + beginOffset);
-	range.setEnd(t, offset + length + beginOffset);
+	// If I actually got an element, set the highlight
+	if ((elem !== null) && (isHighlighting === true)) {
+		var r = document.createRange();
+		r.setStart(elem, wordOffset + highlightBeginOffset);
+		r.setEnd(elem, wordOffset + wordLength + highlightBeginOffset);
+		SetHighlight(doLine, r);
+	}
 	
-	// Create the highlight
-	SetHighlight(range, doLine);
+	// Clear the user selection
+	window.getSelection().empty()
+	
+	// Scroll to highlight if necessary
+	if ((needScroll === true) || (isFirstHighlight === true)) {
+		ScrollToHighlight();
+	}
+	
+	isFirstHighlight = false;
 }
 
 /**
- * Scrolls the view to where the highlight is.
- * @param isInstant
+ * Highlights the next image.
+ * 
+ * @param doLine
+ * @param lastElementType
  */
-function ScrollToHighlight(isInstant) {
-    console.debug("ScrollToHighlight()");
-	isInstant = typeof isInstant !== 'undefined' ? isInstant : false;
+function HighlightNextImage(doLine) {
+	//console.debug('HighlightNextImage()');
+	var reference = GetReferencePoint();
+	var elem = reference.element;
 	
-    // Calculate the top offset making it the top 1/6 of the document viewport.
-    // This will scale correctly for different zoom sizes
-    var myOffset = window.innerHeight * (1.0 / 6.0)
-    
-	var myDuration = 800;
-	if (isInstant) {
-		myDuration = 0;
+	ResetHeadingStates();
+	
+	// Move to the element after it
+	//elem = NextElement(elem);
+	
+	// Search until I get an image
+	while (true) {
+		
+		if (elem === null) {
+			break;
+		}
+		
+		// See if it an image
+		if (elem.nodeName === 'IMG') {
+			break;
+		}
+		
+		// If element fails test, try the next one
+		elem = NextElement(elem);
 	}
-	if (highlightLine != null) {
-		$.scrollTo(highlightLine.parentNode, {duration: myDuration, offset: {top: -myOffset}});
+	
+	// If I actually got an element, set the highlighter
+	if ((elem !== null) && (isHighlighting === true)) {
+		var r = document.createRange();
+		r.selectNode(elem);
+		
+		SetHighlight(doLine, r);
+	}
+	
+	// Clear the user selection
+	window.getSelection().empty()
+	
+	ScrollToHighlight();
+	
+	highlightBeginOffset = 0;
+	
+	isFirstHighlight = true;
+}
+
+/**
+ * Highlights the next math equation.
+ * 
+ * @param doLine
+ * @param lastElementType
+ */
+function HighlightNextMath(doLine) {
+	//console.debug('HighlightNextMath()');
+	
+	var reference = GetReferencePoint();
+	var elem = reference.element;
+	
+	ResetHeadingStates();
+	
+	// Move to the element after it
+	//elem = NextElement(elem);
+	
+	// Search until I get a math equation
+	while (true) {
+		
+		if (elem === null) {
+			break;
+		}
+		
+		// Check if the element is inside a math equation
+		if (IsInsideEquation(elem)) {
+			break;
+		}
+		
+		// If element fails test, try the next one
+		elem = NextElement(elem);
+	}
+	
+	// If I actually got an element, set the highlighter
+	if ((elem !== null) && (isHighlighting === true)) {
+		var r = document.createRange();
+		var eq = GetEquation(elem);
+		r.selectNode(eq);
+		SetHighlight(doLine, r);
+	}
+	
+	// Clear the user selection
+	window.getSelection().empty()
+	
+	ScrollToHighlight();
+	
+	highlightBeginOffset = 0;
+	
+	isFirstHighlight = true;
+	
+}
+
+/**
+ * Returns the element that provides the reference point from which the next
+ * thing to highlight should come after.
+ * 
+ * @returns {element, offset}
+ */
+function GetReferencePoint() {
+	//console.debug('GetReferencePoint()');
+	
+	if (NoHighlights()) {
+		var r = GetSelectionRange();
+		return {element: r.startContainer, offset: r.startOffset};
 	}
 	else {
-		$.scrollTo(highlight.parentNode, {duration: myDuration, offset: {top: -myOffset}});
+		// Now that we are dealing with a highlight, we have to remove it and
+		// figure out its node position.
+		ClearLineHighlight();
+		
+		// Calculate the index and offset of the element that is directly after 
+		// the highlight after we have replaced it with all of its children
+		var results = CalculateIndexOffsetAfterRemoval(highlight);
+		var p = GetHighlightParent();
+		ClearHighlight();
+		var myElem = $(p).contents()[results.index];
+		
+		// If the index is larger than my children count, get the next element
+		// after the parent.
+		if (results.index >= $(p).contents().length) {
+			myElem = NextElement(p);
+		}
+		
+		if (myElem.nodeType === Node.TEXT_NODE) {
+			return {element: myElem, offset: results.offset}
+		}
+		else {
+			return {element: myElem, offset: results.offset}
+		}
+	}
+}
+
+/**
+ * Checks to see if there are no highlights.
+ * 
+ * @returns {Boolean}
+ */
+function NoHighlights() {
+	return (highlight === null) && (highlightLine === null);
+}
+
+/**
+ * Gets the parent node of the highlight in whatever form it may be.
+ * 
+ *  @returns {Element}
+ */
+function GetHighlightParent() {
+    //console.debug("GetHighlightParent()");
+	var p = null;
+	if (!(highlightLine == null)) {
+		p = highlightLine.parentNode;
+	}
+	else {
+		p = highlight.parentNode;
+	}
+	return p;
+}
+
+/**
+ * Gets the child index of the highlight inside of its parent.
+ * 
+ * @returns {Integer}
+ */
+function GetHighlightChildIndex() {
+    //console.debug("GetHighlightChildIndex()");
+	if (highlightLine !== null) {
+		return GetChildIndex(highlightLine);
+	}
+	else {
+		return GetChildIndex(highlight);
 	}
 }
 
 /**
  * Given a Range object, this will clean up any previous highlight and create a
  * highlight over the new range.
+ * 
  * @param range
  * @param doLine
  */
-function SetHighlight(range, doLine) {
-    console.debug("SetHighlight()");
+function SetHighlight(doLine, range) {
+    //console.debug("SetHighlight()");
 	if (highlight != null) {
 		ClearHighlight();
 	}
@@ -332,7 +321,7 @@ function SetHighlight(range, doLine) {
  * sentence end, or just the node if there are no sentences.
  */
 function SetLineHighlight() {
-    console.debug("SetLineHighlight()");
+    //console.debug("SetLineHighlight()");
 	highlightLine = document.createElement("span");
 	highlightLine.setAttribute("id", "npaHighlightLine");
 
@@ -342,9 +331,9 @@ function SetLineHighlight() {
 	
 	// If I have text in text highlight, do shifting. Otherwise, don't do 
 	// anything
-	if (highlight.firstChild.nodeName == "#text") {
+	if (highlight.firstChild.nodeType === Node.TEXT_NODE) {
 		if (!(highlight.previousSibling === null)) {
-			if (highlight.previousSibling.nodeName == "#text") {
+			if (highlight.previousSibling.nodeType === Node.TEXT_NODE) {
 				var endSentenceRegex = /[!?.][\s]/g
 				var t = highlight.previousSibling.data;
 				var start = -1;
@@ -359,7 +348,7 @@ function SetLineHighlight() {
 			}
 		}
 		if (!(highlight.nextSibling === null)) {
-			if (highlight.nextSibling.nodeName == "#text") {
+			if (highlight.nextSibling.nodeType === Node.TEXT_NODE) {
 				var endSentenceRegex = /[!?.][\s]/g
 				var t = highlight.nextSibling.data;
 				var end = -1;
@@ -386,54 +375,24 @@ function SetLineHighlight() {
 }
 
 /**
- * Gets the parent node of the highlight in whatever form it may be. 
- */
-function GetHighlightParent() {
-    console.debug("GetHighlightParent()");
-	var p = null;
-	if (!(highlightLine == null)) {
-		p = highlightLine.parentNode;
-	}
-	else {
-		p = highlight.parentNode;
-	}
-	return p;
-}
-
-/**
- * Gets the child index of the highlight inside of its parent. 
- */
-function GetHighlightChildIndex() {
-    console.debug("GetHighlightChildIndex()");
-	if (highlightLine !== null) {
-		return GetChildIndex(highlightLine);
-	}
-	else {
-		return GetChildIndex(highlight);
-	}
-}
-
-
-/**
  * Clears both the line highlight and the individual element highlight. 
  */
 function ClearAllHighlights() {
-    console.debug("ClearAllHighlights()");
+    //console.debug("ClearAllHighlights()");
 	if (highlightLine !== null) {
 		ClearLineHighlight();
 	}
 
 	if (highlight != null) {
-		ClearHighlight(); 
+		ClearHighlight();
 	}
-
 }
 
 /**
  * Clears the highlight of where it was before. 
  */
 function ClearHighlight() {
-	console.debug("ClearHighlight()");
+	//console.debug("ClearHighlight()");
 	// Replace the highlight node with my contents
 	var p = highlight.parentNode;
 
@@ -449,7 +408,7 @@ function ClearHighlight() {
  * Clears the line highlight. 
  */
 function ClearLineHighlight() {
-	console.debug("ClearLineHighlight()");
+	//console.debug("ClearLineHighlight()");
 	if (highlightLine != null) {
 		var p = highlightLine.parentNode;
 
@@ -461,5 +420,29 @@ function ClearLineHighlight() {
 		p.removeChild(highlightLine);
 		p.normalize();
 		highlightLine = null;
+	}
+}
+
+/**
+ * Scrolls the view to where the highlight is.
+ * @param isInstant
+ */
+function ScrollToHighlight(isInstant) {
+    //console.debug("ScrollToHighlight()");
+	isInstant = typeof isInstant !== 'undefined' ? isInstant : false;
+	
+    // Calculate the top offset making it the top 1/6 of the document viewport.
+    // This will scale correctly for different zoom sizes
+    var myOffset = window.innerHeight * (1.0 / 6.0)
+    
+	var myDuration = 800;
+	if (isInstant) {
+		myDuration = 0;
+	}
+	if (highlightLine != null) {
+		$.scrollTo(highlightLine.parentNode, {duration: myDuration, offset: {top: -myOffset}});
+	}
+	else {
+		$.scrollTo(highlight.parentNode, {duration: myDuration, offset: {top: -myOffset}});
 	}
 }
