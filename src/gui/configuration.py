@@ -356,7 +356,6 @@ h3
 color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
 padding: 10px;
 font-size: 175%;
-
 }
 
 h4
@@ -446,6 +445,7 @@ background-color: ''' + highlightTextBackgroundColor + ''';
 color: ''' + highlightTextColor + ''';
 -webkit-border-radius: 3px;
 display: inline-block;
+z-index: 2;
 }'''
         # -------------------------------------------
         # END CSS FILE

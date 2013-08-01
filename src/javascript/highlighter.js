@@ -308,6 +308,12 @@ function SetHighlight(doLine, range) {
 
 	var contents = range.extractContents();
 	highlight.appendChild(contents);
+	
+	// Check if the highlight is surrounding an image. If so, increase the
+	// padding size so that we can see the border
+	if (highlight.firstChild.nodeName === 'IMG') {
+		highlight.style.padding = '0.2em';
+	}
 
 	range.insertNode(highlight);
 
