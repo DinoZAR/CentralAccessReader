@@ -113,6 +113,13 @@ function HighlightNextImage(doLine) {
 	var reference = GetReferencePoint();
 	var elem = DeepestChild(reference.element);
 	
+	console.debug('Reference element: ' + reference.element.toString());
+	console.debug('Reference offset: ' + reference.offset.toString());
+	
+	if ((reference.element.nodeType !== Node.TEXT_NODE) && (reference.element.children.length > 0)) {
+		elem = $(reference.element).children()[reference.offset];
+	}
+	
 	ResetHeadingStates();
 	
 	// Search until I get an image
