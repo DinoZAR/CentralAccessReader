@@ -7,9 +7,6 @@ Same PatternTree structure and everything as before, but faster.
 '''
 import re
 
-# cdef enum PatternType:
-#     VARIABLE, CATEGORY, XML, TEXT, WILDCARD
-
 WILDCARD_TOKENS = ['?', '+', '#']
     
 cdef class MatchResult:
@@ -117,7 +114,6 @@ cdef class PatternTree:
                             currOther = matchData.next
                             currSelf = currSelf.next
                             if currSelf == None:
-                                
                                 # If I have more stuff in other, then not match
                                 if currOther != None:
                                     return MatchResult(False, None)
@@ -125,7 +121,10 @@ cdef class PatternTree:
                                     return MatchResult(True, other.next)
                         
                     else:
-                        return MatchResult(True, other.next)
+                        if len(other.children) > 0:
+                            return MatchResult(False, None)
+                        else:
+                            return MatchResult(True, other.next)
 
         elif self.type == TEXT:
             if parentIsVariable:

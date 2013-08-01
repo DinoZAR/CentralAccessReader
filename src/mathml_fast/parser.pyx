@@ -86,7 +86,6 @@ cpdef PatternTree _transformNode(PatternTree start, PatternTree pattern):
     newNode.attributes = None
     newNode.children = []
     
-    
     # Move the new children under the new node
     if start.parent != None:
         start.parent.insertBefore(newNode, start)
