@@ -14,7 +14,7 @@ from src.speech.drivers.SapiCOM import SpVoice, SpFileStream
 
 class SAPI5Driver(object):
     '''
-    Used in interfacing with SAPI 5.
+    Used in interfacing with Window's SAPI 5.
     '''
     queueLock = Lock()
     generatorLock = Lock()
@@ -46,21 +46,21 @@ class SAPI5Driver(object):
         
     def setRate(self, rate):
         '''
-        Sets the _rate of the _voice,  a value between 0-100
+        Sets the rate of the voice,  a value between 0-100
         '''
         self._rate = int((rate / 5.0) - 10)
         self._settingsChanged = True
         
     def setVolume(self, volume):
         '''
-        Sets the _volume of the _voice, from 0-100
+        Sets the volume of the voice, from 0-100
         '''
         self._volume = int(volume)
         self._settingsChanged = True
         
     def setVoice(self, voiceKey):
         '''
-        Sets the _voice using the key provided by getVoiceList()
+        Sets the voice using the key provided by getVoiceList()
         '''
         if len(voiceKey) > 0:
             self._voiceId = voiceKey
@@ -235,7 +235,7 @@ class SAPI5Driver(object):
     def stop(self):
         '''
         Stops the TTS playback. The TTS engine will still be running in the
-        background
+        background.
         '''
         #print 'driver: stopping TTS'
         self._grabbingSpeech = False
@@ -303,6 +303,9 @@ class SAPI5Driver(object):
         progressCallback(99)
         
     def waitUntilDone(self):
+        '''
+        Waits until the TTS engine stops running.
+        '''
         while self._running:
             pass
             
