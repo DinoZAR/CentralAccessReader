@@ -121,6 +121,10 @@ class Assigner(object):
         self._mathsLock.unlock()
         
     def generateSpeech(self, element, configuration):
+        '''
+        Creates a generator that gets the speech output for the HTML element and
+        configuration.
+        '''
         
         if element.text != None:
             yield [element.text, 'text']

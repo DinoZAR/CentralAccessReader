@@ -94,17 +94,19 @@ function MoveRangeStartToDeepestInBody(range) {
 }
 
 /**
- * If the start and end of the range are inside of the same equation, move the 
- * start and end out to surround that equation.
+ * If the start or end of the range is inside of an equation, adjust them to the
+ * start or end of the equation span respectively.
  * 
  * @param range
  */
 function SurroundMathEquation(range) {
-	startEq = GetEquation(range.startContainer);
-	endEq = GetEquation(range.endContainer);
-	if ($(startEq).is($(endEq)) && (startEq !== null)) {
-		range.selectNode(startEq);
+	if (IsInsideEquation(range.startContainer) === true) {
+		var startEq = GetEquation(range.startContainer);
 		range.setStart(startEq, 0);
+	}
+	if (IsInsideEquation(range.endContainer) === true) {
+		var endEq = GetEquation(range.endContainer);
+		range.setEnd(NextElement(endEq), 0);
 	}
 }
 

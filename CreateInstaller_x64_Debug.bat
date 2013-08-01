@@ -45,7 +45,7 @@ XCOPY src\lame_64.exe "dist\Central Access Reader\src\" /D /Y /Q
 
 :: Grabbing JavaScript functions
 echo Copying JavaScript functions and configurations
-XCOPY src\javascript "dist\Central Access Reader\src\javascript\" /E /V
+XCOPY /e /v src\javascript\ "dist\Central Access Reader\src\javascript\"
 
 :: Get the OMML to MathML XSLT
 echo Copying OMML to MathML XSLT...
