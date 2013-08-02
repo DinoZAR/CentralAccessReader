@@ -4,6 +4,7 @@ Created on Jul 9, 2013
 @author: Spencer Graffe
 '''
 import urllib2
+import socket
 from PyQt4.QtGui import QWidget
 from PyQt4.QtCore import pyqtSignal, QThread
 from src.forms.download_progress_ui import Ui_DownloadProgressWidget
@@ -107,7 +108,7 @@ class DownloadThread(QThread):
                 self.downloadProgress.emit(percent)
                 self._lastPercent = percent
                         
-        response = urllib2.urlopen(self._url)
+        response = urllib2.urlopen(self._url, timeout=2.0)
         contents = self.chunkRead(response, reportHook)
             
         if not self._stop:
@@ -115,23 +116,34 @@ class DownloadThread(QThread):
         
         destFile.close()
             
-    def chunkRead(self, response, reportHook, chunkSize=8192):
+    def chunkRead(self, response, reportHook, chunkSize=4096):
         size = int(response.info().getheader('Content-Length').strip())
         numBytes = 0
         contents = ''
         
-        while 1:
-            chunk = response.read(chunkSize)
-            numBytes += len(chunk)
-            
-            if not chunk:
-                break
-            
-            if self._stop:
-                break
-            
-            contents += chunk
-            reportHook(int(float(numBytes) / size * 100.0))
+        while not self._stop:
+            try:
+                chunk = response.read(chunkSize)
+                numBytes += len(chunk)
+                
+                if not chunk:
+                    break
+                
+                contents += chunk
+                reportHook(int(float(numBytes) / size * 100.0))
+                
+            except socket.timeout:
+                # Keep trying to restart the connection
+                while not self._stop:
+                    print 'update_download: restarting connection...'
+                    try:
+                        response = urllib2.urlopen(self._url, timeout=0.5)
+                        size = int(response.info().getheader('Content-Length').strip())
+                        numBytes = 0
+                        contents = ''
+                        break
+                    except Exception:
+                        pass
         
         return contents
     
