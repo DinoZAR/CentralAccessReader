@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace\nifty-prose-articulator\src\forms/mainwindow.ui'
+# Form implementation generated from reading ui file '/Users/graffes/Documents/workspace/NiftyProseArticulator/src/forms/mainwindow.ui'
 #
-# Created: Fri Aug 02 08:29:45 2013
-#      by: PyQt4 UI code generator 4.10
+# Created: Fri Aug  2 11:32:14 2013
+#      by: PyQt4 UI code generator 4.10.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(1200, 673)
+        MainWindow.resize(1184, 673)
         font = QtGui.QFont()
         font.setPointSize(12)
         MainWindow.setFont(font)
@@ -69,6 +69,7 @@ class Ui_MainWindow(object):
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.horizontalLayout_2.addWidget(self.label_3)
         self.bookmarkZoomInButton = QtGui.QPushButton(self.scrollAreaWidgetContents_2)
+        self.bookmarkZoomInButton.setMaximumSize(QtCore.QSize(32, 32))
         self.bookmarkZoomInButton.setText(_fromUtf8(""))
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/zoom_in_small.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -78,6 +79,7 @@ class Ui_MainWindow(object):
         self.bookmarkZoomInButton.setObjectName(_fromUtf8("bookmarkZoomInButton"))
         self.horizontalLayout_2.addWidget(self.bookmarkZoomInButton)
         self.bookmarkZoomOutButton = QtGui.QPushButton(self.scrollAreaWidgetContents_2)
+        self.bookmarkZoomOutButton.setMaximumSize(QtCore.QSize(32, 32))
         self.bookmarkZoomOutButton.setText(_fromUtf8(""))
         icon2 = QtGui.QIcon()
         icon2.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/zoom_out_small.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -145,13 +147,14 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 947, 69))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 945, 78))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.horizontalLayout = QtGui.QHBoxLayout(self.scrollAreaWidgetContents)
         self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setMargin(0)
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.playButton = QtGui.QPushButton(self.scrollAreaWidgetContents)
+        self.playButton.setMaximumSize(QtCore.QSize(60, 50))
         self.playButton.setText(_fromUtf8(""))
         icon3 = QtGui.QIcon()
         icon3.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/play.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -161,6 +164,7 @@ class Ui_MainWindow(object):
         self.playButton.setObjectName(_fromUtf8("playButton"))
         self.horizontalLayout.addWidget(self.playButton)
         self.pauseButton = QtGui.QPushButton(self.scrollAreaWidgetContents)
+        self.pauseButton.setMaximumSize(QtCore.QSize(60, 50))
         self.pauseButton.setText(_fromUtf8(""))
         icon4 = QtGui.QIcon()
         icon4.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/stop.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -170,6 +174,7 @@ class Ui_MainWindow(object):
         self.pauseButton.setObjectName(_fromUtf8("pauseButton"))
         self.horizontalLayout.addWidget(self.pauseButton)
         self.speechSettingsButton = QtGui.QPushButton(self.scrollAreaWidgetContents)
+        self.speechSettingsButton.setMaximumSize(QtCore.QSize(60, 50))
         self.speechSettingsButton.setText(_fromUtf8(""))
         icon5 = QtGui.QIcon()
         icon5.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/system_config_services.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -179,6 +184,7 @@ class Ui_MainWindow(object):
         self.speechSettingsButton.setObjectName(_fromUtf8("speechSettingsButton"))
         self.horizontalLayout.addWidget(self.speechSettingsButton)
         self.colorSettingsButton = QtGui.QPushButton(self.scrollAreaWidgetContents)
+        self.colorSettingsButton.setMaximumSize(QtCore.QSize(60, 50))
         self.colorSettingsButton.setText(_fromUtf8(""))
         icon6 = QtGui.QIcon()
         icon6.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/color_settings.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -188,6 +194,7 @@ class Ui_MainWindow(object):
         self.colorSettingsButton.setObjectName(_fromUtf8("colorSettingsButton"))
         self.horizontalLayout.addWidget(self.colorSettingsButton)
         self.saveToMP3Button = QtGui.QPushButton(self.scrollAreaWidgetContents)
+        self.saveToMP3Button.setMaximumSize(QtCore.QSize(60, 50))
         self.saveToMP3Button.setText(_fromUtf8(""))
         icon7 = QtGui.QIcon()
         icon7.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/text_speak.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -197,6 +204,7 @@ class Ui_MainWindow(object):
         self.saveToMP3Button.setObjectName(_fromUtf8("saveToMP3Button"))
         self.horizontalLayout.addWidget(self.saveToMP3Button)
         self.zoomInButton = QtGui.QPushButton(self.scrollAreaWidgetContents)
+        self.zoomInButton.setMaximumSize(QtCore.QSize(60, 50))
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Times New Roman"))
         font.setItalic(False)
@@ -210,6 +218,7 @@ class Ui_MainWindow(object):
         self.zoomInButton.setObjectName(_fromUtf8("zoomInButton"))
         self.horizontalLayout.addWidget(self.zoomInButton)
         self.zoomOutButton = QtGui.QPushButton(self.scrollAreaWidgetContents)
+        self.zoomOutButton.setMaximumSize(QtCore.QSize(60, 50))
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Times New Roman"))
         font.setItalic(False)
@@ -223,6 +232,7 @@ class Ui_MainWindow(object):
         self.zoomOutButton.setObjectName(_fromUtf8("zoomOutButton"))
         self.horizontalLayout.addWidget(self.zoomOutButton)
         self.zoomResetButton = QtGui.QPushButton(self.scrollAreaWidgetContents)
+        self.zoomResetButton.setMaximumSize(QtCore.QSize(60, 50))
         self.zoomResetButton.setText(_fromUtf8(""))
         icon10 = QtGui.QIcon()
         icon10.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/zoom_fit_best.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -282,6 +292,7 @@ class Ui_MainWindow(object):
         self.searchLabel.setObjectName(_fromUtf8("searchLabel"))
         self.horizontalLayout_3.addWidget(self.searchLabel)
         self.searchUpButton = QtGui.QPushButton(self.layoutWidget1)
+        self.searchUpButton.setMaximumSize(QtCore.QSize(45, 32))
         self.searchUpButton.setText(_fromUtf8(""))
         icon12 = QtGui.QIcon()
         icon12.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/up.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -291,6 +302,7 @@ class Ui_MainWindow(object):
         self.searchUpButton.setObjectName(_fromUtf8("searchUpButton"))
         self.horizontalLayout_3.addWidget(self.searchUpButton)
         self.searchDownButton = QtGui.QPushButton(self.layoutWidget1)
+        self.searchDownButton.setMaximumSize(QtCore.QSize(45, 32))
         self.searchDownButton.setText(_fromUtf8(""))
         icon13 = QtGui.QIcon()
         icon13.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/down.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -303,6 +315,7 @@ class Ui_MainWindow(object):
         self.searchTextBox.setObjectName(_fromUtf8("searchTextBox"))
         self.horizontalLayout_3.addWidget(self.searchTextBox)
         self.searchSettingsButton = QtGui.QPushButton(self.layoutWidget1)
+        self.searchSettingsButton.setMaximumSize(QtCore.QSize(45, 32))
         self.searchSettingsButton.setText(_fromUtf8(""))
         icon14 = QtGui.QIcon()
         icon14.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/gear.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -312,6 +325,7 @@ class Ui_MainWindow(object):
         self.searchSettingsButton.setObjectName(_fromUtf8("searchSettingsButton"))
         self.horizontalLayout_3.addWidget(self.searchSettingsButton)
         self.closeSearchButton = QtGui.QPushButton(self.layoutWidget1)
+        self.closeSearchButton.setMaximumSize(QtCore.QSize(45, 32))
         self.closeSearchButton.setText(_fromUtf8(""))
         icon15 = QtGui.QIcon()
         icon15.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/dialog_close.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -330,7 +344,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.addWidget(self.splitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1200, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1184, 22))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))

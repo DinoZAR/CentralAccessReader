@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace\nifty-prose-articulator\src\forms/document_load_progress.ui'
+# Form implementation generated from reading ui file '/Users/graffes/Documents/workspace/NiftyProseArticulator/src/forms/document_load_progress.ui'
 #
-# Created: Fri Jul 19 15:54:21 2013
-#      by: PyQt4 UI code generator 4.10
+# Created: Fri Aug  2 13:29:03 2013
+#      by: PyQt4 UI code generator 4.10.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -27,7 +27,7 @@ class Ui_DocumentLoadProgressDialog(object):
     def setupUi(self, DocumentLoadProgressDialog):
         DocumentLoadProgressDialog.setObjectName(_fromUtf8("DocumentLoadProgressDialog"))
         DocumentLoadProgressDialog.setWindowModality(QtCore.Qt.ApplicationModal)
-        DocumentLoadProgressDialog.resize(443, 77)
+        DocumentLoadProgressDialog.resize(443, 100)
         font = QtGui.QFont()
         font.setPointSize(12)
         DocumentLoadProgressDialog.setFont(font)
@@ -53,7 +53,9 @@ class Ui_DocumentLoadProgressDialog(object):
         self.cancelButton.setIconSize(QtCore.QSize(24, 24))
         self.cancelButton.setObjectName(_fromUtf8("cancelButton"))
         self.horizontalLayout.addWidget(self.cancelButton)
+        self.horizontalLayout.setStretch(0, 1)
         self.verticalLayout.addLayout(self.horizontalLayout)
+        self.verticalLayout.setStretch(1, 1)
 
         self.retranslateUi(DocumentLoadProgressDialog)
         QtCore.QMetaObject.connectSlotsByName(DocumentLoadProgressDialog)
