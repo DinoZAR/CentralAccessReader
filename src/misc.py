@@ -39,7 +39,9 @@ def app_data_path(resourceFile):
     '''
     newPath = ''
     if 'Windows' in platform.system():
-        newPath = os.path.join(os.path.join(os.environ['APPDATA'], _PROGRAM_ROOT), resourceFile)
+        newPath = os.path.join(os.environ['APPDATA'], _PROGRAM_ROOT, resourceFile)
+    elif 'darwin' in sys.platform:
+        newPath = os.path.join('/Users/', os.environ['USER'], 'Library/Application Support/', _PROGRAM_ROOT, resourceFile)
     
     return newPath
 
@@ -50,7 +52,9 @@ def temp_path(resourceFile):
     '''
     newPath = ''
     if 'Windows' in platform.system():
-        newPath = os.path.join(os.path.join(os.environ['TEMP'], _PROGRAM_ROOT), resourceFile)
+        newPath = os.path.join(os.environ['TEMP'], _PROGRAM_ROOT, resourceFile)
+    elif 'darwin' in sys.platform:
+        newPath = os.path.join(os.environ['TMPDIR'], _PROGRAM_ROOT, resourceFile)
     
     return newPath
 
