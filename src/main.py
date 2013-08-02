@@ -19,7 +19,7 @@ def main():
       
     # Generate a splash screen
     from src.forms import resource_rc
-    pixmap = QPixmap(':/icons/icons/CAR Splashscreen.png')
+    pixmap = QPixmap(':/icons/icons/CAR Splash.png')
     splash = QSplashScreen(pixmap)
     splash.show()
     app.processEvents()
