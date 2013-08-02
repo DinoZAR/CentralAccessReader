@@ -14,6 +14,11 @@ def get_driver(requestSpeechHook=None):
         return SAPI5Driver(requestSpeechHook)
 #         from src.speech.drivers.empty import EmptyDriver
 #         return EmptyDriver()
+    elif sys.platform == 'darwin':
+        # Get TTS for Mac
+        from src.speech.drivers.nsss import NSSpeechSynthesizerDriver
+        return NSSpeechSynthesizerDriver(requestSpeechHook)
+        pass
     else:
         from src.speech.drivers.empty import EmptyDriver
         return EmptyDriver()
