@@ -34,7 +34,6 @@ import _codes.txt
 
 import _Numbers.txt
 
-
 // Unicodes and MathML codes for operators
 
 import _Unicodes.txt
@@ -49,9 +48,8 @@ bbcapR = mi("&#8477;") -> 'all real numbers'
 
 // Strikes and Slashes
 
-import _Vocab.txt
+import _Vocab.txt
 import _BordersSlashes.txt
-
 
 //---------------------------------------------------------------
 // Trigonometry-Specific
@@ -59,12 +57,8 @@ import _BordersSlashes.txt
 
 import _Trig.txt
 
-// Products and Unions
-
-import _Integrals.txt
-
-//Powers and Primes
-
+// Products and Unionsimport _Integrals.txt
+//Powers and Primes
 import _PowersPrimes.txt
 
 // Syntax Quirks
@@ -81,7 +75,7 @@ doubleDagger = dagger dagger -> 'double dagger'
 // Other symbols
 infinity = mi("&#8734;") -> 'infinity'
 infinity = mn("&#8734;") -> 'infinity'
-
+
 
 // ------------------------------------------------------------------------------
 // Conditions for arrows based on over or under
@@ -105,8 +99,6 @@ limit = munderover(mrow(l i m) mrow(? ? ?) ?) -> 'the limit as {4}, approaches {
 limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4}, of'
 
 
-
-
 // ------------------------------------------------------------------------------
 // Parenthetical Expressions
 // ------------------------------------------------------------------------------
@@ -115,11 +107,12 @@ cuberoot = mroot(mrow(+) mrow(three)) -> 'the cube root of {1},'
 squareRoot = mroot(mrow(+) mrow(two)) -> 'the square root of {1},'
 fourthRoot = mroot(mrow(+) mrow(four)) -> 'the fourth root of {1},'
 rootPowers = mroot(mrow(+) mrow(+)) -> 'the {2} root of {1},'
-squareRoot = msqrt(+) -> 'the square root of {1},'
+squareRoot = msqrt(+) -> 'the square root of {1},'
+
 leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left superscript {2},'
 leftSub = msup( mrow() mrow(?)) -> 'left subscript {1},'
 leftSup = msub( mrow() mrow(?)) -> 'left superscript {1},'
-
+
 
 // ------------------------------------------------------------------------------
 // Matrices
@@ -129,16 +122,14 @@ matrix = mtable(#) -> 'matrix {1}'
 matrixPar = mfenced(mrow(mtable(+))) -> 'matrix {1}'
 tableColumn = mtd(+) -> '{1},'
 tableRow = mtr(+) -> 'row, {1}'
-
+
 
 // ------------------------------------------------------------------------------
 // Generic Fallbacks, Final Collectors
 // ------------------------------------------------------------------------------
 
 import _SoftFractions.txt
-
 import _Dollars.txt
-
 import _Fractions.txt
 
 fencedABS = mfenced<open="|",close="|",separators="|">(mrow(+) mrow(+) mrow(+)) -> 'vertical bar, {1}, vertical bar, {2}, vertical bar, {3}, vertical bar,'

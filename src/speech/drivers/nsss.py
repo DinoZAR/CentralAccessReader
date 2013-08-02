@@ -3,10 +3,13 @@ Created on Aug 1, 2013
 
 @author: Spencer Graff
 '''
+from Foundation import NSObject, NSString
 from AppKit import NSSpeechSynthesizer
+from PyObjCTools import AppHelper
 from threading import Lock
+import thread
 
-class NSSpeechSynthesizerDriver(object):
+class NSSpeechSynthesizerDriver(NSObject):
     '''
     Used in interfacing with Apple's NSSpeechSynthesizer.
     '''
@@ -14,28 +17,52 @@ class NSSpeechSynthesizerDriver(object):
 
     CALLBACK_GEN = 0
     
-    def __init__(self, requestSpeechHook=None):
-        self._speechGenerator = None
-        self._isFirstSpeech = True
-        self._delegator = {'onStart' : [], 'onWord' : [], 'onEndStream' : [], 'onFinish' : []}
+    def initWithRequestSpeechHook(self, requestSpeechHook=None):
+        self = super(NSSpeechSynthesizerDriver, self).init()
+        if self:
+            self._speechGenerator = None
+            self._currentLabel = 'text'
+            self._currentStream = 0
+            self._isFirstSpeech = True
+            self._delegator = {'onStart' : [], 'onWord' : [], 'onEndStream' : [], 'onFinish' : []}
+            self._grabbingSpeech = False
+            self._requestSpeechHook = requestSpeechHook
+            
+            self._tts = NSSpeechSynthesizer.alloc().initWithVoice_(None)
+            self._tts.setDelegate_(self)
+            
+            self._tts.setVolume_(1.0)
+            self._tts.setRate_(200)
+        
+        return self
+    
+    def destroy(self):
+        self._tts.setDelegate_(None)
+        del self._tts
 
     def setRate(self, rate):
         '''
-        Sets the rate of the voice,  a value between 0-100
+        Sets the rate of the voice, a value between 0-100
         '''
-        pass
+        # Transform 0-100 between a specific words-per-minute range
+        wpmMin = 150
+        wpmMax = 300
+        myRate = wpmMin + ((wpmMax - wpmMin) * float(rate) / 100.0)
+        self._tts.setRate_(myRate)
 
     def setVolume(self, volume):
         '''
         Sets the volume of the voice, from 0-100
         '''
-        pass
+        self._tts.setVolume_(float(volume) / 100.0)
 
     def setVoice(self, voiceKey):
         '''
-        Sets the voice using the key provided by getVoiceList()
+        Sets the voice using a key provided by getVoiceList()
         '''
-        pass
+        if len(voiceKey) > 0:
+            print 'Voice key:', unicode(voiceKey)
+            self._tts.setVoice_(unicode(voiceKey))
 
     def getVoiceList(self):
         '''
@@ -44,7 +71,16 @@ class NSSpeechSynthesizerDriver(object):
         
         The keyOrId is what you would use to set the voice later on.
         '''
-        pass
+        voiceList = NSSpeechSynthesizer.availableVoices()
+        
+        myList = []
+        for v in voiceList:
+            descr = v.split('.')[-1]
+            myList.append((descr, v))
+        
+        print 'My voice list:', myList
+        
+        return myList
 
     def setSpeechGenerator(self, gen):
         '''
@@ -52,26 +88,74 @@ class NSSpeechSynthesizerDriver(object):
         generator object or iterable that returns tuples of the following:
         (text, label)
         '''
-        pass
-
+        self.generatorLock.acquire()
+        self._speechGenerator = gen
+        self.generatorLock.release()
+    
     def start(self):
         '''
         Starts the TTS engine.
         '''
-        pass
+        print 'driver: starting TTS'
+        self._isFirstSpeech = True
+        self._currentLabel = 'text'
+        self._grabbingSpeech = True
+        self._alreadyRequestedSpeech = False
+        self._running = True
+        
+        # Run a thread that will continually read through the speech
+        thread.start_new_thread(self._runLoop, ())
+    
+    def _runLoop(self):
+        '''
+        This loop is used to queue my speech onto the TTS engine.
+        '''
+        while self._grabbingSpeech and self._running:
+            
+            self.generatorLock.acquire()
+            if self._speechGenerator is not None:
+                for speech in self._speechGenerator:
+                    self._currentLabel = speech[1]
+                    self._tts.startSpeakingString_(speech[0])
+                    
+                    # Wait until it has finished, checking for cancel
+                    while self._tts.isSpeaking() and self._running:
+                        pass
+                    
+                    self._currentStream += 1
+            
+                self._speechGenerator = None
+                self._alreadyRequestedSpeech = False
+            
+            self.generatorLock.release()
+            
+            # Request to get some more speech, if I didn't already
+            if not self._alreadyRequestedSpeech:
+                print 'Requesting more speech...'
+                self._alreadyRequestedSpeech = True
+                if self._requestSpeechHook is not None:
+                    self._requestSpeechHook()
+        
+        # Tell everyone that the TTS is done
+        for c in self._delegator['onFinish']:
+            c[1]()
+            
+        return
 
     def stop(self):
         '''
         Stops the TTS playback. The TTS engine will still be running in the
         background.
         '''
-        pass
+        print 'driver: stopping TTS'
+        self._running = False
+        self._tts.stopSpeaking()
 
     def noMoreSpeech(self):
         '''
         Flags the TTS that it won't be expecting any more speech.
         '''
-        pass
+        self._grabbingSpeech = False
 
     def speakToWavFile(self, wavFilePath, speechGenerator, progressCallback, checkStopFunction):
         '''
@@ -97,7 +181,7 @@ class NSSpeechSynthesizerDriver(object):
         pass
 
     def isFinished(self):
-        pass
+        return not (self._running and self._tts.isSpeaking())
 
     def connect(self, eventLabel, callback):
         '''
@@ -111,11 +195,11 @@ class NSSpeechSynthesizerDriver(object):
         Returns a handle to use later for disconnect() for that particular
         callback.
         '''
-        NSSpeechSynthDriver.CALLBACK_GEN = NSSpeechSynthDriver.CALLBACK_GEN + 1
+        NSSpeechSynthesizerDriver.CALLBACK_GEN = NSSpeechSynthesizerDriver.CALLBACK_GEN + 1
 
         if eventLabel in self._delegator:
-            self._delegator[eventLabel].append([NSSpeechSynthDriver.CALLBACK_GEN, callback])
-            return NSSpeechSynthDriver.CALLBACK_GEN
+            self._delegator[eventLabel].append([NSSpeechSynthesizerDriver.CALLBACK_GEN, callback])
+            return NSSpeechSynthesizerDriver.CALLBACK_GEN
         else:
             raise ValueError('Event ' + eventLabel + ' is not available for callback.')
 
@@ -133,3 +217,33 @@ class NSSpeechSynthesizerDriver(object):
                     i = 0
                 else:
                     i += 1
+    
+    def speechSynthesizer_didFinishSpeaking_(self, tts, success):
+        '''
+        This is called when a queue of text is spoken. It's like the end of a
+        stream.
+        '''
+        # Tell everyone that a stream has ended
+        for c in self._delegator['onEndStream']:
+            c[1](self._currentStream, self._currentLabel)
+    
+    def speechSynthesizer_willSpeakWord_ofString_(self, tts, wordRange, text):
+        '''
+        This is called right before a word is about to be spoken. This is the
+        perfect place to call onStart and onWord's. 
+        '''
+        word = text[wordRange.location:wordRange.location + wordRange.length]
+        
+        # If it is the first word, set the beginning
+        if self._isFirstSpeech:
+            for c in self._delegator['onStart']:
+                c[1](wordRange.location, wordRange.length, self._currentLabel, self._currentStream, word)
+            self._isFirstSpeech = False
+        
+        # Notify everyone that I am saying a word
+        for cb in self._delegator['onWord']:
+            cb[1](wordRange.location, wordRange.length, self._currentLabel, self._currentStream, word, self._isFirstSpeech)
+            
+    def __del__(self):
+        self.destroy()
+        

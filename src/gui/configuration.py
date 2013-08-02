@@ -7,6 +7,7 @@ from PyQt4.QtGui import QColor
 from lxml import etree
 from src.misc import app_data_path, temp_path, pattern_databases
 import os
+import traceback
 
 class Configuration(object):
     '''
@@ -192,6 +193,8 @@ class Configuration(object):
             
         except Exception:
             # If the thing doesn't parse, then destroy settings and make new one
+            print 'Exception occurred in loading configuration'
+            print traceback.format_exc()                        
             self.restoreDefaults()
             self.saveToFile(filePath)
         

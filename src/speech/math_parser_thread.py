@@ -39,6 +39,8 @@ class MathParserThread(QThread):
                     math[1]['prose'] = prose
                     
                     self.mathParsed.emit(math)
+            
+            QThread.yieldCurrentThread()
     
     def setMathDatabase(self, newMathTTS):
         '''

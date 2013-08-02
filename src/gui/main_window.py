@@ -5,6 +5,7 @@ Created on Jan 21, 2013
 '''
 import os
 import re
+import traceback
 from lxml import html
 from lxml.etree import ParserError, XMLSyntaxError
 from HTMLParser import HTMLParser
@@ -22,6 +23,8 @@ from src.speech.assigner import Assigner, PrepareSpeechThread
 from src.speech.worker import SpeechWorker
 from src import misc
 from src.updater import GetUpdateThread, RunUpdateInstallerThread, SETUP_FILE, SETUP_TEMP_FILE, run_update_installer, is_update_downloaded, save_server_version_to_temp
+
+print 'Imported all modules for MainWindow!'
 
 class MainWindow(QtGui.QMainWindow):
     loc = 0
@@ -102,9 +105,10 @@ class MainWindow(QtGui.QMainWindow):
             self.mathTTS = MathTTS(dList['General'])
         except Exception:
             self.mathTTS = None
+            tb = traceback.format_exc()
+            print tb            
             message = QtGui.QMessageBox()
-            message.setText('The math parser is not working right now. Don\'t read anything math-related for now.')
-            message.exec_()
+            message.setText('The math parser is not working right now. Don\'t read anything math-related for now.')            
         
         # TTS states
         self.resetTTSStates()
@@ -130,9 +134,9 @@ class MainWindow(QtGui.QMainWindow):
         self.changeRate.connect(self.speechThread.setRate)
         self.changeVoice.connect(self.speechThread.setVoice)
         self.changeMathDatabase.connect(self.assigner.setMathDatabase)
-        
+                
         self.speechThread.start()
-        
+                
         # Create the general-purpose progress dialog
         self.progressDialog = QtGui.QProgressDialog('Stuff', 'Cancel', 0, 100, self)
         
@@ -581,6 +585,14 @@ class MainWindow(QtGui.QMainWindow):
             docxHtml = self.docxImporterThread.getHTML()
             self.assigner.prepare(docxHtml)
             self.ui.webView.loadProgress.connect(self.progressDialog.setProgress)
+            
+            
+            # Use the web view to figure out when the view is done loading
+            self.pageLoaded = False
+            def setLoadedFinished():
+                self.pageLoaded = True
+                
+            self.ui.webView.loadFinished.connect(setLoadedFinished)
             self.ui.webView.setHtml(docxHtml, baseUrl)
             
             # Get and set the bookmarks
@@ -599,19 +611,24 @@ class MainWindow(QtGui.QMainWindow):
             self.lastDocumentFilePath = self.docxImporterThread.getFilePath()
                     
             # Wait until the document has completely loaded
-            loaded = False
-            while not loaded:
+            while not self.pageLoaded:
                 QtGui.qApp.processEvents()
+                self.javascriptMutex.lock()
+                print 'Checking if page is loaded...'
                 loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsPageLoaded', [])).toBool()
+                self.javascriptMutex.unlock()
                     
             # Wait until MathJax is done typesetting
             self.progressDialog.setLabelText('Typesetting math equations...')
             loaded = False
             while not loaded:
                 QtGui.qApp.processEvents()
+                self.javascriptMutex.lock()
+                print 'Checking math typesetting progress...'
                 progress = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetMathTypesetProgress', [])).toInt()
                 self.progressDialog.setProgress(progress[0])
                 loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsMathTypeset', [])).toBool()
+                self.javascriptMutex.unlock()
                     
         self.progressDialog.enableCancel()
         self.progressDialog.close()

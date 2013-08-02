@@ -7,7 +7,10 @@ import traceback
 from HTMLParser import HTMLParser
 from lxml import etree, html
 from PyQt4.QtCore import QMutex, QThread, pyqtSignal
-from src.mathml_fast.tts import MathTTS
+try:
+    from src.mathml_fast.tts import MathTTS
+except ImportError:
+    from src.mathml.tts import MathTTS
 from src.speech.math_parser_thread import MathParserThread
 import time
 
@@ -42,7 +45,7 @@ class PrepareSpeechThread(QThread):
                 break
             QThread.yieldCurrentThread()
         self._doneQueuing.emit()
-        print 'perparer: done!'
+        print 'preparer: done!'
         
     def stop(self):
         print 'Stopping preparer...'

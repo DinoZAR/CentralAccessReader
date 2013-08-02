@@ -46,7 +46,7 @@ class SAPI5Driver(object):
         
     def setRate(self, rate):
         '''
-        Sets the rate of the voice,  a value between 0-100
+        Sets the rate of the voice, a value between 0-100
         '''
         self._rate = int((rate / 5.0) - 10)
         self._settingsChanged = True
@@ -60,7 +60,7 @@ class SAPI5Driver(object):
         
     def setVoice(self, voiceKey):
         '''
-        Sets the voice using the key provided by getVoiceList()
+        Sets the voice using a key provided by getVoiceList()
         '''
         if len(voiceKey) > 0:
             self._voiceId = voiceKey
@@ -87,14 +87,6 @@ class SAPI5Driver(object):
             myList.append([myItem.GetDescription(), myItem.Id])
         
         return myList
-        
-#     def add(self, text, label):
-#         if self._isQueuing:
-#             self.queueLock.lock()
-#             print 'driver: Adding speech to queue'
-#             self._speechCounter += 1
-#             self._unqueued[self._speechCounter] = [text, label, 0]
-#             self.queueLock.unlock()
 
     def setSpeechGenerator(self, gen):
         '''
@@ -117,7 +109,7 @@ class SAPI5Driver(object):
         self._alreadyRequestedSpeech = True
             
         # Run the loop that continually pumps messages during run
-        thread.start_new_thread(self.runLoop, ())
+        thread.start_new_thread(self._runLoop, ())
         
     def voiceTokenFromId(self, id):
         tokens = self._voice.GetVoices()
@@ -125,7 +117,7 @@ class SAPI5Driver(object):
             if token.Id == id: return token
         raise ValueError('Unknown _voice id %s', id)
             
-    def runLoop(self):
+    def _runLoop(self):
         '''
         The main loop of the SAPI driver. It runs as a server, constantly
         listening for instructions.
