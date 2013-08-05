@@ -116,9 +116,11 @@ class SpeechSettings(QtGui.QDialog):
         
     def testButton_clicked(self):
         myText = self.ui.testSpeechText.toPlainText()
-        mySpeechGenerator = [(unicode(myText), 'text')]
-        self.mainWindow.setSpeechGenerator.emit(mySpeechGenerator)
+        self.mainWindow.setSpeechGenerator.emit([(myText, 'text')])
         self.mainWindow.startPlayback.emit()
+
+    def requestMoreSpeech(self):
+        self.mainWindow.noMoreSpeech.emit()
         
     def imageTagCheckBox_stateChanged(self, state):
         if state == Qt.Checked:

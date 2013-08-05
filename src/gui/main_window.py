@@ -435,11 +435,31 @@ class MainWindow(QtGui.QMainWindow):
         self.updateSettings()
         
     def showSpeechSettings(self):
+
+        # Disconnect my highlighter signals
+        self.speechThread.onStart.disconnect(self.onStart)
+        self.speechThread.onWord.disconnect(self.onWord)
+        self.speechThread.onEndStream.disconnect(self.onEndStream)
+        self.speechThread.onFinish.disconnect(self.onSpeechFinished)
+        self.speechThread.requestMoreSpeech.disconnect(self.sendMoreSpeech)
+
+        # Show speech settings dialog
         from src.gui.speech_settings import SpeechSettings
         dialog = SpeechSettings(self)
+        self.speechThread.requestMoreSpeech.connect(dialog.requestMoreSpeech)
         dialog.exec_()
+        self.stopPlayback.emit()
+        self.speechThread.requestMoreSpeech.connect(self.sendMoreSpeech)
+        self.speechThread.requestMoreSpeech.disconnect(dialog.requestMoreSpeech)
         self.configuration.loadFromFile(misc.app_data_path('configuration.xml')) 
         self.updateSettings()
+
+        # Reconnect my highlighter signals
+        self.speechThread.onStart.connect(self.onStart)
+        self.speechThread.onWord.connect(self.onWord)
+        self.speechThread.onEndStream.connect(self.onEndStream)
+        self.speechThread.onFinish.connect(self.onSpeechFinished)
+        self.speechThread.requestMoreSpeech.connect(self.sendMoreSpeech)
         
     def saveMP3All(self):
         self.ui.webView.selectAll()
