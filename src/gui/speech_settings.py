@@ -42,6 +42,7 @@ class SpeechSettings(QtGui.QDialog):
         
         self.ui.rateSlider.valueChanged.connect(self.rateSlider_valueChanged)
         self.ui.volumeSlider.valueChanged.connect(self.volumeSlider_valueChanged)
+        self.ui.pauseSlider.valueChanged.connect(self.pauseSlider_valueChanged)
         self.ui.voiceComboBox.currentIndexChanged.connect(self.voiceComboBox_currentIndexChanged)
         
         self.ui.imageTagCheckBox.stateChanged.connect(self.imageTagCheckBox_stateChanged)
@@ -52,6 +53,7 @@ class SpeechSettings(QtGui.QDialog):
         # Update main window sliders to match
         self.ui.rateSlider.setValue(self.configuration.rate)
         self.ui.volumeSlider.setValue(int(self.configuration.volume))
+        self.ui.pauseSlider.setValue(self.configuration.pause_length)
             
         # Update checkboxes
         self.ui.imageTagCheckBox.setChecked(self.configuration.tag_image)
@@ -107,6 +109,10 @@ class SpeechSettings(QtGui.QDialog):
     def volumeSlider_valueChanged(self, value):
         self.configuration.volume = value
         self.mainWindow.changeVolume.emit(self.configuration.volume)
+        
+    def pauseSlider_valueChanged(self, value):
+        self.configuration.pause_length = value
+        self.mainWindow.changePauseLength.emit(self.configuration.pause_length)
         
     def voiceComboBox_currentIndexChanged(self, index):
         self.configuration.voice = unicode(self.ui.voiceComboBox.itemData(index).toString())

@@ -29,6 +29,7 @@ class SAPI5Driver(object):
         
         self._rate = 5   # Between -10 to 10
         self._volume = 100 # Between 0 to 100
+        self._pauseLength = 0
         self._voiceId = ''
         self._settingsChanged = False
         
@@ -57,6 +58,13 @@ class SAPI5Driver(object):
         '''
         self._volume = int(volume)
         self._settingsChanged = True
+    
+    def setPauseLength(self, pauseLength):
+        '''
+        Sets the pause length between elements. The value is between 0-10, which
+        can be scaled however appropriate for the TTS driver.
+        '''
+        self._pauseLength = pauseLength
         
     def setVoice(self, voiceKey):
         '''

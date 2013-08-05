@@ -8,7 +8,7 @@ from AppKit import NSSpeechSynthesizer
 from PyObjCTools import AppHelper
 from PyQt4.QtCore import QMutex
 import thread
-import copy
+import time
 
 class NSSpeechSynthesizerDriver(NSObject):
     '''
@@ -34,6 +34,7 @@ class NSSpeechSynthesizerDriver(NSObject):
             
             self._tts.setVolume_(1.0)
             self._tts.setRate_(200)
+            self._pauseLength = 0
         
         return self
     
@@ -57,6 +58,13 @@ class NSSpeechSynthesizerDriver(NSObject):
         Sets the volume of the voice, from 0-100
         '''
         self._tts.setVolume_(float(volume) / 100.0)
+        
+    def setPauseLength(self, pauseLength):
+        '''
+        Sets the pause length between elements. The value is between 0-10, which
+        can be scaled however appropriate for the TTS driver.
+        '''
+        self._pauseLength = pauseLength
 
     def setVoice(self, voiceKey):
         '''
@@ -95,9 +103,7 @@ class NSSpeechSynthesizerDriver(NSObject):
         generator object or iterable that returns tuples of the following:
         (text, label)
         '''
-        print 'driver: waiting for lock to set generator'
         self.generatorLock.lock()
-        print 'Setting speech generator'
         self._speechGenerator = gen
         self.generatorLock.unlock()
     
@@ -133,6 +139,10 @@ class NSSpeechSynthesizerDriver(NSObject):
                     
                     if not self._running:
                         break
+                    
+                    # Pause here if it is set
+                    if self._grabbingSpeech and self._running:
+                        time.sleep(self._pauseLength / 5.0)
             
                 self._speechGenerator = None
                 self._alreadyRequestedSpeech = False

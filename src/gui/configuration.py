@@ -5,6 +5,7 @@ Created on Apr 12, 2013
 '''
 from PyQt4.QtGui import QColor
 from lxml import etree
+import platform
 from src.misc import app_data_path, temp_path, pattern_databases
 import os
 import traceback
@@ -13,6 +14,7 @@ class Configuration(object):
     '''
     Object that holds all of the settings for the Nifty Prose Articulator
     '''
+    
 
     def __init__(self):
         '''
@@ -31,6 +33,7 @@ class Configuration(object):
         self.volume = 100
         self.rate = 50
         self.voice = ''
+        self.pause_length = 0  # unit between 0-10
         
         # Tagging
         self.tag_image = False
@@ -116,87 +119,180 @@ class Configuration(object):
         # Check if the file exists first. Otherwise, create the file
         configFile = None
         configDOM = None
+        success = False
         try:
             configFile = open(filePath, 'r')
             configDOM = etree.parse(configFile)
             configFile.close()
-            
-            # Speech Settings
-            self.volume = int(configDOM.xpath('/Configuration/Volume')[0].text)
-            self.rate = int(configDOM.xpath('/Configuration/Rate')[0].text)
-            self.voice = configDOM.xpath('/Configuration/Voice')[0].text
-            if self.voice == None:
-                self.voice = ''
-                
-            self.tag_image = int(configDOM.xpath('/Configuration/TagImage')[0].text)
-            if self.tag_image == 1:
-                self.tag_image = True
-            else:
-                self.tag_image = False
-            
-            self.tag_math = int(configDOM.xpath('/Configuration/TagMath')[0].text)
-            if self.tag_math == 1:
-                self.tag_math = True
-            else:
-                self.tag_math = False
-            
-            self.math_database = os.path.splitext(os.path.basename(configDOM.xpath('/Configuration/MathDatabase')[0].text))[0]
-                
-            # Highlighter Settings
-            self.highlight_text_enable = int(configDOM.xpath('/Configuration/EnableTextHighlight')[0].text)
-            if self.highlight_text_enable == 1:
-                self.highlight_text_enable = True
-            else:
-                self.highlight_text_enable = False
-            
-            self.highlight_line_enable = int(configDOM.xpath('/Configuration/EnableLineHighlight')[0].text)
-            if self.highlight_line_enable == 1:
-                self.highlight_line_enable = True
-            else:
-                self.highlight_line_enable = False
-            
-            # Color Settings
-            self.color_contentText = self._createQColorFromCommaSeparated(configDOM.xpath('/Configuration/Colors/ContentText')[0].text)
-            self.color_contentBackground = self._createQColorFromCommaSeparated(configDOM.xpath('/Configuration/Colors/ContentBackground')[0].text)
-            
-            self.color_highlightText = self._createQColorFromCommaSeparated(configDOM.xpath('/Configuration/Colors/HighlightText')[0].text)
-            self.color_highlightBackground = self._createQColorFromCommaSeparated(configDOM.xpath('/Configuration/Colors/HighlightBackground')[0].text)
-            
-            self.color_highlightLineText = self._createQColorFromCommaSeparated(configDOM.xpath('/Configuration/Colors/HighlightLineText')[0].text)
-            self.color_highlightLineBackground = self._createQColorFromCommaSeparated(configDOM.xpath('/Configuration/Colors/HighlightLineBackground')[0].text)
-            
-            # Font Settings
-            self.font_all = configDOM.xpath('/Configuration/Fonts/All')[0].text
-            
-            # Zoom Settings
-            self.zoom_content = float(configDOM.xpath('/Configuration/Zooms/Content')[0].text)
-            self.zoom_navigation_ptsize = int(configDOM.xpath('/Configuration/Zooms/Navigation')[0].text)
-                
-            self.search_whole_word = int(configDOM.xpath('/Configuration/Search/WholeWord')[0].text)
-            if self.search_whole_word == 1:
-                self.search_whole_word = True
-            else:
-                self.search_whole_word = False
-                
-            self.search_match_case = int(configDOM.xpath('/Configuration/Search/MatchCase')[0].text)
-            if self.search_match_case == 1:
-                self.search_match_case = True
-            else:
-                self.search_match_case = False
-            
-            # Show Tutorial
-            b = configDOM.xpath('/Configuration/ShowTutorial')[0].text
-            if b == '1':
-                self.showTutorial = True
-            else:
-                self.showTutorial = False
-            
+            success = True
         except Exception:
             # If the thing doesn't parse, then destroy settings and make new one
             print 'Exception occurred in loading configuration'
             print traceback.format_exc()                        
             self.restoreDefaults()
             self.saveToFile(filePath)
+        
+        if success:
+            
+            # Speech Settings
+            query = configDOM.xpath('/Configuration/Volume')
+            if len(query) > 0:
+                self.volume = int(query[0].text)
+            else:
+                self.volume = 100
+            
+            query = configDOM.xpath('/Configuration/Rate')
+            if len(query) > 0:
+                self.rate = int(query[0].text)
+            else:
+                self.rate = 50
+                
+            query = configDOM.xpath('/Configuration/PauseLength')
+            if len(query) > 0:
+                self.pause_length = int(query[0].text)
+            else:
+                self.pause_length = 0
+            
+            query = configDOM.xpath('/Configuration/Voice')
+            if len(query) > 0:
+                self.voice = query[0].text
+            else:
+                self.voice = ''
+            
+            # Tagging math or images
+            query = configDOM.xpath('/Configuration/TagImage')
+            if len(query) > 0:
+                self.tag_image = int(query[0].text)
+            else:
+                self.tag_image = 0
+            if self.tag_image == 1:
+                self.tag_image = True
+            else:
+                self.tag_image = False
+            
+            query = configDOM.xpath('/Configuration/TagMath')
+            if len(query) > 0:
+                self.tag_math = int(query[0].text)
+            else:
+                self.tag_math = 0
+            if self.tag_math == 1:
+                self.tag_math = True
+            else:
+                self.tag_math = False
+            
+            # Math database
+            query = configDOM.xpath('/Configuration/MathDatabase')
+            if len(query) > 0:
+                self.math_database = os.path.splitext(os.path.basename(query[0].text))[0]
+            else:
+                self.math_database = 'General'
+                
+            # Highlighter Settings
+            query = configDOM.xpath('/Configuration/EnableTextHighlight')
+            if len(query) > 0:
+                self.highlight_text_enable = int(query[0].text)
+            else:
+                self.highlight_text_enable = 1
+            if self.highlight_text_enable == 1:
+                self.highlight_text_enable = True
+            else:
+                self.highlight_text_enable = False
+            
+            query = configDOM.xpath('/Configuration/EnableLineHighlight')
+            if len(query) > 0:
+                self.highlight_line_enable = int(query[0].text)
+            else:
+                self.highlight_line_enable = 1
+            if self.highlight_line_enable == 1:
+                self.highlight_line_enable = True
+            else:
+                self.highlight_line_enable = False
+            
+            # Color Settings
+            query = configDOM.xpath('/Configuration/Colors/ContentText')
+            if len(query) > 0:
+                self.color_contentText = self._createQColorFromCommaSeparated(query[0].text)
+            else:
+                self.color_contentText = QColor(255,255,255)
+            query = configDOM.xpath('/Configuration/Colors/ContentBackground')
+            if len(query) > 0:
+                self.color_contentBackground = self._createQColorFromCommaSeparated(query[0].text)
+            else:
+                self.color_contentBackground = QColor(0,0,0)
+            
+            query = configDOM.xpath('/Configuration/Colors/HighlightText')
+            if len(query) > 0:
+                self.color_highlightText = self._createQColorFromCommaSeparated(query[0].text)
+            else:
+                self.color_highlightText = QColor(0,0,0)
+            query = configDOM.xpath('/Configuration/Colors/HighlightBackground')
+            if len(query) > 0:
+                self.color_highlightBackground = self._createQColorFromCommaSeparated(query[0].text)
+            else:
+                self.color_highlightBackground = QColor(255,255,0)
+            
+            query = configDOM.xpath('/Configuration/Colors/HighlightLineText')
+            if len(query) > 0:
+                self.color_highlightLineText = self._createQColorFromCommaSeparated(query[0].text)
+            else:
+                self.color_highlightLineText = QColor(0,0,0)
+                
+            query = configDOM.xpath('/Configuration/Colors/HighlightLineBackground')
+            if len(query) > 0:
+                self.color_highlightLineBackground = self._createQColorFromCommaSeparated(query[0].text)
+            else:
+                self.color_highlightLineBackground = QColor(0,255,0)
+            
+            # Font Settings
+            query = configDOM.xpath('/Configuration/Fonts/All')
+            if len(query) > 0:
+                self.font_all = query[0].text
+            else:
+                self.font_all = 'Arial'
+            
+            # Zoom Settings
+            query = configDOM.xpath('/Configuration/Zooms/Content')
+            if len(query) > 0:
+                self.zoom_content = float(query[0].text)
+            else:
+                self.zoom_content = 1.0
+            query = configDOM.xpath('/Configuration/Zooms/Navigation')
+            if len(query) > 0:
+                self.zoom_navigation_ptsize = int(query[0].text)
+            else:
+                self.zoom_navigation_ptsize = 14
+            
+            query = configDOM.xpath('/Configuration/Search/WholeWord')
+            if len(query) > 0:
+                self.search_whole_word = int(query[0].text)
+            else:
+                self.search_whole_word = 0
+            if self.search_whole_word == 1:
+                self.search_whole_word = True
+            else:
+                self.search_whole_word = False
+            
+            query = configDOM.xpath('/Configuration/Search/MatchCase')
+            if len(query) > 0:
+                self.search_match_case = int(query[0].text)
+            else:
+                self.search_match_case = 0
+            if self.search_match_case == 1:
+                self.search_match_case = True
+            else:
+                self.search_match_case = False
+            
+            # Show Tutorial
+            query = configDOM.xpath('/Configuration/ShowTutorial')
+            if len(query) > 0:
+                self.showTutorial = query[0].text
+            else:
+                self.showTutorial = '1'
+            if self.showTutorial == '1':
+                self.showTutorial = True
+            else:
+                self.showTutorial = False
+            
         
     def saveToFile(self, filePath):
         print 'Saving config...'
@@ -210,6 +306,8 @@ class Configuration(object):
         rateElem.text = str(self.rate)
         voiceElem = etree.SubElement(root, 'Voice')
         voiceElem.text = self.voice
+        pauseElem = etree.SubElement(root, 'PauseLength')
+        pauseElem.text = str(self.pause_length)
         
         elem = etree.SubElement(root, 'TagImage')
         if self.tag_image:
@@ -278,7 +376,6 @@ class Configuration(object):
             elem.text = '1'
         else:
             elem.text = '0'
-        
         
         # Show Tutorial
         elem = etree.SubElement(root, 'ShowTutorial')
@@ -409,7 +506,14 @@ padding: 15px;
 
 .mathmlEquation
 {
-font-size: 230%;
+'''
+        # If we are on Windows, make it bigger to better match surrounding text
+        if platform.system() == 'Windows':
+            outtext += r'font-size: 230%;'
+        else:
+            outtext += r'font-size: 100%;'
+    
+        outtext += '''
 }
 
 .pageNumber

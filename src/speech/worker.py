@@ -37,6 +37,7 @@ class SpeechWorker(QThread):
         
         self._volume = 100
         self._rate = 50
+        self._pauseLength = 0
         self._voice = ''
         
         self._ttsCreated = False
@@ -82,6 +83,7 @@ class SpeechWorker(QThread):
             if self._isChange:
                 self.ttsEngine.setVolume(self._volume)
                 self.ttsEngine.setRate(self._rate)
+                self.ttsEngine.setPauseLength(self._pauseLength)
                 self.ttsEngine.setVoice(self._voice)
                 self._isChange = False
             QThread.yieldCurrentThread()
@@ -167,6 +169,10 @@ class SpeechWorker(QThread):
     
     def setRate(self, r):
         self._rate = r
+        self._isChange = True
+    
+    def setPauseLength(self, p):
+        self._pauseLength = p
         self._isChange = True
         
     def setVoice(self, voice):

@@ -38,8 +38,9 @@ class MainWindow(QtGui.QMainWindow):
     noMoreSpeech = pyqtSignal()
     
     # TTS setting signals
-    changeVolume = pyqtSignal(float)
+    changeVolume = pyqtSignal(int)
     changeRate = pyqtSignal(int)
+    changePauseLength = pyqtSignal(int)
     changeVoice = pyqtSignal(str)
     changeMathDatabase = pyqtSignal(str)
     
@@ -132,6 +133,7 @@ class MainWindow(QtGui.QMainWindow):
         self.noMoreSpeech.connect(self.speechThread.noMoreSpeech)
         self.changeVolume.connect(self.speechThread.setVolume)
         self.changeRate.connect(self.speechThread.setRate)
+        self.changePauseLength.connect(self.speechThread.setPauseLength)
         self.changeVoice.connect(self.speechThread.setVoice)
         self.changeMathDatabase.connect(self.assigner.setMathDatabase)
                 
@@ -270,6 +272,7 @@ class MainWindow(QtGui.QMainWindow):
         # Update speech thread with my stuff
         self.changeVolume.emit(self.configuration.volume)
         self.changeRate.emit(self.configuration.rate)
+        self.changePauseLength.emit(self.configuration.pause_length)
         self.changeVoice.emit(self.configuration.voice)
         
         # Update the math database to use
