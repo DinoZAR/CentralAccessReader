@@ -65,6 +65,9 @@ class SAPI5Driver(object):
         if len(voiceKey) > 0:
             self._voiceId = voiceKey
             self._settingsChanged = True
+    
+    def areSettingsInteractive(self):
+        return True
             
     def getVoiceList(self):
         '''

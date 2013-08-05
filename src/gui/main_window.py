@@ -10,7 +10,7 @@ from lxml import html
 from lxml.etree import ParserError, XMLSyntaxError
 from HTMLParser import HTMLParser
 from PyQt4 import QtGui
-from PyQt4.QtCore import Qt, QUrl, QMutex, pyqtSignal
+from PyQt4.QtCore import Qt, QUrl, QMutex, pyqtSignal, QThread
 from PyQt4.QtWebKit import QWebPage, QWebInspector, QWebSettings
 from src.forms.mainwindow_ui import Ui_MainWindow
 from src.gui.bookmarks import BookmarksTreeModel, BookmarkNode
@@ -189,8 +189,10 @@ class MainWindow(QtGui.QMainWindow):
         self.prepareSpeechProgress.hide()
             
     def closeEvent(self, event):
+        # Save the current configuration
         self.configuration.zoom_content = self.ui.webView.getZoom()
         self.configuration.saveToFile(misc.app_data_path('configuration.xml'))
+        self.speechThread.quit()
         
     def resizeEvent(self, event):
         self.prepareSpeechProgress.updatePos()
@@ -390,7 +392,7 @@ class MainWindow(QtGui.QMainWindow):
         It will either get more speech for the TTS and send it, or tell it that
         no more speech is available.
         '''
-        #print 'window: Trying to send more speech'
+        print 'window: Trying to send more speech'
         hasMoreSpeech = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HasMoreElements', [])).toBool()
         if hasMoreSpeech:
             nextContent = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('StreamNextElement', [])).toString())
@@ -412,9 +414,14 @@ class MainWindow(QtGui.QMainWindow):
                 elem = html.Element('p')
             
             # Create and send the speech generator
+            print 'window: sending more speech back!'
             self.setSpeechGenerator.emit(self.assigner.generateSpeech(elem, self.configuration))
+            
         else:
+            print 'window: reporting no more speech left'
             self.noMoreSpeech.emit()
+        
+        print 'window: finished sending signal'
             
     def changeSpeechRate(self, value):
         self.configuration.rate = value
@@ -449,7 +456,6 @@ class MainWindow(QtGui.QMainWindow):
         self.speechThread.requestMoreSpeech.connect(dialog.requestMoreSpeech)
         dialog.exec_()
         self.stopPlayback.emit()
-        self.speechThread.requestMoreSpeech.connect(self.sendMoreSpeech)
         self.speechThread.requestMoreSpeech.disconnect(dialog.requestMoreSpeech)
         self.configuration.loadFromFile(misc.app_data_path('configuration.xml')) 
         self.updateSettings()
@@ -883,12 +889,15 @@ class MainWindow(QtGui.QMainWindow):
         TTS playback.
         '''
         if not isEnable:
-            #self.ui.rateSlider.setEnabled(False)
-            #self.ui.volumeSlider.setEnabled(False)
             self.ui.colorSettingsButton.setEnabled(False)
             self.ui.speechSettingsButton.setEnabled(False)
             self.ui.saveToMP3Button.setEnabled(False)
             self.ui.playButton.setEnabled(False)
+            
+            # Disable slider bars if TTS is not interactive
+            if not self.speechThread.areSettingsInteractive():
+                self.ui.rateSlider.setEnabled(False)
+                self.ui.volumeSlider.setEnabled(False)
             
             # Actions
             self.ui.actionPlay.setEnabled(False)
@@ -904,12 +913,14 @@ class MainWindow(QtGui.QMainWindow):
             for w in self.searchWidgets:
                 w.setEnabled(False)
         else:
-            #self.ui.rateSlider.setEnabled(True)
-            #self.ui.volumeSlider.setEnabled(True)
+            self.ui.rateSlider.setEnabled(True)
+            self.ui.volumeSlider.setEnabled(True)
             self.ui.colorSettingsButton.setEnabled(True)
             self.ui.speechSettingsButton.setEnabled(True)
             self.ui.saveToMP3Button.setEnabled(True)
             self.ui.playButton.setEnabled(True)
+            
+            
             
             # Actions
             self.ui.actionPlay.setEnabled(True)

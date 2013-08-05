@@ -4,19 +4,22 @@
  * @author Spencer Graffe
  */
 
-var lastStreamElement = null;
+var nextStreamElement = null;
 
 /**
  * Gives me a beginning to work with.
  */
 function SetStreamBeginning() {
-    //console.debug('SetStreamBeginning()');
+    console.debug('SetStreamBeginning()');
     range = GetSelectionRange();
-    lastStreamElement = range.startContainer;
+    nextStreamElement = range.startContainer;
     myRange = document.createRange();
-    myRange.setStart(lastStreamElement, range.startOffset);
-    myRange.setEndAfter(lastStreamElement);
+    myRange.setStart(nextStreamElement, range.startOffset);
+    myRange.setEndAfter(nextStreamElement);
     highlightBeginOffset = range.startOffset;
+    
+    nextStreamElement = NextElement(nextStreamElement)
+    
     return GetHTMLSource(myRange);
 }
 
@@ -25,24 +28,24 @@ function SetStreamBeginning() {
  * HTML content. 
  */
 function StreamNextElement() {
-    //console.debug('StreamNextElement()');
-    lastStreamElement = NextElement(lastStreamElement);
+    console.debug('StreamNextElement()');
     
     eq = null;
-    if (lastStreamElement != null) {
-        eq = GetEquation(lastStreamElement);
+    if (nextStreamElement != null) {
+        eq = GetEquation(nextStreamElement);
     }
     
     if (eq != null) {
-        lastStreamElement = eq;
+        nextStreamElement = eq;
     }
     
-    if (lastStreamElement == null) {
+    if (nextStreamElement == null) {
         return '';
     }
     else {
-        myRange = document.createRange();
-        myRange.selectNode(lastStreamElement);
+        var myRange = document.createRange();
+        myRange.selectNode(nextStreamElement);
+        nextStreamElement = NextElement(nextStreamElement);
         return GetHTMLSource(myRange);
     }
 }
@@ -53,7 +56,7 @@ function StreamNextElement() {
  */
 function HasMoreElements() {
     //console.debug('HasMoreElements()');
-    if (lastStreamElement == null) {
+    if (nextStreamElement == null) {
         return false;
     }
     return true;

@@ -33,6 +33,7 @@ class SpeechWorker(QThread):
         
         self._outputList = []
         self._running = True
+        self._done = False
         
         self._volume = 100
         self._rate = 50
@@ -77,7 +78,7 @@ class SpeechWorker(QThread):
         
         self._ttsCreated = True
         
-        while True:
+        while self._running:
             if self._isChange:
                 self.ttsEngine.setVolume(self._volume)
                 self.ttsEngine.setRate(self._rate)
@@ -85,7 +86,23 @@ class SpeechWorker(QThread):
                 self._isChange = False
             QThread.yieldCurrentThread()
         
+        
+        # Kill and cleanup the TTS driver
+        self.ttsEngine.stop()
+        del self.ttsEngine
+        
+        self._done = True
+        
         return
+    
+    def quit(self):
+        '''
+        Stops this thread. It will block until it has quit successfully.
+        '''
+        self._running = False
+        
+        while not self._done:
+            pass
     
     def startPlayback(self):
         print 'worker: Trying to start TTS'
@@ -156,6 +173,12 @@ class SpeechWorker(QThread):
         self._voice = voice
         self._isChange = True
         
+    def areSettingsInteractive(self):
+        '''
+        Returns true if the TTS settings can be changed interactively.
+        '''
+        return self.ttsEngine.areSettingsInteractive()
+        
     def getVoiceList(self):
         # Wait until the TTS is created before attempting what I want to do next
         while not self._ttsCreated:
@@ -164,6 +187,7 @@ class SpeechWorker(QThread):
     
     def setSpeechGenerator(self, gen):
         self.ttsEngine.setSpeechGenerator(gen)
+        print 'worker: finished setting the speech generator'
         
     def noMoreSpeech(self):
         '''

@@ -61,11 +61,12 @@ class SpeechSettings(QtGui.QDialog):
         voiceList = self.mainWindow.speechThread.getVoiceList()
         self.ui.voiceComboBox.blockSignals(True)
         for v in voiceList:
+            print 'Item in voice list:', v
             self.ui.voiceComboBox.addItem(v[0], userData=v[1])
         
         if len(self.configuration.voice) > 0:
             
-            i = self.ui.voiceComboBox.findData(self.configuration.voice)
+            i = self.ui.voiceComboBox.findData(unicode(self.configuration.voice))
             if i < 0:
                 i = 0
             self.ui.voiceComboBox.setCurrentIndex(i)
@@ -108,15 +109,12 @@ class SpeechSettings(QtGui.QDialog):
         self.mainWindow.changeVolume.emit(self.configuration.volume)
         
     def voiceComboBox_currentIndexChanged(self, index):
-        print 'Voice changed! Telling everyone else that we did!'
         self.configuration.voice = unicode(self.ui.voiceComboBox.itemData(index).toString())
-        print 'Voice changed to:', self.configuration.voice
-        
         self.mainWindow.changeVoice.emit(self.configuration.voice)
         
     def testButton_clicked(self):
         myText = self.ui.testSpeechText.toPlainText()
-        self.mainWindow.setSpeechGenerator.emit([(myText, 'text')])
+        self.mainWindow.setSpeechGenerator.emit([(unicode(myText), 'text')])
         self.mainWindow.startPlayback.emit()
 
     def requestMoreSpeech(self):

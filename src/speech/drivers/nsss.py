@@ -6,14 +6,15 @@ Created on Aug 1, 2013
 from Foundation import NSObject, NSString
 from AppKit import NSSpeechSynthesizer
 from PyObjCTools import AppHelper
-from threading import Lock
+from PyQt4.QtCore import QMutex
 import thread
+import copy
 
 class NSSpeechSynthesizerDriver(NSObject):
     '''
     Used in interfacing with Apple's NSSpeechSynthesizer.
     '''
-    generatorLock = Lock()
+    generatorLock = QMutex()
 
     CALLBACK_GEN = 0
     
@@ -45,8 +46,9 @@ class NSSpeechSynthesizerDriver(NSObject):
         Sets the rate of the voice, a value between 0-100
         '''
         # Transform 0-100 between a specific words-per-minute range
-        wpmMin = 150
-        wpmMax = 300
+        # Average rate is 180-220 wpm
+        wpmMin = 50
+        wpmMax = 350
         myRate = wpmMin + ((wpmMax - wpmMin) * float(rate) / 100.0)
         self._tts.setRate_(myRate)
 
@@ -60,9 +62,16 @@ class NSSpeechSynthesizerDriver(NSObject):
         '''
         Sets the voice using a key provided by getVoiceList()
         '''
-        print 'driver: changing voice,', voiceKey
+        vol = self._tts.volume()
+        rate = self._tts.rate()
         if len(voiceKey) > 0:
             self._tts.setVoice_(unicode(voiceKey))
+        
+        self._tts.setVolume_(vol)
+        self._tts.setRate_(rate)
+        
+    def areSettingsInteractive(self):
+        return False
 
     def getVoiceList(self):
         '''
@@ -76,7 +85,7 @@ class NSSpeechSynthesizerDriver(NSObject):
         myList = []
         for v in voiceList:
             descr = v.split('.')[-1]
-            myList.append([descr, v])
+            myList.append((unicode(descr), unicode(v)))
         
         return myList
 
@@ -86,9 +95,11 @@ class NSSpeechSynthesizerDriver(NSObject):
         generator object or iterable that returns tuples of the following:
         (text, label)
         '''
-        self.generatorLock.acquire()
+        print 'driver: waiting for lock to set generator'
+        self.generatorLock.lock()
+        print 'Setting speech generator'
         self._speechGenerator = gen
-        self.generatorLock.release()
+        self.generatorLock.unlock()
     
     def start(self):
         '''
@@ -109,27 +120,26 @@ class NSSpeechSynthesizerDriver(NSObject):
         This loop is used to queue my speech onto the TTS engine.
         '''
         while self._grabbingSpeech and self._running:
-            
-            self.generatorLock.acquire()
+            self.generatorLock.lock()
             if self._speechGenerator is not None:
                 for speech in self._speechGenerator:
                     self._currentLabel = speech[1]
                     self._tts.startSpeakingString_(speech[0])
+                    self._currentStream += 1
                     
                     # Wait until it has finished, checking for cancel
                     while self._tts.isSpeaking() and self._running:
                         pass
                     
-                    self._currentStream += 1
+                    if not self._running:
+                        break
             
                 self._speechGenerator = None
                 self._alreadyRequestedSpeech = False
-            
-            self.generatorLock.release()
+            self.generatorLock.unlock()
             
             # Request to get some more speech, if I didn't already
             if not self._alreadyRequestedSpeech:
-                print 'Requesting more speech...'
                 self._alreadyRequestedSpeech = True
                 if self._requestSpeechHook is not None:
                     self._requestSpeechHook()
@@ -137,7 +147,9 @@ class NSSpeechSynthesizerDriver(NSObject):
         # Tell everyone that the TTS is done
         for c in self._delegator['onFinish']:
             c[1]()
-            
+        
+        print 'driver: done!'
+        
         return
 
     def stop(self):
@@ -146,8 +158,8 @@ class NSSpeechSynthesizerDriver(NSObject):
         background.
         '''
         print 'driver: stopping TTS'
-        self._running = False
         self._tts.stopSpeaking()
+        self._running = False
 
     def noMoreSpeech(self):
         '''
