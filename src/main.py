@@ -27,9 +27,6 @@ def main():
     # Check to see if my folders in my paths exist. If they don't, make them
     from src.misc import program_path, app_data_path, temp_path
     
-    print 'Where is my configuration file?'
-    print app_data_path('configuration.xml')
-    
     if not os.path.exists(os.path.dirname(program_path('test.txt'))):
         os.makedirs(os.path.dirname(program_path('test.txt')))
     if not os.path.exists(os.path.dirname(app_data_path('test.txt'))):

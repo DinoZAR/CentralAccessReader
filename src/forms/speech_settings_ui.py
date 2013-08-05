@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/graffes/Documents/workspace/NiftyProseArticulator/src/forms/speech_settings.ui'
+# Form implementation generated from reading ui file 'C:\Users\GraffeS\Desktop\workspace\nifty-prose-articulator\src\forms/speech_settings.ui'
 #
-# Created: Mon Aug  5 14:10:38 2013
-#      by: PyQt4 UI code generator 4.10.2
+# Created: Mon Aug 05 15:46:55 2013
+#      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -63,36 +63,26 @@ class Ui_SpeechSettings(object):
         self.volumeSlider.setTickInterval(10)
         self.volumeSlider.setObjectName(_fromUtf8("volumeSlider"))
         self.formLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.volumeSlider)
-        self.label_6 = QtGui.QLabel(SpeechSettings)
-        self.label_6.setObjectName(_fromUtf8("label_6"))
-        self.formLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.label_6)
-        self.pauseSlider = QtGui.QSlider(SpeechSettings)
-        self.pauseSlider.setMaximum(10)
-        self.pauseSlider.setOrientation(QtCore.Qt.Horizontal)
-        self.pauseSlider.setTickPosition(QtGui.QSlider.TicksAbove)
-        self.pauseSlider.setTickInterval(1)
-        self.pauseSlider.setObjectName(_fromUtf8("pauseSlider"))
-        self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.pauseSlider)
         spacerItem = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
-        self.formLayout.setItem(3, QtGui.QFormLayout.FieldRole, spacerItem)
+        self.formLayout.setItem(2, QtGui.QFormLayout.FieldRole, spacerItem)
         self.label_3 = QtGui.QLabel(SpeechSettings)
         self.label_3.setObjectName(_fromUtf8("label_3"))
-        self.formLayout.setWidget(4, QtGui.QFormLayout.LabelRole, self.label_3)
+        self.formLayout.setWidget(3, QtGui.QFormLayout.LabelRole, self.label_3)
         self.voiceComboBox = QtGui.QComboBox(SpeechSettings)
         self.voiceComboBox.setEditable(False)
         self.voiceComboBox.setObjectName(_fromUtf8("voiceComboBox"))
-        self.formLayout.setWidget(4, QtGui.QFormLayout.FieldRole, self.voiceComboBox)
+        self.formLayout.setWidget(3, QtGui.QFormLayout.FieldRole, self.voiceComboBox)
         spacerItem1 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
-        self.formLayout.setItem(5, QtGui.QFormLayout.FieldRole, spacerItem1)
+        self.formLayout.setItem(4, QtGui.QFormLayout.FieldRole, spacerItem1)
         self.label_5 = QtGui.QLabel(SpeechSettings)
         self.label_5.setObjectName(_fromUtf8("label_5"))
-        self.formLayout.setWidget(6, QtGui.QFormLayout.LabelRole, self.label_5)
+        self.formLayout.setWidget(5, QtGui.QFormLayout.LabelRole, self.label_5)
         self.mathDatabaseComboBox = QtGui.QComboBox(SpeechSettings)
         self.mathDatabaseComboBox.setObjectName(_fromUtf8("mathDatabaseComboBox"))
-        self.formLayout.setWidget(6, QtGui.QFormLayout.FieldRole, self.mathDatabaseComboBox)
+        self.formLayout.setWidget(5, QtGui.QFormLayout.FieldRole, self.mathDatabaseComboBox)
         self.label_4 = QtGui.QLabel(SpeechSettings)
         self.label_4.setObjectName(_fromUtf8("label_4"))
-        self.formLayout.setWidget(7, QtGui.QFormLayout.LabelRole, self.label_4)
+        self.formLayout.setWidget(6, QtGui.QFormLayout.LabelRole, self.label_4)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
         self.imageTagCheckBox = QtGui.QCheckBox(SpeechSettings)
@@ -103,7 +93,7 @@ class Ui_SpeechSettings(object):
         self.horizontalLayout_3.addWidget(self.mathTagCheckBox)
         spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem2)
-        self.formLayout.setLayout(7, QtGui.QFormLayout.FieldRole, self.horizontalLayout_3)
+        self.formLayout.setLayout(6, QtGui.QFormLayout.FieldRole, self.horizontalLayout_3)
         self.verticalLayout.addLayout(self.formLayout)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
@@ -151,7 +141,6 @@ class Ui_SpeechSettings(object):
         self.rateSlider.setToolTip(_translate("SpeechSettings", "Words per minute slider (rate)", None))
         self.label_2.setText(_translate("SpeechSettings", "Volume:", None))
         self.volumeSlider.setToolTip(_translate("SpeechSettings", "Volume slider", None))
-        self.label_6.setText(_translate("SpeechSettings", "Pause Length:", None))
         self.label_3.setText(_translate("SpeechSettings", "Voices:", None))
         self.voiceComboBox.setToolTip(_translate("SpeechSettings", "Drop down box for selecting the voice", None))
         self.label_5.setText(_translate("SpeechSettings", "Math:", None))
