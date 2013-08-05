@@ -64,7 +64,10 @@ class SpeechSettings(QtGui.QDialog):
             self.ui.voiceComboBox.addItem(v[0], userData=v[1])
         
         if len(self.configuration.voice) > 0:
+            
             i = self.ui.voiceComboBox.findData(self.configuration.voice)
+            if i < 0:
+                i = 0
             self.ui.voiceComboBox.setCurrentIndex(i)
             self.ui.voiceComboBox.blockSignals(False)
         else:
@@ -105,12 +108,16 @@ class SpeechSettings(QtGui.QDialog):
         self.mainWindow.changeVolume.emit(self.configuration.volume)
         
     def voiceComboBox_currentIndexChanged(self, index):
-        self.configuration.voice = str(self.ui.voiceComboBox.itemData(index).toString())
+        print 'Voice changed! Telling everyone else that we did!'
+        self.configuration.voice = unicode(self.ui.voiceComboBox.itemData(index).toString())
+        print 'Voice changed to:', self.configuration.voice
+        
         self.mainWindow.changeVoice.emit(self.configuration.voice)
         
     def testButton_clicked(self):
         myText = self.ui.testSpeechText.toPlainText()
-        self.mainWindow.addToQueue.emit(myText, 'text')
+        mySpeechGenerator = [(unicode(myText), 'text')]
+        self.mainWindow.setSpeechGenerator.emit(mySpeechGenerator)
         self.mainWindow.startPlayback.emit()
         
     def imageTagCheckBox_stateChanged(self, state):

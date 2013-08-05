@@ -60,8 +60,8 @@ class NSSpeechSynthesizerDriver(NSObject):
         '''
         Sets the voice using a key provided by getVoiceList()
         '''
+        print 'driver: changing voice,', voiceKey
         if len(voiceKey) > 0:
-            print 'Voice key:', unicode(voiceKey)
             self._tts.setVoice_(unicode(voiceKey))
 
     def getVoiceList(self):
@@ -76,9 +76,7 @@ class NSSpeechSynthesizerDriver(NSObject):
         myList = []
         for v in voiceList:
             descr = v.split('.')[-1]
-            myList.append((descr, v))
-        
-        print 'My voice list:', myList
+            myList.append([descr, v])
         
         return myList
 
