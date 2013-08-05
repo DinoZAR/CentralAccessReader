@@ -142,6 +142,7 @@ class NSSpeechSynthesizerDriver(NSObject):
                     
                     # Pause here if it is set
                     if self._grabbingSpeech and self._running:
+                        print 'driver: pausing between paragraphs'
                         time.sleep(self._pauseLength / 5.0)
             
                 self._speechGenerator = None
@@ -168,8 +169,8 @@ class NSSpeechSynthesizerDriver(NSObject):
         background.
         '''
         print 'driver: stopping TTS'
-        self._tts.stopSpeaking()
         self._running = False
+        self._tts.stopSpeaking()
 
     def noMoreSpeech(self):
         '''
