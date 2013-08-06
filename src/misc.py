@@ -26,8 +26,14 @@ def program_path(resourceFile):
     development environment or in an installed environment.
     ''' 
     if getattr(sys, 'frozen', None):
-        myPath = os.path.join(sys._MEIPASS, resourceFile)
-        return myPath
+        if getattr(sys, '_MEIPASS', None):
+            # This is a PyInstaller-packaged program
+            myPath = os.path.join(sys._MEIPASS, resourceFile)
+            return myPath
+        else:
+            # This is an app-packaged program (for Mac)
+            myPath = os.path.join(os.environ['RESOURCEPATH'], resourceFile)
+            return myPath
     else:
         myPath = os.path.normpath(os.path.join(os.path.dirname(os.path.dirname(inspect.getsourcefile(program_path))), resourceFile))
         return myPath
@@ -135,6 +141,17 @@ def open_file_browser_to_location(filePath):
     '''
     if 'Windows' in platform.system():
         subprocess.Popen(r'explorer /select,"' + os.path.abspath(filePath) + '"')
+    elif 'Darwin' in platform.system():
+        appleScript = '''
+set p to "''' + filePath + '''"
+
+tell application "Finder"
+    reveal POSIX file p as text
+    activate
+end tell
+'''
+        osa = subprocess.Popen(['osascript', '-'], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        osa.communicate(appleScript)[0]
 
 def prepare_bug_report(traceback, configuration, detailMessage=None):
     '''

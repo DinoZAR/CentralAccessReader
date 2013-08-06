@@ -3,12 +3,15 @@ Created on Aug 1, 2013
 
 @author: Spencer Graff
 '''
-from Foundation import NSObject, NSString
+from Foundation import NSObject, NSString, NSURL
 from AppKit import NSSpeechSynthesizer
 from PyObjCTools import AppHelper
 from PyQt4.QtCore import QMutex
 import thread
 import time
+import subprocess
+import re
+from misc import program_path, temp_path
 
 class NSSpeechSynthesizerDriver(NSObject):
     '''
@@ -27,6 +30,7 @@ class NSSpeechSynthesizerDriver(NSObject):
             self._isFirstSpeech = True
             self._delegator = {'onStart' : [], 'onWord' : [], 'onEndStream' : [], 'onFinish' : []}
             self._grabbingSpeech = False
+            self._signalsEnabled = True
             self._requestSpeechHook = requestSpeechHook
             
             self._tts = NSSpeechSynthesizer.alloc().initWithVoice_(None)
@@ -35,6 +39,8 @@ class NSSpeechSynthesizerDriver(NSObject):
             self._tts.setVolume_(1.0)
             self._tts.setRate_(200)
             self._pauseLength = 0
+            
+            self._done = False
         
         return self
     
@@ -117,6 +123,7 @@ class NSSpeechSynthesizerDriver(NSObject):
         self._grabbingSpeech = True
         self._alreadyRequestedSpeech = False
         self._running = True
+        self._done = False
         
         # Run a thread that will continually read through the speech
         thread.start_new_thread(self._runLoop, ())
@@ -160,6 +167,7 @@ class NSSpeechSynthesizerDriver(NSObject):
             c[1]()
         
         print 'driver: done!'
+        self._done = True
         
         return
 
@@ -178,14 +186,13 @@ class NSSpeechSynthesizerDriver(NSObject):
         '''
         self._grabbingSpeech = False
 
-    def speakToWavFile(self, wavFilePath, speechGenerator, progressCallback, checkStopFunction):
+    def speakToFile(self, mp3Path, speechGenerator, progressCallback, labelCallback, checkStopFunction):
         '''
-        This is a separate function that runs on a different thread.
-        This will not return until it has completely written the speech to the
-        file.
+        Writes the speech output given by the speech generator as an MP3 file
+        that will be saved to mp3Path.
         
-        The output list should be the following:
-        [('Speech!', 'label'), ('Speech!', 'label'), ...]
+        The speech generator should generate tuples of the following:
+        ('speech', 'label')
         
         The progressCallback should be a function that takes an int from 0-100,
         100 being when it is done.
@@ -193,13 +200,59 @@ class NSSpeechSynthesizerDriver(NSObject):
         The checkStopFunction returns a boolean value saying whether we need to
         stop creation, False being don't stop, and True being stop.
         '''
-        pass
+        
+        aiffPath = unicode(temp_path('tmp.aiff'))
+        
+        # Create a single string that will be sent to the TTS
+        myString = ''
+        labelCallback('Preparing speech...')
+        for speech in speechGenerator:
+            myString += speech[0] + '. '
+            myString = myString.replace('..', '.')
+            if checkStopFunction():
+                break
+        
+        if not checkStopFunction():
+            progressCallback(30)
+            labelCallback('Speaking into AIFF...')
+            
+            # Create my URL object
+            url = NSURL.alloc()
+            url.initFileURLWithPath_(aiffPath)
+            
+            # Speak string into TTS 
+            self._tts.startSpeakingString_toURL_(myString, url)
+            while self._tts.isSpeaking() and not checkStopFunction():
+                pass
+            
+            progressCallback(60)
+            
+            # Convert to MP3
+            if not checkStopFunction():
+                labelCallback('Converting to MP3...')
+                lameExe = program_path('src/lame_mac') 
+                
+                lameCommand = lameExe + ' -h "' + aiffPath + '" "' + mp3Path + '"'
+                ps = subprocess.Popen(lameCommand, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+                 
+                while ps.poll() == None:
+                    if checkStopFunction():
+                        ps.terminate()
+                        break
+                    out = ps.stderr.readline()
+                    if re.search(r'\([0-9]+%\)', out) != None:
+                        percent = int(float(re.search(r'\([0-9]+%\)', out).group(0)[1:-2]) * 0.3)
+                        progressCallback(69 + percent)
+            
+            progressCallback(100)
+            
 
     def waitUntilDone(self):
         '''
         Waits until the TTS engine stops running.
         '''
-        pass
+        while not self._done:
+            pass
 
     def isFinished(self):
         return not (self._running and self._tts.isSpeaking())
@@ -238,6 +291,21 @@ class NSSpeechSynthesizerDriver(NSObject):
                     i = 0
                 else:
                     i += 1
+                    
+    def disableSignals(self):
+        '''
+        Disables the output signals that this driver emits. This is nice when
+        one needs to temporarily turn them off without disconnecting and
+        reconnecting everything.
+        '''
+        self._signalsEnabled = False
+    
+    def enableSignals(self):
+        '''
+        Enables the output signals that this driver emits. It will not assume
+        that one called called disableSignals() before calling this function.
+        '''
+        self._signalsEnabled = True
     
     def speechSynthesizer_didFinishSpeaking_(self, tts, success):
         '''
@@ -245,8 +313,9 @@ class NSSpeechSynthesizerDriver(NSObject):
         stream.
         '''
         # Tell everyone that a stream has ended
-        for c in self._delegator['onEndStream']:
-            c[1](self._currentStream, self._currentLabel)
+        if self._signalsEnabled:
+            for c in self._delegator['onEndStream']:
+                c[1](self._currentStream, self._currentLabel)
     
     def speechSynthesizer_willSpeakWord_ofString_(self, tts, wordRange, text):
         '''
@@ -257,13 +326,15 @@ class NSSpeechSynthesizerDriver(NSObject):
         
         # If it is the first word, set the beginning
         if self._isFirstSpeech:
-            for c in self._delegator['onStart']:
-                c[1](wordRange.location, wordRange.length, self._currentLabel, self._currentStream, word)
+            if self._signalsEnabled:
+                for c in self._delegator['onStart']:
+                    c[1](wordRange.location, wordRange.length, self._currentLabel, self._currentStream, word)
             self._isFirstSpeech = False
         
         # Notify everyone that I am saying a word
-        for cb in self._delegator['onWord']:
-            cb[1](wordRange.location, wordRange.length, self._currentLabel, self._currentStream, word, self._isFirstSpeech)
+        if self._signalsEnabled:
+            for cb in self._delegator['onWord']:
+                cb[1](wordRange.location, wordRange.length, self._currentLabel, self._currentStream, word, self._isFirstSpeech)
             
     def __del__(self):
         self.destroy()

@@ -12,17 +12,17 @@ from HTMLParser import HTMLParser
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt, QUrl, QMutex, pyqtSignal, QThread
 from PyQt4.QtWebKit import QWebPage, QWebInspector, QWebSettings
-from src.forms.mainwindow_ui import Ui_MainWindow
-from src.gui.bookmarks import BookmarksTreeModel, BookmarkNode
-from src.gui.configuration import Configuration
-from src.gui.npa_webview import NPAWebView
-from src.gui.prepare_speech import PrepareSpeechProgressWidget
-from src.gui.search_settings import SearchSettings
-from src.mathml.tts import MathTTS
-from src.speech.assigner import Assigner, PrepareSpeechThread
-from src.speech.worker import SpeechWorker
-from src import misc
-from src.updater import GetUpdateThread, RunUpdateInstallerThread, SETUP_FILE, SETUP_TEMP_FILE, run_update_installer, is_update_downloaded, save_server_version_to_temp
+from forms.mainwindow_ui import Ui_MainWindow
+from gui.bookmarks import BookmarksTreeModel, BookmarkNode
+from gui.configuration import Configuration
+from gui.npa_webview import NPAWebView
+from gui.prepare_speech import PrepareSpeechProgressWidget
+from gui.search_settings import SearchSettings
+from mathml.tts import MathTTS
+from speech.assigner import Assigner, PrepareSpeechThread
+from speech.worker import SpeechWorker
+import misc
+from updater import GetUpdateThread, RunUpdateInstallerThread, SETUP_FILE, SETUP_TEMP_FILE, run_update_installer, is_update_downloaded, save_server_version_to_temp
 
 print 'Imported all modules for MainWindow!'
 
@@ -395,7 +395,6 @@ class MainWindow(QtGui.QMainWindow):
         It will either get more speech for the TTS and send it, or tell it that
         no more speech is available.
         '''
-        print 'window: Trying to send more speech'
         hasMoreSpeech = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HasMoreElements', [])).toBool()
         if hasMoreSpeech:
             nextContent = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('StreamNextElement', [])).toString())
@@ -417,14 +416,10 @@ class MainWindow(QtGui.QMainWindow):
                 elem = html.Element('p')
             
             # Create and send the speech generator
-            print 'window: sending more speech back!'
             self.setSpeechGenerator.emit(self.assigner.generateSpeech(elem, self.configuration))
             
         else:
-            print 'window: reporting no more speech left'
             self.noMoreSpeech.emit()
-        
-        print 'window: finished sending signal'
             
     def changeSpeechRate(self, value):
         self.configuration.rate = value
@@ -435,7 +430,7 @@ class MainWindow(QtGui.QMainWindow):
         self.changeVolume.emit(self.configuration.volume)
         
     def showColorSettings(self):
-        from src.gui.color_settings import ColorSettings
+        from gui.color_settings import ColorSettings
         dialog = ColorSettings(self)
         result = dialog.exec_()
         self.configuration.loadFromFile(misc.app_data_path('configuration.xml'))
@@ -454,7 +449,7 @@ class MainWindow(QtGui.QMainWindow):
         self.speechThread.requestMoreSpeech.disconnect(self.sendMoreSpeech)
 
         # Show speech settings dialog
-        from src.gui.speech_settings import SpeechSettings
+        from gui.speech_settings import SpeechSettings
         dialog = SpeechSettings(self)
         self.speechThread.requestMoreSpeech.connect(dialog.requestMoreSpeech)
         dialog.exec_()
@@ -524,6 +519,8 @@ class MainWindow(QtGui.QMainWindow):
                 
                 misc.open_file_browser_to_location(fileName)
         
+        self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('ClearUserSelection', []))
+        
     def zoomIn(self):
         self.ui.webView.zoomIn()
     
@@ -551,8 +548,8 @@ class MainWindow(QtGui.QMainWindow):
         filePath = str(filePath)
         if len(filePath) > 0:
             
-            from src.docx.thread import DocxImporterThread
-            from src.gui.document_load_progress import DocumentLoadProgressDialog
+            from docx.thread import DocxImporterThread
+            from gui.document_load_progress import DocumentLoadProgressDialog
              
             # Create my .docx importer thread
             self.docxImporterThread = DocxImporterThread(filePath)
@@ -576,8 +573,8 @@ class MainWindow(QtGui.QMainWindow):
         self.progressDialog.setLabelText(text)
         
     def reportErrorOpenDocx(self, exception, tb):
-        from src.mathtype.parser import MathTypeParseError
-        from src.gui.bug_reporter import BugReporter
+        from mathtype.parser import MathTypeParseError
+        from gui.bug_reporter import BugReporter
         
         if isinstance(exception, MathTypeParseError):
             out = misc.prepare_bug_report(tb, self.configuration, detailMessage=exception.message)
@@ -630,7 +627,7 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.bookmarksTreeView.expandAll()
                     
             # Get and set the pages
-            from src.gui.pages import PagesTreeModel
+            from gui.pages import PagesTreeModel
             
             self.pagesModel = PagesTreeModel(self.docxImporterThread.getPages())
             self.ui.pagesTreeView.setModel(self.pagesModel)
@@ -685,7 +682,7 @@ class MainWindow(QtGui.QMainWindow):
         self.openDocx(misc.program_path('Tutorial.docx'))
             
     def openAboutDialog(self):
-        from src.gui.about import AboutDialog
+        from gui.about import AboutDialog
         dialog = AboutDialog()
         dialog.exec_()
         
@@ -743,7 +740,7 @@ class MainWindow(QtGui.QMainWindow):
         self.mathTTS.setPatternDatabase(databaseFileName)
         
     def showAllMathML(self):
-        from src.gui.mathmlcodes_dialog import MathMLCodesDialog
+        from gui.mathmlcodes_dialog import MathMLCodesDialog
         self.mathmlDialog = MathMLCodesDialog(self.assigner._maths)
         self.mathmlDialog.show()
         
@@ -824,7 +821,7 @@ class MainWindow(QtGui.QMainWindow):
         # Depending on whether the update has already downloaded or not, make
         # the prompt tell the user the appropriate action (download it or
         # install it)
-        from src.gui.update_prompt import UpdatePromptDialog
+        from gui.update_prompt import UpdatePromptDialog
         
         try:
             if is_update_downloaded():
@@ -842,7 +839,7 @@ class MainWindow(QtGui.QMainWindow):
             
                 if result == QtGui.QMessageBox.Yes:
                     
-                    from src.gui.download_progress import DownloadProgressWidget
+                    from gui.download_progress import DownloadProgressWidget
                     
                     # Create the widget for the download right below the content view
                     self.updateDownloadProgress = DownloadProgressWidget(self)
@@ -858,7 +855,7 @@ class MainWindow(QtGui.QMainWindow):
             # Generate a bug report for it
             import traceback
             from misc import prepare_bug_report
-            from src.gui.bug_reporter import BugReporter
+            from gui.bug_reporter import BugReporter
             out = prepare_bug_report(traceback.format_exc(), self.configuration)
             dialog = BugReporter(out)
             dialog.exec_()
@@ -876,7 +873,7 @@ class MainWindow(QtGui.QMainWindow):
             
             # Prompt the user if they want to install it
             if len(versionInfo) > 0:
-                from src.gui.update_prompt import UpdatePromptDialog
+                from gui.update_prompt import UpdatePromptDialog
                 question = UpdatePromptDialog(self)
                 question.setText('Downloaded update! Want to install it?')
                 result = question.exec_()

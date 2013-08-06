@@ -55,12 +55,12 @@ function IsMathTypeset() {
 	return finishedMathTypeset;
 }
 
-/**
- * Returns the typeset progress from MathJax. Returns an integer from 0-100.
- */
 MathJax.Hub.processMessage = function (state, type) {
 	mathTypeSetProgress = Math.floor((state.i/state.scripts.length) * 50);
 }
+/**
+ * Returns the typeset progress from MathJax. Returns an integer from 0-100.
+ */
 function GetMathTypesetProgress() {
     //console.debug("GetMathTypesetProgress()");
 	return mathTypeSetProgress * 2;
@@ -76,6 +76,14 @@ function GotoPageAnchor(anchorName) {
 	startFromHeading = true;
 	lastHeadingElement = element_to_scroll_to;
 	$.scrollTo(element_to_scroll_to, {duration: 200});
+}
+
+/**
+ * Clears the user's selection.
+ */
+function ClearUserSelection() {
+	sel = window.getSelection();
+	sel.collapse();
 }
 
 /*******************************************************************************

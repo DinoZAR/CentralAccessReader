@@ -5,11 +5,7 @@ Created on Apr 8, 2013
 '''
 from PyQt4.QtCore import QThread, QMutex, pyqtSignal
 from PyQt4.QtGui import qApp
-from src.speech import driver
-import platform
-import subprocess
-import re
-from src.misc import temp_path, program_path
+import driver
 
 class SpeechWorker(QThread):
     
@@ -68,10 +64,10 @@ class SpeechWorker(QThread):
             self.requestMoreSpeech.emit()
         
         self.ttsEngine = driver.get_driver(mySpeechRequestHook)
-        self.ttsEngine.connect('onStart', myOnStart)
-        self.ttsEngine.connect('onWord', myOnWord)
-        self.ttsEngine.connect('onFinish', myOnFinish)
-        self.ttsEngine.connect('onEndStream', myOnEndStream)
+        startHandle = self.ttsEngine.connect('onStart', myOnStart)
+        wordHandle = self.ttsEngine.connect('onWord', myOnWord)
+        finishHandle = self.ttsEngine.connect('onFinish', myOnFinish)
+        streamHandle = self.ttsEngine.connect('onEndStream', myOnEndStream)
         
         self.ttsEngine.setVolume(self._volume)
         self.ttsEngine.setRate(self._rate)
@@ -90,6 +86,10 @@ class SpeechWorker(QThread):
         
         
         # Kill and cleanup the TTS driver
+        self.ttsEngine.disconnect(startHandle)
+        self.ttsEngine.disconnect(wordHandle)
+        self.ttsEngine.disconnect(finishHandle)
+        self.ttsEngine.disconnect(streamHandle)
         self.ttsEngine.stop()
         del self.ttsEngine
         
@@ -121,47 +121,21 @@ class SpeechWorker(QThread):
         return self._stopMP3Creation
             
     def saveToMP3(self, mp3Path, speechGenerator):
-        
         self._stopMP3Creation = False
         
-        # Create the WAV file first
         def myIsStop():
             return self._stopMP3Creation
         
         def myOnProgress(percent):
-            self.onProgress.emit(int((float(percent) / 100.0) * 70.0))
+            self.onProgress.emit(percent)
         
-        wavSavePath = temp_path('tmp.wav')
-        
-        self.onProgressLabel.emit('Speaking into WAV...')
-        self.ttsEngine.speakToWavFile(wavSavePath, speechGenerator, myOnProgress, myIsStop)
-        
-        if not self._stopMP3Creation:
-            # Then convert it to MP3
-            self.onProgressLabel.emit('Converting to MP3...')
-            lameExe = ''
-            if '64' in platform.architecture()[0]:
-                lameExe = program_path('src/lame_64.exe')
-            else:
-                lameExe = program_path('src/lame_32.exe')
+        def myLabelUpdater(label):
+            self.onProgressLabel.emit(label)
             
-            startupInfo = subprocess.STARTUPINFO()
-            startupInfo.dwFlags = subprocess.STARTF_USESTDHANDLES | subprocess.STARTF_USESHOWWINDOW
-            startupInfo.wShowWindow = subprocess.SW_HIDE
-            lameCommand = lameExe + ' -h "' + wavSavePath + '" "' + mp3Path + '"'
-            ps = subprocess.Popen(lameCommand, stdout=subprocess.PIPE, stderr=subprocess.PIPE, startupinfo=startupInfo)
-            
-            while ps.poll() == None:
-                qApp.processEvents()
-                if self._stopMP3Creation:
-                    ps.terminate()
-                    break
-                out = ps.stderr.readline()
-                if re.search(r'\([0-9]+%\)', out) != None:
-                    percent = int(float(re.search(r'\([0-9]+%\)', out).group(0)[1:-2]) * 0.3)
-                    self.onProgress.emit(69 + percent)
-        
-        self.onProgress.emit(100)
+        # Turn off my signals so that window doesn't try and update
+        self.ttsEngine.disableSignals()
+        self.ttsEngine.speakToFile(mp3Path, speechGenerator, myOnProgress, myLabelUpdater, myIsStop)
+        self.ttsEngine.enableSignals()
     
     def setVolume(self, v):
         self._volume = v

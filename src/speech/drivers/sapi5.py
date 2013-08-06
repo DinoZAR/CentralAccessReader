@@ -9,6 +9,10 @@ import win32event
 import thread
 from threading import Lock
 import time
+import platform
+import subprocess
+import re
+from src.misc import program_path, temp_path
 
 from src.speech.drivers.SapiCOM import SpVoice, SpFileStream
 
@@ -251,14 +255,13 @@ class SAPI5Driver(object):
         #print 'driver: flagging no more speech'
         self._grabbingSpeech = False
         
-    def speakToWavFile(self, wavFilePath, speechGenerator, progressCallback, checkStopFunction):
+    def speakToFile(self, mp3Path, speechGenerator, progressCallback, labelCallback, checkStopFunction):
         '''
-        This is a separate function that runs on a different thread.
-        This will not return until it has completely written the speech to the
-        file.
+        Writes the speech output given by the speech generator as an MP3 file
+        that will be saved to mp3Path.
         
-        The output list should be the following:
-        [('Speech!', 'label'), ('Speech!', 'label'), ...]
+        The speech generator should generate tuples of the following:
+        ('speech', 'label')
         
         The progressCallback should be a function that takes an int from 0-100,
         100 being when it is done.
@@ -270,7 +273,7 @@ class SAPI5Driver(object):
     
         saveFileStream = SpFileStream()
         saveFileStream.Format.Type = 18  # Some magic number that gives good results
-        saveFileStream.Open(wavFilePath, 3)
+        saveFileStream.Open(temp_path('temp.wav'), 3)
     
         self._voice = SpVoice()
         self._voice.AudioOutputStream = saveFileStream
@@ -294,7 +297,7 @@ class SAPI5Driver(object):
             outputList.append(speech)
         
         for i in range(len(outputList)):
-            progressCallback(int(float(i) / len(outputList) * 100.0 - 1))
+            progressCallback(int(float(i) / len(outputList) * 69.0))
             self._voice.Speak(outputList[i][0], 1)
             while not self._voice.WaitUntilDone(10):
                 if checkStopFunction():
@@ -303,7 +306,34 @@ class SAPI5Driver(object):
                 break
         
         saveFileStream.Close()
-        progressCallback(99)
+        progressCallback(69)
+        
+        
+        if not checkStopFunction():
+            # Then convert it to MP3
+            labelCallback('Converting to MP3...')
+            lameExe = ''
+            if '64' in platform.architecture()[0]:
+                lameExe = program_path('src/lame_64.exe')
+            else:
+                lameExe = program_path('src/lame_32.exe')
+             
+            startupInfo = subprocess.STARTUPINFO()
+            startupInfo.dwFlags = subprocess.STARTF_USESTDHANDLES | subprocess.STARTF_USESHOWWINDOW
+            startupInfo.wShowWindow = subprocess.SW_HIDE
+            lameCommand = lameExe + ' -h "' + temp_path('tmp.wav') + '" "' + mp3Path + '"'
+            ps = subprocess.Popen(lameCommand, stdout=subprocess.PIPE, stderr=subprocess.PIPE, startupinfo=startupInfo)
+             
+            while ps.poll() == None:
+                if checkStopFunction():
+                    ps.terminate()
+                    break
+                out = ps.stderr.readline()
+                if re.search(r'\([0-9]+%\)', out) != None:
+                    percent = int(float(re.search(r'\([0-9]+%\)', out).group(0)[1:-2]) * 0.3)
+                    progressCallback(69 + percent)
+         
+        progressCallback(100)
         
     def waitUntilDone(self):
         '''
@@ -334,6 +364,36 @@ class SAPI5Driver(object):
             return SAPI5Driver.CALLBACK_GEN
         else:
             raise ValueError('Event ' + eventLabel + ' is not available for callback.')
+    
+    def disconnect(self, handle):
+        '''
+        Removes the callback from the driver using the handle. The handle is
+        provided to you when you call connect().
+        '''
+        # Search for the handle in all of my callback lists
+        for e in self._delegator:
+            i = 0
+            while i < len(self._delegator[e]):
+                if self._delegator[e][i][0] == handle:
+                    self._delegator[e].pop(i)
+                    i = 0
+                else:
+                    i += 1
+                    
+    def disableSignals(self):
+        '''
+        Disables the output signals that this driver emits. This is nice when
+        one needs to temporarily turn them off without disconnecting and
+        reconnecting everything.
+        '''
+        pass
+    
+    def enableSignals(self):
+        '''
+        Enables the output signals that this driver emits. It will not assume
+        that one called called disableSignals() before calling this function.
+        '''
+        pass
             
     def handle_onWord(self, stream, pos, char, length):
         
@@ -379,21 +439,6 @@ class SAPI5Driver(object):
                 del self._queue[k]
                 break
         self.queueLock.release()
-    
-    def disconnect(self, handle):
-        '''
-        Removes the callback from the driver using the handle. The handle is
-        provided to you when you call connect().
-        '''
-        # Search for the handle in all of my callback lists
-        for e in self._delegator:
-            i = 0
-            while i < len(self._delegator[e]):
-                if self._delegator[e][i][0] == handle:
-                    self._delegator[e].pop(i)
-                    i = 0
-                else:
-                    i += 1
     
         
 class SAPIEventSink(object):
