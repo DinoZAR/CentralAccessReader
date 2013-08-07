@@ -6,8 +6,8 @@ Created on Jun 21, 2013
 from PyQt4.QtGui import QDialog, QWidget, QMovie
 from PyQt4.QtCore import QByteArray, Qt
 
-from src.forms.update_in_progress_ui import Ui_UpdateInstallProgressDialog
-from src.forms import resource_rc
+from forms.update_in_progress_ui import Ui_UpdateInstallProgressDialog
+from forms import resource_rc
 
 class UpdateInstallProgressDialog(QDialog):
     

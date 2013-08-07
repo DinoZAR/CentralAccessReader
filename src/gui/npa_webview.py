@@ -8,7 +8,7 @@ from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QApplication
 import webbrowser
 import os
-from src import misc
+import misc
 
 class NPAWebView(QWebView):
     '''

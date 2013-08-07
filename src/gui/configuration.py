@@ -6,7 +6,7 @@ Created on Apr 12, 2013
 from PyQt4.QtGui import QColor
 from lxml import etree
 import platform
-from src.misc import app_data_path, temp_path, pattern_databases
+from misc import app_data_path, temp_path, pattern_databases
 import os
 import traceback
 

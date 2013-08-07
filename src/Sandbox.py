@@ -15,8 +15,8 @@ def main():
     from lxml import html as HTML
     # from threading import Thread
     # from src.threadpool import Pool
-    from src.misc import program_path, temp_path
-    from src.docx.importer import DocxDocument
+    from misc import program_path, temp_path
+    from docx.importer import DocxDocument
     # from src.docx.paragraph import parseParagraph, parseTable
     
     #testPath = program_path('Tutorial.docx')

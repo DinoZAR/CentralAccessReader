@@ -7,7 +7,7 @@ from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
 from lxml import etree
 import copy
-from src.misc import app_data_path, pattern_databases
+from misc import app_data_path, pattern_databases
 
 from src.forms.speech_settings_ui import Ui_SpeechSettings
 

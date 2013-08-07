@@ -4,8 +4,8 @@ Created on Jul 2, 2013
 @author: Spencer Graffe
 '''
 from PyQt4.QtGui import QWidget
-from src.forms.prepare_speech_progress_ui import Ui_PrepareSpeechProgressWidget
-from src import misc
+from forms.prepare_speech_progress_ui import Ui_PrepareSpeechProgressWidget
+import misc
 
 class PrepareSpeechProgressWidget(QWidget):
     '''

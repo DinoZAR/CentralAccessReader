@@ -8,8 +8,8 @@ import operator
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtWebKit import QWebView
 from lxml import etree, html
-from src.forms.mathmlcodesdialog_ui import Ui_MathMLCodesDialog
-from src.misc import temp_path, program_path
+from forms.mathmlcodesdialog_ui import Ui_MathMLCodesDialog
+from misc import temp_path, program_path
 
 class MathMLCodesDialog(QtGui.QDialog):
     '''

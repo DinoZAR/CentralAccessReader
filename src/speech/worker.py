@@ -84,7 +84,6 @@ class SpeechWorker(QThread):
                 self._isChange = False
             QThread.yieldCurrentThread()
         
-        
         # Kill and cleanup the TTS driver
         self.ttsEngine.disconnect(startHandle)
         self.ttsEngine.disconnect(wordHandle)

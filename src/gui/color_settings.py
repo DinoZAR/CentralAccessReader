@@ -7,9 +7,9 @@ from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
 from lxml import etree
 import copy
-from src.misc import app_data_path
+from misc import app_data_path
 
-from src.forms.color_settings_ui import Ui_ColorSettings
+from forms.color_settings_ui import Ui_ColorSettings
 
 class ColorSettings(QtGui.QDialog):
     '''

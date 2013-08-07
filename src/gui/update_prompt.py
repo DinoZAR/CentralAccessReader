@@ -4,7 +4,7 @@ Created on Jun 25, 2013
 @author: GraffeS
 '''
 from PyQt4.QtGui import QDialog, QWidget, QMessageBox
-from src.forms.update_prompt_ui import Ui_UpdatePromptDialog
+from forms.update_prompt_ui import Ui_UpdatePromptDialog
 
 class UpdatePromptDialog(QDialog):
 

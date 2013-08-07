@@ -9,7 +9,6 @@ import database
 from parser import transform
 from pattern_tree import convertDOMToPatternTree
 import re
-from src.profilehooks import profile
 
 class MathTTS():
     

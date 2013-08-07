@@ -5,7 +5,7 @@ Created on Jan 21, 2013
 '''
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt, QUrl, QVariant
-from src.forms.settings_ui import Ui_Settings
+from forms.settings_ui import Ui_Settings
 from lxml import etree
 import copy
 

@@ -44,9 +44,9 @@ def app_data_path(resourceFile):
     be different on different operating systems.
     '''
     newPath = ''
-    if 'Windows' in platform.system():
+    if sys.platform == 'win32':
         newPath = os.path.join(os.environ['APPDATA'], _PROGRAM_ROOT, resourceFile)
-    elif 'darwin' in sys.platform:
+    elif sys.platform == 'darwin':
         newPath = os.path.join('/Users/', os.environ['USER'], 'Library/Application Support/', _PROGRAM_ROOT, resourceFile)
     
     return newPath
@@ -57,9 +57,9 @@ def temp_path(resourceFile):
     This directory will be different depending on the operating system.
     '''
     newPath = ''
-    if 'Windows' in platform.system():
+    if sys.platform == 'win32':
         newPath = os.path.join(os.environ['TEMP'], _PROGRAM_ROOT, resourceFile)
-    elif 'darwin' in sys.platform:
+    if sys.platform == 'darwin':
         newPath = os.path.join(os.environ['TMPDIR'], _PROGRAM_ROOT, resourceFile)
     
     return newPath
@@ -139,9 +139,9 @@ def open_file_browser_to_location(filePath):
     '''
     Creates the process to open a file browser with the file selected.
     '''
-    if 'Windows' in platform.system():
+    if sys.platform == 'win32':
         subprocess.Popen(r'explorer /select,"' + os.path.abspath(filePath) + '"')
-    elif 'Darwin' in platform.system():
+    if sys.platform == 'darwin':
         appleScript = '''
 set p to "''' + filePath + '''"
 

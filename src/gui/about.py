@@ -4,8 +4,8 @@ Created on May 6, 2013
 @author: GraffeS
 '''
 from PyQt4.QtGui import QDialog, QWidget
-from src.forms.about_ui import Ui_AboutDialog
-from src.misc import program_path
+from forms.about_ui import Ui_AboutDialog
+from misc import program_path
 
 class AboutDialog(QDialog):
     '''

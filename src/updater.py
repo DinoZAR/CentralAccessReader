@@ -9,7 +9,7 @@ import re
 import urllib2
 import os
 import subprocess
-from src import misc
+import misc
 
 UPDATE_URL = r'http://www.cwu.edu/~atrc/centralaccessreader/'
 #UPDATE_URL = r'file:///W:/Nifty%20Prose%20Articulator/'  # For testing purposes

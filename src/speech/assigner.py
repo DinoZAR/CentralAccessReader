@@ -8,10 +8,10 @@ from HTMLParser import HTMLParser
 from lxml import etree, html
 from PyQt4.QtCore import QMutex, QThread, pyqtSignal
 try:
-    from src.mathml_fast.tts import MathTTS
+    from mathml_fast.tts import MathTTS
 except ImportError:
-    from src.mathml.tts import MathTTS
-from src.speech.math_parser_thread import MathParserThread
+    from mathml.tts import MathTTS
+from speech.math_parser_thread import MathParserThread
 import time
 
 # Namespace for XHTML

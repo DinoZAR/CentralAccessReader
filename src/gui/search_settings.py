@@ -5,7 +5,7 @@ Created on Jun 4, 2013
 '''
 from PyQt4.QtGui import QDialog, QWidget
 
-from src.forms.search_settings_ui import Ui_SearchSettings
+from forms.search_settings_ui import Ui_SearchSettings
 
 class SearchSettings(QDialog):
     '''

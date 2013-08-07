@@ -5,7 +5,7 @@ Created on Jul 19, 2013
 '''
 from PyQt4.QtGui import QWidget
 from PyQt4.QtCore import pyqtSignal, Qt
-from src.forms.document_load_progress_ui import Ui_DocumentLoadProgressDialog
+from forms.document_load_progress_ui import Ui_DocumentLoadProgressDialog
 
 class DocumentLoadProgressDialog(QWidget):
     '''
