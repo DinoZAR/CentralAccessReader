@@ -1,46 +1,63 @@
+cd src
+
 # Cleanup what we had before
+echo "Cleaning up previous build..."
 rm -rf build dist
 
-#echo "Creating spec…"
-#python generate_spec.py release
+echo "Building the app..."
+python setup_mac.py py2app
 
-#echo "Creating the executable…"
-#python ../../pyinstaller-2.0/utils/Build.py "Central Access Reader.spec"
+mkdir -p "./dist/Central Access Reader.app/Contents/Resources"
+
+echo "Copying application icon file..."
+cp ./icons.icns "./dist/Central Access Reader.app/Contents/Resources"
 
 # JavaScript files
-echo "Copying MathJax…"
-cp -R ./mathjax "./dist/Central Access Reader/mathjax/"
 
-echo "Copying JQuery…"
-cp ./jquery-1.9.1.min.js "./dist/Central Access Reader/"
+echo "Copying MathJax..."
+mkdir -p "./dist/Central Access Reader.app/Contents/Resources/mathjax"
+cp -R ../mathjax "./dist/Central Access Reader.app/Contents/Resources/"
 
-echo "Copying JQuery UI…"
-cp -R ./jquery-ui "./dist/Central Access Reader/jquery-ui/"
+echo "Copying JQuery..."
+cp ../jquery-1.9.1.min.js "./dist/Central Access Reader.app/Contents/Resources/"
 
-echo "Copying JQuery Scroll-to…"
-cp ./jquery.scrollTo-1.4.3.1-min.js "./dist/Central Access Reader/"
+echo "Copying JQuery UI..."
+mkdir -p "./dist/Central Access Reader.app/Contents/Resources/jquery-ui"
+cp -R ../jquery-ui "./dist/Central Access Reader.app/Contents/Resources/"
 
-echo "Copying JavaScript functions and configurations…"
-cp -R ./src/javascript "./dist/Central Access Reader/src/javascript/"
+echo "Copying JQuery Scroll-to..."
+cp ../jquery.scrollTo-1.4.3.1-min.js "./dist/Central Access Reader.app/Contents/Resources/"
+
+echo "Copying JavaScript functions and configurations..."
+mkdir -p "./dist/Central Access Reader.app/Contents/Resources/src/javascript"
+cp -R ./javascript "./dist/Central Access Reader.app/Contents/Resources/src/"
 
 # Other files
-echo "Copying the MathML pattern databases…"
-cp -R ./src/math_patterns "./dist/Central Access Reader/src/math_patterns/"
+echo "Copying the MathML pattern databases..."
+mkdir -p "./dist/Central Access Reader.app/Contents/Resources/src/math_patterns"
+cp -R ./math_patterns "./dist/Central Access Reader.app/Contents/Resources/src/"
 
-echo "Copying LAME MP3 encoder…"
-cp ./src/lame_mac "./dist/Central Access Reader/src/"
+echo "Copying LAME MP3 encoder..."
+cp ./lame_mac "./dist/Central Access Reader.app/Contents/Resources/src/"
 
-echo "Copying OMML to MathML XSLT…"
-cpy ./src/docx/OMMLToMathML.xsl "./dist/Central Access Reader/src/docx/"
+echo "Copying OMML to MathML XSLT..."
+mkdir -p "./dist/Central Access Reader.app/Contents/Resources/src/docx"
+cp ./docx/OMMLToMathML.xsl "./dist/Central Access Reader.app/Contents/Resources/src/docx/"
 
-echo "Copying tutorial…"
-cp ./Tutorial.docx "./dist/Central Access Reader/"
+echo "Copying tutorial..."
+cp ../Tutorial.docx "./dist/Central Access Reader.app/Contents/Resources/"
 
-echo "Copying version file…"
-cp ./version.txt "./dist/Central Access Reader/"
+echo "Copying version file..."
+cp ../version.txt "./dist/Central Access Reader.app/Contents/Resources/"
+
+#echo "Renaming the .app bundle..."
+#mv ./dist/main.app "./dist/Central Access Reader.app"
 
 # Package it all up using the created "dist" folder
-pkgbuild --identifier com.cwu.centralaccessreader --version 1.02 --root ./dist "Central Access Reader.pkg"
+#echo "Creating package..."
+#pkgbuild --identifier com.cwu.centralaccessreader --version 1.02 --root ./dist "Central Access Reader.pkg"
+
+cd ..
 
 echo "----------------------------------"
 echo "Done!"

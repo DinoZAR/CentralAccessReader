@@ -13,9 +13,9 @@ import urllib
 import re
 from cStringIO import StringIO
 from threading import Thread
-from src.gui.bookmarks import BookmarkNode
-from src.misc import program_path, temp_path
-from src.docx.paragraph import parseParagraph, parseTable, IMAGE_TRANSLATION
+from gui.bookmarks import BookmarkNode
+from misc import program_path, temp_path
+from docx.paragraph import parseParagraph, parseTable, IMAGE_TRANSLATION
 
 ROOT_PATH = program_path('src/docx')
 

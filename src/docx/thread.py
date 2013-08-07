@@ -5,7 +5,7 @@ Created on Jul 10, 2013
 '''
 import traceback
 from PyQt4.QtCore import QThread, pyqtSignal
-from src.docx.importer import DocxDocument
+from docx.importer import DocxDocument
 
 class DocxImporterThread(QThread):
     '''

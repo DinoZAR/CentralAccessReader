@@ -9,7 +9,7 @@ import StringIO
 import traceback
 from lxml import etree
 from records import *
-from src.misc import temp_path, REPORT_BUG_URL
+from misc import temp_path, REPORT_BUG_URL
 
 def parseMTEF(mtefString, debug=False):
     '''

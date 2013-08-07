@@ -7,8 +7,8 @@ import os
 import traceback
 from lxml import etree
 from lxml import html as HTML
-from src.mathtype.parser import parseWMF, MathTypeParseError
-from src.misc import program_path, temp_path, REPORT_BUG_URL
+from mathtype.parser import parseWMF, MathTypeParseError
+from misc import program_path, temp_path, REPORT_BUG_URL
 from cStringIO import StringIO
 
 # The path to this particular module

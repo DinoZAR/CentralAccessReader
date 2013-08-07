@@ -9,7 +9,7 @@ from lxml import etree
 import copy
 from misc import app_data_path, pattern_databases
 
-from src.forms.speech_settings_ui import Ui_SpeechSettings
+from forms.speech_settings_ui import Ui_SpeechSettings
 
 class SpeechSettings(QtGui.QDialog):
     '''
@@ -63,7 +63,6 @@ class SpeechSettings(QtGui.QDialog):
         voiceList = self.mainWindow.speechThread.getVoiceList()
         self.ui.voiceComboBox.blockSignals(True)
         for v in voiceList:
-            print 'Item in voice list:', v
             self.ui.voiceComboBox.addItem(v[0], userData=v[1])
         
         if len(self.configuration.voice) > 0:
