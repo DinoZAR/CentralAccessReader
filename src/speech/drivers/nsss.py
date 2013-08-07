@@ -213,6 +213,7 @@ class NSSpeechSynthesizerDriver(NSObject):
                 break
         
         if not checkStopFunction():
+            
             progressCallback(30)
             labelCallback('Speaking into AIFF...')
             
@@ -221,7 +222,8 @@ class NSSpeechSynthesizerDriver(NSObject):
             url.initFileURLWithPath_(aiffPath)
             
             # Speak string into TTS 
-            self._tts.startSpeakingString_toURL_(myString, url)
+            success = self._tts.startSpeakingString_toURL_(myString, url)
+            
             while self._tts.isSpeaking() and not checkStopFunction():
                 pass
             
@@ -229,8 +231,9 @@ class NSSpeechSynthesizerDriver(NSObject):
             
             # Convert to MP3
             if not checkStopFunction():
+                
                 labelCallback('Converting to MP3...')
-                lameExe = program_path('src/lame_mac') 
+                lameExe = '"' + program_path('src/lame_mac') + '"'
                 
                 lameCommand = lameExe + ' -h "' + aiffPath + '" "' + mp3Path + '"'
                 ps = subprocess.Popen(lameCommand, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)

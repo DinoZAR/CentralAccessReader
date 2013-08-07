@@ -156,6 +156,8 @@ class Configuration(object):
             query = configDOM.xpath('/Configuration/Voice')
             if len(query) > 0:
                 self.voice = query[0].text
+                if self.voice is None:
+                    self.voice = ''
             else:
                 self.voice = ''
             

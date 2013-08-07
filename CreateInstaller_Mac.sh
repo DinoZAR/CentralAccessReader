@@ -50,12 +50,13 @@ cp ../Tutorial.docx "./dist/Central Access Reader.app/Contents/Resources/"
 echo "Copying version file..."
 cp ../version.txt "./dist/Central Access Reader.app/Contents/Resources/"
 
-#echo "Renaming the .app bundle..."
-#mv ./dist/main.app "./dist/Central Access Reader.app"
-
 # Package it all up using the created "dist" folder
 #echo "Creating package..."
 #pkgbuild --identifier com.cwu.centralaccessreader --version 1.02 --root ./dist "Central Access Reader.pkg"
+
+#echo "Moving app and version file to top level..."
+#cp ../version.txt ../../../
+#mv "./dist/Central Access Reader.app" "../../../Central Access Reader.app"
 
 cd ..
 
