@@ -29,13 +29,10 @@
 // ------------------------------------------------------------------------------
 // Symbol Code
 // ------------------------------------------------------------------------------
-
 import _codes.txt
-
 import _Numbers.txt
 
 // Unicodes and MathML codes for operators
-
 import _Unicodes.txt
 
 e [variable] = mi("e") -> '"e"'
@@ -43,35 +40,28 @@ i [variable] = mi("i") -> '"i"'
 z [variable] = mi("z") -> '"z"'
 
 bbcapR = mi("&#8477;") -> 'all real numbers'
-
+
 // Other symbols
 
 // Strikes and Slashes
-
 import _Vocab.txt
-
 import _BordersSlashes.txt
-
 
 //---------------------------------------------------------------
 // Trigonometry-Specific
 //---------------------------------------------------------------
-
 import _Trig.txt
 
 // Products and Unions
-
 import _Integrals.txt
 
 //Powers and Primes
-
 import _PowersPrimes.txt
 
 // Syntax Quirks
 doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'
 doubleBarSyn = munder(munder(mrow(+) bar) bar) -> '{1} over double bar'
 doubleDagger = dagger dagger -> 'double dagger'
-
 
 // ------------------------------------------------------------------------------
 // Fraction-based
@@ -82,7 +72,6 @@ integral = msub([integral] ?) -> '{1} sub {2} of,'
 infinity = mi("&#8734;") -> 'infinity'
 infinity = mn("&#8734;") -> 'infinity'
 
-
 // ------------------------------------------------------------------------------
 // Conditions for arrows based on over or under
 // ------------------------------------------------------------------------------
@@ -92,7 +81,6 @@ overUnderArrowB = munderover(rightArrow mrow(+) mrow(+)) -> '{2}, above {1}, sub
 overUnderArrowB = munderover(leftArrow mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
 overUnderArrowB = munderover(bothArrow mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
 overUnderArrowB = munderover(rightHarpoon mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
-
 
 // ------------------------------------------------------------------------------
 // Statistics and Finance
@@ -108,7 +96,6 @@ probableError = P point E point -> 'probable error'
 standardDev = s d -> 'standard deviation'
 standardDev = s point d point -> 'standard deviation'
 
-
 // ------------------------------------------------------------------------------
 // Under-Over, Integrals, Products, and Summations
 // ------------------------------------------------------------------------------
@@ -117,7 +104,6 @@ backPrimes = mmultiscripts(? ? ? ?) -> '{4} {1}'
 // Limits
 limit = munderover(mrow(l i m) mrow(? ? ?) ?) -> 'the limit as {4}, approaches {6}, of'
 limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4}, of'
-
 
 // ------------------------------------------------------------------------------
 // Parenthetical Expressions
@@ -141,18 +127,12 @@ matrix = mtable(#) -> 'matrix {1}'
 matrixPar = mfenced(mrow(mtable(+))) -> 'matrix {1}'
 tableColumn = mtd(+) -> '{1},'
 tableRow = mtr(+) -> 'row, {1}'
-
 
 // ------------------------------------------------------------------------------
 // Generic Fallbacks, Final Collectors
 // ------------------------------------------------------------------------------
-
 import _SoftFractions.txt
-
 import _Dollars.txt
-
 import _Fractions.txt
-
 import _Fences.txt
-
 import _Final.txt

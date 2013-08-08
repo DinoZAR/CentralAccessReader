@@ -32,9 +32,7 @@
 // ------------------------------------------------------------------------------
 // Symbol Code
 // ------------------------------------------------------------------------------
-
 import _codes.txt
-
 import _Numbers.txt
 
 // Unicodes and MathML codes for operators
@@ -51,7 +49,6 @@ tilde = mi("~") -> 'not'
 times = mi("&#8727;") -> 'dot'
 times = mi("&#8901;") -> 'dot'
 times = mi("&#59791;") -> 'dot'
-
 
 // Parentheses, Brackets, Braces, and Bars
 closeBrace = mo("}") -> 'close curly bracket'
@@ -95,9 +92,7 @@ i [variable] = mi("i") -> '"i"'
 z [variable] = mi("z") -> '"z"'
 
 bbcapR = mi("&#8477;") -> 'blackboard cap R'
-
 infinityLogic = infinity -> 'lemniscate'
-
 
 // ------------------------------------------------------------------------------
 // Logic-based
@@ -113,15 +108,12 @@ union = munderover(union mrow() mrow()) -> 'union'
 
 // Strikes and Slashes
 import _Vocab.txt
-
 import _BordersSlashes.txt
-
 dubsub = msub( + mrow( + comma + )) -> '{1} double subscript {2} comma {4}'
 
 //---------------------------------------------------------------
 // Trigonometry-Specific
 //---------------------------------------------------------------
-
 import _Trig.txt
 import _Integrals.txt
 import _PowersPrimes.txt
@@ -131,12 +123,10 @@ doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'
 doubleBarSyn = munder(munder(mrow(+) bar) bar) -> '{1} over double bar'
 doubleDagger = dagger dagger -> 'double dagger'
 
-
 // ------------------------------------------------------------------------------
 // Fraction-based
 // ------------------------------------------------------------------------------
 integral = msub([integral] ?) -> '{1} sub {2} of,'
-
 
 // ------------------------------------------------------------------------------
 // Conditions for arrows based on over or under
@@ -148,7 +138,6 @@ overUnderArrowB = munderover(leftArrow mrow(+) mrow(+)) -> '{2}, above {1}, sub 
 overUnderArrowB = munderover(bothArrow mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
 overUnderArrowB = munderover(rightHarpoon mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
 
-
 // ------------------------------------------------------------------------------
 // Under-Over, Integrals, Products, and Summations
 // ------------------------------------------------------------------------------
@@ -157,7 +146,6 @@ backPrimes = mmultiscripts(? ? ? ?) -> '{4} {1}'
 // Limits
 limit = munderover(mrow(l i m) mrow(? ? ?) ?) -> 'the limit as {4}, approaches {6}, of'
 limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4}, of'
-
 
 // ------------------------------------------------------------------------------
 // Parenthetical Expressions
@@ -184,11 +172,9 @@ detMat = d e t matrixPar -> 'determinant of the {4}'
 detMat = d e t matrix -> 'determinant of the {4}'
 determ = d e t -> 'determinant of the square matrix'
 
-
 // ------------------------------------------------------------------------------
 // Generic Fallbacks, Final Collectors
 // ------------------------------------------------------------------------------
-
 fencedABS = mfenced<open="|",close="|">(+) -> 'determinant of the square matrix {1},'
 
 import _SoftFractions.txt

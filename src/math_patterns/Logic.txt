@@ -31,20 +31,14 @@
 // ------------------------------------------------------------------------------
 // Symbol Code
 // ------------------------------------------------------------------------------
-
-weirdSpace = mi("&#1160;") -> ' '
+weirdSpace = mi("&#1160;") -> ' '
 
 import _codes.txt
-
 import _Numbers.txt
 
 // Unicodes and MathML codes for operators
-
-slash = divideBack -> ', back slash,'
-slash = divide -> ', forward slash,'
-
-cross = timesCross -> 'cross'
-
+slash = divideBack -> ', back slash,'slash = divide -> ', forward slash,'
+cross = timesCross -> 'cross'
 diamond = mi("&#8900;") -> 'diamond'
 identical = mi("&#8801;") -> 'triple bars'
 plus = mo("+") -> 'plus sign'
@@ -54,7 +48,8 @@ tilde = mo("~") -> 'tilde'
 tilde = mi("~") -> 'tilde'
 times = mi("&#8901;") -> 'dot'
 times = mi("&#59791;") -> 'dot'
-times = times -> 'dot'
+times = times -> 'dot'
+
 // Parentheses, Brackets, Braces, and Bars
 closeBrace = mo("}") -> 'close curly bracket'
 closeBracket = mo("]") -> 'close square bracket'
@@ -91,7 +86,7 @@ or = mo("&#8744;") -> 'wedge (or)'
 properSubsetRight = mo("&#8834;") -> 'subset'
 properSubsetLeft = mo("&#8835;") -> 'horseshoe'
 therefore = mo("&#8756;") -> 'triple dot'
-
+
 e [variable] = mi("e") -> '"e"'
 i [variable] = mi("i") -> '"i"'
 z [variable] = mi("z") -> '"z"'
@@ -99,7 +94,6 @@ z [variable] = mi("z") -> '"z"'
 bbcapR = mi("&#8477;") -> 'blackboard cap R'
 
 // Other symbols
-
 
 // ------------------------------------------------------------------------------
 // Logic-based
@@ -114,31 +108,24 @@ quadBars = munder(identical bar) -> 'quadruple bars'
 union = munderover(union mrow() mrow()) -> 'union'
 
 // Strikes and Slashes
-
 import _Vocab.txt
-
 import _BordersSlashes.txt
-
 
 //---------------------------------------------------------------
 // Trigonometry-Specific
 //---------------------------------------------------------------
-
 import _Trig.txt
 
 // Products and Unions
-
 import _Integrals.txt
 
 //Powers and Primes
-
 import _PowersPrimes.txt
 
 // Syntax Quirks
 doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'
 doubleBarSyn = munder(munder(mrow(+) bar) bar) -> '{1} over double bar'
 doubleDagger = dagger dagger -> 'double dagger'
-
 
 // ------------------------------------------------------------------------------
 // Fraction-based
@@ -148,7 +135,6 @@ integral = msub([integral] ?) -> '{1} sub {2} of,'
 // Other symbols
 infinityLogic = infinity -> 'lemniscate'
 infinityLogic = infinity -> 'lemniscate'
-
 
 // ------------------------------------------------------------------------------
 // Conditions for arrows based on over or under
@@ -160,17 +146,14 @@ overUnderArrowB = munderover(leftArrow mrow(+) mrow(+)) -> '{2}, above {1}, sub 
 overUnderArrowB = munderover(bothArrow mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
 overUnderArrowB = munderover(rightHarpoon mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
 
-
 // ------------------------------------------------------------------------------
 // Under-Over, Integrals, Products, and Summations
 // ------------------------------------------------------------------------------
 backPrimes = mmultiscripts(? ? ? ?) -> '{4} {1}'
 
 // Limits
-
 limit = munderover(mrow(l i m) mrow(? ? ?) ?) -> 'the limit as {4}, approaches {6}, of'
 limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4}, of'
-
 
 // ------------------------------------------------------------------------------
 // Parenthetical Expressions
@@ -193,18 +176,12 @@ matrix = mtable(#) -> 'truth table {1}'
 matrixPar = mfenced(mrow(mtable(+))) -> 'truth table {1}'
 tableColumn = mtd(+) -> '{1},'
 tableRow = mtr(+) -> 'row, {1}'
-
 
 // ------------------------------------------------------------------------------
 // Generic Fallbacks, Final Collectors
 // ------------------------------------------------------------------------------
-
 import _SoftFractions.txt
-
 import _Dollars.txt
-
 import _Fractions.txt
-
 import _Fences.txt
-
 import _Final.txt

@@ -40,11 +40,14 @@ class NSSpeechSynthesizerDriver(NSObject):
             self._tts.setRate_(200)
             self._pauseLength = 0
             
-            self._done = False
+            self._done = True
         
         return self
     
     def destroy(self):
+        '''
+        Do any cleanup before this driver gets dereferenced.
+        '''
         self._tts.setDelegate_(None)
         del self._tts
 
@@ -132,6 +135,8 @@ class NSSpeechSynthesizerDriver(NSObject):
         '''
         This loop is used to queue my speech onto the TTS engine.
         '''
+        self._done = False
+        
         while self._grabbingSpeech and self._running:
             self.generatorLock.lock()
             if self._speechGenerator is not None:
@@ -338,7 +343,4 @@ class NSSpeechSynthesizerDriver(NSObject):
         if self._signalsEnabled:
             for cb in self._delegator['onWord']:
                 cb[1](wordRange.location, wordRange.length, self._currentLabel, self._currentStream, word, self._isFirstSpeech)
-            
-    def __del__(self):
-        self.destroy()
         

@@ -89,8 +89,16 @@ class SpeechWorker(QThread):
         self.ttsEngine.disconnect(wordHandle)
         self.ttsEngine.disconnect(finishHandle)
         self.ttsEngine.disconnect(streamHandle)
+        
+        print 'driver: stop TTS'
         self.ttsEngine.stop()
+        print 'driver: waiting for TTS to finish'
+        self.ttsEngine.waitUntilDone()
+        print 'driver: destroying the engine'
+        self.ttsEngine.destroy()
         del self.ttsEngine
+        
+        print 'driver: TTS engine cleaned up'
         
         self._done = True
         

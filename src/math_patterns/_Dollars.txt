@@ -1,5 +1,4 @@
 // Numbers
-
 decimates = point zero -> '{1} {2}'
 decimates = point one -> '{1} {2}'
 decimates = point two -> '{1} {2}'
@@ -56,7 +55,6 @@ decimates = point infinity -> '{1} {2}'
 decimates = point number -> '{1} {2}'
 
 // Dollars
-
 dollars = dollarSign zero decimates -> '{2} {3} dollars'
 dollars = dollarSign one decimates -> '{2} {3} dollars'
 dollars = dollarSign two decimates -> '{2} {3} dollars'

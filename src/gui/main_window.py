@@ -194,6 +194,7 @@ class MainWindow(QtGui.QMainWindow):
         # Save the current configuration
         self.configuration.zoom_content = self.ui.webView.getZoom()
         self.configuration.saveToFile(misc.app_data_path('configuration.xml'))
+        print 'window: speech thread quitting...'
         self.speechThread.quit()
         
     def resizeEvent(self, event):

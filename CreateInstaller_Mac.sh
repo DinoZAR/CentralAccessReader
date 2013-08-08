@@ -12,7 +12,9 @@ mkdir -p "./dist/Central Access Reader.app/Contents/Resources"
 echo "Copying application icon file..."
 cp ./icons.icns "./dist/Central Access Reader.app/Contents/Resources"
 
+#
 # JavaScript files
+#
 
 echo "Copying MathJax..."
 mkdir -p "./dist/Central Access Reader.app/Contents/Resources/mathjax"
@@ -32,7 +34,10 @@ echo "Copying JavaScript functions and configurations..."
 mkdir -p "./dist/Central Access Reader.app/Contents/Resources/src/javascript"
 cp -R ./javascript "./dist/Central Access Reader.app/Contents/Resources/src/"
 
+#
 # Other files
+#
+
 echo "Copying the MathML pattern databases..."
 mkdir -p "./dist/Central Access Reader.app/Contents/Resources/src/math_patterns"
 cp -R ./math_patterns "./dist/Central Access Reader.app/Contents/Resources/src/"
@@ -50,13 +55,13 @@ cp ../Tutorial.docx "./dist/Central Access Reader.app/Contents/Resources/"
 echo "Copying version file..."
 cp ../version.txt "./dist/Central Access Reader.app/Contents/Resources/"
 
-# Package it all up using the created "dist" folder
-#echo "Creating package..."
-#pkgbuild --identifier com.cwu.centralaccessreader --version 1.02 --root ./dist "Central Access Reader.pkg"
+#
+# Package it all up using the created .app
+#
 
-#echo "Moving app and version file to top level..."
-#cp ../version.txt ../../../
-#mv "./dist/Central Access Reader.app" "../../../Central Access Reader.app"
+# Get the size of the app
+zarnky=$(du -sk "./dist/Central Access Reader.app" | cut -d'.' -f1)
+echo "App size: $zarnky"
 
 cd ..
 

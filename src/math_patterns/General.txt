@@ -29,13 +29,10 @@
 // ------------------------------------------------------------------------------
 // Symbol Code
 // ------------------------------------------------------------------------------
-
 import _codes.txt
-
 import _Numbers.txt
 
 // Unicodes and MathML codes for operators
-
 import _Unicodes.txt
 
 e [variable] = mi("e") -> '"e"'
@@ -47,7 +44,6 @@ bbcapR = mi("&#8477;") -> 'all real numbers'
 // Other symbols
 
 // Strikes and Slashes
-
 import _Vocab.txt
 import _BordersSlashes.txt
 
@@ -57,7 +53,8 @@ import _BordersSlashes.txt
 
 import _Trig.txt
 
-// Products and Unionsimport _Integrals.txt
+// Products and Unionsimport _Integrals.txt
+
 //Powers and Primes
 import _PowersPrimes.txt
 
@@ -65,7 +62,6 @@ import _PowersPrimes.txt
 doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'
 doubleBarSyn = munder(munder(mrow(+) bar) bar) -> '{1} over double bar'
 doubleDagger = dagger dagger -> 'double dagger'
-
 
 // ------------------------------------------------------------------------------
 // Fraction-based
@@ -75,7 +71,6 @@ doubleDagger = dagger dagger -> 'double dagger'
 // Other symbols
 infinity = mi("&#8734;") -> 'infinity'
 infinity = mn("&#8734;") -> 'infinity'
-
 
 // ------------------------------------------------------------------------------
 // Conditions for arrows based on over or under
@@ -87,17 +82,14 @@ overUnderArrowB = munderover(leftArrow mrow(+) mrow(+)) -> '{2}, above {1}, sub 
 overUnderArrowB = munderover(bothArrow mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
 overUnderArrowB = munderover(rightHarpoon mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
 
-
 // ------------------------------------------------------------------------------
 // Under-Over, Integrals, Products, and Summations
 // ------------------------------------------------------------------------------
 backPrimes = mmultiscripts(? ? ? ?) -> '{4} {1}'
 
-
 // Limits
 limit = munderover(mrow(l i m) mrow(? ? ?) ?) -> 'the limit as {4}, approaches {6}, of'
 limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4}, of'
-
 
 // ------------------------------------------------------------------------------
 // Parenthetical Expressions
@@ -113,7 +105,6 @@ leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left super
 leftSub = msup( mrow() mrow(?)) -> 'left subscript {1},'
 leftSup = msub( mrow() mrow(?)) -> 'left superscript {1},'
 
-
 // ------------------------------------------------------------------------------
 // Matrices
 // ------------------------------------------------------------------------------
@@ -123,11 +114,9 @@ matrixPar = mfenced(mrow(mtable(+))) -> 'matrix {1}'
 tableColumn = mtd(+) -> '{1},'
 tableRow = mtr(+) -> 'row, {1}'
 
-
 // ------------------------------------------------------------------------------
 // Generic Fallbacks, Final Collectors
 // ------------------------------------------------------------------------------
-
 import _SoftFractions.txt
 import _Dollars.txt
 import _Fractions.txt

@@ -26,8 +26,8 @@ fraction = mfrac(mrow(four) mrow(nine)) -> 'four nineths'
 fraction = mfrac(mrow(five) mrow(nine)) -> 'five nineths'
 fraction = mfrac(mrow(seven) mrow(nine)) -> 'seven nineths'
 fraction = mfrac(mrow(eight) mrow(nine)) -> 'eight nineths'
-
 fraction = mfrac(mrow(one) mrow(ten)) -> 'one tenth'
+
 fraction = mfrac(mrow(three) mrow(ten)) -> 'three tenths'
 fraction = mfrac(mrow(seven) mrow(ten)) -> 'seven tenths'
 fraction = mfrac(mrow(nine) mrow(ten)) -> 'nine tenths'

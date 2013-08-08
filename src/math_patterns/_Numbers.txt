@@ -1,5 +1,4 @@
 // Numbers
-
 zero [number] = mn("0") -> 'zero'
 one [number] = mn("1") -> 'one'
 two [number] = mn("2") -> 'two'
@@ -53,7 +52,6 @@ fortyNine [number] = mn("49") -> 'forty nine'
 fifty [number] = mn("50") -> 'fifty'
 
 infinity = mi("&#8734;") -> 'infinity'
-
 infinity = mn("&#8734;") -> 'infinity'
 
 number [number] = mn(?) -> '"{1}"'

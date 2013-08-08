@@ -49,6 +49,12 @@ class SAPI5Driver(object):
         self._alreadyRequestedSpeech = False
         self._requestSpeechHook = requestSpeechHook
         
+    def destroy(self):
+        '''
+        Do any cleanup required before this driver gets dereferenced.
+        '''
+        pass
+        
     def setRate(self, rate):
         '''
         Sets the rate of the voice, a value between 0-100

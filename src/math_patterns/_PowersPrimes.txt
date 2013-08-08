@@ -1,4 +1,4 @@
-//Specifically for twos
+// Specifically for twos
 
 powerOne = msup(mrow( two ) mrow(one)) -> '{1} , to the first power,'
 powerFour = msup(mrow( two ) mrow(four)) -> '{1} , to the fourth power,'
