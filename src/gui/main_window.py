@@ -276,7 +276,11 @@ class MainWindow(QtGui.QMainWindow):
         self.changeVoice.emit(self.configuration.voice)
         
         # Update the math database to use
-        self.changeMathDatabase.emit(misc.pattern_databases()[self.configuration.math_database])
+        try:
+            self.changeMathDatabase.emit(misc.pattern_databases()[self.configuration.math_database])
+        except KeyError:
+            self.changeMathDatabase.emit(misc.pattern_databases()['General'])
+        
         try:
             if self.document is not None:
                 self.assigner.prepare(self.document.getMainPage())
