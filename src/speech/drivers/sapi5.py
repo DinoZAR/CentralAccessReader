@@ -288,13 +288,13 @@ class SAPI5Driver(object):
         pythoncom.CoInitialize()
     
         saveFileStream = SpFileStream()
-        saveFileStream.Format.Type = 18  # Some magic number that gives good results
-        saveFileStream.Open(temp_path('temp.wav'), 3)
+        saveFileStream.Format.Type = constants.SAFT32kHz16BitStereo
+        saveFileStream.Open(temp_path('tmp.wav'), 3)
     
         self._voice = SpVoice()
         self._voice.AudioOutputStream = saveFileStream
-        self._voice.EventInterests = 33790 # SVEAllEvents
-        self._voice.AlertBoundary = 64 # SVEPhoneme
+        self._voice.EventInterests = constants.SVEAllEvents
+        self._voice.AlertBoundary = constants.SVEPhoneme # SVEPhoneme
         
         if len(self._voiceId) > 0:
             token = self.voiceTokenFromId(self._voiceId)
