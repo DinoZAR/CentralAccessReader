@@ -24,8 +24,6 @@ from speech.worker import SpeechWorker
 import misc
 from updater import GetUpdateThread, RunUpdateInstallerThread, SETUP_FILE, SETUP_TEMP_FILE, run_update_installer, is_update_downloaded, save_server_version_to_temp
 
-print 'Imported all modules for MainWindow!'
-
 class MainWindow(QtGui.QMainWindow):
     loc = 0
     len = 0
@@ -194,7 +192,6 @@ class MainWindow(QtGui.QMainWindow):
         # Save the current configuration
         self.configuration.zoom_content = self.ui.webView.getZoom()
         self.configuration.saveToFile(misc.app_data_path('configuration.xml'))
-        print 'window: speech thread quitting...'
         self.speechThread.quit()
         
     def resizeEvent(self, event):
@@ -831,9 +828,10 @@ class MainWindow(QtGui.QMainWindow):
                 result = question.exec_()
                 
                 if result == QtGui.QMessageBox.Yes:
+                    # Run the installer and close this window down
                     run_update_installer()
-                    self.app.exit(0)
-            
+                    self.close()
+                                
             else:
                 question = UpdatePromptDialog(self)
                 result = question.exec_()
@@ -842,7 +840,8 @@ class MainWindow(QtGui.QMainWindow):
                     
                     from gui.download_progress import DownloadProgressWidget
                     
-                    # Create the widget for the download right below the content view
+                    # Create the widget for the download right below the content 
+                    # view
                     self.updateDownloadProgress = DownloadProgressWidget(self)
                     self.updateDownloadProgress.setUrl(SETUP_FILE)
                     self.updateDownloadProgress.setDestination(SETUP_TEMP_FILE)

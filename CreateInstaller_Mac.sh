@@ -4,7 +4,9 @@ cd src
 # Cleanup what we had before
 #
 echo "Cleaning up previous build..."
-rm -rf build dist
+rm -rf ./build
+rm -rf ./dist
+sleep 2
 
 #
 # Build the app
@@ -64,8 +66,6 @@ cp ./CAR_DMG_Background.png ./dist/.background
 
 echo "Creating Application folder alias..."
 ABS_DIR=`cd "$1"; pwd`
-echo "Absolute path here: $ABS_DIR"
-
 echo '
 set the app_folder to POSIX file "/Applications" as alias
 set the destination to the POSIX file ("'$ABS_DIR'" & "/dist") as alias
@@ -110,20 +110,17 @@ tell application "Finder"
 		set text size of theViewOptions to 16
 		set background picture of theViewOptions to file ".background:CAR_DMG_Background.png"
 		
-		delay 3
-		
 		# Set the position and colors of the icons
-		set label index of item "Central Access Reader.app" of container window to 2
-		set label index of item "Applications" of container window to 2
-		
 		set position of file "Applications" to {500, 250}
-		
-		delay 3
-		
 		set position of file "Central Access Reader.app" to {200, 250}
 		
-		# Update and close out
+		# Update and eject
 		update without registering applications
+		
+		# Have to do this so that icon positions are correctly updated
+		close
+		open
+		
 		delay 5
 		eject
 	end tell
@@ -134,17 +131,17 @@ end tell
 # Finalize the DMG by compressing and setting the correct permissions on it
 #
 sync
-hdiutil convert "./dist/tmp.dmg" -format UDZO -imagekey zlib-level=9 -o "./dist/Central Access Reader.dmg"
+hdiutil convert "./dist/tmp.dmg" -format UDZO -imagekey zlib-level=9 -o "./dist/Central_Access_Reader.dmg"
 rm -f "./dist/tmp.dmg"
 
 echo "Moving the files to top level..."
-mv "./dist/Central Access Reader.dmg" "../../../Central Access Reader.dmg"
+mv "./dist/Central_Access_Reader.dmg" "../../../Central_Access_Reader.dmg"
 cp ../version.txt ../../../version.txt
 
 cd ..
 
 echo "----------------------------------"
 echo "Done!"
-echo "Your file can be found as Central Access Reader Release.dmg"
+echo "Your file can be found as Central_Access_Reader.dmg"
 echo "The version file is called version.txt"
 echo "----------------------------------"

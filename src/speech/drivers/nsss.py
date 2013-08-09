@@ -120,7 +120,7 @@ class NSSpeechSynthesizerDriver(NSObject):
         '''
         Starts the TTS engine.
         '''
-        print 'driver: starting TTS'
+        #print 'driver: starting TTS'
         self._isFirstSpeech = True
         self._currentLabel = 'text'
         self._grabbingSpeech = True
@@ -154,7 +154,7 @@ class NSSpeechSynthesizerDriver(NSObject):
                     
                     # Pause here if it is set
                     if self._grabbingSpeech and self._running:
-                        print 'driver: pausing between paragraphs'
+                        #print 'driver: pausing between paragraphs'
                         time.sleep(self._pauseLength / 5.0)
             
                 self._speechGenerator = None
@@ -171,7 +171,7 @@ class NSSpeechSynthesizerDriver(NSObject):
         for c in self._delegator['onFinish']:
             c[1]()
         
-        print 'driver: done!'
+        #print 'driver: done!'
         self._done = True
         
         return
@@ -181,7 +181,7 @@ class NSSpeechSynthesizerDriver(NSObject):
         Stops the TTS playback. The TTS engine will still be running in the
         background.
         '''
-        print 'driver: stopping TTS'
+        #print 'driver: stopping TTS'
         self._running = False
         self._tts.stopSpeaking()
 

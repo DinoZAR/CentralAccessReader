@@ -99,22 +99,24 @@ class DownloadThread(QThread):
         
     def run(self):
         self._stop = False
-            
-        destFile = open(self._dest, 'wb')
         
         def reportHook(percent):
             # I'm doing this to minimize the number of signals sent
             if percent != self._lastPercent:
                 self.downloadProgress.emit(percent)
                 self._lastPercent = percent
-                        
-        response = urllib2.urlopen(self._url, timeout=2.0)
-        contents = self.chunkRead(response, reportHook)
-            
-        if not self._stop:
-            destFile.write(contents)
         
-        destFile.close()
+        try:
+            response = urllib2.urlopen(self._url, timeout=2.0)
+            contents = self.chunkRead(response, reportHook)
+        except Exception:
+            print 'updater: encountered exception trying to read from URL'
+            self._stop = True
+        
+        if not self._stop:
+            destFile = open(self._dest, 'wb')
+            destFile.write(contents)
+            destFile.close()
             
     def chunkRead(self, response, reportHook, chunkSize=4096):
         size = int(response.info().getheader('Content-Length').strip())

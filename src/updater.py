@@ -19,7 +19,9 @@ SETUP_FILE = ''
 if platform.system() == 'Windows':
     if platform.architecture()[0] == '64bit':
         SETUP_FILE = UPDATE_URL + 'CAR_Setup_64.exe'
-        
+elif platform.system() == 'Darwin':
+    SETUP_FILE = UPDATE_URL + 'Central_Access_Reader.dmg'
+    
 SETUP_TEMP_FILE = misc.temp_path(os.path.join('update', os.path.basename(SETUP_FILE)))
 VERSION_TEMP = misc.temp_path(os.path.join('update', 'version.txt'))
 
@@ -170,6 +172,18 @@ def run_exe(exePath):
     kwargs.update(close_fds=True)
     
     p = subprocess.Popen('"' + exePath + '"', **kwargs)
+    
+def open_dmg(dmgPath):
+    '''
+    Opens a .dmg in a Mac environment.
+    '''
+    kwargs = {}
+    kwargs.update(close_fds=True)
+    kwargs.update(shell=True)
+    
+    print 'misc: opening DMG', dmgPath
+    
+    p = subprocess.Popen('open "' + dmgPath + '"', **kwargs)
 
 def run_update_installer():
     '''
@@ -179,11 +193,8 @@ def run_update_installer():
     if os.path.exists(SETUP_TEMP_FILE):
         if platform.system() == 'Windows':
             run_exe(SETUP_TEMP_FILE)
-            print 'Finished executing process!'
-            
-#             p = Process(target=run_exe, args=[SETUP_TEMP_FILE])
-#             p.start()
-#             p.cancel_join_thread()
+        elif platform.system() == 'Darwin':
+            open_dmg(SETUP_TEMP_FILE)
 
 class RunUpdateInstallerThread(Thread):
     

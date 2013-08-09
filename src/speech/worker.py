@@ -90,15 +90,10 @@ class SpeechWorker(QThread):
         self.ttsEngine.disconnect(finishHandle)
         self.ttsEngine.disconnect(streamHandle)
         
-        print 'driver: stop TTS'
         self.ttsEngine.stop()
-        print 'driver: waiting for TTS to finish'
         self.ttsEngine.waitUntilDone()
-        print 'driver: destroying the engine'
         self.ttsEngine.destroy()
         del self.ttsEngine
-        
-        print 'driver: TTS engine cleaned up'
         
         self._done = True
         
@@ -114,11 +109,11 @@ class SpeechWorker(QThread):
             pass
     
     def startPlayback(self):
-        print 'worker: Trying to start TTS'
+        #print 'worker: Trying to start TTS'
         self.ttsEngine.start()
     
     def stopPlayback(self):
-        print 'worker: Trying to stop TTS'
+        #print 'worker: Trying to stop TTS'
         self.ttsEngine.stop()
             
     def stopMP3(self):
@@ -174,7 +169,7 @@ class SpeechWorker(QThread):
     
     def setSpeechGenerator(self, gen):
         self.ttsEngine.setSpeechGenerator(gen)
-        print 'worker: finished setting the speech generator'
+        #print 'worker: finished setting the speech generator'
         
     def noMoreSpeech(self):
         '''
