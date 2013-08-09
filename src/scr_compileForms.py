@@ -52,14 +52,14 @@ def main():
             if os.path.exists(os.path.join(mydir, pyExportName)):
                 lastTime2 = os.path.getmtime(os.path.join(mydir, pyExportName))
                 if lastTime2 < lastTime:
-                    print 'Compiling resource', file
+                    print 'Compiling', file
                     data = check_output(['pyrcc4', os.path.join(mydir, file)])
                     pyfile = open(os.path.join(mydir, pyExportName), 'wb')
                     pyfile.write(data)
                     pyfile.close()
             
             else:
-                print 'Compiling resource', file
+                print 'Compiling', file
                 data = check_output(['pyrcc4', os.path.join(mydir, file)])
                 pyfile = open(os.path.join(mydir, pyExportName), 'wb')
                 pyfile.write(data)

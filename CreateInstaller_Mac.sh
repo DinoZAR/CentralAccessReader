@@ -107,6 +107,7 @@ tell application "Finder"
 		set theViewOptions to the icon view options of container window
 		set arrangement of theViewOptions to not arranged
 		set icon size of theViewOptions to 128
+		set text size of theViewOptions to 16
 		set background picture of theViewOptions to file ".background:CAR_DMG_Background.png"
 		
 		delay 3
@@ -135,6 +136,10 @@ end tell
 sync
 hdiutil convert "./dist/tmp.dmg" -format UDZO -imagekey zlib-level=9 -o "./dist/Central Access Reader.dmg"
 rm -f "./dist/tmp.dmg"
+
+echo "Moving the files to top level..."
+mv "./dist/Central Access Reader.dmg" "../../../Central Access Reader.dmg"
+cp ../version.txt ../../../version.txt
 
 cd ..
 

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/about.ui'
+# Form implementation generated from reading ui file '/Users/graffes/Documents/workspace/NiftyProseArticulator/src/forms/about.ui'
 #
-# Created: Mon Jul 08 13:09:39 2013
-#      by: PyQt4 UI code generator 4.10
+# Created: Fri Aug  9 08:45:47 2013
+#      by: PyQt4 UI code generator 4.10.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_AboutDialog(object):
     def setupUi(self, AboutDialog):
         AboutDialog.setObjectName(_fromUtf8("AboutDialog"))
-        AboutDialog.resize(598, 309)
+        AboutDialog.resize(598, 322)
         font = QtGui.QFont()
         font.setPointSize(12)
         AboutDialog.setFont(font)
@@ -39,7 +39,7 @@ class Ui_AboutDialog(object):
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         self.label_5 = QtGui.QLabel(AboutDialog)
         self.label_5.setText(_fromUtf8(""))
-        self.label_5.setPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/CAR_Logo.ico")))
+        self.label_5.setPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/CAR_Logo_256.png")))
         self.label_5.setObjectName(_fromUtf8("label_5"))
         self.horizontalLayout_2.addWidget(self.label_5)
         self.verticalLayout = QtGui.QVBoxLayout()
