@@ -274,7 +274,11 @@ class MainWindow(QtGui.QMainWindow):
         self.changeVoice.emit(self.configuration.voice)
         
         # Update the math database to use
-        self.changeMathDatabase.emit(misc.pattern_databases()[self.configuration.math_database])
+        try:
+            self.changeMathDatabase.emit(misc.pattern_databases()[self.configuration.math_database])
+        except KeyError:
+            self.changeMathDatabase.emit(misc.pattern_databases()['General'])
+        
         try:
             if self.document is not None:
                 self.assigner.prepare(self.document.getMainPage())
@@ -634,21 +638,12 @@ class MainWindow(QtGui.QMainWindow):
             self.document = self.docxImporterThread.getDocument()
             self.lastDocumentFilePath = self.docxImporterThread.getFilePath()
                     
-            # Wait until the document has completely loaded
-            while not self.pageLoaded:
-                QtGui.qApp.processEvents()
-                self.javascriptMutex.lock()
-                print 'Checking if page is loaded...'
-                loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsPageLoaded', [])).toBool()
-                self.javascriptMutex.unlock()
-                    
             # Wait until MathJax is done typesetting
             self.progressDialog.setLabelText('Typesetting math equations...')
             loaded = False
             while not loaded:
                 QtGui.qApp.processEvents()
                 self.javascriptMutex.lock()
-                print 'Checking math typesetting progress...'
                 progress = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetMathTypesetProgress', [])).toInt()
                 self.progressDialog.setProgress(progress[0])
                 loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsMathTypeset', [])).toBool()
@@ -657,15 +652,6 @@ class MainWindow(QtGui.QMainWindow):
         self.progressDialog.enableCancel()
         self.progressDialog.close()
         self.stopDocumentLoad = False
-        
-        # DEBUG PURPOSES
-        # Check to see if streaming the next content will work good.
-#         print 'Checking if streaming works as planned'
-#         myStuff = 'GARP'
-#         self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SetStreamBeginning', []))
-#         while self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HasMoreElements', [])).toBool():
-#             myStuff = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetNextElement', [])).toString())
-#             print 'Next:', [myStuff]
         
     def showOpenDocxDialog(self):
         filePath = QtGui.QFileDialog.getOpenFileName(self, 'Open Docx...',os.path.join(os.path.expanduser('~'), 'Documents'),'(*.docx)')
