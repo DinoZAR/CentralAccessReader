@@ -132,11 +132,58 @@ Cursor functions
 *******************************************************************************/
 
 function MoveCursorLeft() {
-	var reference = GetReferencePoint();
-	var elem = reference.element;
-	var startOffset = reference.offset;
 	
-	ResetHeadingStates();
+	// Get the previous element, whatever that happens to be.
+	var elem = PreviousElement(highlight);
+	var start = -1;
+	var offset = -1;
+	while (elem !== null) {
+		var equation = GetEquation(elem);
+		
+		// If it is an equation, select the top element
+		if (equation !== null) {
+			elem = equation;
+			break;
+		}
+		
+		// If it is a text node, try to see if I can get a word
+		else if (elem.nodeType == Node.TEXT_NODE) {
+			var regex = /\w+/g;
+			var m = null;
+			while (m = regex.exec(elem.data)) {
+				start = regex.lastIndex - m[0].length;
+				offset = regex.lastIndex;
+			}
+			
+			if (m !== null) {
+				break;
+			}
+		}
+		
+		else if (elem.nodeName === 'IMG') {
+			break;
+		}
+		
+		elem = PreviousElement(elem);
+	}
+	
+	// If I got something, get that next element highlighted
+	if (elem !== null) {
+		if (start >= 0) {
+			var r = document.createRange();
+			r.setStart(elem, start);
+			r.setEnd(elem, offset);
+			SetHighlight(false, r);
+		}
+		else {
+			var r = document.createRange();
+			r.selectNode(elem);
+			SetHighlight(false, r);
+		}
+		
+		// Scroll to the highlight
+		ScrollToHighlight(true);
+	}
 }
 
 function MoveCursorRight() {
@@ -145,7 +192,7 @@ function MoveCursorRight() {
 	var elem = NextElement(highlight);
 	var start = -1;
 	var offset = -1;
-	while (true) {
+	while (elem !== null) {
 		var equation = GetEquation(elem);
 		
 		// If it is an equation, select the top element
@@ -161,12 +208,13 @@ function MoveCursorRight() {
 			var m = regex.exec(elem.data);
 			if (m !== null) {
 				start = regex.lastIndex - m[0].length;
-				offset = regex.lastIndex - 1;
-				
-				console.debug('start: ' + start.toString());
-				console.debug('offset: ' + offset.toString());
+				offset = regex.lastIndex;
 				break;
 			}
+		}
+		
+		else if (elem.nodeName === 'IMG') {
+			break;
 		}
 		
 		elem = NextElement(elem);
@@ -185,6 +233,9 @@ function MoveCursorRight() {
 			r.selectNode(elem);
 			SetHighlight(false, r);
 		}
+		
+		// Scroll to the highlight
+		ScrollToHighlight(true);
 	}
 }
 
