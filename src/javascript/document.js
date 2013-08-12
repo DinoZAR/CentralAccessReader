@@ -131,6 +131,10 @@ function ResetHeadingStates() {
 Cursor functions
 *******************************************************************************/
 
+/**
+ * Moves the cursor to the left. It will go to the previous word or element,
+ * whichever is there.
+ */
 function MoveCursorLeft() {
 	
 	// Get the previous element, whatever that happens to be.
@@ -149,17 +153,17 @@ function MoveCursorLeft() {
 		// If it is a text node, try to see if I can get a word
 		else if (elem.nodeType == Node.TEXT_NODE) {
 			var regex = /\w+/g;
-			var m = null;
-			while (m = regex.exec(elem.data)) {
+			var m;
+			while ((m = regex.exec(elem.data)) !== null) {
 				start = regex.lastIndex - m[0].length;
 				offset = regex.lastIndex;
 			}
-			
-			if (m !== null) {
+			if (start >= 0) {
 				break;
 			}
 		}
 		
+		// If an image, get the image
 		else if (elem.nodeName === 'IMG') {
 			break;
 		}
@@ -186,6 +190,10 @@ function MoveCursorLeft() {
 	}
 }
 
+/**
+ * Moves the cursor to the right. It will get the next word or element,
+ * whichever is there.
+ */
 function MoveCursorRight() {
 	
 	// Get the next element, whatever that happens to be
@@ -213,6 +221,7 @@ function MoveCursorRight() {
 			}
 		}
 		
+		// If an image, get the image
 		else if (elem.nodeName === 'IMG') {
 			break;
 		}
@@ -239,16 +248,125 @@ function MoveCursorRight() {
 	}
 }
 
+/**
+ * This moves the cursor up, jumping to the beginning of the previous paragraph.
+ */
 function MoveCursorUp() {
-	var reference = GetReferencePoint();
-	var elem = reference.element;
+	var elem = highlight.parentNode.previousSibling;
 	
-	ResetHeadingStates();
+	if (elem.nodeName === 'BODY') {
+		elem = highlight;
+	}
+	
+	if (elem !== null) {
+		elem = DeepestChild(elem);
+	}
+	
+	var start = -1;
+	var offset = -1;
+	while (elem !== null) {
+		var equation = GetEquation(elem);
+		
+		// If it is an equation, select the top element
+		if (equation !== null) {
+			elem = equation;
+			break;
+		}
+		
+		// If it is a text node, try to see if I can get a word
+		else if (elem.nodeType == Node.TEXT_NODE) {
+			// Check if I got a word I can highlight
+			var regex = /\w+/g;
+			var m = regex.exec(elem.data);
+			if (m !== null) {
+				start = regex.lastIndex - m[0].length;
+				offset = regex.lastIndex;
+				break;
+			}
+		}
+		
+		// If an image, get the image
+		else if (elem.nodeName === 'IMG') {
+			break;
+		}
+		
+		elem = NextElement(elem);
+	}
+	
+	// If there is something next, get that next element highlighted
+	if (elem !== null) {
+		
+		console.debug('Element that is up: ' + elem.nodeName);
+		
+		if (start >= 0) {
+			var r = document.createRange();
+			r.setStart(elem, start);
+			r.setEnd(elem, offset);
+			SetHighlight(false, r);
+		}
+		else {
+			var r = document.createRange();
+			r.selectNode(elem);
+			SetHighlight(false, r);
+		}
+		
+		// Scroll to the highlight
+		ScrollToHighlight(true);
+	}
 }
 
+/**
+ * This moves the cursor down, jumping to the beginning of the next paragraph.
+ */
 function MoveCursorDown() {
-	var reference = GetReferencePoint();
-	var elem = reference.element;
+	var elem = NextElement(highlight.parentNode);
 	
-	ResetHeadingStates();
+	var start = -1;
+	var offset = -1;
+	while (elem !== null) {
+		var equation = GetEquation(elem);
+		
+		// If it is an equation, select the top element
+		if (equation !== null) {
+			elem = equation;
+			break;
+		}
+		
+		// If it is a text node, try to see if I can get a word
+		else if (elem.nodeType == Node.TEXT_NODE) {
+			// Check if I got a word I can highlight
+			var regex = /\w+/g;
+			var m = regex.exec(elem.data);
+			if (m !== null) {
+				start = regex.lastIndex - m[0].length;
+				offset = regex.lastIndex;
+				break;
+			}
+		}
+		
+		// If an image, get the image
+		else if (elem.nodeName === 'IMG') {
+			break;
+		}
+		
+		elem = NextElement(elem);
+	}
+	
+	// If there is something next, get that next element highlighted
+	if (elem !== null) {
+		if (start >= 0) {
+			var r = document.createRange();
+			r.setStart(elem, start);
+			r.setEnd(elem, offset);
+			SetHighlight(false, r);
+		}
+		else {
+			var r = document.createRange();
+			r.selectNode(elem);
+			SetHighlight(false, r);
+		}
+		
+		// Scroll to the highlight
+		ScrollToHighlight(true);
+	}
 }

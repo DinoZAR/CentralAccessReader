@@ -552,6 +552,7 @@ color: ''' + self._createRGBStringFromQColor(self.color_highlightLineText) + '''
 {
 background-color: ''' + highlightTextBackgroundColor + ''';
 color: ''' + highlightTextColor + ''';
+box-shadow: 1px 1px 7px ''' + highlightTextBackgroundColor + ''';
 -webkit-border-radius: 3px;
 display: inline-block;
 z-index: 2;

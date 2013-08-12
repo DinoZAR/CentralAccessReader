@@ -200,8 +200,13 @@ function PreviousElement(elem) {
 			return null;
 		}
 		else {
-			elem = PreviousElement(elem.parentNode);
-			return elem;
+			if (elem.parentNode.nodeName === 'BODY') {
+				return null;
+			}
+			else {
+				elem = PreviousElement(elem.parentNode);
+				return elem;
+			}
 		}
 	}
 	else {

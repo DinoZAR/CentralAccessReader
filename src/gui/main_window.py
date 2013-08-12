@@ -340,6 +340,7 @@ class MainWindow(QtGui.QMainWindow):
     def stopSpeech(self):
         self.stopPlayback.emit()
         self.setSettingsEnableState(True)
+        self.ui.webView.setFocus()
         
     def resetTTSStates(self):
         self.ttsStates = {'lastElement' : ['', -1, '', -1], 
@@ -390,6 +391,7 @@ class MainWindow(QtGui.QMainWindow):
         
         self.setSettingsEnableState(True)
         self.resetTTSStates()
+        self.ui.webView.setFocus()
         
     def sendMoreSpeech(self):
         '''
@@ -652,6 +654,8 @@ class MainWindow(QtGui.QMainWindow):
         self.progressDialog.enableCancel()
         self.progressDialog.close()
         self.stopDocumentLoad = False
+        
+        self.ui.webView.setFocus()
         
     def showOpenDocxDialog(self):
         filePath = QtGui.QFileDialog.getOpenFileName(self, 'Open Docx...',os.path.join(os.path.expanduser('~'), 'Documents'),'(*.docx)')
