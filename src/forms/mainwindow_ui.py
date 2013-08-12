@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/graffes/Documents/workspace/NiftyProseArticulator/src/forms/mainwindow.ui'
+# Form implementation generated from reading ui file 'C:\Users\GraffeS\workspace\nifty-prose-articulator\src\forms/mainwindow.ui'
 #
-# Created: Fri Aug  2 11:32:14 2013
-#      by: PyQt4 UI code generator 4.10.2
+# Created: Mon Aug 12 16:03:27 2013
+#      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(1184, 673)
+        MainWindow.resize(1178, 673)
         font = QtGui.QFont()
         font.setPointSize(12)
         MainWindow.setFont(font)
@@ -147,7 +147,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 945, 78))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 931, 69))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.horizontalLayout = QtGui.QHBoxLayout(self.scrollAreaWidgetContents)
         self.horizontalLayout.setSpacing(0)
@@ -344,7 +344,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.addWidget(self.splitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1184, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1178, 21))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))
@@ -463,14 +463,14 @@ class Ui_MainWindow(object):
         self.collapseBookmarksButton.setText(_translate("MainWindow", "Collapse", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.bookmarksTab), _translate("MainWindow", "Headings", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.pagesTab), _translate("MainWindow", "Pages", None))
-        self.playButton.setToolTip(_translate("MainWindow", "Read (Ctrl+R)", None))
-        self.pauseButton.setToolTip(_translate("MainWindow", "Stop (Ctrl+S)", None))
-        self.speechSettingsButton.setToolTip(_translate("MainWindow", "Speech Settings (F1)", None))
-        self.colorSettingsButton.setToolTip(_translate("MainWindow", "Highlighting, Colors, and Fonts Settings (F2)", None))
-        self.saveToMP3Button.setToolTip(_translate("MainWindow", "Save All To MP3 (Ctrl+Shift+S)", None))
-        self.zoomInButton.setToolTip(_translate("MainWindow", "Zoom In (Ctrl+=)", None))
-        self.zoomOutButton.setToolTip(_translate("MainWindow", "Zoom Out (Ctrl+-)", None))
-        self.zoomResetButton.setToolTip(_translate("MainWindow", "Reset Zoom (Ctrl+Backspace)", None))
+        self.playButton.setToolTip(_translate("MainWindow", "Read", None))
+        self.pauseButton.setToolTip(_translate("MainWindow", "Stop", None))
+        self.speechSettingsButton.setToolTip(_translate("MainWindow", "Speech Settings", None))
+        self.colorSettingsButton.setToolTip(_translate("MainWindow", "Highlighting, Colors, and Fonts Settings", None))
+        self.saveToMP3Button.setToolTip(_translate("MainWindow", "Save All To MP3", None))
+        self.zoomInButton.setToolTip(_translate("MainWindow", "Zoom In", None))
+        self.zoomOutButton.setToolTip(_translate("MainWindow", "Zoom Out", None))
+        self.zoomResetButton.setToolTip(_translate("MainWindow", "Reset Zoom", None))
         self.label_2.setText(_translate("MainWindow", "Volume:", None))
         self.label.setText(_translate("MainWindow", "Rate:", None))
         self.rateSlider.setToolTip(_translate("MainWindow", "Rate", None))
@@ -478,6 +478,10 @@ class Ui_MainWindow(object):
         self.getUpdateButton.setToolTip(_translate("MainWindow", "Update Available!", None))
         self.getUpdateButton.setText(_translate("MainWindow", "Update Available!", None))
         self.searchLabel.setText(_translate("MainWindow", "Search", None))
+        self.searchUpButton.setToolTip(_translate("MainWindow", "Previous Occurrence", None))
+        self.searchDownButton.setToolTip(_translate("MainWindow", "Next Occurrence", None))
+        self.searchSettingsButton.setToolTip(_translate("MainWindow", "Search Settings", None))
+        self.closeSearchButton.setToolTip(_translate("MainWindow", "Close Search", None))
         self.menuFile.setTitle(_translate("MainWindow", "&File", None))
         self.menuMathML.setTitle(_translate("MainWindow", "&MathML", None))
         self.menuHelp.setTitle(_translate("MainWindow", "&Help", None))

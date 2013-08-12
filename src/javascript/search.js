@@ -46,7 +46,7 @@ function ResetSearchStates() {
 function SearchTextBackward(myText, wholeWord, matchCase, alreadyWrapped) {
     //console.debug('SearchTextBackward()');
 	var currentNode = null;
-	if (!(highlight === null)) {
+	if (highlight !== null) {
 		currentNode = PreviousElement(highlight);
 	}
 	else {
@@ -54,7 +54,7 @@ function SearchTextBackward(myText, wholeWord, matchCase, alreadyWrapped) {
 	}
 	
 	while (true) {
-		if (currentNode.nodeType == 3) {
+		if (currentNode.nodeType === Node.TEXT_NODE) {
 			var lastIndex = -1;
 			var first = true;
 			var index = 1000;
@@ -96,7 +96,7 @@ function SearchTextBackward(myText, wholeWord, matchCase, alreadyWrapped) {
 				startFromSearch = true;
 				range.setStart(currentNode, lastIndex);
 				range.setEnd(currentNode, lastIndex + myText.length);
-				SetHighlight(range, false);
+				SetHighlight(false, range);
 				ScrollToHighlight(true);
 				return true;
 			}
@@ -123,9 +123,9 @@ function SearchTextBackward(myText, wholeWord, matchCase, alreadyWrapped) {
  */
 function SearchTextForward(myText, wholeWord, matchCase, alreadyWrapped) {
     //console.debug('SearchTextForward()');
-	// Determing the starting point
+	// Determining the starting point
 	var currentNode = null;
-	if (!(highlight === null)) {
+	if (highlight !== null) {
 		currentNode = NextElement(highlight);
 	}
 	else {
@@ -142,7 +142,7 @@ function SearchTextForward(myText, wholeWord, matchCase, alreadyWrapped) {
 	}
 	
 	while (true) {
-		if (currentNode.nodeType == TEXT_NODE) {
+		if (currentNode.nodeType == Node.TEXT_NODE) {
 			var index = -1;
 			if (matchCase == true) {
 				index = currentNode.data.search(re);
@@ -158,7 +158,7 @@ function SearchTextForward(myText, wholeWord, matchCase, alreadyWrapped) {
 				startFromSearch = true;
 				range.setStart(currentNode, index);
 				range.setEnd(currentNode, index + myText.length);
-				SetHighlight(range, false);
+				SetHighlight(false, range);
 				ScrollToHighlight(true);
 				return true;
 			}
