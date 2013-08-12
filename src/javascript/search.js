@@ -1,4 +1,4 @@
-/**
+/*
  * Search Functions
  * 
  * @author Spencer Graffe

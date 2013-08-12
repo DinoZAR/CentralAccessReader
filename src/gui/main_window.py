@@ -301,7 +301,7 @@ class MainWindow(QtGui.QMainWindow):
     def hideSearch(self):
         for w in self.searchWidgets:
             w.hide()
-        self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('ClearAllHighlights', []))
+        #self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('ClearAllHighlights', []))
     
     def showSearch(self):
         for w in self.searchWidgets:

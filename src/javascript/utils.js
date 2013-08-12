@@ -1,4 +1,4 @@
-/**
+/*
  * General Utility Functions
  * 
  * @author Spencer Graffe

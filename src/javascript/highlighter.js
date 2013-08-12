@@ -26,7 +26,8 @@ function StopHighlighting() {
 	//console.debug('StopHighlighting()');
 	isHighlighting = false;
 	isFirstHighlight = false;
-	ClearAllHighlights();
+	ClearLineHighlight();
+	//ClearAllHighlights();
 }
 
 /**
@@ -311,8 +312,10 @@ function SetHighlight(doLine, range) {
 	
 	// Check if the highlight is surrounding an image. If so, increase the
 	// padding size so that we can see the border
-	if (highlight.firstChild.nodeName === 'IMG') {
-		highlight.style.padding = '0.2em';
+	if (highlight.firstChild !== null) {
+		if (highlight.firstChild.nodeName === 'IMG') {
+			highlight.style.padding = '0.2em';
+		}
 	}
 
 	range.insertNode(highlight);
@@ -341,7 +344,7 @@ function SetLineHighlight() {
 	if (highlight.firstChild.nodeType === Node.TEXT_NODE) {
 		if (!(highlight.previousSibling === null)) {
 			if (highlight.previousSibling.nodeType === Node.TEXT_NODE) {
-				var endSentenceRegex = /[!?.][\s]/g
+				var endSentenceRegex = /[!?.][\s]/g;
 				var t = highlight.previousSibling.data;
 				var start = -1;
 				var m;
@@ -356,7 +359,7 @@ function SetLineHighlight() {
 		}
 		if (!(highlight.nextSibling === null)) {
 			if (highlight.nextSibling.nodeType === Node.TEXT_NODE) {
-				var endSentenceRegex = /[!?.][\s]/g
+				var endSentenceRegex = /[!?.][\s]/g;
 				var t = highlight.nextSibling.data;
 				var end = -1;
 				var m = endSentenceRegex.exec(t);

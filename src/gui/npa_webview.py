@@ -100,9 +100,25 @@ class NPAWebView(QWebView):
         
     def keyPressEvent(self, event):
         
-        # Ctrl+A should do Select All
+        # Ctrl+A (Select All)
         if (event.key() == Qt.Key_A) and (event.nativeModifiers() and Qt.ControlModifier):
             self.page().triggerAction(QWebPage.SelectAll)
+
+        # Arrow Up
+        elif event.key() == Qt.Key_Up:
+            self.page().mainFrame().evaluateJavaScript(misc.js_command('MoveCursorUp', []))
+
+        # Arrow Down
+        elif event.key() == Qt.Key_Down:
+            self.page().mainFrame().evaluateJavaScript(misc.js_command('MoveCursorDown', []))
+            
+        # Arrow left
+        elif event.key() == Qt.Key_Left:
+            self.page().mainFrame().evaluateJavaScript(misc.js_command('MoveCursorLeft', []))
+
+        # Arrow right
+        elif event.key() == Qt.Key_Right:
+            self.page().mainFrame().evaluateJavaScript(misc.js_command('MoveCursorRight', []))
             
         event.ignore()
         
