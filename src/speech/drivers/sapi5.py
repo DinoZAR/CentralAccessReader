@@ -12,9 +12,9 @@ import time
 import platform
 import subprocess
 import re
-from src.misc import program_path, temp_path
+from misc import program_path, temp_path
 
-from src.speech.drivers.SapiCOM import SpVoice, SpFileStream
+from speech.drivers.SapiCOM import SpVoice, SpFileStream, constants
 
 class SAPI5Driver(object):
     '''
@@ -33,7 +33,7 @@ class SAPI5Driver(object):
         
         self._rate = 5   # Between -10 to 10
         self._volume = 100 # Between 0 to 100
-        self._pauseLength = 0
+        self._pauseLength = 0 # Unit between 0-10
         self._voiceId = ''
         self._settingsChanged = False
         
@@ -75,6 +75,7 @@ class SAPI5Driver(object):
         can be scaled however appropriate for the TTS driver.
         '''
         self._pauseLength = pauseLength
+        self._settingsChanged = True
         
     def setVoice(self, voiceKey):
         '''
@@ -176,7 +177,16 @@ class SAPI5Driver(object):
                 for speech in self._speechGenerator:
                     #print 'driver: queuing speech to voice', speech
                     self._queue[self._speechCounter] = [speech[0], speech[1], None]
-                    self._queue[self._speechCounter][2] = self._voice.Speak(self._queue[self._speechCounter][0], 1)
+                    self._queue[self._speechCounter][2] = self._voice.Speak(self._queue[self._speechCounter][0], constants.SVSFlagsAsync)
+
+                    self._speechCounter += 1
+                    
+                    if self._pauseLength > 0:
+                        # Map 0-10 to 0-2 seconds
+                        pauseXML = r'<silence msec="' + str(self._pauseLength * 200) + r'"/>'
+                        self._queue[self._speechCounter] = [pauseXML, '_silence_', None]
+                        self._queue[self._speechCounter][2] = self._voice.Speak(self._queue[self._speechCounter][0], constants.SVSFlagsAsync | constants.SVSFIsXML | constants.SVSFParseSapi)
+                        
                     self._speechCounter += 1
                     
                     # Check if my settings have changed
@@ -278,13 +288,13 @@ class SAPI5Driver(object):
         pythoncom.CoInitialize()
     
         saveFileStream = SpFileStream()
-        saveFileStream.Format.Type = 18  # Some magic number that gives good results
-        saveFileStream.Open(temp_path('temp.wav'), 3)
+        saveFileStream.Format.Type = constants.SAFT32kHz16BitStereo
+        saveFileStream.Open(temp_path('tmp.wav'), 3)
     
         self._voice = SpVoice()
         self._voice.AudioOutputStream = saveFileStream
-        self._voice.EventInterests = 33790 # SVEAllEvents
-        self._voice.AlertBoundary = 64 # SVEPhoneme
+        self._voice.EventInterests = constants.SVEAllEvents
+        self._voice.AlertBoundary = constants.SVEPhoneme # SVEPhoneme
         
         if len(self._voiceId) > 0:
             token = self.voiceTokenFromId(self._voiceId)
@@ -301,7 +311,8 @@ class SAPI5Driver(object):
         outputList = []
         for speech in speechGenerator:
             outputList.append(speech)
-        
+
+        labelCallback('Speaking into WAV...')
         for i in range(len(outputList)):
             progressCallback(int(float(i) / len(outputList) * 69.0))
             self._voice.Speak(outputList[i][0], 1)
@@ -413,20 +424,21 @@ class SAPI5Driver(object):
                 break
         
         if i >= 0:
-            word = self._queue[i][0][char:char+length]
-            
-            # Publish onStart if it is so
-            myIsFirst = self._isFirstSpeech
-            if self._isFirstSpeech:
-                #print 'driver: Publishing onStart'
-                for c in self._delegator['onStart']:
-                    c[1](char, length, self._queue[i][1], stream, word)
-                self._isFirstSpeech = False
-            
-            # Publish onWord
-            #print 'driver: Publishing onWord'
-            for c in self._delegator['onWord']:
-                c[1](char, length, self._queue[i][1], stream, word, myIsFirst)
+            if self._queue[i][1] != '_silence_':
+                word = self._queue[i][0][char:char+length]
+                
+                # Publish onStart if it is so
+                myIsFirst = self._isFirstSpeech
+                if self._isFirstSpeech:
+                    #print 'driver: Publishing onStart'
+                    for c in self._delegator['onStart']:
+                        c[1](char, length, self._queue[i][1], stream, word)
+                    self._isFirstSpeech = False
+                
+                # Publish onWord
+                #print 'driver: Publishing onWord'
+                for c in self._delegator['onWord']:
+                    c[1](char, length, self._queue[i][1], stream, word, myIsFirst)
         
     
     def handle_onEndStream(self, stream, pos):

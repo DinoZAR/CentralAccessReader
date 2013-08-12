@@ -85,6 +85,8 @@ class SpeechSettings(QtGui.QDialog):
             
         if len(self.configuration.math_database) > 0:
             i = self.ui.mathDatabaseComboBox.findData(self.configuration.math_database)
+            if i < 0:
+                i = self.ui.mathDatabaseComboBox.findData('General')
             self.ui.mathDatabaseComboBox.setCurrentIndex(i)
             self.ui.mathDatabaseComboBox.blockSignals(False)
         else:
@@ -139,4 +141,3 @@ class SpeechSettings(QtGui.QDialog):
         
     def mathDatabaseComboBox_currentIndexChanged(self, index):
         self.configuration.math_database = str(self.ui.mathDatabaseComboBox.itemData(index).toString())
-        #self.mainWindow.changeMathDatabase.emit(self.configuration.math_database)
