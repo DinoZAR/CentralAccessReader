@@ -12,9 +12,11 @@ Selection Functions
  * Gets the selection range. 
  */
 function GetSelectionRange() {
+	console.debug('GetSelectionRange()');
+	
 	range = ConvertUserSelectionToRange();
 
-	// Check if I don't have a user selection or not
+	// Check if I have don't have a user selection.
 	if (range.collapsed) {
 		// Start from beginning or last navigated heading
 		if (startFromHeading) {
@@ -22,11 +24,37 @@ function GetSelectionRange() {
 			range.startOffset = 0;
 		}
 		else {
-			range = GetRangeToEntireDocument();
+			//range = GetRangeToEntireDocument();
+			// Make a range that starts from the highlighter/cursor
+			var parent = highlight.parentNode;
+			
+			if (highlight.previousSibling !== null) {
+			
+				if (highlight.previousSibling.nodeType === Node.TEXT_NODE) {
+					var elem = highlight.previousSibling;
+					var startOffset = elem.length;
+					var startIndex = GetChildIndex(elem);
+					
+					ClearHighlight();
+					
+					elem = $(parent).contents()[startIndex];
+					range.setStart(elem, startOffset);
+					range.setEndAfter(parent.lastChild);
+				}
+				else {
+					var index = GetChildIndex(highlight);
+					ClearHighlight();
+					range.selectNode($(parent).contents()[index]);
+				}
+			}
+			else {
+				ClearHighlight();
+				range.selectNode(DeepestChild(parent));
+			}
 		}
 	}
 	else {
-		// Start from the user selection. Do some random fixes for it
+		// Start from the user selection. Do some random fixes to it
 		MoveRangeAfterWhitespace(range);
 		MoveRangeStartToDeepestInBody(range);
 		SurroundMathEquation(range);
@@ -204,13 +232,43 @@ function PreviousElement(elem) {
 				return null;
 			}
 			else {
-				elem = PreviousElement(elem.parentNode);
-				return elem;
+				//elem = PreviousElement(elem.parentNode);
+				//return elem;
+				return elem.parentNode;
 			}
 		}
 	}
 	else {
 		return DeepestChild(prev, true);
+	}
+}
+
+/**
+ * Get the previous element, except that it will take the first child of the
+ * previous parent instead of the last.
+ * 
+ * @param elem
+ */
+function PreviousElementFirstChild(elem) {
+	//console.debug("PreviousElementFirstChild()");
+	var prev = elem.previousSibling;
+	if (prev === null) {
+		if (elem.parentNode === null) {
+			return null;
+		}
+		else {
+			if (elem.parentNode.nodeName === 'BODY') {
+				return null;
+			}
+			else {
+				//elem = PreviousElement(elem.parentNode);
+				//return elem;
+				return elem.parentNode;
+			}
+		}
+	}
+	else {
+		return DeepestChild(prev);
 	}
 }
 

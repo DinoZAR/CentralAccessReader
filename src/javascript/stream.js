@@ -11,8 +11,10 @@ var nextStreamElement = null;
  */
 function SetStreamBeginning() {
     console.debug('SetStreamBeginning()');
+    
     range = GetSelectionRange();
     nextStreamElement = range.startContainer;
+    
     myRange = document.createRange();
     myRange.setStart(nextStreamElement, range.startOffset);
     myRange.setEndAfter(nextStreamElement);

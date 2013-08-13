@@ -254,6 +254,12 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.volumeSlider.valueChanged.connect(self.changeSpeechVolume)
         self.ui.rateSlider.valueChanged.connect(self.changeSpeechRate)
         
+        self.ui.actionIncrease_Volume.triggered.connect(self.increaseVolume)
+        self.ui.actionDecrease_Volume.triggered.connect(self.decreaseVolume)
+        
+        self.ui.actionIncrease_Rate.triggered.connect(self.increaseRate)
+        self.ui.actionDecrease_Rate.triggered.connect(self.decreaseRate)
+        
         # Bookmark and page controls and widgets
         self.ui.bookmarksTreeView.clicked.connect(self.bookmarksTree_clicked)
         self.ui.pagesTreeView.clicked.connect(self.pagesTree_clicked)
@@ -332,6 +338,7 @@ class MainWindow(QtGui.QMainWindow):
             root = html.fromstring(contents)
         except XMLSyntaxError:
             root = html.Element('p')
+            
         
         # Set the speech generator and start playback
         self.setSpeechGenerator.emit(self.assigner.generateSpeech(root, self.configuration))
@@ -385,6 +392,7 @@ class MainWindow(QtGui.QMainWindow):
     def onSpeechFinished(self):
         #print 'window: OnSpeechFinished'
         
+        # Tell JavaScript to not highlight further
         self.javascriptMutex.lock()
         self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('StopHighlighting', []))
         self.javascriptMutex.unlock()
@@ -428,10 +436,38 @@ class MainWindow(QtGui.QMainWindow):
     def changeSpeechRate(self, value):
         self.configuration.rate = value
         self.changeRate.emit(self.configuration.rate)
+        
+    def increaseRate(self):
+        print 'window: increase rate'
+        self.configuration.rate += 10
+        if self.configuration.rate > 100:
+            self.configuration.rate = 100
+        self.ui.rateSlider.setValue(self.configuration.rate)
+    
+    def decreaseRate(self):
+        print 'window: decrease rate'
+        self.configuration.rate -= 10
+        if self.configuration.rate < 0:
+            self.configuration.rate = 0
+        self.ui.rateSlider.setValue(self.configuration.rate)
 
     def changeSpeechVolume(self, value):
         self.configuration.volume = value
         self.changeVolume.emit(self.configuration.volume)
+    
+    def increaseVolume(self):
+        print 'window: increase volume'
+        self.configuration.volume += 10
+        if self.configuration.volume > 100:
+            self.configuration.volume = 100
+        self.ui.volumeSlider.setValue(self.configuration.volume)
+    
+    def decreaseVolume(self):
+        print 'window: decrease volume'
+        self.configuration.volume -= 10
+        if self.configuration < 0:
+            self.configuration.volume = 0
+        self.ui.volumeSlider.setValue(self.configuration.volume)
         
     def showColorSettings(self):
         from gui.color_settings import ColorSettings
@@ -470,8 +506,10 @@ class MainWindow(QtGui.QMainWindow):
         self.speechThread.requestMoreSpeech.connect(self.sendMoreSpeech)
         
     def saveMP3All(self):
+        self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('ClearAllHighlights', []))
         self.ui.webView.selectAll()
         self.saveMP3Selection()
+        self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SetHighlightToBeginning', []))
         
     def saveMP3Selection(self):
         # Generate a filename that is basically the original file but with the
@@ -902,6 +940,10 @@ class MainWindow(QtGui.QMainWindow):
             # Search bar
             for w in self.searchWidgets:
                 w.setEnabled(False)
+                
+            # Cursor
+            self.ui.webView.setKeyboardNavEnabled(False)
+            
         else:
             self.ui.rateSlider.setEnabled(True)
             self.ui.volumeSlider.setEnabled(True)
@@ -909,8 +951,6 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.speechSettingsButton.setEnabled(True)
             self.ui.saveToMP3Button.setEnabled(True)
             self.ui.playButton.setEnabled(True)
-            
-            
             
             # Actions
             self.ui.actionPlay.setEnabled(True)
@@ -925,3 +965,6 @@ class MainWindow(QtGui.QMainWindow):
             # Search bar
             for w in self.searchWidgets:
                 w.setEnabled(True)
+            
+            # Cursor
+            self.ui.webView.setKeyboardNavEnabled(True)

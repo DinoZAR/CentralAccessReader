@@ -17,7 +17,7 @@ def main():
     from PyQt4.QtGui import QApplication, QPixmap, QSplashScreen
     app = QApplication(sys.argv)
       
-    # Generate a splash screen
+    # Create a splash screen
     from forms import resource_rc
     pixmap = QPixmap(':/icons/icons/CAR Splash.png')
     splash = QSplashScreen(pixmap)

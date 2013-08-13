@@ -40,7 +40,8 @@ function StopHighlighting() {
  * @param wordLength
  */
 function HighlightNextWord(doLine, word, wordOffset, wordLength) {
-	//console.debug('HighlightNextWord()');
+	console.debug('HighlightNextWord()');
+	console.debug('word: ' + word);
 	if (isHighlighting === true) {
 		
 		var reference = GetReferencePoint();
@@ -89,6 +90,10 @@ function HighlightNextWord(doLine, word, wordOffset, wordLength) {
 		// If I actually got an element, set the highlight
 		if (elem !== null) {
 			var r = document.createRange();
+			
+			console.debug('Start: ' + (wordOffset + highlightBeginOffset));
+			console.debug('End: ' + (wordOffset + wordLength + highlightBeginOffset));
+			
 			r.setStart(elem, wordOffset + highlightBeginOffset);
 			r.setEnd(elem, wordOffset + wordLength + highlightBeginOffset);
 			SetHighlight(doLine, r);
@@ -122,7 +127,7 @@ function HighlightNextImage(doLine) {
 		console.debug('Reference offset: ' + reference.offset.toString());
 		
 		if ((reference.element.nodeType !== Node.TEXT_NODE) && (reference.element.children.length > 0)) {
-			elem = $(reference.element).children()[reference.offset];
+			elem = $(reference.element).contents()[reference.offset];
 		}
 		
 		ResetHeadingStates();
@@ -330,6 +335,32 @@ function SetHighlight(doLine, range) {
 	}
 }
 
+function SetHighlightToBeginning() {
+	// Highlight the first element in the document. This will act as the cursor.
+	var r = GetRangeToEntireDocument();
+	var start = DeepestChild(r.startContainer);
+	var offset = 0;
+	
+	// Get the first word, of that is the case
+	if (start.nodeType == Node.TEXT_NODE) {
+		var regex = /\b\w+\b/g;
+		var m = start.data.match(regex);
+		if (m !== null) {
+			r.setStart(start, regex.lastIndex);
+			r.setEnd(start, regex.lastIndex + m[0].length);
+			SetHighlight(false, r);
+		}
+		else {
+			r.selectNode(start);
+			SetHighlight(false, r);
+		}
+	}
+	else {
+		r.selectNode(start);
+		SetHighlight(false, r);
+	}
+}
+
 /**
  * This function will set the line highlight to surround that particular range.
  * It will highlight all the way to the previous sentence end to the next
@@ -448,16 +479,20 @@ function ScrollToHighlight(isInstant) {
 	
     // Calculate the top offset making it the top 1/6 of the document viewport.
     // This will scale correctly for different zoom sizes
-    var myOffset = window.innerHeight * (1.0 / 6.0)
+    var myVerticalOffset = window.innerHeight * (1.0 / 6.0);
+    
+    // Calculate the horizontal offset, which should be the first 1/3 of the
+    // document viewport
+    var myHorizOffset = window.innerWidth * (1.0 / 3.0);
     
 	var myDuration = 800;
 	if (isInstant) {
 		myDuration = 0;
 	}
 	if (highlightLine != null) {
-		$.scrollTo(highlightLine.parentNode, {duration: myDuration, offset: {top: -myOffset}});
+		$.scrollTo(highlightLine.parentNode, {duration: myDuration, offset: {top: -myVerticalOffset, left: -myHorizOffset}});
 	}
 	else {
-		$.scrollTo(highlight.parentNode, {duration: myDuration, offset: {top: -myOffset}});
+		$.scrollTo(highlight.parentNode, {duration: myDuration, offset: {top: -myVerticalOffset, left: -myHorizOffset}});
 	}
 }

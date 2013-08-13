@@ -37,6 +37,8 @@ class NPAWebView(QWebView):
             
         self.linkClicked.connect(self.myLinkClicked)
         
+        self._keyboardNavEnabled = True
+        
     def dragEnterEvent(self, e):
         if e.mimeData().hasUrls:
             url = unicode(e.mimeData().urls()[0].toLocalFile())
@@ -103,24 +105,28 @@ class NPAWebView(QWebView):
         # Ctrl+A (Select All)
         if (event.key() == Qt.Key_A) and (event.nativeModifiers() and Qt.ControlModifier):
             self.page().triggerAction(QWebPage.SelectAll)
-
-        # Arrow Up
-        elif event.key() == Qt.Key_Up:
-            self.page().mainFrame().evaluateJavaScript(misc.js_command('MoveCursorUp', []))
-
-        # Arrow Down
-        elif event.key() == Qt.Key_Down:
-            self.page().mainFrame().evaluateJavaScript(misc.js_command('MoveCursorDown', []))
-            
-        # Arrow left
-        elif event.key() == Qt.Key_Left:
-            self.page().mainFrame().evaluateJavaScript(misc.js_command('MoveCursorLeft', []))
-
-        # Arrow right
-        elif event.key() == Qt.Key_Right:
-            self.page().mainFrame().evaluateJavaScript(misc.js_command('MoveCursorRight', []))
-            
-        event.ignore()
+            event.ignore()
+        
+        if self._keyboardNavEnabled:
+            # Arrow Up
+            if event.key() == Qt.Key_Up:
+                self.page().mainFrame().evaluateJavaScript(misc.js_command('MoveCursorUp', []))
+                event.ignore()
+    
+            # Arrow Down
+            elif event.key() == Qt.Key_Down:
+                self.page().mainFrame().evaluateJavaScript(misc.js_command('MoveCursorDown', []))
+                event.ignore()
+                
+            # Arrow left
+            elif event.key() == Qt.Key_Left:
+                self.page().mainFrame().evaluateJavaScript(misc.js_command('MoveCursorLeft', []))
+                event.ignore()
+    
+            # Arrow right
+            elif event.key() == Qt.Key_Right:
+                self.page().mainFrame().evaluateJavaScript(misc.js_command('MoveCursorRight', []))
+                event.ignore()
         
     def keyReleaseEvent(self, event):
         event.ignore()
@@ -173,3 +179,11 @@ class NPAWebView(QWebView):
         
     def myLinkClicked(self, url):
         webbrowser.open_new(str(url.toString()))
+    
+    def setKeyboardNavEnabled(self, isEnabled):
+        '''
+        Sets whether the keyboard navigation is enabled or disabled. One would
+        want to disable it if they wanted to manipulate the highlighter, like
+        a TTS engine.
+        '''
+        self._keyboardNavEnabled = isEnabled

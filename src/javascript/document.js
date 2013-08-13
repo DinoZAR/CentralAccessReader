@@ -28,31 +28,8 @@ $(document).ready( function() {
       hide: false,
       show: false
     });
-	
-	// Highlight the first element in the document. This will act as the cursor.
-	var r = GetRangeToEntireDocument();
-	var start = DeepestChild(r.startContainer);
-	var offset = 0;
-	
-	// Get the first word, of that is the case
-	if (start.nodeType == Node.TEXT_NODE) {
-		var regex = /\b\w+\b/g;
-		var m = start.data.match(regex);
-		if (m !== null) {
-			r.setStart(start, regex.lastIndex);
-			r.setEnd(start, regex.lastIndex + m[0].length);
-			SetHighlight(false, r);
-		}
-		else {
-			r.selectNode(start);
-			SetHighlight(false, r);
-		}
-	}
-	else {
-		r.selectNode(start);
-		SetHighlight(false, r);
-	}
-	
+    
+	SetHighlightToBeginning();
 	ClearUserSelection();
 });
 
@@ -252,15 +229,7 @@ function MoveCursorRight() {
  * This moves the cursor up, jumping to the beginning of the previous paragraph.
  */
 function MoveCursorUp() {
-	var elem = highlight.parentNode.previousSibling;
-	
-	if (elem.nodeName === 'BODY') {
-		elem = highlight;
-	}
-	
-	if (elem !== null) {
-		elem = DeepestChild(elem);
-	}
+	var elem = PreviousElementFirstChild(highlight.parentNode);
 	
 	var start = -1;
 	var offset = -1;
@@ -290,14 +259,11 @@ function MoveCursorUp() {
 			break;
 		}
 		
-		elem = NextElement(elem);
+		elem = PreviousElementFirstChild(elem);
 	}
 	
 	// If there is something next, get that next element highlighted
 	if (elem !== null) {
-		
-		console.debug('Element that is up: ' + elem.nodeName);
-		
 		if (start >= 0) {
 			var r = document.createRange();
 			r.setStart(elem, start);
