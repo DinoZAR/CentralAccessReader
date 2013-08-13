@@ -26,7 +26,8 @@ function StopHighlighting() {
 	//console.debug('StopHighlighting()');
 	isHighlighting = false;
 	isFirstHighlight = false;
-	ClearAllHighlights();
+	ClearLineHighlight();
+	//ClearAllHighlights();
 }
 
 /**
@@ -40,66 +41,69 @@ function StopHighlighting() {
  */
 function HighlightNextWord(doLine, word, wordOffset, wordLength) {
 	//console.debug('HighlightNextWord()');
-	var reference = GetReferencePoint();
-	var elem = reference.element;
-	var startOffset = reference.offset;
-	var needScroll = false;
-	
-	ResetHeadingStates();
-	
-	// Search for a text node that has the word I want.
-	while (true) {
+	if (isHighlighting === true) {
 		
-		// Stop if I don't have anymore
-		if (elem === null) {
-			break;
-		}
+		var reference = GetReferencePoint();
+		var elem = reference.element;
+		var startOffset = reference.offset;
+		var needScroll = false;
 		
-		// Check that my word offset is at or ahead of the start offset.
-		// Otherwise, this may mean a different word in a different place.
-		if ((wordOffset + highlightBeginOffset) >= (startOffset - word.length)) {
-			// Check the node's properties
-			if (elem.nodeType === Node.TEXT_NODE) {
-				// Check if my proposed offset and length are within my text 
-				// element
-				if ((wordOffset + wordLength) <= elem.data.length) {
-					// See if the word is even in there
-					if (elem.data.indexOf(word) >= 0) {
-						// Check if it is not inside an equation
-						if (IsInsideEquation(elem) !== true) {
-							break;
+		ResetHeadingStates();
+		
+		// Search for a text node that has the word I want.
+		while (true) {
+			
+			// Stop if I don't have anymore
+			if (elem === null) {
+				break;
+			}
+			
+			// Check that my word offset is at or ahead of the start offset.
+			// Otherwise, this may mean a different word in a different place.
+			if ((wordOffset + highlightBeginOffset) >= (startOffset - word.length)) {
+				// Check the node's properties
+				if (elem.nodeType === Node.TEXT_NODE) {
+					// Check if my proposed offset and length are within my text 
+					// element
+					if ((wordOffset + wordLength) <= elem.data.length) {
+						// See if the word is even in there
+						if (elem.data.indexOf(word) >= 0) {
+							// Check if it is not inside an equation
+							if (IsInsideEquation(elem) !== true) {
+								break;
+							}
 						}
 					}
 				}
 			}
+			
+			startOffset = 0;
+			needScroll = true;
+			
+			highlightBeginOffset = 0;
+			
+			// If element fails test, try the next one
+			elem = NextElement(elem);
 		}
 		
-		startOffset = 0;
-		needScroll = true;
+		// If I actually got an element, set the highlight
+		if (elem !== null) {
+			var r = document.createRange();
+			r.setStart(elem, wordOffset + highlightBeginOffset);
+			r.setEnd(elem, wordOffset + wordLength + highlightBeginOffset);
+			SetHighlight(doLine, r);
+		}
 		
-		highlightBeginOffset = 0;
+		// Clear the user selection
+		window.getSelection().empty()
 		
-		// If element fails test, try the next one
-		elem = NextElement(elem);
+		// Scroll to highlight if necessary
+		if ((needScroll === true) || (isFirstHighlight === true)) {
+			ScrollToHighlight();
+		}
+		
+		isFirstHighlight = false;
 	}
-	
-	// If I actually got an element, set the highlight
-	if ((elem !== null) && (isHighlighting === true)) {
-		var r = document.createRange();
-		r.setStart(elem, wordOffset + highlightBeginOffset);
-		r.setEnd(elem, wordOffset + wordLength + highlightBeginOffset);
-		SetHighlight(doLine, r);
-	}
-	
-	// Clear the user selection
-	window.getSelection().empty()
-	
-	// Scroll to highlight if necessary
-	if ((needScroll === true) || (isFirstHighlight === true)) {
-		ScrollToHighlight();
-	}
-	
-	isFirstHighlight = false;
 }
 
 /**
@@ -110,50 +114,52 @@ function HighlightNextWord(doLine, word, wordOffset, wordLength) {
  */
 function HighlightNextImage(doLine) {
 	//console.debug('HighlightNextImage()');
-	var reference = GetReferencePoint();
-	var elem = DeepestChild(reference.element);
-	
-	console.debug('Reference element: ' + reference.element.toString());
-	console.debug('Reference offset: ' + reference.offset.toString());
-	
-	if ((reference.element.nodeType !== Node.TEXT_NODE) && (reference.element.children.length > 0)) {
-		elem = $(reference.element).children()[reference.offset];
-	}
-	
-	ResetHeadingStates();
-	
-	// Search until I get an image
-	while (true) {
+	if (isHighlighting === true) {
+		var reference = GetReferencePoint();
+		var elem = DeepestChild(reference.element);
 		
-		if (elem === null) {
-			break;
+		console.debug('Reference element: ' + reference.element.toString());
+		console.debug('Reference offset: ' + reference.offset.toString());
+		
+		if ((reference.element.nodeType !== Node.TEXT_NODE) && (reference.element.children.length > 0)) {
+			elem = $(reference.element).children()[reference.offset];
 		}
 		
-		// See if it an image
-		if (elem.nodeName === 'IMG') {
-			break;
+		ResetHeadingStates();
+		
+		// Search until I get an image
+		while (true) {
+			
+			if (elem === null) {
+				break;
+			}
+			
+			// See if it an image
+			if (elem.nodeName === 'IMG') {
+				break;
+			}
+			
+			// If element fails test, try the next one
+			elem = NextElement(elem);
 		}
 		
-		// If element fails test, try the next one
-		elem = NextElement(elem);
-	}
-	
-	// If I actually got an element, set the highlighter
-	if ((elem !== null) && (isHighlighting === true)) {
-		var r = document.createRange();
-		r.selectNode(elem);
+		// If I actually got an element, set the highlighter
+		if (elem !== null) {
+			var r = document.createRange();
+			r.selectNode(elem);
+			
+			SetHighlight(doLine, r);
+		}
 		
-		SetHighlight(doLine, r);
+		// Clear the user selection
+		window.getSelection().empty()
+		
+		ScrollToHighlight();
+		
+		highlightBeginOffset = 0;
+		
+		isFirstHighlight = true;
 	}
-	
-	// Clear the user selection
-	window.getSelection().empty()
-	
-	ScrollToHighlight();
-	
-	highlightBeginOffset = 0;
-	
-	isFirstHighlight = true;
 }
 
 /**
@@ -164,45 +170,45 @@ function HighlightNextImage(doLine) {
  */
 function HighlightNextMath(doLine) {
 	//console.debug('HighlightNextMath()');
-	
-	var reference = GetReferencePoint();
-	var elem = reference.element;
-	
-	ResetHeadingStates();
-	
-	// Search until I get a math equation
-	while (true) {
+	if (isHighlighting === true) {
+		var reference = GetReferencePoint();
+		var elem = reference.element;
 		
-		if (elem === null) {
-			break;
+		ResetHeadingStates();
+		
+		// Search until I get a math equation
+		while (true) {
+			
+			if (elem === null) {
+				break;
+			}
+			
+			// Check if the element is inside a math equation
+			if (IsInsideEquation(elem)) {
+				break;
+			}
+			
+			// If element fails test, try the next one
+			elem = NextElement(elem);
 		}
 		
-		// Check if the element is inside a math equation
-		if (IsInsideEquation(elem)) {
-			break;
+		// If I actually got an element, set the highlighter
+		if (elem !== null) {
+			var r = document.createRange();
+			var eq = GetEquation(elem);
+			r.selectNode(eq);
+			SetHighlight(doLine, r);
 		}
 		
-		// If element fails test, try the next one
-		elem = NextElement(elem);
+		// Clear the user selection
+		window.getSelection().empty()
+		
+		ScrollToHighlight();
+		
+		highlightBeginOffset = 0;
+		
+		isFirstHighlight = true;
 	}
-	
-	// If I actually got an element, set the highlighter
-	if ((elem !== null) && (isHighlighting === true)) {
-		var r = document.createRange();
-		var eq = GetEquation(elem);
-		r.selectNode(eq);
-		SetHighlight(doLine, r);
-	}
-	
-	// Clear the user selection
-	window.getSelection().empty()
-	
-	ScrollToHighlight();
-	
-	highlightBeginOffset = 0;
-	
-	isFirstHighlight = true;
-	
 }
 
 /**
@@ -311,8 +317,10 @@ function SetHighlight(doLine, range) {
 	
 	// Check if the highlight is surrounding an image. If so, increase the
 	// padding size so that we can see the border
-	if (highlight.firstChild.nodeName === 'IMG') {
-		highlight.style.padding = '0.2em';
+	if (highlight.firstChild !== null) {
+		if (highlight.firstChild.nodeName === 'IMG') {
+			highlight.style.padding = '0.2em';
+		}
 	}
 
 	range.insertNode(highlight);
@@ -341,7 +349,7 @@ function SetLineHighlight() {
 	if (highlight.firstChild.nodeType === Node.TEXT_NODE) {
 		if (!(highlight.previousSibling === null)) {
 			if (highlight.previousSibling.nodeType === Node.TEXT_NODE) {
-				var endSentenceRegex = /[!?.][\s]/g
+				var endSentenceRegex = /[!?.][\s]/g;
 				var t = highlight.previousSibling.data;
 				var start = -1;
 				var m;
@@ -356,7 +364,7 @@ function SetLineHighlight() {
 		}
 		if (!(highlight.nextSibling === null)) {
 			if (highlight.nextSibling.nodeType === Node.TEXT_NODE) {
-				var endSentenceRegex = /[!?.][\s]/g
+				var endSentenceRegex = /[!?.][\s]/g;
 				var t = highlight.nextSibling.data;
 				var end = -1;
 				var m = endSentenceRegex.exec(t);

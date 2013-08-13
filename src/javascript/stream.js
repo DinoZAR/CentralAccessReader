@@ -1,4 +1,4 @@
-/**
+/*
  * Stream functions (so far, just for TTS)
  * 
  * @author Spencer Graffe
