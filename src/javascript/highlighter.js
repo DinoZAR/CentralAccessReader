@@ -41,7 +41,6 @@ function StopHighlighting() {
  */
 function HighlightNextWord(doLine, word, wordOffset, wordLength) {
 	console.debug('HighlightNextWord()');
-	console.debug('word: ' + word);
 	if (isHighlighting === true) {
 		
 		var reference = GetReferencePoint();
@@ -60,20 +59,39 @@ function HighlightNextWord(doLine, word, wordOffset, wordLength) {
 			}
 			
 			// Check that my word offset is at or ahead of the start offset.
-			// Otherwise, this may mean a different word in a different place.
-			if ((wordOffset + highlightBeginOffset) >= (startOffset - word.length)) {
+			// Otherwise, this may mean a previous occurrence of a word that's
+			// already visited.
+			//if ((wordOffset + highlightBeginOffset) >= (startOffset - wordLength)) {
 				// Check the node's properties
-				if (elem.nodeType === Node.TEXT_NODE) {
+				//if (elem.nodeType === Node.TEXT_NODE) {
 					// Check if my proposed offset and length are within my text 
 					// element
-					if ((wordOffset + wordLength) <= elem.data.length) {
-						// See if the word is even in there
-						if (elem.data.indexOf(word) >= 0) {
-							// Check if it is not inside an equation
-							if (IsInsideEquation(elem) !== true) {
-								break;
-							}
-						}
+					//if ((wordOffset + highlightBeginOffset + wordLength) <= elem.data.length) {
+						// Check if it is not inside an equation
+						//if (IsInsideEquation(elem) !== true) {
+							//break;
+						//}
+						//console.debug('Failed: inside equation');
+					//}
+					//console.debug('Failed: bound not in length');
+				//}
+				//console.debug('Failed: not text node');
+			//}
+			//console.debug('Failed: not beyond last highlight');
+			
+			//console.debug('word:' + word);
+			//console.debug('wordOffset: ' + wordOffset);
+			//console.debug('wordLength: ' + wordLength);
+			//console.debug('startOffset: ' + startOffset);
+			//console.debug('highlightBeginOffset: ' + highlightBeginOffset);
+			//console.debug('elem: ' + elem);
+			
+			if (elem.nodeType === Node.TEXT_NODE) {
+				if ((wordOffset + highlightBeginOffset) >= (startOffset - wordLength)) {
+					var sub = elem.data.substring(wordOffset + highlightBeginOffset, 
+							wordOffset + wordLength + highlightBeginOffset);
+					if (sub === word) {
+						break;
 					}
 				}
 			}
@@ -90,10 +108,6 @@ function HighlightNextWord(doLine, word, wordOffset, wordLength) {
 		// If I actually got an element, set the highlight
 		if (elem !== null) {
 			var r = document.createRange();
-			
-			console.debug('Start: ' + (wordOffset + highlightBeginOffset));
-			console.debug('End: ' + (wordOffset + wordLength + highlightBeginOffset));
-			
 			r.setStart(elem, wordOffset + highlightBeginOffset);
 			r.setEnd(elem, wordOffset + wordLength + highlightBeginOffset);
 			SetHighlight(doLine, r);

@@ -300,7 +300,7 @@ def _parseImage(elem, parentData, otherData):
         if query != None:
             altText = query.get('descr')
             if altText != None:
-                data['altText'] = unicode(altText)
+                data['altText'] = unicode(altText).replace('\n', ' ').replace('\r', ' ')
             
         # Append this to the parent data
         parentData['image'] = data

@@ -7,6 +7,17 @@ var startFromHeading = false;
 var lastHeadingElement = null;
 
 /**
+ * Detect when MathJax is done messing around with the MathML. 
+ */
+finishedMathTypeset = false;
+mathTypeSetProgress = 0;
+MathJax.Hub.Queue(function () {
+	SetHighlightToBeginning();
+	ClearUserSelection();
+	finishedMathTypeset = true;
+});
+
+/**
  * This function is run at startup. Do whatever one needs to do to setup
  * for things to come.
  */
@@ -28,18 +39,7 @@ $(document).ready( function() {
       hide: false,
       show: false
     });
-    
-	SetHighlightToBeginning();
-	ClearUserSelection();
-});
-
-/**
- * Detect when MathJax is done messing around with the MathML. 
- */
-finishedMathTypeset = false;
-mathTypeSetProgress = 0;
-MathJax.Hub.Queue(function () {
-	finishedMathTypeset = true;
+  
 });
 
 /**
@@ -172,57 +172,8 @@ function MoveCursorLeft() {
  * whichever is there.
  */
 function MoveCursorRight() {
-	
-	// Get the next element, whatever that happens to be
 	var elem = NextElement(highlight);
-	var start = -1;
-	var offset = -1;
-	while (elem !== null) {
-		var equation = GetEquation(elem);
-		
-		// If it is an equation, select the top element
-		if (equation !== null) {
-			elem = equation;
-			break;
-		}
-		
-		// If it is a text node, try to see if I can get a word
-		else if (elem.nodeType == Node.TEXT_NODE) {
-			// Check if I got a word I can highlight
-			var regex = /\w+/g;
-			var m = regex.exec(elem.data);
-			if (m !== null) {
-				start = regex.lastIndex - m[0].length;
-				offset = regex.lastIndex;
-				break;
-			}
-		}
-		
-		// If an image, get the image
-		else if (elem.nodeName === 'IMG') {
-			break;
-		}
-		
-		elem = NextElement(elem);
-	}
-	
-	// If there is something next, get that next element highlighted
-	if (elem !== null) {
-		if (start >= 0) {
-			var r = document.createRange();
-			r.setStart(elem, start);
-			r.setEnd(elem, offset);
-			SetHighlight(false, r);
-		}
-		else {
-			var r = document.createRange();
-			r.selectNode(elem);
-			SetHighlight(false, r);
-		}
-		
-		// Scroll to the highlight
-		ScrollToHighlight(true);
-	}
+	MoveCursorToBeginningOfNode(elem);
 }
 
 /**
@@ -230,55 +181,8 @@ function MoveCursorRight() {
  */
 function MoveCursorUp() {
 	var elem = PreviousElementFirstChild(highlight.parentNode);
-	
-	var start = -1;
-	var offset = -1;
-	while (elem !== null) {
-		var equation = GetEquation(elem);
-		
-		// If it is an equation, select the top element
-		if (equation !== null) {
-			elem = equation;
-			break;
-		}
-		
-		// If it is a text node, try to see if I can get a word
-		else if (elem.nodeType == Node.TEXT_NODE) {
-			// Check if I got a word I can highlight
-			var regex = /\w+/g;
-			var m = regex.exec(elem.data);
-			if (m !== null) {
-				start = regex.lastIndex - m[0].length;
-				offset = regex.lastIndex;
-				break;
-			}
-		}
-		
-		// If an image, get the image
-		else if (elem.nodeName === 'IMG') {
-			break;
-		}
-		
-		elem = PreviousElementFirstChild(elem);
-	}
-	
-	// If there is something next, get that next element highlighted
-	if (elem !== null) {
-		if (start >= 0) {
-			var r = document.createRange();
-			r.setStart(elem, start);
-			r.setEnd(elem, offset);
-			SetHighlight(false, r);
-		}
-		else {
-			var r = document.createRange();
-			r.selectNode(elem);
-			SetHighlight(false, r);
-		}
-		
-		// Scroll to the highlight
-		ScrollToHighlight(true);
-	}
+	MoveCursorToEndOfNode(elem);
+	MoveCursorToStart();
 }
 
 /**
@@ -286,7 +190,64 @@ function MoveCursorUp() {
  */
 function MoveCursorDown() {
 	var elem = NextElement(highlight.parentNode);
+	MoveCursorToBeginningOfNode(elem);
+}
+
+/**
+ * Moves the cursor to the start of the line.
+ */
+function MoveCursorToStart() {
+	var p = highlight.parentNode;
+	ClearAllHighlights();
+	var elem = p.firstChild;
+	MoveCursorToBeginningOfNode(elem);
+}
+
+/**
+ * Moves the cursor to the end of the line.
+ */
+function MoveCursorToEnd() {
+	var p = highlight.parentNode;
+	ClearAllHighlights();
+	var elem = p.lastChild;
+	MoveCursorToEndOfNode(elem);
+}
+
+/**
+ * Moves the cursor to the previous bookmark, whether that is a heading or a
+ * page number.
+ */
+function MoveCursorToPreviousBookmark() {
+	var elemSel = $(highlight.parentNode);
+	var headingSel = $("p.pageNumber, h1, h2, h3, h4, h5, h6");
+	var elem = GetPreviousOccurrence(elemSel, headingSel);
 	
+	if (typeof elem !== "undefined") {
+		elem = DeepestChild(elem[0]);
+		MoveCursorToBeginningOfNode(elem);
+	}
+}
+
+/**
+ * Moves the cursor to the next bookmark, whether that is a heading or a page
+ * number.
+ */
+function MoveCursorToNextBookmark() {
+	var elemSel = $(highlight);
+	var headingSel = $("p.pageNumber, h1, h2, h3, h4, h5, h6");
+	var elem = GetNextOccurrence(elemSel, headingSel);
+	
+	if (typeof elem !== "undefined") {
+		elem = DeepestChild(elem[0]);
+		MoveCursorToBeginningOfNode(elem);
+	}
+}
+
+/**
+ * Moves to the beginning of whatever the node is.
+ * @param elem
+ */
+function MoveCursorToBeginningOfNode(elem) {
 	var start = -1;
 	var offset = -1;
 	while (elem !== null) {
@@ -319,6 +280,62 @@ function MoveCursorDown() {
 	}
 	
 	// If there is something next, get that next element highlighted
+	if (elem !== null) {
+		if (start >= 0) {
+			var r = document.createRange();
+			r.setStart(elem, start);
+			r.setEnd(elem, offset);
+			SetHighlight(false, r);
+		}
+		else {
+			var r = document.createRange();
+			r.selectNode(elem);
+			SetHighlight(false, r);
+		}
+		
+		// Scroll to the highlight
+		ScrollToHighlight(true);
+	}
+}
+
+/**
+ * Moves to the end of whatever the node is.
+ * @param elem
+ */
+function MoveCursorToEndOfNode(elem) {
+	var start = -1;
+	var offset = -1;
+	while (elem !== null) {
+		var equation = GetEquation(elem);
+		
+		// If it is an equation, select the top element
+		if (equation !== null) {
+			elem = equation;
+			break;
+		}
+		
+		// If it is a text node, try to see if I can get a word
+		else if (elem.nodeType == Node.TEXT_NODE) {
+			var regex = /\w+/g;
+			var m;
+			while ((m = regex.exec(elem.data)) !== null) {
+				start = regex.lastIndex - m[0].length;
+				offset = regex.lastIndex;
+			}
+			if (start >= 0) {
+				break;
+			}
+		}
+		
+		// If an image, get the image
+		else if (elem.nodeName === 'IMG') {
+			break;
+		}
+		
+		elem = PreviousElement(elem);
+	}
+	
+	// If I got something, get that next element highlighted
 	if (elem !== null) {
 		if (start >= 0) {
 			var r = document.createRange();

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\GraffeS\workspace\nifty-prose-articulator\src\forms/mainwindow.ui'
+# Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace\nifty-prose-articulator\src\forms/mainwindow.ui'
 #
-# Created: Mon Aug 12 16:03:27 2013
+# Created: Wed Aug 14 08:23:03 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -419,6 +419,14 @@ class Ui_MainWindow(object):
         icon21.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/zoom_fit_best_small.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionReset_Zoom.setIcon(icon21)
         self.actionReset_Zoom.setObjectName(_fromUtf8("actionReset_Zoom"))
+        self.actionIncrease_Volume = QtGui.QAction(MainWindow)
+        self.actionIncrease_Volume.setObjectName(_fromUtf8("actionIncrease_Volume"))
+        self.actionDecrease_Volume = QtGui.QAction(MainWindow)
+        self.actionDecrease_Volume.setObjectName(_fromUtf8("actionDecrease_Volume"))
+        self.actionIncrease_Rate = QtGui.QAction(MainWindow)
+        self.actionIncrease_Rate.setObjectName(_fromUtf8("actionIncrease_Rate"))
+        self.actionDecrease_Rate = QtGui.QAction(MainWindow)
+        self.actionDecrease_Rate.setObjectName(_fromUtf8("actionDecrease_Rate"))
         self.menuFile.addAction(self.actionOpen_Docx)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionSave_All_to_MP3)
@@ -438,6 +446,11 @@ class Ui_MainWindow(object):
         self.menuFunctions.addAction(self.actionZoom_In)
         self.menuFunctions.addAction(self.actionZoom_Out)
         self.menuFunctions.addAction(self.actionReset_Zoom)
+        self.menuFunctions.addSeparator()
+        self.menuFunctions.addAction(self.actionIncrease_Volume)
+        self.menuFunctions.addAction(self.actionDecrease_Volume)
+        self.menuFunctions.addAction(self.actionIncrease_Rate)
+        self.menuFunctions.addAction(self.actionDecrease_Rate)
         self.menuFunctions.addSeparator()
         self.menuFunctions.addAction(self.actionSearch)
         self.menuSettings.addAction(self.actionSpeech)
@@ -520,6 +533,18 @@ class Ui_MainWindow(object):
         self.actionZoom_Out.setShortcut(_translate("MainWindow", "Ctrl+-", None))
         self.actionReset_Zoom.setText(_translate("MainWindow", "Reset Zoom", None))
         self.actionReset_Zoom.setShortcut(_translate("MainWindow", "Ctrl+Backspace", None))
+        self.actionIncrease_Volume.setText(_translate("MainWindow", "Increase Volume", None))
+        self.actionIncrease_Volume.setToolTip(_translate("MainWindow", "Increase Volume", None))
+        self.actionIncrease_Volume.setShortcut(_translate("MainWindow", "Ctrl+Up", None))
+        self.actionDecrease_Volume.setText(_translate("MainWindow", "Decrease Volume", None))
+        self.actionDecrease_Volume.setToolTip(_translate("MainWindow", "Decrease Volume", None))
+        self.actionDecrease_Volume.setShortcut(_translate("MainWindow", "Ctrl+Down", None))
+        self.actionIncrease_Rate.setText(_translate("MainWindow", "Increase Rate", None))
+        self.actionIncrease_Rate.setToolTip(_translate("MainWindow", "Increase Rate", None))
+        self.actionIncrease_Rate.setShortcut(_translate("MainWindow", "Ctrl+Right", None))
+        self.actionDecrease_Rate.setText(_translate("MainWindow", "Decrease Rate", None))
+        self.actionDecrease_Rate.setToolTip(_translate("MainWindow", "Decrease Rate", None))
+        self.actionDecrease_Rate.setShortcut(_translate("MainWindow", "Ctrl+Left", None))
 
 from PyQt4 import QtWebKit
 import resource_rc

@@ -10,12 +10,17 @@ var nextStreamElement = null;
  * Gives me a beginning to work with.
  */
 function SetStreamBeginning() {
-    console.debug('SetStreamBeginning()');
+    //console.debug('SetStreamBeginning()');
     
-    range = GetSelectionRange();
+    var range = GetSelectionRange();
     nextStreamElement = range.startContainer;
     
-    myRange = document.createRange();
+    var eq = GetEquation(nextStreamElement);
+    if (eq !== null) {
+    	nextStreamElement = eq;
+    }
+    
+    var myRange = document.createRange();
     myRange.setStart(nextStreamElement, range.startOffset);
     myRange.setEndAfter(nextStreamElement);
     highlightBeginOffset = range.startOffset;
@@ -30,18 +35,18 @@ function SetStreamBeginning() {
  * HTML content. 
  */
 function StreamNextElement() {
-    console.debug('StreamNextElement()');
+    //console.debug('StreamNextElement()');
     
-    eq = null;
+    var eq = null;
     if (nextStreamElement != null) {
         eq = GetEquation(nextStreamElement);
     }
     
-    if (eq != null) {
+    if (eq !== null) {
         nextStreamElement = eq;
     }
     
-    if (nextStreamElement == null) {
+    if (nextStreamElement === null) {
         return '';
     }
     else {

@@ -349,6 +349,13 @@ class MainWindow(QtGui.QMainWindow):
         self.setSettingsEnableState(True)
         self.ui.webView.setFocus()
         
+    def toggleSpeechPlayback(self):
+        '''
+        Depending on the state of the TTS, it will either start it or stop it,
+        whichever is opposite 
+        '''
+        
+        
     def resetTTSStates(self):
         self.ttsStates = {'lastElement' : ['', -1, '', -1], 
                           'hasWorded' : False}
@@ -438,14 +445,12 @@ class MainWindow(QtGui.QMainWindow):
         self.changeRate.emit(self.configuration.rate)
         
     def increaseRate(self):
-        print 'window: increase rate'
         self.configuration.rate += 10
         if self.configuration.rate > 100:
             self.configuration.rate = 100
         self.ui.rateSlider.setValue(self.configuration.rate)
     
     def decreaseRate(self):
-        print 'window: decrease rate'
         self.configuration.rate -= 10
         if self.configuration.rate < 0:
             self.configuration.rate = 0
@@ -456,14 +461,12 @@ class MainWindow(QtGui.QMainWindow):
         self.changeVolume.emit(self.configuration.volume)
     
     def increaseVolume(self):
-        print 'window: increase volume'
         self.configuration.volume += 10
         if self.configuration.volume > 100:
             self.configuration.volume = 100
         self.ui.volumeSlider.setValue(self.configuration.volume)
     
     def decreaseVolume(self):
-        print 'window: decrease volume'
         self.configuration.volume -= 10
         if self.configuration < 0:
             self.configuration.volume = 0

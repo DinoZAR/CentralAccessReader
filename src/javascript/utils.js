@@ -12,8 +12,7 @@ Selection Functions
  * Gets the selection range. 
  */
 function GetSelectionRange() {
-	console.debug('GetSelectionRange()');
-	
+	//console.debug('GetSelectionRange()');
 	range = ConvertUserSelectionToRange();
 
 	// Check if I have don't have a user selection.
@@ -270,6 +269,52 @@ function PreviousElementFirstChild(elem) {
 	else {
 		return DeepestChild(prev);
 	}
+}
+
+
+/**
+ * Gets the previous occurrence of $sel from $elemSel. Both parameters are
+ * JQuery objects. Returns a JQuery object.
+ * @param $elemSel
+ * @param $sel
+ * @returns
+ */
+function GetPreviousOccurrence($elemSel, $sel) {
+    var selector = $elemSel.add($sel);
+    var $prev;
+    $(selector).each(function() {
+        if ($(this).is($elemSel)) {
+            return false;
+        }
+        $prev = $(this);
+    });
+    
+    return $prev;
+}
+
+/**
+ * Gets the next occurrence of $sel from $elemSel. Both parameters are JQuery
+ * objects. Returns a JQuery object.
+ * @param $elemSel
+ * @param $sel
+ * @returns
+ */
+function GetNextOccurrence($elemSel, $sel) {
+	var selector = $elemSel.add($sel);
+	var $next;
+	var gotMatch = false;
+	$(selector).each(function() {
+		if (gotMatch) {
+            $next = $(this);
+			return false;
+		}
+		if ($(this).is($elemSel)) {
+			gotMatch = true;
+		}
+        return true;
+	});
+	
+	return $next;
 }
 
 /**

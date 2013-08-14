@@ -144,6 +144,7 @@ class Assigner(object):
                     yield [altText, 'image']
                 else:
                     yield ['Image.', 'image']
+                    
             if element.tail != None:
                 yield [element.tail, 'text']
         

@@ -127,6 +127,24 @@ class NPAWebView(QWebView):
             elif event.key() == Qt.Key_Right:
                 self.page().mainFrame().evaluateJavaScript(misc.js_command('MoveCursorRight', []))
                 event.ignore()
+                
+            # Home
+            elif event.key() == Qt.Key_Home:
+                self.page().mainFrame().evaluateJavaScript(misc.js_command('MoveCursorToStart', []))
+                event.ignore()
+
+            # End                
+            elif event.key() == Qt.Key_End:
+                self.page().mainFrame().evaluateJavaScript(misc.js_command('MoveCursorToEnd', []))
+                event.ignore()
+                
+            # Page Up
+            elif event.key() == Qt.Key_PageUp:
+                self.page().mainFrame().evaluateJavaScript(misc.js_command('MoveCursorToPreviousBookmark', []))
+            
+            # Page Down
+            elif event.key() == Qt.Key_PageDown:
+                self.page().mainFrame().evaluateJavaScript(misc.js_command('MoveCursorToNextBookmark', []))
         
     def keyReleaseEvent(self, event):
         event.ignore()

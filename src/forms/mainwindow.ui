@@ -877,6 +877,11 @@
     <addaction name="actionZoom_Out"/>
     <addaction name="actionReset_Zoom"/>
     <addaction name="separator"/>
+    <addaction name="actionIncrease_Volume"/>
+    <addaction name="actionDecrease_Volume"/>
+    <addaction name="actionIncrease_Rate"/>
+    <addaction name="actionDecrease_Rate"/>
+    <addaction name="separator"/>
     <addaction name="actionSearch"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
@@ -1081,6 +1086,50 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Backspace</string>
+   </property>
+  </action>
+  <action name="actionIncrease_Volume">
+   <property name="text">
+    <string>Increase Volume</string>
+   </property>
+   <property name="toolTip">
+    <string>Increase Volume</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Up</string>
+   </property>
+  </action>
+  <action name="actionDecrease_Volume">
+   <property name="text">
+    <string>Decrease Volume</string>
+   </property>
+   <property name="toolTip">
+    <string>Decrease Volume</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Down</string>
+   </property>
+  </action>
+  <action name="actionIncrease_Rate">
+   <property name="text">
+    <string>Increase Rate</string>
+   </property>
+   <property name="toolTip">
+    <string>Increase Rate</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Right</string>
+   </property>
+  </action>
+  <action name="actionDecrease_Rate">
+   <property name="text">
+    <string>Decrease Rate</string>
+   </property>
+   <property name="toolTip">
+    <string>Decrease Rate</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Left</string>
    </property>
   </action>
  </widget>
