@@ -24,7 +24,7 @@ cdef class PatternTree:
     cpdef object insertChild(self, PatternTree newNode, int index)
     cpdef object insertBefore(self, PatternTree newNode, PatternTree beforeNode)
     cpdef PatternTree getNext(self, int includeChildren=*)
-    cpdef unicode getOutput(self)
+    cpdef list getOutput(self)
     cpdef object disconnect(self)
     cpdef object copyData(self, PatternTree other)
     cdef unicode _getTypeString(self)

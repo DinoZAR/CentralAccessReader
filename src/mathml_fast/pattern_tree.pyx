@@ -331,15 +331,14 @@ cdef class PatternTree:
 
         return None
         
-    cpdef unicode getOutput(self):
+    cpdef list getOutput(self):
         '''
         Gets the speech output from this node.
         '''
-        cdef unicode out
         cdef int i
         cdef int num
         
-        out = u''
+        out = []
         if self.type == VARIABLE:
             # This one is fun. Get a list of all of the expression indices to
             # replace with
@@ -361,17 +360,17 @@ cdef class PatternTree:
                     num = int(c.replace(u'{', u'').replace(u'}', u'').strip()) - 1
                     out += self.children[num].getOutput()
                 else:
-                    out += c
+                    out += [c]
             
         elif self.type == CATEGORY:
             for c in self.children:
                 out += c.getOutput()
             
         elif self.type == XML:
-            out += u'[ERROR]'
+            out += [u'[ERROR]']
             
         elif self.type == TEXT:
-            out += self.name
+            out += [self.name]
             
         elif self.type == WILDCARD:
             
@@ -380,14 +379,14 @@ cdef class PatternTree:
             
             elif self.name == u'+':
                 for c in self.children:
-                    out += c.getOutput() + ' '
-                out = out[:-1]
+                    out += c.getOutput()
                 
             elif self.name == u'#':
                 # Make output numbered
                 for index in range(len(self.children)):
-                    out += self.children[index].getOutput() + u', ' + unicode(index + 1) + u', ' 
-                out = out[:-1]
+                    myOut = self.children[i].getOutput()
+                    myOut[1:1] = [u'"' + unicode(i + 1) + u'".']
+                    out += myOut
         
         return out
         

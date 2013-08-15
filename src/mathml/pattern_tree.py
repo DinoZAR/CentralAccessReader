@@ -328,8 +328,7 @@ class PatternTree(object):
         '''
         Gets the speech output from this node.
         '''
-        out = ''
-        
+        out = []
         if self.type == PatternTree.VARIABLE:
             # This one is fun. Get a list of all of the expression indices to
             # replace with
@@ -351,17 +350,17 @@ class PatternTree(object):
                     num = int(c.replace('{', '').replace('}', '').strip()) - 1
                     out += self.children[num].getOutput()
                 else:
-                    out += c
+                    out += [c]
             
         elif self.type == PatternTree.CATEGORY:
             for c in self.children:
                 out += c.getOutput()
             
         elif self.type == PatternTree.XML:
-            out += '[ERROR]'
+            out += ['[ERROR]']
             
         elif self.type == PatternTree.TEXT:
-            out += self.name
+            out += [self.name]
             
         elif self.type == PatternTree.WILDCARD:
             
@@ -370,14 +369,14 @@ class PatternTree(object):
             
             elif self.name == '+':
                 for c in self.children:
-                    out += c.getOutput() + ' '
-                out = out[:-1]
+                    out += c.getOutput()
                 
             elif self.name == '#':
                 # Make output numbered
                 for i in range(len(self.children)):
-                    out += self.children[i].getOutput() + ', ' + str(i + 1) + ', '
-                out = out[:-1]
+                    myOut = self.children[i].getOutput()
+                    myOut[1:1] = ['"' + str(i + 1) + '".']
+                    out += myOut
         
         else:
             raise TypeError('PatternTree type not recognized: ' + str(self.type))

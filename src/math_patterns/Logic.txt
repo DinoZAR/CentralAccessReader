@@ -175,7 +175,7 @@ matrix = mrow(mtable(#)) -> 'truth table {1}'
 matrix = mtable(#) -> 'truth table {1}'
 matrixPar = mfenced(mrow(mtable(+))) -> 'truth table {1}'
 tableColumn = mtd(+) -> '{1},'
-tableRow = mtr(+) -> 'row, {1}'
+tableRow = mtr(+) -> 'row {1}'
 
 // ------------------------------------------------------------------------------
 // Generic Fallbacks, Final Collectors
