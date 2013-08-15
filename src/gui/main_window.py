@@ -658,7 +658,6 @@ class MainWindow(QtGui.QMainWindow):
             self.assigner.prepare(docxHtml)
             self.ui.webView.loadProgress.connect(self.progressDialog.setProgress)
             
-            
             # Use the web view to figure out when the view is done loading
             self.pageLoaded = False
             def setLoadedFinished():
@@ -681,11 +680,23 @@ class MainWindow(QtGui.QMainWindow):
             
             self.document = self.docxImporterThread.getDocument()
             self.lastDocumentFilePath = self.docxImporterThread.getFilePath()
-                    
+            
+            # Wait until page is done loading
+            while not self.pageLoaded:
+                QtGui.qApp.processEvents()
+            
             # Wait until MathJax is done typesetting
             self.progressDialog.setLabelText('Typesetting math equations...')
-            loaded = False
-            while not loaded:
+            self.mathjax_loaded = False
+            
+            # Allow the user to cancel this. Sometimes MathJax freaks out and
+            # the user should say no to it
+            self.progressDialog.enableCancel()
+            def myCancelHandler():
+                self.mathjax_loaded = True
+            self.progressDialog.canceled.connect(myCancelHandler)
+            
+            while not self.mathjax_loaded:
                 QtGui.qApp.processEvents()
                 self.javascriptMutex.lock()
                 progress = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetMathTypesetProgress', [])).toInt()
@@ -693,7 +704,6 @@ class MainWindow(QtGui.QMainWindow):
                 loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsMathTypeset', [])).toBool()
                 self.javascriptMutex.unlock()
                     
-        self.progressDialog.enableCancel()
         self.progressDialog.close()
         self.stopDocumentLoad = False
         
