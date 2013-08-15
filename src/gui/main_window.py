@@ -701,7 +701,7 @@ class MainWindow(QtGui.QMainWindow):
                 self.javascriptMutex.lock()
                 progress = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetMathTypesetProgress', [])).toInt()
                 self.progressDialog.setProgress(progress[0])
-                loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsMathTypeset', [])).toBool()
+                self.mathjax_loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsMathTypeset', [])).toBool()
                 self.javascriptMutex.unlock()
                     
         self.progressDialog.close()
