@@ -526,19 +526,17 @@ padding: 5px 0px 0px 25px;
 font-size: 150%;
 }
 
-.ui-tooltip
+.ui-tooltip 
 {
 background: ''' + self._createRGBStringFromQColor(self.color_contentBackground) + ''';
 border: 2px solid ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
-}
-
-.ui-tooltip 
-{
 padding: 10px 20px;
 margin-left: 10px;
 color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
 border-radius: 20px;
 box-shadow: 0 0 7px ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
+-webkit-user-select: none;
+-moz-user-select: -moz-none;
 }
 
 #npaHighlightLine

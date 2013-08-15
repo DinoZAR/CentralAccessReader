@@ -376,7 +376,7 @@ class PatternTree(object):
             elif self.name == '#':
                 # Make output numbered
                 for i in range(len(self.children)):
-                    out += ', ' + str(i + 1) + ', ' + self.children[i].getOutput() + ' '
+                    out += self.children[i].getOutput() + ', ' + str(i + 1) + ', '
                 out = out[:-1]
         
         else:

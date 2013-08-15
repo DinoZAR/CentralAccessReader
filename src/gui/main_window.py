@@ -338,7 +338,6 @@ class MainWindow(QtGui.QMainWindow):
             root = html.fromstring(contents)
         except XMLSyntaxError:
             root = html.Element('p')
-            
         
         # Set the speech generator and start playback
         self.setSpeechGenerator.emit(self.assigner.generateSpeech(root, self.configuration))
@@ -349,12 +348,14 @@ class MainWindow(QtGui.QMainWindow):
         self.setSettingsEnableState(True)
         self.ui.webView.setFocus()
         
-    def toggleSpeechPlayback(self):
+    def toggleSpeech(self):
         '''
-        Depending on the state of the TTS, it will either start it or stop it,
-        whichever is opposite 
+        Toggles the state of speech playback
         '''
-        
+        if self.speechThread.isPlaying():
+            self.stopSpeech()
+        else:
+            self.playSpeech()
         
     def resetTTSStates(self):
         self.ttsStates = {'lastElement' : ['', -1, '', -1], 

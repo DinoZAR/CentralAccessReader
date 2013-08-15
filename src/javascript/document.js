@@ -222,8 +222,8 @@ function MoveCursorToPreviousBookmark() {
 	var headingSel = $("p.pageNumber, h1, h2, h3, h4, h5, h6");
 	var elem = GetPreviousOccurrence(elemSel, headingSel);
 	
-	if (typeof elem !== "undefined") {
-		elem = DeepestChild(elem[0]);
+	if (elem !== null) {
+		elem = DeepestChild(elem);
 		MoveCursorToBeginningOfNode(elem);
 	}
 }
@@ -237,8 +237,8 @@ function MoveCursorToNextBookmark() {
 	var headingSel = $("p.pageNumber, h1, h2, h3, h4, h5, h6");
 	var elem = GetNextOccurrence(elemSel, headingSel);
 	
-	if (typeof elem !== "undefined") {
-		elem = DeepestChild(elem[0]);
+	if (elem !== null) {
+		elem = DeepestChild(elem);
 		MoveCursorToBeginningOfNode(elem);
 	}
 }

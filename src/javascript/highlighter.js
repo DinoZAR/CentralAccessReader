@@ -26,8 +26,49 @@ function StopHighlighting() {
 	//console.debug('StopHighlighting()');
 	isHighlighting = false;
 	isFirstHighlight = false;
+	
+	// If there isn't a highlight present, make sure to create one
+	if (highlight === null) {
+		var range = GetSelectionRange();
+	    var startElem = range.startContainer;
+	    var myRange = document.createRange();
+	    
+	    var eq = GetEquation(startElem);
+	    if (eq !== null) {
+	    	startElem = eq;
+	    	myRange.setStart(startElem, range.startOffset);
+		    myRange.setEndAfter(startElem);
+	    }
+	    else if (startElem.nodeType === Node.TEXT_NODE) {
+	    	// See if I can't get the first word from the text. If I can't, I'll
+	    	// just select all of the text.
+	    	var regex = /\w+/g;
+			var m = regex.exec(startElem.data.substring(range.startOffset));
+			var start = -1;
+			var offset = -1;
+			if (m !== null) {
+				start = regex.lastIndex - m[0].length;
+				offset = regex.lastIndex;
+			}
+	    	
+			if (start >= 0) {
+				var myRangeStart = range.startOffset;
+				myRange.setStart(startElem, start + myRangeStart);
+				myRange.setEnd(startElem, offset + myRangeStart);
+			}
+			else {
+				myRange.selectNode(startElem);
+			}
+	    }
+	    else {
+	    	myRange.selectNode(startElem);
+	    }
+	    
+	    SetHighlight(false, myRange);
+	}
+	
 	ClearLineHighlight();
-	//ClearAllHighlights();
+	ClearUserSelection();
 }
 
 /**
@@ -40,7 +81,7 @@ function StopHighlighting() {
  * @param wordLength
  */
 function HighlightNextWord(doLine, word, wordOffset, wordLength) {
-	console.debug('HighlightNextWord()');
+	//console.debug('HighlightNextWord()');
 	if (isHighlighting === true) {
 		
 		var reference = GetReferencePoint();
@@ -136,9 +177,6 @@ function HighlightNextImage(doLine) {
 	if (isHighlighting === true) {
 		var reference = GetReferencePoint();
 		var elem = DeepestChild(reference.element);
-		
-		console.debug('Reference element: ' + reference.element.toString());
-		console.debug('Reference offset: ' + reference.offset.toString());
 		
 		if ((reference.element.nodeType !== Node.TEXT_NODE) && (reference.element.children.length > 0)) {
 			elem = $(reference.element).contents()[reference.offset];

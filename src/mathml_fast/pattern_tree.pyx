@@ -386,7 +386,7 @@ cdef class PatternTree:
             elif self.name == u'#':
                 # Make output numbered
                 for index in range(len(self.children)):
-                    out += u', ' + unicode(index + 1) + u', ' + self.children[index].getOutput() + u' '
+                    out += self.children[index].getOutput() + u', ' + unicode(index + 1) + u', ' 
                 out = out[:-1]
         
         return out

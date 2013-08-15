@@ -115,6 +115,9 @@ class SpeechWorker(QThread):
     def stopPlayback(self):
         #print 'worker: Trying to stop TTS'
         self.ttsEngine.stop()
+        
+    def isPlaying(self):
+        return self.ttsEngine.isPlaying()
             
     def stopMP3(self):
         self._stopMP3Creation = True

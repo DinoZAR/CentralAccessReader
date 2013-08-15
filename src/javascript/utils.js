@@ -23,32 +23,39 @@ function GetSelectionRange() {
 			range.startOffset = 0;
 		}
 		else {
-			//range = GetRangeToEntireDocument();
-			// Make a range that starts from the highlighter/cursor
-			var parent = highlight.parentNode;
 			
-			if (highlight.previousSibling !== null) {
-			
-				if (highlight.previousSibling.nodeType === Node.TEXT_NODE) {
-					var elem = highlight.previousSibling;
-					var startOffset = elem.length;
-					var startIndex = GetChildIndex(elem);
-					
-					ClearHighlight();
-					
-					elem = $(parent).contents()[startIndex];
-					range.setStart(elem, startOffset);
-					range.setEndAfter(parent.lastChild);
+			if (highlight !== null) {
+				// Make a range that starts from the highlighter/cursor
+				var parent = highlight.parentNode;
+				
+				if (highlight.previousSibling !== null) {
+				
+					if (highlight.previousSibling.nodeType === Node.TEXT_NODE) {
+						var elem = highlight.previousSibling;
+						var startOffset = elem.length;
+						var startIndex = GetChildIndex(elem);
+						
+						ClearHighlight();
+						
+						elem = $(parent).contents()[startIndex];
+						range.setStart(elem, startOffset);
+						range.setEndAfter(parent.lastChild);
+					}
+					else {
+						var index = GetChildIndex(highlight);
+						ClearHighlight();
+						range.selectNode($(parent).contents()[index]);
+					}
 				}
 				else {
-					var index = GetChildIndex(highlight);
 					ClearHighlight();
-					range.selectNode($(parent).contents()[index]);
+					range.selectNode(DeepestChild(parent));
 				}
 			}
+			
 			else {
-				ClearHighlight();
-				range.selectNode(DeepestChild(parent));
+				// Select the entire document and start at beginning
+				range = GetRangeToEntireDocument();
 			}
 		}
 	}
@@ -271,52 +278,6 @@ function PreviousElementFirstChild(elem) {
 	}
 }
 
-
-/**
- * Gets the previous occurrence of $sel from $elemSel. Both parameters are
- * JQuery objects. Returns a JQuery object.
- * @param $elemSel
- * @param $sel
- * @returns
- */
-function GetPreviousOccurrence($elemSel, $sel) {
-    var selector = $elemSel.add($sel);
-    var $prev;
-    $(selector).each(function() {
-        if ($(this).is($elemSel)) {
-            return false;
-        }
-        $prev = $(this);
-    });
-    
-    return $prev;
-}
-
-/**
- * Gets the next occurrence of $sel from $elemSel. Both parameters are JQuery
- * objects. Returns a JQuery object.
- * @param $elemSel
- * @param $sel
- * @returns
- */
-function GetNextOccurrence($elemSel, $sel) {
-	var selector = $elemSel.add($sel);
-	var $next;
-	var gotMatch = false;
-	$(selector).each(function() {
-		if (gotMatch) {
-            $next = $(this);
-			return false;
-		}
-		if ($(this).is($elemSel)) {
-			gotMatch = true;
-		}
-        return true;
-	});
-	
-	return $next;
-}
-
 /**
  * Gets the next element, whether that is a text element or a normal element.
  * 
@@ -337,6 +298,58 @@ function NextElement(elem) {
 	else {
 		return DeepestChild(next);
 	}
+}
+
+/**
+ * Gets the previous occurrence of $sel from $elemSel. Both parameters are
+ * JQuery objects. Returns an Element object.
+ * @param $elemSel
+ * @param $sel
+ * @returns
+ */
+function GetPreviousOccurrence($elemSel, $sel) {
+	var elem = $elemSel[0];
+	var prev = PreviousElement(elem);
+	
+	// Keep getting the previous until I get something that matches selector
+	while (prev !== null) {
+		if ($(prev).is($sel)) {
+			break;
+		}
+		prev = PreviousElement(prev);
+	}
+	
+	return prev;
+}
+
+/**
+ * Gets the next occurrence of $sel from $elemSel. Both parameters are JQuery
+ * objects. Returns a JQuery object.
+ * @param $elemSel
+ * @param $sel
+ * @returns
+ */
+function GetNextOccurrence($elemSel, $sel) {
+	var elem = $($elemSel)[0];
+	var next = NextElement(elem.parentNode);
+	
+	// Keep getting the next until I get something that matches selector
+	while (next !== null) {
+		if ($(next).is($sel)) {
+			break;
+		}
+		
+		if (next.parentNode !== null) {
+			if ($(next.parentNode).is($sel)) {
+				next = next.parentNode;
+				break;
+			}
+		}
+		
+		next = NextElement(next);
+	}
+	
+	return next;
 }
 
 /**

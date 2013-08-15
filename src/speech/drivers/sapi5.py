@@ -264,6 +264,12 @@ class SAPI5Driver(object):
         self._grabbingSpeech = False
         self._running = False
         
+    def isPlaying(self):
+        '''
+        Returns true if the driver is currently playing.
+        '''
+        return self._running
+        
     def noMoreSpeech(self):
         '''
         Flags the TTS that it won't be expecting any more speech.

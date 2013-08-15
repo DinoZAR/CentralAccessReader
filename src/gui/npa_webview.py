@@ -107,6 +107,9 @@ class NPAWebView(QWebView):
             self.page().triggerAction(QWebPage.SelectAll)
             event.ignore()
         
+        elif event.key() == Qt.Key_Space:
+            self.mainWindow.toggleSpeech()
+        
         if self._keyboardNavEnabled:
             # Arrow Up
             if event.key() == Qt.Key_Up:
@@ -167,6 +170,9 @@ class NPAWebView(QWebView):
         self.setZoomFactor(self.ZOOM_LEVELS[self._zoomIndex])
         self.update()
         
+        # Scroll view to the highlight cursor
+        self.page().mainFrame().evaluateJavaScript(misc.js_command('ScrollToHighlight', [True]))
+        
     def zoomIn(self):
         '''
         Called by application to zoom the view in.
@@ -176,6 +182,9 @@ class NPAWebView(QWebView):
             self._zoomIndex = len(self.ZOOM_LEVELS) - 1
         self.setZoomFactor(self.ZOOM_LEVELS[self._zoomIndex])
         self.update()
+        
+        # Scroll view to the highlight cursor
+        self.page().mainFrame().evaluateJavaScript(misc.js_command('ScrollToHighlight', [True]))
     
     def zoomOut(self):
         '''
@@ -187,6 +196,9 @@ class NPAWebView(QWebView):
         self.setZoomFactor(self.ZOOM_LEVELS[self._zoomIndex])
         self.update()
         
+        # Scroll view to the highlight cursor
+        self.page().mainFrame().evaluateJavaScript(misc.js_command('ScrollToHighlight', [True]))
+        
     def zoomReset(self):
         '''
         Called by application to reset the zoom factor to 1.0
@@ -194,6 +206,9 @@ class NPAWebView(QWebView):
         self._zoomIndex = self.DEFAULT_ZOOM_INDEX
         self.setZoomFactor(self.ZOOM_LEVELS[self._zoomIndex])
         self.update()
+        
+        # Scroll view to the highlight cursor
+        self.page().mainFrame().evaluateJavaScript(misc.js_command('ScrollToHighlight', [True]))
         
     def myLinkClicked(self, url):
         webbrowser.open_new(str(url.toString()))

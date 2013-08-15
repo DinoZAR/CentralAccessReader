@@ -184,6 +184,12 @@ class NSSpeechSynthesizerDriver(NSObject):
         #print 'driver: stopping TTS'
         self._running = False
         self._tts.stopSpeaking()
+        
+    def isPlaying(self):
+        '''
+        Returns true if the driver is currently playing.
+        '''
+        return not self._done
 
     def noMoreSpeech(self):
         '''
