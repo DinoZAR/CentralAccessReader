@@ -114,7 +114,10 @@ class PatternTree(object):
                                     return (True, other.next)
                         
                     else:
-                        return (True, other.next)
+                        if len(other.children) > 0:
+                            return (False, None)
+                        else:
+                            return (True, other.next)
 
         elif self.type == PatternTree.TEXT:
             if parentIsVariable:
