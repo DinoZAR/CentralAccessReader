@@ -403,9 +403,12 @@ class MainWindow(QtGui.QMainWindow):
         It will either get more speech for the TTS and send it, or tell it that
         no more speech is available.
         '''
+        
+        print 'window: sending more speech'
         hasMoreSpeech = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HasMoreElements', [])).toBool()
         if hasMoreSpeech:
             nextContent = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('StreamNextElement', [])).toString())
+            print 'window: done sending more speech'
             
             # Create the HTML DOM from content
             elem = None

@@ -35,8 +35,6 @@ class MathTTS():
         
         myString = ' '.join(mathTree.getOutput())
         
-        print 'My math string:', myString
-        
         return myString
     
     def setPatternDatabase(self, filePath):
