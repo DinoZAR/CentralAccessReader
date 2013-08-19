@@ -65,6 +65,7 @@ function StopHighlighting() {
 	    }
 	    
 	    SetHighlight(false, myRange);
+	    ScrollToHighlight(true);
 	}
 	
 	ClearLineHighlight();
