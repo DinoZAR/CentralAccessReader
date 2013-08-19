@@ -336,7 +336,6 @@ cdef class PatternTree:
         Gets the speech output from this node.
         '''
         cdef int i
-        cdef int num
         
         out = []
         if self.type == VARIABLE:
@@ -347,8 +346,8 @@ cdef class PatternTree:
             # Remove the empty ones
             i = 0
             while i < len(expressionIndices):
-                if expressionIndices[i] == u'':
-                    expressionIndices.remove(u'')
+                if expressionIndices[i] == '':
+                    expressionIndices.remove('')
                     i = 0
                 else:
                     i += 1
@@ -357,7 +356,7 @@ cdef class PatternTree:
             for c in expressionIndices:
                 if c.find(r'{') != -1:
                     # Must generate speech from child object number refers to
-                    num = int(c.replace(u'{', u'').replace(u'}', u'').strip()) - 1
+                    num = int(c.replace('{', '').replace('}', '').strip()) - 1
                     out += self.children[num].getOutput()
                 else:
                     out += [c]
@@ -367,25 +366,25 @@ cdef class PatternTree:
                 out += c.getOutput()
             
         elif self.type == XML:
-            out += [u'[ERROR]']
+            out += ['[ERROR]']
             
         elif self.type == TEXT:
             out += [self.name]
             
         elif self.type == WILDCARD:
             
-            if self.name == u'?':
+            if self.name == '?':
                 out += self.getFirstChild().getOutput()
             
-            elif self.name == u'+':
+            elif self.name == '+':
                 for c in self.children:
                     out += c.getOutput()
                 
-            elif self.name == u'#':
+            elif self.name == '#':
                 # Make output numbered
-                for index in range(len(self.children)):
+                for i in range(len(self.children)):
                     myOut = self.children[i].getOutput()
-                    myOut[1:1] = [u'"' + unicode(i + 1) + u'".']
+                    myOut[1:1] = ['"' + str(i + 1) + '".']
                     out += myOut
         
         return out

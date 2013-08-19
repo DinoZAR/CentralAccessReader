@@ -32,8 +32,10 @@ class MathTTS():
             i += 1
             pattern = database.convertToPatternTree(p)
             mathTree = transform(mathTree, pattern)
-            
+        
         myString = ' '.join(mathTree.getOutput())
+        
+        print 'My math string:', myString
         
         return myString
     

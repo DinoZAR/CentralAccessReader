@@ -328,9 +328,7 @@ class MainWindow(QtGui.QMainWindow):
         self.setSettingsEnableState(False)
         
         # Set the beginning of the streamer
-        self.javascriptMutex.lock()
         contents = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SetStreamBeginning', [])).toString())
-        self.javascriptMutex.unlock()
         
         # Convert the HTML to DOM
         root = None
@@ -363,9 +361,7 @@ class MainWindow(QtGui.QMainWindow):
     
     def onStart(self, offset, length, label, stream, word):
         #print 'window: OnStart;', offset, length, label, stream, word
-        self.javascriptMutex.lock()
         self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('StartHighlighting', []))
-        self.javascriptMutex.unlock()
         
     def onWord(self, offset, length, label, stream, word, isFirst):
         #print 'window: OnWord; offset', offset, ',length', length, ', label', label, ', stream', stream, ', word', [word], ', isFirst', isFirst
@@ -373,21 +369,15 @@ class MainWindow(QtGui.QMainWindow):
         lastElement = self.ttsStates['lastElement']
         
         if label == 'text':
-            self.javascriptMutex.lock()
             self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextWord', [self.configuration.highlight_line_enable, unicode(word), offset, length]))
-            self.javascriptMutex.unlock()
             
         elif label == 'math':
             if label != lastElement[2] or stream != lastElement[3] and (lastElement[3] >= 0):
-                self.javascriptMutex.lock()
                 self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextMath', [self.configuration.highlight_line_enable]))
-                self.javascriptMutex.unlock()
                     
         elif label == 'image':
             if label != lastElement[2] or stream != lastElement[3] and (lastElement[3] >= 0):
-                self.javascriptMutex.lock()
                 self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextImage', [self.configuration.highlight_line_enable]))
-                self.javascriptMutex.unlock()
         else:
             print 'ERROR: I don\'t know what this label refers to for highlighting:', label
         
@@ -401,9 +391,7 @@ class MainWindow(QtGui.QMainWindow):
         #print 'window: OnSpeechFinished'
         
         # Tell JavaScript to not highlight further
-        self.javascriptMutex.lock()
         self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('StopHighlighting', []))
-        self.javascriptMutex.unlock()
         
         self.setSettingsEnableState(True)
         self.resetTTSStates()
@@ -698,11 +686,9 @@ class MainWindow(QtGui.QMainWindow):
             
             while not self.mathjax_loaded:
                 QtGui.qApp.processEvents()
-                self.javascriptMutex.lock()
                 progress = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetMathTypesetProgress', [])).toInt()
                 self.progressDialog.setProgress(progress[0])
                 self.mathjax_loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsMathTypeset', [])).toBool()
-                self.javascriptMutex.unlock()
                     
         self.progressDialog.close()
         self.stopDocumentLoad = False
@@ -786,15 +772,11 @@ class MainWindow(QtGui.QMainWindow):
         
     def bookmarksTree_clicked(self, index):
         node = index.internalPointer()
-        self.javascriptMutex.lock()
         self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GotoPageAnchor', [node.anchorId]))
-        self.javascriptMutex.unlock()
         
     def pagesTree_clicked(self, index):
         node = index.internalPointer()
-        self.javascriptMutex.lock()
         self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GotoPageAnchor', [node.anchorId]))
-        self.javascriptMutex.unlock()
         
     def bookmarkZoomInButton_clicked(self):
         # Get the current font

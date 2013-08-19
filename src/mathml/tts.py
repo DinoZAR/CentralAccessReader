@@ -29,6 +29,7 @@ class MathTTS():
             pattern = database.convertToPatternTree(p)
             mathTree = transform(mathTree, pattern)
     
+        print 'Math tree output:', mathTree.getOutput()
         myString = ' '.join(mathTree.getOutput())
         
         return myString

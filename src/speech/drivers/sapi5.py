@@ -206,9 +206,9 @@ class SAPI5Driver(object):
                 self._speechGenerator = None
                 self._alreadyRequestedSpeech = False
                 
-                #print 'driver: queue contents', self._queue
-                
             self.generatorLock.release()
+            
+            pythoncom.PumpWaitingMessages()
             
             # Request for more speech if I haven't already
             if not self._alreadyRequestedSpeech:
@@ -216,7 +216,6 @@ class SAPI5Driver(object):
                 if self._requestSpeechHook is not None:
                     #print 'driver: requesting more speech'
                     self._requestSpeechHook()
-                    #time.sleep(0.1)
             
             # Check if my settings have changed
             if self._settingsChanged:
