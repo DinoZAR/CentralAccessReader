@@ -115,15 +115,15 @@ def parseWMF(wmfFile, debug=False):
             
     except Exception as ex:
         # Write the problem file to my temp
-        savePath = temp_path(os.path.join('mathtype', os.path.basename(wmfFile.name)))
-        if not os.path.exists(os.path.dirname(savePath)):
-            os.makedirs(os.path.dirname(savePath))
-        saveFile = open(savePath, 'wb')
-        wmfFile.seek(0)
-        saveFile.write(wmfFile.read())
-        saveFile.close()
+#         savePath = temp_path(os.path.join('mathtype', os.path.basename(wmfFile.name)))
+#         if not os.path.exists(os.path.dirname(savePath)):
+#             os.makedirs(os.path.dirname(savePath))
+#         saveFile = open(savePath, 'wb')
+#         wmfFile.seek(0)
+#         saveFile.write(wmfFile.read())
+#         saveFile.close()
             
-        raise MathTypeParseError(savePath, traceback.format_exc())
+        raise MathTypeParseError('', traceback.format_exc())
     
 def _combineNumbers(mathml):
     '''
@@ -132,6 +132,8 @@ def _combineNumbers(mathml):
     '''
     
     if _isNumber(mathml):
+        gotDecimal = False
+        
         # Keep grabbing nodes after this and putting them in here if they are
         # also numbers
         while True:
@@ -145,6 +147,17 @@ def _combineNumbers(mathml):
                 mathml.text += n.text
                 if n.getparent() != None:
                     n.getparent().remove(n)
+            
+            # Check if it is a decimal
+            elif _isDecimal(n):
+                if not gotDecimal:
+                    gotDecimal = True
+                    mathml.text += n.text
+                    if n.getparent() != None:
+                        n.getparent().remove(n)
+                else:
+                    break
+                
             else:
                 
                 # If there is a number that is inside of a superscript or
@@ -158,6 +171,30 @@ def _combineNumbers(mathml):
                             n.insert(0, mathml)
                             mathml = n
                 break
+            
+    elif _isDecimal(mathml):
+        
+        # Mutate the node to turn it into a <mn>
+        if '}' in mathml.tag:
+            namespace = mathml.tag.rsplit('}')[0] + '}'
+            print 'Setting MathML tag to:', namespace + 'mn'
+            mathml.tag = namespace + 'mn'
+        else:
+            mathml.tag = 'mn'
+        
+        # Same procedure as the normal number.
+        while True:
+            n = mathml.getnext()
+            if n == None:
+                break
+            
+            if _isNumber(n):
+                mathml.text += n.text
+                if n.getparent() != None:
+                    n.getparent().remove(n)
+                
+            else:
+                break
     
     # Check the children and make sure those are all good too
     if len(mathml) > 0:
@@ -169,6 +206,10 @@ def _combineNumbers(mathml):
         _combineNumbers(mathml.getnext())
 
 def _isNumber(mathml):
+    '''
+    Checks whether the MathML element is a number, or more specifically, a <mn>
+    element. Returns True if it is.
+    '''
     testTag = mathml.tag.rsplit('}', 1)[-1].lower()
     if testTag == 'mn':
         try:
@@ -179,6 +220,18 @@ def _isNumber(mathml):
     else:
         return False
     
+def _isDecimal(mathml):
+    '''
+    Checks whether the MathML element has a decimal in it and there is a digit
+    to the right of it. Returns True if it is.
+    '''
+    if mathml.text == '.':
+        n = mathml.getnext()    
+        if n != None:
+            return _isNumber(n)
+            
+    return False
+        
 def _isSuperscriptOrSubscript(mathml):
     testTag = mathml.tag.rsplit('}', 1)[-1].lower()
     if testTag == 'msup':
