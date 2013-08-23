@@ -35,7 +35,7 @@ weirdSpace = mi("&#1160;") -> ' '
 
 divideBack = mo("&#247;") -> 'divided by,'
 divideBack = mi("\") -> ', back slash,'
-divide = mo("/") -> 'divided by,'
+divide = mo("/") -> 'forward slash,'
 
 import _codes.txt
 import _Numbers.txt
