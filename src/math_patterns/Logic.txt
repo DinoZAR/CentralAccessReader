@@ -33,11 +33,16 @@
 // ------------------------------------------------------------------------------
 weirdSpace = mi("&#1160;") -> ' '
 
+divideBack = mo("&#247;") -> 'divided by,'
+divideBack = mi("\") -> ', back slash,'
+divide = mo("/") -> 'divided by,'
+
 import _codes.txt
 import _Numbers.txt
 
 // Unicodes and MathML codes for operators
-slash = divideBack -> ', back slash,'slash = divide -> ', forward slash,'
+//backSlash = divideBack -> ', back slash,'//forwardSlash = divide -> ', forward slash,'
+
 cross = timesCross -> 'cross'
 diamond = mi("&#8900;") -> 'diamond'
 identical = mi("&#8801;") -> 'triple bars'
