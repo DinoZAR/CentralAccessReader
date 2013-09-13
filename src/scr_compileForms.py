@@ -12,7 +12,6 @@ files that have corresponding .py that are newer than itself.
 
 import os
 from subprocess import check_output
-from PyQt4 import uic
 
 def main():
     
@@ -35,13 +34,18 @@ def main():
                 lastTime2 = os.path.getmtime(os.path.join(mydir, pyExportName))
                 if lastTime2 < lastTime:
                     print 'Compiling', file
-                    pyfile = open(os.path.join(mydir, pyExportName), 'w')
-                    uic.compileUi(os.path.join(mydir, file), pyfile)
+                    data = check_output(['pyside-uic', os.path.join(mydir, file)])
+                    pyfile = open(os.path.join(mydir, pyExportName), 'wb')
+                    pyfile.write(data)
+                    pyfile.close()
             
             else:
                 print 'Compiling', file
                 pyfile = open(os.path.join(mydir, pyExportName), 'w')
-                uic.compileUi(os.path.join(mydir, file), pyfile)
+                data = check_output(['pyside-uic', os.path.join(mydir, file)])
+                pyfile = open(os.path.join(mydir, pyExportName), 'wb')
+                pyfile.write(data)
+                pyfile.close()
                 
         # Do the same routine here for the resource files.
         if nameExt[1] == '.qrc':
@@ -53,14 +57,14 @@ def main():
                 lastTime2 = os.path.getmtime(os.path.join(mydir, pyExportName))
                 if lastTime2 < lastTime:
                     print 'Compiling', file
-                    data = check_output(['pyrcc4', os.path.join(mydir, file)])
+                    data = check_output(['pyside-rcc', os.path.join(mydir, file)])
                     pyfile = open(os.path.join(mydir, pyExportName), 'wb')
                     pyfile.write(data)
                     pyfile.close()
             
             else:
                 print 'Compiling', file
-                data = check_output(['pyrcc4', os.path.join(mydir, file)])
+                data = check_output(['pyside-rcc', os.path.join(mydir, file)])
                 pyfile = open(os.path.join(mydir, pyExportName), 'wb')
                 pyfile.write(data)
                 pyfile.close()

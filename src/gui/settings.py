@@ -3,8 +3,8 @@ Created on Jan 21, 2013
 
 @author: Spencer
 '''
-from PyQt4 import QtGui
-from PyQt4.QtCore import Qt, QUrl, QVariant
+from PySide import QtGui
+from PySide.QtCore import Qt, QUrl, QVariant
 from forms.settings_ui import Ui_Settings
 from lxml import etree
 import copy
@@ -12,7 +12,7 @@ import copy
 class Settings(QtGui.QDialog):
 
     def __init__(self, mainWindow, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtGui.QDialog.__init__(self, parent)
         
         self.ui = Ui_Settings()
         self.ui.setupUi(self)

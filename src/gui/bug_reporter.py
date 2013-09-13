@@ -3,7 +3,7 @@ Created on May 20, 2013
 
 @author: GraffeS
 '''
-from PyQt4 import QtGui
+from PySide import QtGui
 import webbrowser
 
 from forms.bug_report_ui import Ui_BugReporter
@@ -14,7 +14,7 @@ class BugReporter(QtGui.QDialog):
     classdocs
     '''
     def __init__(self, bugReportText, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtGui.QDialog.__init__(self, parent)
         
         self.ui = Ui_BugReporter()
         self.ui.setupUi(self)

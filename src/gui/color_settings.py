@@ -3,8 +3,8 @@ Created on Apr 25, 2013
 
 @author: Spencer Graffe
 '''
-from PyQt4 import QtGui
-from PyQt4.QtCore import Qt
+from PySide import QtGui
+from PySide.QtCore import Qt
 from lxml import etree
 import copy
 from misc import app_data_path
@@ -19,7 +19,7 @@ class ColorSettings(QtGui.QDialog):
     RESULT_NEED_REFRESH = 2
     
     def __init__(self, mainWindow, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtGui.QDialog.__init__(self, parent)
         
         self.ui = Ui_ColorSettings()
         self.ui.setupUi(self)

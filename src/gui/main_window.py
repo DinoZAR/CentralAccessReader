@@ -9,9 +9,9 @@ import traceback
 from lxml import html
 from lxml.etree import ParserError, XMLSyntaxError
 from HTMLParser import HTMLParser
-from PyQt4 import QtGui
-from PyQt4.QtCore import Qt, QUrl, QMutex, pyqtSignal, QThread
-from PyQt4.QtWebKit import QWebPage, QWebInspector, QWebSettings
+from PySide import QtGui
+from PySide.QtCore import Qt, QUrl, QMutex, Signal, QThread
+from PySide.QtWebKit import QWebPage, QWebInspector, QWebSettings
 from forms.mainwindow_ui import Ui_MainWindow
 from gui.bookmarks import BookmarksTreeModel, BookmarkNode
 from gui.configuration import Configuration
@@ -30,27 +30,27 @@ class MainWindow(QtGui.QMainWindow):
     jumped = False
     
     # TTS control signals
-    startPlayback = pyqtSignal()
-    stopPlayback = pyqtSignal()
-    setSpeechGenerator = pyqtSignal(object)
-    noMoreSpeech = pyqtSignal()
+    startPlayback = Signal()
+    stopPlayback = Signal()
+    setSpeechGenerator = Signal(object)
+    noMoreSpeech = Signal()
     
     # TTS setting signals
-    changeVolume = pyqtSignal(int)
-    changeRate = pyqtSignal(int)
-    changePauseLength = pyqtSignal(int)
-    changeVoice = pyqtSignal(str)
-    changeMathDatabase = pyqtSignal(str)
+    changeVolume = Signal(int)
+    changeRate = Signal(int)
+    changePauseLength = Signal(int)
+    changeVoice = Signal(str)
+    changeMathDatabase = Signal(str)
     
     # Program update notification
-    notifyProgramUpdate = pyqtSignal()
-    programUpdateFinish = pyqtSignal()
+    notifyProgramUpdate = Signal()
+    programUpdateFinish = Signal()
     
     # JavaScript mutex
     javascriptMutex = QMutex()
     
     def __init__(self, app, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtGui.QMainWindow.__init__(self, parent)
         
         self.app = app
         
@@ -328,7 +328,7 @@ class MainWindow(QtGui.QMainWindow):
         self.setSettingsEnableState(False)
         
         # Set the beginning of the streamer
-        contents = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SetStreamBeginning', [])).toString())
+        contents = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SetStreamBeginning', [])))
         
         # Convert the HTML to DOM
         root = None
@@ -405,9 +405,9 @@ class MainWindow(QtGui.QMainWindow):
         '''
         
         print 'window: sending more speech'
-        hasMoreSpeech = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HasMoreElements', [])).toBool()
+        hasMoreSpeech = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HasMoreElements', []))
         if hasMoreSpeech:
-            nextContent = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('StreamNextElement', [])).toString())
+            nextContent = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('StreamNextElement', [])))
             print 'window: done sending more speech'
             
             # Create the HTML DOM from content
@@ -523,7 +523,7 @@ class MainWindow(QtGui.QMainWindow):
             QtGui.qApp.processEvents()
             
             # Get my speech output list
-            selectedHTML = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetSelectionHTML', [])).toString())
+            selectedHTML = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetSelectionHTML', [])))
             speechGenerator = self.assigner.generateSpeech(html.fromstring(selectedHTML), self.configuration)
             
             # Get the progress of the thing from the speech thread
@@ -689,9 +689,9 @@ class MainWindow(QtGui.QMainWindow):
             
             while not self.mathjax_loaded:
                 QtGui.qApp.processEvents()
-                progress = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetMathTypesetProgress', [])).toInt()
-                self.progressDialog.setProgress(progress[0])
-                self.mathjax_loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsMathTypeset', [])).toBool()
+                progress = int(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetMathTypesetProgress', [])))
+                self.progressDialog.setProgress(progress)
+                self.mathjax_loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsMathTypeset', []))
                     
         self.progressDialog.close()
         self.stopDocumentLoad = False
@@ -732,7 +732,7 @@ class MainWindow(QtGui.QMainWindow):
     def searchBackwards(self):
         text = unicode(self.ui.searchTextBox.text())
         args = [text, False, self.configuration.search_whole_word, self.configuration.search_match_case]
-        result = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SearchForText', args)).toBool()
+        result = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SearchForText', args))
         if not result:
             self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('ClearAllHighlights', []))
             message = QtGui.QMessageBox()
@@ -742,7 +742,7 @@ class MainWindow(QtGui.QMainWindow):
     def searchForwards(self):
         text = unicode(self.ui.searchTextBox.text())
         args = [text, True, self.configuration.search_whole_word, self.configuration.search_match_case]
-        result = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SearchForText', args)).toBool()
+        result = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SearchForText', args))
         if not result:
             self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('ClearAllHighlights', []))
             message = QtGui.QMessageBox()

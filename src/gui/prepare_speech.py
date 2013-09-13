@@ -3,7 +3,7 @@ Created on Jul 2, 2013
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtGui import QWidget
+from PySide.QtGui import QWidget
 from forms.prepare_speech_progress_ui import Ui_PrepareSpeechProgressWidget
 import misc
 

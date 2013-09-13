@@ -3,8 +3,8 @@ Created on Jun 21, 2013
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtGui import QDialog, QWidget, QMovie
-from PyQt4.QtCore import QByteArray, Qt
+from PySide.QtGui import QDialog, QWidget, QMovie
+from PySide.QtCore import QByteArray, Qt
 
 from forms.update_in_progress_ui import Ui_UpdateInstallProgressDialog
 from forms import resource_rc
@@ -12,7 +12,7 @@ from forms import resource_rc
 class UpdateInstallProgressDialog(QDialog):
     
     def __init__(self, parent=None):
-        QWidget.__init__(self, parent)
+        QDialog.__init__(self, parent)
         
         self.ui = Ui_UpdateInstallProgressDialog()
         self.ui.setupUi(self)

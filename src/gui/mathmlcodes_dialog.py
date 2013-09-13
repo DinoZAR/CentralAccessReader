@@ -5,8 +5,8 @@ Created on Feb 27, 2013
 '''
 import urllib
 import operator
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtWebKit import QWebView
+from PySide import QtGui, QtCore
+from PySide.QtWebKit import QWebView
 from lxml import etree, html
 from forms.mathmlcodesdialog_ui import Ui_MathMLCodesDialog
 from misc import temp_path, program_path
@@ -18,7 +18,7 @@ class MathMLCodesDialog(QtGui.QDialog):
     '''
 
     def __init__(self, mathmlCodes, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtGui.QDialog.__init__(self, parent)
         
         self.ui = Ui_MathMLCodesDialog()
         

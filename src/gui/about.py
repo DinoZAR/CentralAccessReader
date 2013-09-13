@@ -3,7 +3,7 @@ Created on May 6, 2013
 
 @author: GraffeS
 '''
-from PyQt4.QtGui import QDialog, QWidget
+from PySide.QtGui import QDialog, QWidget
 from forms.about_ui import Ui_AboutDialog
 from misc import program_path
 
@@ -16,7 +16,7 @@ class AboutDialog(QDialog):
         '''
         Constructor
         '''
-        QWidget.__init__(self, parent)
+        QDialog.__init__(self, parent)
         
         self.ui = Ui_AboutDialog()
         self.ui.setupUi(self)

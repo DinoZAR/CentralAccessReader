@@ -11,7 +11,7 @@ import os
 import platform
 import subprocess
 import inspect
-from PyQt4.QtCore import QThread, pyqtSignal
+from PySide.QtCore import QThread, Signal
 
 _PROGRAM_ROOT = 'Central Access Reader'
 
@@ -191,7 +191,7 @@ class UpdateQtThread(QThread):
     hogging up my main thread.
     '''
     
-    updateGUI = pyqtSignal()
+    updateGUI = Signal()
     
     def __init__(self):
         QThread.__init__(self)

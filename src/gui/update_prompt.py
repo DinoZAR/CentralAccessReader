@@ -3,14 +3,14 @@ Created on Jun 25, 2013
 
 @author: GraffeS
 '''
-from PyQt4.QtGui import QDialog, QWidget, QMessageBox
+from PySide.QtGui import QDialog, QWidget, QMessageBox
 from forms.update_prompt_ui import Ui_UpdatePromptDialog
 
 class UpdatePromptDialog(QDialog):
 
 
     def __init__(self, parent=None):
-        QWidget.__init__(self, parent)
+        QDialog.__init__(self, parent)
         
         self.ui = Ui_UpdatePromptDialog()
         self.ui.setupUi(self)

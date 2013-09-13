@@ -3,7 +3,7 @@ Created on Apr 12, 2013
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtGui import QColor
+from PySide.QtGui import QColor
 from lxml import etree
 import platform
 from misc import app_data_path, temp_path, pattern_databases

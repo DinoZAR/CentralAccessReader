@@ -14,7 +14,7 @@ def main():
     # to the Python path
     #sys.path.append(os.path.abspath('..'))
     
-    from PyQt4.QtGui import QApplication, QPixmap, QSplashScreen
+    from PySide.QtGui import QApplication, QPixmap, QSplashScreen
     app = QApplication(sys.argv)
       
     # Create a splash screen
