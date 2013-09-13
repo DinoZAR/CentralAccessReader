@@ -1,7 +1,7 @@
 '''
 Created on Jan 21, 2013
 
-@author: Spencer
+@author: Spencer Graffe
 '''
 
 def main():

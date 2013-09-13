@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace\nifty-prose-articulator\src\forms/speech_settings.ui'
+# Form implementation generated from reading ui file '/Users/atrctech/Desktop/workspace/NiftyProseArticulator/src/forms/speech_settings.ui'
 #
-# Created: Fri Aug 09 14:25:34 2013
-#      by: PyQt4 UI code generator 4.10
+# Created: Fri Sep 13 11:34:56 2013
+#      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -98,6 +98,7 @@ class Ui_SpeechSettings(object):
         self.pauseSlider.setMaximum(10)
         self.pauseSlider.setOrientation(QtCore.Qt.Horizontal)
         self.pauseSlider.setTickPosition(QtGui.QSlider.TicksAbove)
+        self.pauseSlider.setTickInterval(1)
         self.pauseSlider.setObjectName(_fromUtf8("pauseSlider"))
         self.formLayout.setWidget(3, QtGui.QFormLayout.FieldRole, self.pauseSlider)
         self.label_6 = QtGui.QLabel(SpeechSettings)

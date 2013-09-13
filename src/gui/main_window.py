@@ -265,8 +265,8 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.pagesTreeView.clicked.connect(self.pagesTree_clicked)
         self.ui.bookmarkZoomInButton.clicked.connect(self.bookmarkZoomInButton_clicked)
         self.ui.bookmarkZoomOutButton.clicked.connect(self.bookmarkZoomOutButton_clicked)
-        self.ui.expandBookmarksButton.clicked.connect(self.expandBookmarksButton_clicked)
-        self.ui.collapseBookmarksButton.clicked.connect(self.collapseBookmarksButton_clicked)
+        #self.ui.expandBookmarksButton.clicked.connect(self.expandBookmarksButton_clicked)
+        #self.ui.collapseBookmarksButton.clicked.connect(self.collapseBookmarksButton_clicked)
         
         # Update button
         self.ui.getUpdateButton.clicked.connect(self.runUpdate)
