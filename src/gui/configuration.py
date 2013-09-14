@@ -15,7 +15,6 @@ class Configuration(object):
     Object that holds all of the settings for the Nifty Prose Articulator
     '''
     
-
     def __init__(self):
         '''
         Fill it with all of the basic stuff.

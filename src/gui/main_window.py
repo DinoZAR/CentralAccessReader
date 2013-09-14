@@ -645,58 +645,79 @@ class MainWindow(QtGui.QMainWindow):
             
             # Set the content views and prepare assigner
             self.progressDialog.setLabelText('Loading content into view...')
+            
+            print 'Step 2'
             docxHtml = self.docxImporterThread.getHTML()
+            print 'Step 3'
             self.assigner.prepare(docxHtml)
+            print 'Step 4'
             self.ui.webView.loadProgress.connect(self.progressDialog.setProgress)
+            print 'Step 5'
             
             # Use the web view to figure out when the view is done loading
             self.pageLoaded = False
+            print 'Step 6'
             def setLoadedFinished():
                 self.pageLoaded = True
-                
+            print 'Step 7'
             self.ui.webView.loadFinished.connect(setLoadedFinished)
+            print 'Step 8'
             self.ui.webView.setHtml(docxHtml, baseUrl)
+            print 'Step 9'
             
             # Get and set the bookmarks
             self.bookmarksModel = BookmarksTreeModel(self.docxImporterThread.getHeadings())
+            print 'Step 9'
             self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
+            print 'Step 10'
             self.ui.bookmarksTreeView.expandAll()
+            print 'Step 11'
                     
             # Get and set the pages
             from gui.pages import PagesTreeModel
+            print 'Step 12'
             
             self.pagesModel = PagesTreeModel(self.docxImporterThread.getPages())
+            print 'Step 13'
             self.ui.pagesTreeView.setModel(self.pagesModel)
+            print 'Step 14'
             self.ui.pagesTreeView.expandAll()
+            print 'Step 15'
             
             self.document = self.docxImporterThread.getDocument()
+            print 'Step 16'
             self.lastDocumentFilePath = self.docxImporterThread.getFilePath()
+            print 'Step 17'
             
             # Wait until page is done loading
             while not self.pageLoaded:
                 QtGui.qApp.processEvents()
-            
-            # Wait until MathJax is done typesetting
-            self.progressDialog.setLabelText('Typesetting math equations...')
-            self.mathjax_loaded = False
-            
-            # Allow the user to cancel this. Sometimes MathJax freaks out and
-            # the user should say no to it
             self.progressDialog.enableCancel()
-            def myCancelHandler():
-                self.mathjax_loaded = True
-            self.progressDialog.canceled.connect(myCancelHandler)
-            
-            while not self.mathjax_loaded:
-                QtGui.qApp.processEvents()
-                progress = int(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetMathTypesetProgress', [])))
-                self.progressDialog.setProgress(progress)
-                self.mathjax_loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsMathTypeset', []))
-                    
+#             
+#             # Wait until MathJax is done typesetting
+#             self.progressDialog.setLabelText('Typesetting math equations...')
+#             self.mathjax_loaded = False
+#             
+#             # Allow the user to cancel this. Sometimes MathJax freaks out and
+#             # the user should say no to it
+#             self.progressDialog.enableCancel()
+#             def myCancelHandler():
+#                 self.mathjax_loaded = True
+#             self.progressDialog.canceled.connect(myCancelHandler)
+#             
+#             while not self.mathjax_loaded:
+#                 QtGui.qApp.processEvents()
+#                 progress = int(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetMathTypesetProgress', [])))
+#                 self.progressDialog.setProgress(progress)
+#                 self.mathjax_loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsMathTypeset', []))
+
         self.progressDialog.close()
+        print 'Step 18'
         self.stopDocumentLoad = False
-        
+        print 'Step 19'
         self.ui.webView.setFocus()
+        print 'Step 20'
+        QtGui.qApp.processEvents()
         
     def showOpenDocxDialog(self):
         filePath = QtGui.QFileDialog.getOpenFileName(self, 'Open Docx...',os.path.join(os.path.expanduser('~'), 'Documents'),'(*.docx)')

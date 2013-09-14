@@ -281,7 +281,7 @@ class DocxDocument(object):
          
         mathjaxScript = HTML.Element('script')
         mathjaxScript.attrib['type'] = 'text/javascript'
-        mathjaxScript.attrib['src'] = 'file:' + urllib.pathname2url(program_path('mathjax/MathJax.js')) + r'?config=MML_HTMLorMML-full.js'
+        mathjaxScript.attrib['src'] = 'file:' + urllib.pathname2url(program_path('mathjax/MathJax.js')) #+ r'?config=TeX-AMS-MML_HTMLorMML-full.js'
          
         jqueryScript = HTML.Element('script')
         jqueryScript.attrib['type'] = 'text/javascript'

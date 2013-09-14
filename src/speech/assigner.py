@@ -151,7 +151,7 @@ class Assigner(object):
         for child in element:
             testTag = child.tag.split('}')[-1]
             if testTag == 'span':
-                if child.get('class') == 'MathJax':
+                if 'MathJax' in child.get('class'):
                     # See if the MathML already got parsed. Otherwise, generate
                     # the speech on demand and save that.
                     key = child.get('id')
