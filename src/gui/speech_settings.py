@@ -116,7 +116,7 @@ class SpeechSettings(QtGui.QDialog):
         self.mainWindow.changePauseLength.emit(self.configuration.pause_length)
         
     def voiceComboBox_currentIndexChanged(self, index):
-        self.configuration.voice = unicode(self.ui.voiceComboBox.itemData(index).toString())
+        self.configuration.voice = self.ui.voiceComboBox.itemData(index)
         self.mainWindow.changeVoice.emit(self.configuration.voice)
         
     def testButton_clicked(self):
@@ -140,4 +140,4 @@ class SpeechSettings(QtGui.QDialog):
             self.configuration.tag_math = False
         
     def mathDatabaseComboBox_currentIndexChanged(self, index):
-        self.configuration.math_database = str(self.ui.mathDatabaseComboBox.itemData(index).toString())
+        self.configuration.math_database = self.ui.mathDatabaseComboBox.itemData(index)

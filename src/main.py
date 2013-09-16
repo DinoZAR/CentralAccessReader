@@ -10,9 +10,6 @@ def main():
     import sys
     import os
     
-    # Because we have local stuff, we need to append this local directory
-    # to the Python path
-    
     from PySide.QtGui import QApplication, QPixmap, QSplashScreen
     app = QApplication(sys.argv)
       

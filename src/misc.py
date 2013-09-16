@@ -90,6 +90,16 @@ def is_release_environment():
         return True
     else:
         return False
+    
+def is_number(numberString):
+    '''
+    Checks if the string is an integer. It only returns True or False.
+    '''
+    try:
+        int(numberString)
+        return True
+    except ValueError:
+        return False
 
 def clean_XML_input(input):  
     

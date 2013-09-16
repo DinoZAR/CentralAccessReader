@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/atrctech/Desktop/workspace/NiftyProseArticulator/src/forms/mainwindow.ui'
+# Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created: Fri Sep 13 14:31:11 2013
+# Created: Mon Sep 16 10:36:09 2013
 #      by: pyside-uic 0.2.14 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -319,6 +319,8 @@ class Ui_MainWindow(object):
         self.menuFunctions.setObjectName("menuFunctions")
         self.menuSettings = QtGui.QMenu(self.menubar)
         self.menuSettings.setObjectName("menuSettings")
+        self.menuMP3 = QtGui.QMenu(self.menubar)
+        self.menuMP3.setObjectName("menuMP3")
         MainWindow.setMenuBar(self.menubar)
         self.actionOpen_Docx = QtGui.QAction(MainWindow)
         self.actionOpen_Docx.setObjectName("actionOpen_Docx")
@@ -390,6 +392,15 @@ class Ui_MainWindow(object):
         self.actionIncrease_Rate.setObjectName("actionIncrease_Rate")
         self.actionDecrease_Rate = QtGui.QAction(MainWindow)
         self.actionDecrease_Rate.setObjectName("actionDecrease_Rate")
+        self.actionEntire_Document = QtGui.QAction(MainWindow)
+        self.actionEntire_Document.setIcon(icon7)
+        self.actionEntire_Document.setObjectName("actionEntire_Document")
+        self.actionCurrent_Selection = QtGui.QAction(MainWindow)
+        self.actionCurrent_Selection.setIcon(icon7)
+        self.actionCurrent_Selection.setObjectName("actionCurrent_Selection")
+        self.actionBy_Page = QtGui.QAction(MainWindow)
+        self.actionBy_Page.setIcon(icon7)
+        self.actionBy_Page.setObjectName("actionBy_Page")
         self.menuFile.addAction(self.actionOpen_Docx)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionSave_All_to_MP3)
@@ -418,8 +429,13 @@ class Ui_MainWindow(object):
         self.menuFunctions.addAction(self.actionSearch)
         self.menuSettings.addAction(self.actionSpeech)
         self.menuSettings.addAction(self.actionHighlights_Colors_and_Fonts)
+        self.menuMP3.addAction(self.actionEntire_Document)
+        self.menuMP3.addAction(self.actionCurrent_Selection)
+        self.menuMP3.addSeparator()
+        self.menuMP3.addAction(self.actionBy_Page)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuFunctions.menuAction())
+        self.menubar.addAction(self.menuMP3.menuAction())
         self.menubar.addAction(self.menuSettings.menuAction())
         self.menubar.addAction(self.menuMathML.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
@@ -458,6 +474,7 @@ class Ui_MainWindow(object):
         self.menuHelp.setTitle(QtGui.QApplication.translate("MainWindow", "&Help", None, QtGui.QApplication.UnicodeUTF8))
         self.menuFunctions.setTitle(QtGui.QApplication.translate("MainWindow", "F&unctions", None, QtGui.QApplication.UnicodeUTF8))
         self.menuSettings.setTitle(QtGui.QApplication.translate("MainWindow", "&Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuMP3.setTitle(QtGui.QApplication.translate("MainWindow", "MP3", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpen_Docx.setText(QtGui.QApplication.translate("MainWindow", "&Open Word Document", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpen_Docx.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+O", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpen_Pattern_Editor.setText(QtGui.QApplication.translate("MainWindow", "&Open Pattern Editor...", None, QtGui.QApplication.UnicodeUTF8))
@@ -503,6 +520,9 @@ class Ui_MainWindow(object):
         self.actionDecrease_Rate.setText(QtGui.QApplication.translate("MainWindow", "Decrease Rate", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDecrease_Rate.setToolTip(QtGui.QApplication.translate("MainWindow", "Decrease Rate", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDecrease_Rate.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+Left", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionEntire_Document.setText(QtGui.QApplication.translate("MainWindow", "Entire Document", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionCurrent_Selection.setText(QtGui.QApplication.translate("MainWindow", "Current Selection", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionBy_Page.setText(QtGui.QApplication.translate("MainWindow", "By Page", None, QtGui.QApplication.UnicodeUTF8))
 
 from PySide import QtWebKit
 import resource_rc

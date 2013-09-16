@@ -11,7 +11,7 @@ files that have corresponding .py that are newer than itself.
 '''
 
 import os
-from subprocess import check_output
+import subprocess
 
 def main():
     
@@ -33,16 +33,21 @@ def main():
             if os.path.exists(os.path.join(mydir, pyExportName)):
                 lastTime2 = os.path.getmtime(os.path.join(mydir, pyExportName))
                 if lastTime2 < lastTime:
-                    print 'Compiling', file
-                    data = check_output(['pyside-uic', os.path.join(mydir, file)])
+                    print 'Compiling', file, 'at path', os.path.join(mydir, file)
+                    
+                    p = subprocess.Popen('pyside-uic ' + os.path.join(mydir, file), shell=True)
+                    data = p.communicate()
+                    print 'Data:', data
                     pyfile = open(os.path.join(mydir, pyExportName), 'wb')
                     pyfile.write(data)
                     pyfile.close()
             
             else:
-                print 'Compiling', file
+                print 'Compiling', file, 'at path', os.path.join(mydir, file)
                 pyfile = open(os.path.join(mydir, pyExportName), 'w')
-                data = check_output(['pyside-uic', os.path.join(mydir, file)])
+                p = subprocess.Popen('pyside-uic ' + os.path.join(mydir, file), shell=True)
+                data = p.communicate()[0]
+                print 'Data:', data
                 pyfile = open(os.path.join(mydir, pyExportName), 'wb')
                 pyfile.write(data)
                 pyfile.close()
@@ -56,15 +61,19 @@ def main():
             if os.path.exists(os.path.join(mydir, pyExportName)):
                 lastTime2 = os.path.getmtime(os.path.join(mydir, pyExportName))
                 if lastTime2 < lastTime:
-                    print 'Compiling', file
-                    data = check_output(['pyside-rcc', os.path.join(mydir, file)])
+                    print 'Compiling', file, 'at path', os.path.join(mydir, file)
+                    p = subprocess.Popen('pyside-rcc ' + os.path.join(mydir, file), shell=True)
+                    data = p.communicate()[0]
+                    print 'Data:', data
                     pyfile = open(os.path.join(mydir, pyExportName), 'wb')
                     pyfile.write(data)
                     pyfile.close()
             
             else:
-                print 'Compiling', file
-                data = check_output(['pyside-rcc', os.path.join(mydir, file)])
+                print 'Compiling', file, 'at path', os.path.join(mydir, file)
+                p = subprocess.Popen('pyside-rcc ' + os.path.join(mydir, file), shell=True)
+                data = p.communicate()[0]
+                print 'Data:', data
                 pyfile = open(os.path.join(mydir, pyExportName), 'wb')
                 pyfile.write(data)
                 pyfile.close()
