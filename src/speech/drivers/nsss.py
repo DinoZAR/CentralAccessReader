@@ -11,6 +11,7 @@ import thread
 import time
 import subprocess
 import re
+import os
 from misc import program_path, temp_path
 
 class NSSpeechSynthesizerDriver(NSObject):
@@ -212,6 +213,12 @@ class NSSpeechSynthesizerDriver(NSObject):
         stop creation, False being don't stop, and True being stop.
         '''
         
+        self._tts.stopSpeaking()
+        
+        try:
+            os.remove(temp_path('tmp.aiff'))
+        except OSError:
+            pass
         aiffPath = unicode(temp_path('tmp.aiff'))
         
         # Create a single string that will be sent to the TTS
@@ -223,7 +230,7 @@ class NSSpeechSynthesizerDriver(NSObject):
             if checkStopFunction():
                 break
         
-        if not checkStopFunction():
+        if not checkStopFunction() and len(myString) > 0:
             
             progressCallback(30)
             labelCallback('Speaking into AIFF...')
@@ -236,7 +243,8 @@ class NSSpeechSynthesizerDriver(NSObject):
             success = self._tts.startSpeakingString_toURL_(myString, url)
             
             while self._tts.isSpeaking() and not checkStopFunction():
-                pass
+                progressCallback(30)
+                time.sleep(0.05)
             
             progressCallback(60)
             

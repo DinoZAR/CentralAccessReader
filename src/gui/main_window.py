@@ -5,6 +5,7 @@ Created on Jan 21, 2013
 '''
 import os
 import re
+import math
 import traceback
 from lxml import html
 from lxml.etree import ParserError, XMLSyntaxError
@@ -18,6 +19,7 @@ from gui.configuration import Configuration
 from gui.npa_webview import NPAWebView
 from gui.prepare_speech import PrepareSpeechProgressWidget
 from gui.search_settings import SearchSettings
+from gui.save_mp3_pages_dialog import SaveMP3PagesDialog
 from mathml.tts import MathTTS
 from speech.assigner import Assigner, PrepareSpeechThread
 from speech.worker import SpeechWorker
@@ -50,7 +52,7 @@ class MainWindow(QtGui.QMainWindow):
     javascriptMutex = QMutex()
     
     def __init__(self, app, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtGui.QMainWindow.__init__(self, parent)
         
         self.app = app
         
@@ -229,6 +231,11 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.actionReset_Zoom.triggered.connect(self.zoomReset)
         self.ui.actionSearch.triggered.connect(self.toggleSearchBar)
         
+        # MP3
+        self.ui.actionEntire_Document.triggered.connect(self.saveMP3All)
+        self.ui.actionCurrent_Selection.triggered.connect(self.saveMP3Selection)
+        self.ui.actionBy_Page.triggered.connect(self.saveMP3ByPage)
+        
         # Settings
         self.ui.actionHighlights_Colors_and_Fonts.triggered.connect(self.showColorSettings)
         self.ui.actionSpeech.triggered.connect(self.showSpeechSettings)
@@ -403,12 +410,9 @@ class MainWindow(QtGui.QMainWindow):
         It will either get more speech for the TTS and send it, or tell it that
         no more speech is available.
         '''
-        
-        print 'window: sending more speech'
         hasMoreSpeech = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HasMoreElements', [])).toBool()
         if hasMoreSpeech:
             nextContent = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('StreamNextElement', [])).toString())
-            print 'window: done sending more speech'
             
             # Create the HTML DOM from content
             elem = None
@@ -470,7 +474,6 @@ class MainWindow(QtGui.QMainWindow):
         result = dialog.exec_()
         self.configuration.loadFromFile(misc.app_data_path('configuration.xml'))
         if result == ColorSettings.RESULT_NEED_REFRESH:
-            print 'Color settings needing refresh...'
             self.refreshDocument()
         self.updateSettings()
         
@@ -510,7 +513,7 @@ class MainWindow(QtGui.QMainWindow):
         # Generate a filename that is basically the original file but with the
         # .mp3 extension at the end
         defaultFileName = os.path.splitext(str(self.lastDocumentFilePath))[0] + '.mp3'
-        fileName = unicode(QtGui.QFileDialog.getSaveFileName(self, 'Save MP3...', defaultFileName, '(*.mp3)'))
+        fileName = QtGui.QFileDialog.getSaveFileName(self, 'Save MP3...', defaultFileName, '(*.mp3)')[0]
         print 'Saving to...', fileName
         
         if len(fileName) > 0:
@@ -557,6 +560,112 @@ class MainWindow(QtGui.QMainWindow):
                 misc.open_file_browser_to_location(fileName)
         
         self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('ClearUserSelection', []))
+    
+    def saveMP3ByPage(self):
+        
+        if self.document is not None:
+            # Open a dialog to select the folder
+            folder = unicode(QtGui.QFileDialog.getExistingDirectory(self, 
+                                                            'Select Folder to Save Pages',
+                                                            os.path.join(os.path.expanduser('~'), 'Desktop')))
+            print 'Saving pages to:', folder
+            
+            if len(folder) > 0:
+                
+                # Show the dialog that facilitates the per-page export
+                success = True
+                dialog = SaveMP3PagesDialog(self)
+                dialog.show()
+                
+                myHTML = html.fromstring(self.document.getMainPage())
+                body = myHTML.xpath('//body')[0]
+                
+                # Split up the body into a list of elements, split by page.
+                pages = []
+                currentPage = [[], 'Front']
+                largestNumberLength = 1
+                for e in body:
+                    if e.get('class') == 'pageNumber':
+                        
+                        if len(e.text_content()) > 0:
+                            
+                            # Figure out the number of decimal places of the page number, if possible
+                            try:
+                                num = math.ceil(math.log10(int(e.text_content())))
+                                if num > largestNumberLength:
+                                    largestNumberLength = int(num)
+                            except ValueError:
+                                pass
+                                
+                        if len(currentPage[0]) > 0:
+                            pages.append(currentPage)
+                        currentPage = [[], e.text_content()]
+                    currentPage[0].append(e)
+                
+                if len(currentPage[0]) > 0:
+                    pages.append(currentPage)
+                
+                # Save all of the pages!
+                for i in range(len(pages)):
+                    page = pages[i]
+                    
+                    # Tell the dialog what page we are on
+                    dialog.setPageLabel('Page ' + page[1] + '...')
+                    dialog.setPageProgress(int((i+1.0) / len(pages) * 100.0))
+                    QtGui.qApp.processEvents()
+                    
+                    # Prepare the speech of the page
+                    dialog.setStatusLabel('Preparing...')
+                    dialog.setStatusProgress(0)
+                    QtGui.qApp.processEvents()
+                    myHTML = ''
+                    for e in page[0]:
+                        myHTML += html.tostring(e)
+                        
+                    speechGenerator = self.assigner.generateSpeech(html.fromstring(myHTML), self.configuration)
+                
+                    # Generate a file name for saving the page number
+                    fileName = ''
+                    if misc.is_number(page[1]):
+                        fileName = 'Pg ' + page[1].zfill(largestNumberLength) + ' ' + os.path.splitext(os.path.basename(self.lastDocumentFilePath))[0]
+                    else:
+                        fileName = 'Pg ' + page[1] + ' ' + os.path.splitext(os.path.basename(self.lastDocumentFilePath))[0]
+                    fileName += '.mp3'
+                    fileName = os.path.join(folder, fileName)
+                
+                    # Get the progress of the thing from the speech thread
+                    def myOnProgress(percent):
+                        dialog.setStatusProgress(percent)
+                        QtGui.qApp.processEvents()
+                        
+                    def myOnProgressLabel(newLabel):
+                        dialog.setStatusLabel(newLabel)
+                        QtGui.qApp.processEvents()
+                    
+                    self.speechThread.onProgress.connect(myOnProgress)
+                    self.speechThread.onProgressLabel.connect(myOnProgressLabel)
+                    dialog.canceled.connect(self.speechThread.stopMP3)
+                    
+                    self.speechThread.saveToMP3(fileName, speechGenerator)
+                    
+                    if self.speechThread.mp3Interrupted():
+                        success = False
+                        break
+    
+                dialog.close()
+                
+                # Show the success message, if I was indeed successful
+                if success:
+                    messageBox = QtGui.QMessageBox()
+                    messageText = 'Success!\nYour MP3 files were saved in:\n' + folder
+                    messageBox.setText(messageText)
+                    messageBox.setStandardButtons(QtGui.QMessageBox.Ok)
+                    messageBox.setDefaultButton(QtGui.QMessageBox.Ok)
+                    messageBox.setWindowTitle('MP3 Files Saved Successfully')
+                    messageBox.setIcon(QtGui.QMessageBox.Information)
+                    messageBox.exec_()
+                    
+                    misc.open_file_browser_to_location(folder)
         
     def zoomIn(self):
         self.ui.webView.zoomIn()
@@ -645,6 +754,7 @@ class MainWindow(QtGui.QMainWindow):
             
             # Set the content views and prepare assigner
             self.progressDialog.setLabelText('Loading content into view...')
+            
             docxHtml = self.docxImporterThread.getHTML()
             self.assigner.prepare(docxHtml)
             self.ui.webView.loadProgress.connect(self.progressDialog.setProgress)
@@ -653,7 +763,6 @@ class MainWindow(QtGui.QMainWindow):
             self.pageLoaded = False
             def setLoadedFinished():
                 self.pageLoaded = True
-                
             self.ui.webView.loadFinished.connect(setLoadedFinished)
             self.ui.webView.setHtml(docxHtml, baseUrl)
             
@@ -675,28 +784,29 @@ class MainWindow(QtGui.QMainWindow):
             # Wait until page is done loading
             while not self.pageLoaded:
                 QtGui.qApp.processEvents()
-            
+            self.progressDialog.enableCancel()
+             
             # Wait until MathJax is done typesetting
             self.progressDialog.setLabelText('Typesetting math equations...')
             self.mathjax_loaded = False
-            
+             
             # Allow the user to cancel this. Sometimes MathJax freaks out and
             # the user should say no to it
             self.progressDialog.enableCancel()
             def myCancelHandler():
                 self.mathjax_loaded = True
             self.progressDialog.canceled.connect(myCancelHandler)
-            
+             
             while not self.mathjax_loaded:
                 QtGui.qApp.processEvents()
-                progress = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetMathTypesetProgress', [])).toInt()
-                self.progressDialog.setProgress(progress[0])
-                self.mathjax_loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsMathTypeset', [])).toBool()
-                    
+                progress = int(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetMathTypesetProgress', [])).toInt()[0])
+                self.progressDialog.setProgress(progress)
+                self.mathjax_loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsMathTypeset', []))
+
         self.progressDialog.close()
         self.stopDocumentLoad = False
-        
         self.ui.webView.setFocus()
+        QtGui.qApp.processEvents()
         
     def showOpenDocxDialog(self):
         filePath = QtGui.QFileDialog.getOpenFileName(self, 'Open Docx...',os.path.join(os.path.expanduser('~'), 'Documents'),'(*.docx)')
@@ -732,7 +842,7 @@ class MainWindow(QtGui.QMainWindow):
     def searchBackwards(self):
         text = unicode(self.ui.searchTextBox.text())
         args = [text, False, self.configuration.search_whole_word, self.configuration.search_match_case]
-        result = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SearchForText', args)).toBool()
+        result = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SearchForText', args))
         if not result:
             self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('ClearAllHighlights', []))
             message = QtGui.QMessageBox()
@@ -742,7 +852,7 @@ class MainWindow(QtGui.QMainWindow):
     def searchForwards(self):
         text = unicode(self.ui.searchTextBox.text())
         args = [text, True, self.configuration.search_whole_word, self.configuration.search_match_case]
-        result = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SearchForText', args)).toBool()
+        result = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SearchForText', args))
         if not result:
             self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('ClearAllHighlights', []))
             message = QtGui.QMessageBox()

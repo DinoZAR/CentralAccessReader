@@ -50,7 +50,7 @@
       <property name="handleWidth">
        <number>20</number>
       </property>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <property name="spacing">
          <number>0</number>
@@ -496,14 +496,14 @@
                <number>12</number>
               </property>
               <item row="1" column="0">
-               <widget class="QLabel" name="label_2">
+               <widget class="QLabel" name="volumeLabel">
                 <property name="text">
                  <string>Volume:</string>
                 </property>
                </widget>
               </item>
               <item row="0" column="0">
-               <widget class="QLabel" name="label">
+               <widget class="QLabel" name="rateLabel">
                 <property name="text">
                  <string>Rate:</string>
                 </property>
@@ -829,8 +829,18 @@
     <addaction name="actionSpeech"/>
     <addaction name="actionHighlights_Colors_and_Fonts"/>
    </widget>
+   <widget class="QMenu" name="menuMP3">
+    <property name="title">
+     <string>MP3</string>
+    </property>
+    <addaction name="actionEntire_Document"/>
+    <addaction name="actionCurrent_Selection"/>
+    <addaction name="separator"/>
+    <addaction name="actionBy_Page"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuFunctions"/>
+   <addaction name="menuMP3"/>
    <addaction name="menuSettings"/>
    <addaction name="menuMathML"/>
    <addaction name="menuHelp"/>
@@ -1068,6 +1078,33 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Left</string>
+   </property>
+  </action>
+  <action name="actionEntire_Document">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icons/text_speak.png</normaloff>:/icons/icons/text_speak.png</iconset>
+   </property>
+   <property name="text">
+    <string>Entire Document</string>
+   </property>
+  </action>
+  <action name="actionCurrent_Selection">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icons/text_speak.png</normaloff>:/icons/icons/text_speak.png</iconset>
+   </property>
+   <property name="text">
+    <string>Current Selection</string>
+   </property>
+  </action>
+  <action name="actionBy_Page">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icons/text_speak.png</normaloff>:/icons/icons/text_speak.png</iconset>
+   </property>
+   <property name="text">
+    <string>By Page</string>
    </property>
   </action>
  </widget>

@@ -12,7 +12,7 @@ import copy
 class Settings(QtGui.QDialog):
 
     def __init__(self, mainWindow, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtGui.QDialog.__init__(self, parent)
         
         self.ui = Ui_Settings()
         self.ui.setupUi(self)

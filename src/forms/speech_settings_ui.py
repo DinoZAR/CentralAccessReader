@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/Users/atrctech/Desktop/workspace/NiftyProseArticulator/src/forms/speech_settings.ui'
 #
-# Created: Fri Sep 13 11:34:56 2013
+# Created: Mon Sep 16 16:34:05 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!

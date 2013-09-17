@@ -12,7 +12,7 @@ from forms import resource_rc
 class UpdateInstallProgressDialog(QDialog):
     
     def __init__(self, parent=None):
-        QWidget.__init__(self, parent)
+        QDialog.__init__(self, parent)
         
         self.ui = Ui_UpdateInstallProgressDialog()
         self.ui.setupUi(self)

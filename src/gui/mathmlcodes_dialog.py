@@ -18,7 +18,7 @@ class MathMLCodesDialog(QtGui.QDialog):
     '''
 
     def __init__(self, mathmlCodes, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtGui.QDialog.__init__(self, parent)
         
         self.ui = Ui_MathMLCodesDialog()
         

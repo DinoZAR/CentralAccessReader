@@ -17,7 +17,7 @@ class SpeechSettings(QtGui.QDialog):
     '''
     
     def __init__(self, mainWindow, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtGui.QDialog.__init__(self, parent)
         
         self.ui = Ui_SpeechSettings()
         self.ui.setupUi(self)
@@ -140,4 +140,4 @@ class SpeechSettings(QtGui.QDialog):
             self.configuration.tag_math = False
         
     def mathDatabaseComboBox_currentIndexChanged(self, index):
-        self.configuration.math_database = str(self.ui.mathDatabaseComboBox.itemData(index).toString())
+        self.configuration.math_database = unicode(self.ui.mathDatabaseComboBox.itemData(index).toString())

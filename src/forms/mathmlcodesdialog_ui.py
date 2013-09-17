@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/mathmlcodesdialog.ui'
+# Form implementation generated from reading ui file '/Users/atrctech/Desktop/workspace/NiftyProseArticulator/src/forms/mathmlcodesdialog.ui'
 #
-# Created: Mon Jul 08 13:19:47 2013
-#      by: PyQt4 UI code generator 4.10
+# Created: Mon Sep 16 16:34:04 2013
+#      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
 

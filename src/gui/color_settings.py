@@ -19,7 +19,7 @@ class ColorSettings(QtGui.QDialog):
     RESULT_NEED_REFRESH = 2
     
     def __init__(self, mainWindow, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtGui.QDialog.__init__(self, parent)
         
         self.ui = Ui_ColorSettings()
         self.ui.setupUi(self)
