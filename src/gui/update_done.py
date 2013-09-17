@@ -3,7 +3,7 @@ Created on Jun 24, 2013
 
 @author: Spencer Graffe
 '''
-from PySide.QtGui import QDialog, QWidget
+from PyQt4.QtGui import QDialog, QWidget
 from forms.update_done_ui import Ui_UpdateDoneDialog
 
 class UpdateDoneDialog(QDialog):

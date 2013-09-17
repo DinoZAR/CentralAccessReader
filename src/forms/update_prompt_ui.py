@@ -2,64 +2,78 @@
 
 # Form implementation generated from reading ui file '/Users/atrctech/Desktop/workspace/NiftyProseArticulator/src/forms/update_prompt.ui'
 #
-# Created: Fri Sep 13 14:31:13 2013
-#      by: pyside-uic 0.2.14 running on PySide 1.2.1
+# Created: Mon Sep 16 16:34:05 2013
+#      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
 
-from PySide import QtCore, QtGui
+from PyQt4 import QtCore, QtGui
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
 
 class Ui_UpdatePromptDialog(object):
     def setupUi(self, UpdatePromptDialog):
-        UpdatePromptDialog.setObjectName("UpdatePromptDialog")
+        UpdatePromptDialog.setObjectName(_fromUtf8("UpdatePromptDialog"))
         UpdatePromptDialog.resize(439, 164)
         font = QtGui.QFont()
         font.setPointSize(12)
         UpdatePromptDialog.setFont(font)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/icons/icons/update_down_arrow.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/update_down_arrow.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         UpdatePromptDialog.setWindowIcon(icon)
         self.verticalLayout_3 = QtGui.QVBoxLayout(UpdatePromptDialog)
-        self.verticalLayout_3.setObjectName("verticalLayout_3")
+        self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
         self.horizontalLayout = QtGui.QHBoxLayout()
-        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.label_2 = QtGui.QLabel(UpdatePromptDialog)
-        self.label_2.setText("")
-        self.label_2.setPixmap(QtGui.QPixmap(":/icons/icons/update_down_arrow_big.png"))
-        self.label_2.setObjectName("label_2")
+        self.label_2.setText(_fromUtf8(""))
+        self.label_2.setPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/update_down_arrow_big.png")))
+        self.label_2.setObjectName(_fromUtf8("label_2"))
         self.horizontalLayout.addWidget(self.label_2)
         self.label = QtGui.QLabel(UpdatePromptDialog)
         font = QtGui.QFont()
         font.setPointSize(14)
-        font.setWeight(75)
         font.setBold(True)
+        font.setWeight(75)
         self.label.setFont(font)
-        self.label.setObjectName("label")
+        self.label.setObjectName(_fromUtf8("label"))
         self.horizontalLayout.addWidget(self.label)
         self.horizontalLayout.setStretch(1, 1)
         self.verticalLayout_3.addLayout(self.horizontalLayout)
         self.contentText = QtGui.QLabel(UpdatePromptDialog)
         self.contentText.setWordWrap(True)
-        self.contentText.setObjectName("contentText")
+        self.contentText.setObjectName(_fromUtf8("contentText"))
         self.verticalLayout_3.addWidget(self.contentText)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
         self.verticalLayout = QtGui.QVBoxLayout()
-        self.verticalLayout.setObjectName("verticalLayout")
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem1)
         self.yesButton = QtGui.QPushButton(UpdatePromptDialog)
-        self.yesButton.setObjectName("yesButton")
+        self.yesButton.setObjectName(_fromUtf8("yesButton"))
         self.verticalLayout.addWidget(self.yesButton)
         self.horizontalLayout_2.addLayout(self.verticalLayout)
         self.verticalLayout_2 = QtGui.QVBoxLayout()
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem2)
         self.noButton = QtGui.QPushButton(UpdatePromptDialog)
-        self.noButton.setObjectName("noButton")
+        self.noButton.setObjectName(_fromUtf8("noButton"))
         self.verticalLayout_2.addWidget(self.noButton)
         self.horizontalLayout_2.addLayout(self.verticalLayout_2)
         self.verticalLayout_3.addLayout(self.horizontalLayout_2)
@@ -69,10 +83,10 @@ class Ui_UpdatePromptDialog(object):
         UpdatePromptDialog.setTabOrder(self.noButton, self.yesButton)
 
     def retranslateUi(self, UpdatePromptDialog):
-        UpdatePromptDialog.setWindowTitle(QtGui.QApplication.translate("UpdatePromptDialog", "Install Update", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("UpdatePromptDialog", "Update is Available!", None, QtGui.QApplication.UnicodeUTF8))
-        self.contentText.setText(QtGui.QApplication.translate("UpdatePromptDialog", "Would you like to download it?", None, QtGui.QApplication.UnicodeUTF8))
-        self.yesButton.setText(QtGui.QApplication.translate("UpdatePromptDialog", "Yes", None, QtGui.QApplication.UnicodeUTF8))
-        self.noButton.setText(QtGui.QApplication.translate("UpdatePromptDialog", "No", None, QtGui.QApplication.UnicodeUTF8))
+        UpdatePromptDialog.setWindowTitle(_translate("UpdatePromptDialog", "Install Update", None))
+        self.label.setText(_translate("UpdatePromptDialog", "Update is Available!", None))
+        self.contentText.setText(_translate("UpdatePromptDialog", "Would you like to download it?", None))
+        self.yesButton.setText(_translate("UpdatePromptDialog", "Yes", None))
+        self.noButton.setText(_translate("UpdatePromptDialog", "No", None))
 
 import resource_rc

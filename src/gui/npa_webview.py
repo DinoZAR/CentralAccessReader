@@ -3,9 +3,9 @@ Created on Apr 18, 2013
 
 @author: Spencer Graffe
 '''
-from PySide.QtWebKit import QWebView, QWebPage
-from PySide.QtCore import Qt
-from PySide.QtGui import QApplication
+from PyQt4.QtWebKit import QWebView, QWebPage
+from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QApplication
 import webbrowser
 import os
 import misc

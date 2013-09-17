@@ -3,8 +3,8 @@ Created on Apr 25, 2013
 
 @author: Spencer Graffe
 '''
-from PySide import QtGui
-from PySide.QtCore import Qt
+from PyQt4 import QtGui
+from PyQt4.QtCore import Qt
 from lxml import etree
 import copy
 from misc import app_data_path, pattern_databases
@@ -116,7 +116,7 @@ class SpeechSettings(QtGui.QDialog):
         self.mainWindow.changePauseLength.emit(self.configuration.pause_length)
         
     def voiceComboBox_currentIndexChanged(self, index):
-        self.configuration.voice = self.ui.voiceComboBox.itemData(index)
+        self.configuration.voice = unicode(self.ui.voiceComboBox.itemData(index).toString())
         self.mainWindow.changeVoice.emit(self.configuration.voice)
         
     def testButton_clicked(self):
@@ -140,4 +140,4 @@ class SpeechSettings(QtGui.QDialog):
             self.configuration.tag_math = False
         
     def mathDatabaseComboBox_currentIndexChanged(self, index):
-        self.configuration.math_database = self.ui.mathDatabaseComboBox.itemData(index)
+        self.configuration.math_database = unicode(self.ui.mathDatabaseComboBox.itemData(index).toString())

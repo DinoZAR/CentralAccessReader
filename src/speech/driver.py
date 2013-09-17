@@ -9,10 +9,10 @@ def get_driver(requestSpeechHook=None):
     '''
     Returns the correct TTS driver for the operating system in use.
     '''
-    if platform.system() == 'Windows':
-        from speech.drivers.sapi5 import SAPI5Driver
-        return SAPI5Driver(requestSpeechHook)
-    elif platform.system() == 'Darwin':
+#     if platform.system() == 'Windows':
+#         from speech.drivers.sapi5 import SAPI5Driver
+#         return SAPI5Driver(requestSpeechHook)
+    if platform.system() == 'Darwin':
         # Get TTS for Mac
         from speech.drivers.nsss import NSSpeechSynthesizerDriver
         nsObject = NSSpeechSynthesizerDriver.alloc().initWithRequestSpeechHook(requestSpeechHook)

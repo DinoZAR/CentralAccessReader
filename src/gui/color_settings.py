@@ -3,8 +3,8 @@ Created on Apr 25, 2013
 
 @author: Spencer Graffe
 '''
-from PySide import QtGui
-from PySide.QtCore import Qt
+from PyQt4 import QtGui
+from PyQt4.QtCore import Qt
 from lxml import etree
 import copy
 from misc import app_data_path

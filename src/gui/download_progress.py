@@ -5,8 +5,8 @@ Created on Jul 9, 2013
 '''
 import urllib2
 import socket
-from PySide.QtGui import QWidget
-from PySide.QtCore import Signal, QThread
+from PyQt4.QtGui import QWidget
+from PyQt4.QtCore import pyqtSignal, QThread
 from forms.download_progress_ui import Ui_DownloadProgressWidget
 
 class DownloadProgressWidget(QWidget):
@@ -14,8 +14,8 @@ class DownloadProgressWidget(QWidget):
     This widget displays and otherwise reports on the progress of a download.
     '''
     
-    downloadProgress = Signal(int)
-    downloadFinished = Signal(bool)
+    downloadProgress = pyqtSignal(int)
+    downloadFinished = pyqtSignal(bool)
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
@@ -88,7 +88,7 @@ class DownloadThread(QThread):
     of its download and can be interrupted at any time.
     '''
     
-    downloadProgress = Signal(int)
+    downloadProgress = pyqtSignal(int)
     
     def __init__(self):
         QThread.__init__(self)

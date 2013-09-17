@@ -3,7 +3,7 @@ Created on Jun 4, 2013
 
 @author: Spencer Graffe
 '''
-from PySide.QtGui import QDialog, QWidget
+from PyQt4.QtGui import QDialog, QWidget
 
 from forms.search_settings_ui import Ui_SearchSettings
 

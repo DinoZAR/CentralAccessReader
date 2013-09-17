@@ -3,7 +3,7 @@ Created on Mar 5, 2013
 
 @author: Spencer Graffe
 '''
-from PySide.QtCore import Qt, QAbstractItemModel, QModelIndex
+from PyQt4.QtCore import Qt, QAbstractItemModel, QModelIndex
 
 class BookmarkNode(object):
     '''

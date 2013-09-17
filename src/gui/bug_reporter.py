@@ -3,7 +3,7 @@ Created on May 20, 2013
 
 @author: GraffeS
 '''
-from PySide import QtGui
+from PyQt4 import QtGui
 import webbrowser
 
 from forms.bug_report_ui import Ui_BugReporter

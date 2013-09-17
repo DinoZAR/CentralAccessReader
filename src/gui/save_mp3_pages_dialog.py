@@ -3,15 +3,15 @@ Created on Sep 16, 2013
 
 @author: Spencer Graffe
 '''
-from PySide.QtGui import QDialog
-from PySide.QtCore import Signal
+from PyQt4.QtGui import QDialog
+from PyQt4.QtCore import pyqtSignal
 from forms.save_mp3_pages_dialog_ui import Ui_SaveMP3ByPageDialog
 
 class SaveMP3PagesDialog(QDialog):
     '''
     classdocs
     '''
-    canceled = Signal()
+    canceled = pyqtSignal()
 
     def __init__(self, parent=None):
         '''

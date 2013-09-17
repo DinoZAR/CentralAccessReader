@@ -10,7 +10,7 @@ def main():
     import sys
     import os
     
-    from PySide.QtGui import QApplication, QPixmap, QSplashScreen
+    from PyQt4.QtGui import QApplication, QPixmap, QSplashScreen
     app = QApplication(sys.argv)
       
     # Create a splash screen

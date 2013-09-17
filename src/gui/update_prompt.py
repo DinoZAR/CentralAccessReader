@@ -3,7 +3,7 @@ Created on Jun 25, 2013
 
 @author: GraffeS
 '''
-from PySide.QtGui import QDialog, QWidget, QMessageBox
+from PyQt4.QtGui import QDialog, QWidget, QMessageBox
 from forms.update_prompt_ui import Ui_UpdatePromptDialog
 
 class UpdatePromptDialog(QDialog):

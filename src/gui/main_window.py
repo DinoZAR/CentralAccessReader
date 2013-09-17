@@ -10,9 +10,9 @@ import traceback
 from lxml import html
 from lxml.etree import ParserError, XMLSyntaxError
 from HTMLParser import HTMLParser
-from PySide import QtGui
-from PySide.QtCore import Qt, QUrl, QMutex, Signal, QThread
-from PySide.QtWebKit import QWebPage, QWebInspector, QWebSettings
+from PyQt4 import QtGui
+from PyQt4.QtCore import Qt, QUrl, QMutex, pyqtSignal, QThread
+from PyQt4.QtWebKit import QWebPage, QWebInspector, QWebSettings
 from forms.mainwindow_ui import Ui_MainWindow
 from gui.bookmarks import BookmarksTreeModel, BookmarkNode
 from gui.configuration import Configuration
@@ -32,21 +32,21 @@ class MainWindow(QtGui.QMainWindow):
     jumped = False
     
     # TTS control signals
-    startPlayback = Signal()
-    stopPlayback = Signal()
-    setSpeechGenerator = Signal(object)
-    noMoreSpeech = Signal()
+    startPlayback = pyqtSignal()
+    stopPlayback = pyqtSignal()
+    setSpeechGenerator = pyqtSignal(object)
+    noMoreSpeech = pyqtSignal()
     
     # TTS setting signals
-    changeVolume = Signal(int)
-    changeRate = Signal(int)
-    changePauseLength = Signal(int)
-    changeVoice = Signal(str)
-    changeMathDatabase = Signal(str)
+    changeVolume = pyqtSignal(int)
+    changeRate = pyqtSignal(int)
+    changePauseLength = pyqtSignal(int)
+    changeVoice = pyqtSignal(str)
+    changeMathDatabase = pyqtSignal(str)
     
     # Program update notification
-    notifyProgramUpdate = Signal()
-    programUpdateFinish = Signal()
+    notifyProgramUpdate = pyqtSignal()
+    programUpdateFinish = pyqtSignal()
     
     # JavaScript mutex
     javascriptMutex = QMutex()
@@ -335,7 +335,7 @@ class MainWindow(QtGui.QMainWindow):
         self.setSettingsEnableState(False)
         
         # Set the beginning of the streamer
-        contents = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SetStreamBeginning', [])))
+        contents = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SetStreamBeginning', [])).toString())
         
         # Convert the HTML to DOM
         root = None
@@ -410,9 +410,9 @@ class MainWindow(QtGui.QMainWindow):
         It will either get more speech for the TTS and send it, or tell it that
         no more speech is available.
         '''
-        hasMoreSpeech = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HasMoreElements', []))
+        hasMoreSpeech = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HasMoreElements', [])).toBool()
         if hasMoreSpeech:
-            nextContent = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('StreamNextElement', [])))
+            nextContent = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('StreamNextElement', [])).toString())
             
             # Create the HTML DOM from content
             elem = None
@@ -526,7 +526,7 @@ class MainWindow(QtGui.QMainWindow):
             QtGui.qApp.processEvents()
             
             # Get my speech output list
-            selectedHTML = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetSelectionHTML', [])))
+            selectedHTML = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetSelectionHTML', [])).toString())
             speechGenerator = self.assigner.generateSpeech(html.fromstring(selectedHTML), self.configuration)
             
             # Get the progress of the thing from the speech thread
@@ -565,9 +565,9 @@ class MainWindow(QtGui.QMainWindow):
         
         if self.document is not None:
             # Open a dialog to select the folder
-            folder = QtGui.QFileDialog.getExistingDirectory(self, 
+            folder = unicode(QtGui.QFileDialog.getExistingDirectory(self, 
                                                             'Select Folder to Save Pages',
-                                                            os.path.join(os.path.expanduser('~'), 'Desktop'))
+                                                            os.path.join(os.path.expanduser('~'), 'Desktop')))
             print 'Saving pages to:', folder
             
             if len(folder) > 0:
@@ -799,7 +799,7 @@ class MainWindow(QtGui.QMainWindow):
              
             while not self.mathjax_loaded:
                 QtGui.qApp.processEvents()
-                progress = int(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetMathTypesetProgress', [])))
+                progress = int(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetMathTypesetProgress', [])).toInt()[0])
                 self.progressDialog.setProgress(progress)
                 self.mathjax_loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsMathTypeset', []))
 

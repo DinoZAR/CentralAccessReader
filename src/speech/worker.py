@@ -3,24 +3,24 @@ Created on Apr 8, 2013
 
 @author: Spencer Graffe
 '''
-from PySide.QtCore import QThread, QMutex, Signal
-from PySide.QtGui import qApp
+from PyQt4.QtCore import QThread, QMutex, pyqtSignal
+from PyQt4.QtGui import qApp
 import driver
 
 class SpeechWorker(QThread):
     
     # TTS
-    onStart = Signal(int, int, str, int, str)
-    onWord = Signal(int, int, str, int, str, bool)
-    onEndStream = Signal(int, str)
-    onFinish = Signal()
+    onStart = pyqtSignal(int, int, str, int, str)
+    onWord = pyqtSignal(int, int, str, int, str, bool)
+    onEndStream = pyqtSignal(int, str)
+    onFinish = pyqtSignal()
     
     # MP3 Creation
-    onProgress = Signal(int)
-    onProgressLabel = Signal(str)
+    onProgress = pyqtSignal(int)
+    onProgressLabel = pyqtSignal(str)
     
     # Streaming
-    requestMoreSpeech = Signal()
+    requestMoreSpeech = pyqtSignal()
     
     queueLock = QMutex()
     

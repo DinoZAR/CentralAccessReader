@@ -3,8 +3,8 @@ Created on Jun 21, 2013
 
 @author: Spencer Graffe
 '''
-from PySide.QtGui import QDialog, QWidget, QMovie
-from PySide.QtCore import QByteArray, Qt
+from PyQt4.QtGui import QDialog, QWidget, QMovie
+from PyQt4.QtCore import QByteArray, Qt
 
 from forms.update_in_progress_ui import Ui_UpdateInstallProgressDialog
 from forms import resource_rc
