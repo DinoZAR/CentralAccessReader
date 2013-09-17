@@ -75,7 +75,7 @@ def pattern_databases():
     for f in os.listdir(program_path(MATHML_PATTERNS_FOLDER)):
         p = os.path.join(program_path(MATHML_PATTERNS_FOLDER), f)
         if os.path.isfile(p):
-            if os.path.basename(p)[0] != '_':
+            if os.path.basename(p)[0] != '_' and os.path.splitext(p)[1] == '.txt':
                 fileList[os.path.splitext(os.path.basename(p))[0]] = p
             
     return fileList

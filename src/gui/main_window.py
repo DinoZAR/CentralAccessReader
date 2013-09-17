@@ -1,7 +1,7 @@
 '''
 Created on Jan 21, 2013
 
-@author: Spencer
+@author: Spencer Graffe
 '''
 import os
 import re
@@ -801,7 +801,7 @@ class MainWindow(QtGui.QMainWindow):
                 QtGui.qApp.processEvents()
                 progress = int(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetMathTypesetProgress', [])).toInt()[0])
                 self.progressDialog.setProgress(progress)
-                self.mathjax_loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsMathTypeset', []))
+                self.mathjax_loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsMathTypeset', [])).toBool()
 
         self.progressDialog.close()
         self.stopDocumentLoad = False
