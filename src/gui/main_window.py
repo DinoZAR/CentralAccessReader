@@ -625,11 +625,11 @@ class MainWindow(QtGui.QMainWindow):
                     speechGenerator = self.assigner.generateSpeech(html.fromstring(myHTML), self.configuration)
                 
                     # Generate a file name for saving the page number
-                    fileName = os.path.splitext(os.path.basename(self.lastDocumentFilePath))[0] + ' - Page '
+                    fileName = ''
                     if misc.is_number(page[1]):
-                        fileName += page[1].zfill(largestNumberLength)
+                        fileName = 'Pg ' + page[1].zfill(largestNumberLength) + ' ' + os.path.splitext(os.path.basename(self.lastDocumentFilePath))[0]
                     else:
-                        fileName += page[1]
+                        fileName = 'Pg ' + page[1] + ' ' + os.path.splitext(os.path.basename(self.lastDocumentFilePath))[0]
                     fileName += '.mp3'
                     fileName = os.path.join(folder, fileName)
                 
