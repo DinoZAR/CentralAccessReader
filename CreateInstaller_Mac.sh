@@ -26,37 +26,6 @@ mkdir -p "./dist/Central Access Reader.app/Contents/Resources"
 echo "Copying application icon file..."
 cp ./icons.icns "./dist/Central Access Reader.app/Contents/Resources"
 
-echo "Copying dependencies that py2app missed..."
-# lxml
-echo "lxml..."
-mkdir -p "./dist/Central Access Reader.app/Contents/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages"
-cp -r /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/lxml "./dist/Central Access Reader.app/Contents/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages"
-
-# PIL
-echo "PIL..."
-cp -r /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/PIL "./dist/Central Access Reader.app/Contents/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages"
-
-# PyObjC
-echo "PyObjC..."
-cp -r /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/PyObjC "./dist/Central Access Reader.app/Contents/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages"
-cp -r /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/Foundation "./dist/Central Access Reader.app/Contents/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages"
-cp -r /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/AppKit "./dist/Central Access Reader.app/Contents/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages"
-cp -r /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/Cocoa "./dist/Central Access Reader.app/Contents/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages"
-cp -r /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/CoreFoundation "./dist/Central Access Reader.app/Contents/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages"
-cp -r /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/macholib "./dist/Central Access Reader.app/Contents/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages"
-
-# PyQt4
-echo "PyQt4..."
-cp -r /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/PyQt4 "./dist/Central Access Reader.app/Contents/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages"
-
-# modulegraph
-echo "modulegraph..."
-cp -r /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/modulegraph "./dist/Central Access Reader.app/Contents/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages"
-
-# altgraph
-echo "altgraph..."
-cp -r /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/altgraph "./dist/Central Access Reader.app/Contents/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages"
-
 #
 # JavaScript files
 #
