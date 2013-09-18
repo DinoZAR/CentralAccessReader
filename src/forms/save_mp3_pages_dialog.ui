@@ -16,6 +16,10 @@
   <property name="windowTitle">
    <string>Saving By Page</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resource.qrc">
+    <normaloff>:/icons/icons/text_speak.png</normaloff>:/icons/icons/text_speak.png</iconset>
+  </property>
   <property name="modal">
    <bool>true</bool>
   </property>

@@ -513,7 +513,7 @@ class MainWindow(QtGui.QMainWindow):
         # Generate a filename that is basically the original file but with the
         # .mp3 extension at the end
         defaultFileName = os.path.splitext(str(self.lastDocumentFilePath))[0] + '.mp3'
-        fileName = QtGui.QFileDialog.getSaveFileName(self, 'Save MP3...', defaultFileName, '(*.mp3)')[0]
+        fileName = unicode(QtGui.QFileDialog.getSaveFileName(self, 'Save MP3...', defaultFileName, '(*.mp3)'))
         print 'Saving to...', fileName
         
         if len(fileName) > 0:

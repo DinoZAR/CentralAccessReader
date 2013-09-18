@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/atrctech/Desktop/workspace/NiftyProseArticulator/src/forms/save_mp3_pages_dialog.ui'
+# Form implementation generated from reading ui file 'save_mp3_pages_dialog.ui'
 #
-# Created: Mon Sep 16 16:34:04 2013
+# Created: Wed Sep 18 13:29:49 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -28,6 +28,9 @@ class Ui_SaveMP3ByPageDialog(object):
         SaveMP3ByPageDialog.setObjectName(_fromUtf8("SaveMP3ByPageDialog"))
         SaveMP3ByPageDialog.setWindowModality(QtCore.Qt.ApplicationModal)
         SaveMP3ByPageDialog.resize(391, 166)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/text_speak.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        SaveMP3ByPageDialog.setWindowIcon(icon)
         SaveMP3ByPageDialog.setModal(True)
         self.verticalLayout = QtGui.QVBoxLayout(SaveMP3ByPageDialog)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
@@ -52,9 +55,9 @@ class Ui_SaveMP3ByPageDialog(object):
         spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
         self.cancelButton = QtGui.QPushButton(SaveMP3ByPageDialog)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/dialog_close.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.cancelButton.setIcon(icon)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/dialog_close.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.cancelButton.setIcon(icon1)
         self.cancelButton.setObjectName(_fromUtf8("cancelButton"))
         self.horizontalLayout.addWidget(self.cancelButton)
         self.verticalLayout.addLayout(self.horizontalLayout)
