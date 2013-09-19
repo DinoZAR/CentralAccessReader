@@ -86,10 +86,11 @@ def is_release_environment():
     True if it is, False if it is not, which means this program instance is in
     a development environment.
     '''
-    if getattr(sys, 'frozen', None):
-        return True
-    else:
-        return False
+    return False
+#     if getattr(sys, 'frozen', None):
+#         return True
+#     else:
+#         return False
     
 def is_number(numberString):
     '''

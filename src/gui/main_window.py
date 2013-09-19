@@ -66,6 +66,14 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.webViewLayout.insertWidget(2, self.ui.webView, stretch=1)
         self.ui.webViewLayout.update()
         
+        # Also set the path for the web cache to save at temp
+        QWebSettings.setOfflineStoragePath(misc.temp_path('storageCache'))
+        QWebSettings.setOfflineWebApplicationCachePath(misc.temp_path('webAppCache'))
+        QWebSettings.globalSettings().setAttribute(QWebSettings.LocalContentCanAccessRemoteUrls, True);
+        QWebSettings.globalSettings().setAttribute(QWebSettings.LocalContentCanAccessFileUrls, True);
+        QWebSettings.globalSettings().setAttribute(QWebSettings.LocalStorageEnabled, True);
+        QWebSettings.globalSettings().setAttribute(QWebSettings.AutoLoadImages, True);
+        
         # Get the search function widgets
         self.searchWidgets = []
         self.searchWidgets.append(self.ui.searchLabel)
