@@ -22,28 +22,35 @@ ROOT_PATH = program_path('src/docx')
 w_NS = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
 r_NS = '{http://schemas.openxmlformats.org/package/2006/relationships}'
 
-def save_images(docxPath, importPath, cancelHook=None):
+def save_images(docxPath, importPath, cancelHook=None, progressHook=None):
      
     # Open a zip file of my docx file
     z = zipfile.ZipFile(docxPath, 'r')
- 
+    
+    i = 0
     for f in z.namelist():
+        i += 1
         
         # Check for cancel
         if cancelHook is not None:
             if cancelHook():
                 break
+            
+        # Check the progress
+        if progressHook is not None:
+            progressHook(int(float(i) / len(z.namelist()) * 100.0))
         
         if f.find('word/media/') == 0:
             # Extract it to my import folder
             savePath = importPath + '/images/' + f.replace('word/media/', '')
-            with open(savePath, 'wb') as imageFile:
-                if os.path.splitext(savePath)[1] in IMAGE_TRANSLATION:
-                    contents = z.read(f)
-                    myFile = StringIO(contents)
-                    convertFile = Image.open(myFile)
-                    convertFile.save(os.path.splitext(savePath)[0] + IMAGE_TRANSLATION[os.path.splitext(savePath)[1]])
-                else:
+            if os.path.splitext(savePath)[1].lower() in IMAGE_TRANSLATION:
+                contents = z.read(f)
+                myFile = StringIO(contents)
+                convertFile = Image.open(myFile)
+                outPath = os.path.splitext(savePath)[0] + IMAGE_TRANSLATION[os.path.splitext(savePath)[1].lower()]
+                convertFile.save(outPath)
+            else:
+                with open(savePath, 'wb') as imageFile:
                     imageFile.write(z.read(f))
      
     z.close()
@@ -87,7 +94,11 @@ class DocxDocument(object):
         print 'Starting the save images thread...'
         
         # Start saving images to my import folder in the background
-        saveImagesThread = Thread(target=save_images, args=(docxFilePath, self.importFolder, cancelHook))
+        self._imageProgress = 0
+        def myImageProgressHook(percent):
+            self._imageProgress = percent / 2.0
+        
+        saveImagesThread = Thread(target=save_images, args=(docxFilePath, self.importFolder, cancelHook, myImageProgressHook))
         saveImagesThread.start()
         
         # .docx is just a zip file
@@ -132,7 +143,7 @@ class DocxDocument(object):
             self.paragraphData.append(self._convert_paragraph_to_html(p, otherData))
             i += 1
             if progressHook is not None:
-                progress = int(float(i) / len(paragraphs) * 100.0)
+                progress = int(float(i) / len(paragraphs) * 50.0) + int(self._imageProgress)
                 if progress != lastProgress:
                     progressHook(progress)
                     lastProgress = progress
@@ -153,7 +164,12 @@ class DocxDocument(object):
             print 'I was interrupted'
         
         print 'Waiting for image saving thread to finish...'
-        saveImagesThread.join()
+        while saveImagesThread.isAlive():
+            if progressHook is not None:
+                progress = 50 + int(self._imageProgress)
+                if progress != lastProgress:
+                    progressHook(progress)
+                    lastProgress = progress
         
         print 'Import done!'
         

@@ -50,11 +50,8 @@ cp -R ./javascript "./dist/Central Access Reader.app/Contents/Resources/src/"
 #
 # Other files
 #
-echo "Copying the image plugins..."
-cp -R /opt/local/share/qt4/plugins/ "./dist/Central Access Reader.app/contents/Resources/plugins"
-
-echo "Copying the Qt conf..."
-cp ../qt.conf "./dist/Central Access Reader.app/Contents/Resources/"
+echo "Make small revision to the Qt image plugins folder..."
+mv "./dist/Central Access Reader.app/Contents/Resources/qt_pluginst4/plugins" "./dist/Central Access Reader.app/Contents/Resources/qt_plugins"
 
 echo "Copying the MathML pattern databases..."
 mkdir -p "./dist/Central Access Reader.app/Contents/Resources/src/math_patterns"

@@ -289,8 +289,8 @@ def _parseImage(elem, parentData, otherData):
                 
                 # Check to see if this is an image I need to convert later. If 
                 # so, change the file extension to match the converted file
-                if os.path.splitext(filename)[1] in IMAGE_TRANSLATION:
-                    filename = os.path.splitext(filename)[0] + IMAGE_TRANSLATION[os.path.splitext(filename)[1]]
+                if os.path.splitext(filename)[1].lower() in IMAGE_TRANSLATION:
+                    filename = os.path.splitext(filename)[0] + IMAGE_TRANSLATION[os.path.splitext(filename)[1].lower()]
                     
                 data['filename'] = unicode(filename)
                 break
