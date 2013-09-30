@@ -83,6 +83,16 @@ function GetSelectionHTML() {
 }
 
 /**
+ * Gets the HTML content of the body.
+ * @returns
+ */
+function GetBodyHTML() {
+	var range = document.createRange();
+	range.selectNode(document.body);
+	return GetHTMLSource(range);
+}
+
+/**
  * Takes a Range object and extracts the HTML content as text.
  * 
  * @param range 

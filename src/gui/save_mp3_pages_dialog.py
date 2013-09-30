@@ -22,7 +22,10 @@ class SaveMP3PagesDialog(QDialog):
         self.ui = Ui_SaveMP3ByPageDialog()
         self.ui.setupUi(self)
         
-        self.ui.cancelButton.clicked.connect(self.canceled)
+        self.ui.cancelButton.clicked.connect(self._cancelButtonPressed)
+    
+    def _cancelButtonPressed(self):
+        self.close()
     
     def setStatusLabel(self, labelText):
         self.ui.statusLabel.setText(labelText)

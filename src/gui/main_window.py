@@ -585,14 +585,14 @@ class MainWindow(QtGui.QMainWindow):
                 dialog = SaveMP3PagesDialog(self)
                 dialog.show()
                 
-                myHTML = html.fromstring(self.document.getMainPage())
-                body = myHTML.xpath('//body')[0]
+                htmlString = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetBodyHTML', [])).toString())
+                myHTML = html.fromstring(htmlString)
                 
                 # Split up the body into a list of elements, split by page.
                 pages = []
                 currentPage = [[], 'Front']
                 largestNumberLength = 1
-                for e in body:
+                for e in myHTML:
                     if e.get('class') == 'pageNumber':
                         
                         if len(e.text_content()) > 0:
