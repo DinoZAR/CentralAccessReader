@@ -1,6 +1,12 @@
+otherwise = o t h e r w i s e -> 'otherwise'
 vertical = v e r t i c a l -> 'vertical'
 horizontal = h o r i z o n t a l -> 'horizontal'
 coordinate = c o o r d i n a t e -> 'coordinate'
+
+max = m a x -> 'max'
+sup = s u p -> 'supremum'
+inf = i n f -> 'infimum'
+lim = l i m -> 'limit'
 
 add = a d d -> 'add'
 add = A d d -> 'add'
@@ -123,3 +129,5 @@ low = l o w -> 'low'
 lcd = L C D -> 'l c d'
 
 by = b y -> 'by'
+
+if = i f -> 'if'

@@ -1,8 +1,9 @@
 diamond = mi("&#8900;") -> 'diamond'
 identical = mi("&#8801;") -> 'is identical to'
 identical = mo("&#8801;") -> 'is identical to'
+numberSign = mi("#") -> 'number sign'
 plus = mo("+") -> 'plus'
-summation = mi("&#8721;") -> 'summation'
+SigmaLone = mi("&#8721;") -> 'summation'
 tilde = mo("&#732;") -> 'tilde'
 tilde = mo("~") -> 'tilde'
 tilde = mi("~") -> 'tilde'
@@ -11,7 +12,7 @@ times = mi("&#59791;") -> 'times'
 
 fourrootsym = mo("&#8732;") -> 'the fourth root of'
 cuberootsym = mo("&#8731;") -> 'the cube root of'
-squarerrotsym = mo("&#8730;") -> 'the square root of'
+squarerootsym = mo("&#8730;") -> 'the square root of'
 
 // Parentheses, Brackets, Braces, and Bars
 closeBrace = mo("}") -> 'close brace,'
