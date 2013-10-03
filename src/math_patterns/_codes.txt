@@ -2,7 +2,7 @@
 // Common Signs
 // ------------
 //
-// --------------
+//--------------
 // Order Matters!
 // --------------
 //
@@ -16,7 +16,7 @@
 // -----------------
 //
 // In order for patterns to match correctly, you should have patterns grouped
-// and have those groups ordered in the following way: 
+// and have those groups ordered in the following way:
 //
 // 1. Symbol Code (like variables and Unicode)
 // 2. Fraction-Based (like derivatives)
@@ -90,8 +90,8 @@ plusMinus = mo("&#xB1;") -> 'plus or minus'
 product [integral] = mi("&#8719;") -> 'product'
 questionMark = mi("?") -> 'question mark'
 product [integral] = mo("&#8719;") -> 'product'
-times = mo("*") -> 'times'
-times = mi("*") -> 'times'
+times = mo("*") -> 'asterisk'
+times = mi("*") -> 'asterisk'
 timesCross = mo("&#215;") -> 'times'
 times = mi("&#8727;") -> 'times'
 
@@ -245,6 +245,8 @@ space = mi("&#8203;") -> ' '
 space = mo("&#8289;") -> ' '
 
 // Letters
+ScriptJ [variable] = mi<mathvariant="script">("J") -> 'mathematical script cap J'
+
 a [variable] = mi("a") -> '"a"'
 b [variable] = mi("b") -> ', "b"'
 c [variable] = mi("c") -> '"c"'

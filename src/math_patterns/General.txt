@@ -53,7 +53,8 @@ import _BordersSlashes.txt
 
 import _Trig.txt
 
-// Products and Unionsimport _Integrals.txt
+// Products and Unions
+import _Integrals.txt
 
 //Powers and Primes
 import _PowersPrimes.txt
@@ -88,8 +89,11 @@ overUnderArrowB = munderover(rightHarpoon mrow(+) mrow(+)) -> '{2}, above {1}, s
 backPrimes = mmultiscripts(? ? ? ?) -> '{4} {1}'
 
 // Limits
-limit = munderover(mrow(l i m) mrow(? ? ?) ?) -> 'the limit as {4}, approaches {6}, of'
-limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4}, of'
+limit = munderover(mrow(lim) mrow(? ? ?) ?) -> 'the limit as {4}, approaches {6}, of'
+limit = munderover(mrow(lim) mrow(+) ?) -> 'the limit as {4}, of'
+
+// Unders and Overs
+munder = munderover(mrow(+) mrow(+) mrow()) -> '{1} sub {2}'
 
 // ------------------------------------------------------------------------------
 // Parenthetical Expressions
