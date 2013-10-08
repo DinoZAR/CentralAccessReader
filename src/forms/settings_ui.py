@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'W:\Documents\Special Projects\Graffe, Spencer\workspace2\another\src\forms/settings.ui'
+# Form implementation generated from reading ui file '/Users/atrctech/Desktop/workspace/NiftyProseArticulator/src/forms/settings.ui'
 #
-# Created: Thu Apr 25 15:46:15 2013
-#      by: PyQt4 UI code generator 4.10
+# Created: Mon Sep 16 16:34:05 2013
+#      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
 

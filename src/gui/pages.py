@@ -3,7 +3,7 @@ Created on May 21, 2013
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtCore import Qt, QAbstractItemModel, QModelIndex, QVariant
+from PyQt4.QtCore import Qt, QAbstractItemModel, QModelIndex
 
 class PageNode(object):
     '''
@@ -55,12 +55,12 @@ class PagesTreeModel(QAbstractItemModel):
         referred to by the index."""
 
         if not index.isValid():
-            return QVariant()
+            return None
         node = index.internalPointer()
         if role == Qt.DisplayRole:
-            return QVariant(str(node.name))
+            return unicode(node.name)
         else:
-            return QVariant()
+            return None
 
 
     def columnCount(self, parent):

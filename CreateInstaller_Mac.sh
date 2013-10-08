@@ -1,6 +1,13 @@
 cd src
 
 #
+# Setting up the environment
+#
+echo "Setting up the environment..."
+export PATH=/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/:$PATH
+echo $PATH
+
+#
 # Cleanup what we had before
 #
 echo "Cleaning up previous build..."
@@ -43,6 +50,9 @@ cp -R ./javascript "./dist/Central Access Reader.app/Contents/Resources/src/"
 #
 # Other files
 #
+echo "Make small revision to the Qt image plugins folder..."
+mv "./dist/Central Access Reader.app/Contents/Resources/qt_pluginst4/plugins" "./dist/Central Access Reader.app/Contents/Resources/qt_plugins"
+
 echo "Copying the MathML pattern databases..."
 mkdir -p "./dist/Central Access Reader.app/Contents/Resources/src/math_patterns"
 cp -R ./math_patterns "./dist/Central Access Reader.app/Contents/Resources/src/"

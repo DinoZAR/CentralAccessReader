@@ -16,7 +16,7 @@ class AboutDialog(QDialog):
         '''
         Constructor
         '''
-        QWidget.__init__(self, parent)
+        QDialog.__init__(self, parent)
         
         self.ui = Ui_AboutDialog()
         self.ui.setupUi(self)

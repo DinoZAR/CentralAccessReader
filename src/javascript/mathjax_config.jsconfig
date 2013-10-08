@@ -1,10 +1,12 @@
-MathJax.Ajax.timeout = 1000;  // 1 second rather than 15 seconds
+MathJax.Ajax.timeout = 15000; // 1 second rather than 15 seconds
 MathJax.Hub.Config({
-	messageStyle: 'none',
-	"HTML-CSS": {
-		imageFont: null
-	}
+    messageStyle: 'none',
+    jax: ["input/MathML", "output/HTML-CSS"],
+    extensions: ["mml2jax.js"],
+    showMathMenu: false,
+    showMathMenuMSIE: false
 });
+
 MathJax.Hub.Register.StartupHook("HTML-CSS Jax Startup", function () {
-          MathJax.OutputJax["HTML-CSS"].Font.timeout = 500; // shorter than 5 second font timeout
+    MathJax.OutputJax["HTML-CSS"].Font.timeout = 1000; // shorter than 5 second font timeout
 });

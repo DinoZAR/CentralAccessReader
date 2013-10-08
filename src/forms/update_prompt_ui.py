@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace\nifty-prose-articulator\src\forms/update_prompt.ui'
+# Form implementation generated from reading ui file '/Users/atrctech/Desktop/workspace/NiftyProseArticulator/src/forms/update_prompt.ui'
 #
-# Created: Tue Jul 09 16:40:20 2013
-#      by: PyQt4 UI code generator 4.10
+# Created: Mon Sep 16 16:34:05 2013
+#      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
 

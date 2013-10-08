@@ -3,7 +3,7 @@ Created on Mar 5, 2013
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtCore import Qt, QAbstractItemModel, QModelIndex, QVariant
+from PyQt4.QtCore import Qt, QAbstractItemModel, QModelIndex
 
 class BookmarkNode(object):
     '''
@@ -63,12 +63,12 @@ class BookmarksTreeModel(QAbstractItemModel):
         referred to by the index."""
 
         if not index.isValid():
-            return QVariant()
+            return None
         node = index.internalPointer()
         if role == Qt.DisplayRole:
-            return QVariant(unicode(node.name))
+            return unicode(node.name)
         else:
-            return QVariant()
+            return None
 
 
     def columnCount(self, parent):

@@ -13,7 +13,7 @@ class SearchSettings(QDialog):
     '''
     
     def __init__(self, parent=None):
-        QWidget.__init__(self, parent)
+        QDialog.__init__(self, parent)
         
         self.ui = Ui_SearchSettings()
         self.ui.setupUi(self)

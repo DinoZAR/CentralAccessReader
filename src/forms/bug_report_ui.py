@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace2\another\src\forms/bug_report.ui'
+# Form implementation generated from reading ui file 'bug_report.ui'
 #
-# Created: Mon Jul 08 13:14:51 2013
-#      by: PyQt4 UI code generator 4.10
+# Created: Wed Sep 18 09:31:09 2013
+#      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
 

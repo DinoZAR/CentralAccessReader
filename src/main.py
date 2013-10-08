@@ -1,7 +1,7 @@
 '''
 Created on Jan 21, 2013
 
-@author: Spencer
+@author: Spencer Graffe
 '''
 
 def main():
@@ -9,10 +9,6 @@ def main():
 
     import sys
     import os
-    
-    # Because we have local stuff, we need to append this local directory
-    # to the Python path
-    #sys.path.append(os.path.abspath('..'))
     
     from PyQt4.QtGui import QApplication, QPixmap, QSplashScreen
     app = QApplication(sys.argv)
