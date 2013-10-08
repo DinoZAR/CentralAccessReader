@@ -7,6 +7,7 @@ sum = munderover(SigmaBig mrow(+) mrow(+)) -> 'the summation from {2}, to {3}, o
 sum = munderover(SigmaBig mrow(+) mrow()) -> 'the summation from {2}, of'
 sum = munderover(SigmaBig mrow() mrow(+)) -> 'the summation to {2}, of'
 sum = munderover(SigmaBig mrow(+) ?) -> 'the summation from {2}, of'
+sum = munderover(SigmaBig mrow() mrow()) -> 'the summation of'
 sum = munderover(SigmaBig) -> 'the summation of'
 sum = munderover(SigmaLone mrow(munderover(mrow(+) mrow(+) mrow())) mrow()) -> 'the summation from {2}. from {3}, of'
 sum = munderover(mrow(munderover(mrow(SigmaLone) mrow(+) mrow())) mrow(+) mrow()) -> 'the summation from {2}. from {3}, of'
@@ -17,6 +18,7 @@ sum = munderover(SigmaLone mrow(+) mrow(+)) -> 'the summation from {2}, to {3}, 
 sum = munderover(SigmaLone mrow(+) mrow()) -> 'the summation from {2}, of'
 sum = munderover(SigmaLone mrow() mrow(+)) -> 'the summation to {2}, of'
 sum = munderover(SigmaLone mrow(+) ?) -> 'the summation from {2}, of'
+sum = munderover(SigmaLone mrow() mrow()) -> 'the summation of'
 sum = munderover(SigmaLone) -> 'the summation of'
 
 sum = munderover(mrow(SigmaBig) mrow(+) mrow ()) -> 'the summation from {2}, of'
