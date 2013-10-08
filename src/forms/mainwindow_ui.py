@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/atrctech/Desktop/workspace/NiftyProseArticulator/src/forms/mainwindow.ui'
+# Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace\nifty-prose-articulator\src\forms/mainwindow.ui'
 #
-# Created: Mon Sep 16 16:34:04 2013
-#      by: PyQt4 UI code generator 4.10.3
+# Created: Mon Oct 07 13:25:28 2013
+#      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -124,7 +124,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 945, 76))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 931, 69))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.horizontalLayout = QtGui.QHBoxLayout(self.scrollAreaWidgetContents)
         self.horizontalLayout.setSpacing(0)
@@ -321,7 +321,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4.addWidget(self.splitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1032, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1032, 21))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))
@@ -415,10 +415,14 @@ class Ui_MainWindow(object):
         self.actionBy_Page = QtGui.QAction(MainWindow)
         self.actionBy_Page.setIcon(icon7)
         self.actionBy_Page.setObjectName(_fromUtf8("actionBy_Page"))
+        self.actionExport_to_HTML = QtGui.QAction(MainWindow)
+        self.actionExport_to_HTML.setObjectName(_fromUtf8("actionExport_to_HTML"))
         self.menuFile.addAction(self.actionOpen_Docx)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionSave_All_to_MP3)
         self.menuFile.addAction(self.actionSave_Selection_to_MP3)
+        self.menuFile.addSeparator()
+        self.menuFile.addAction(self.actionExport_to_HTML)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionQuit)
         self.menuMathML.addAction(self.actionOpen_Pattern_Editor)
@@ -537,6 +541,7 @@ class Ui_MainWindow(object):
         self.actionEntire_Document.setText(_translate("MainWindow", "Entire Document", None))
         self.actionCurrent_Selection.setText(_translate("MainWindow", "Current Selection", None))
         self.actionBy_Page.setText(_translate("MainWindow", "By Page", None))
+        self.actionExport_to_HTML.setText(_translate("MainWindow", "&Export to HTML", None))
 
 from PyQt4 import QtWebKit
 import resource_rc

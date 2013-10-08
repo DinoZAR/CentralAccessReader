@@ -1,0 +1,8 @@
+MathJax.Ajax.timeout = 15000; // 1 second rather than 15 seconds
+MathJax.Hub.Config({
+    messageStyle: 'none',
+    jax: ["input/MathML", "output/SVG"],
+    extensions: ["mml2jax.js"],
+    showMathMenu: false,
+    showMathMenuMSIE: false
+});

@@ -173,8 +173,18 @@ class DocxDocument(object):
         
         print 'Import done!'
         
-    def getMainPage(self):
-        return HTML.tostring(self._html)
+    def getMainPage(self, mathOutput='html'):
+        if mathOutput == 'svg':
+            html = HTML.Element('html')
+            head = HTML.Element('head')
+            body = HTML.Element('body')
+            html.append(head)
+            html.append(body)
+            self._prepareHead(head, mathOutput='svg')
+            self._prepareBody(body)
+            return HTML.tostring(html)
+        else:
+            return HTML.tostring(self._html)
     
     def getHeadings(self):
         '''
@@ -286,18 +296,22 @@ class DocxDocument(object):
                 myDict[key] = value
         return myDict
     
-    def _prepareHead(self, head):
-         
+    def _prepareHead(self, head, mathOutput='svg'):
         mathjaxConfig = HTML.Element('script')
         mathjaxConfig.set('type', 'text/x-mathjax-config')
-        scriptFile = open(program_path('src/javascript/mathjax_config.jsconfig'), 'r')
+        mathjaxConfigFile = ''
+        if mathOutput == 'svg':
+            mathjaxConfigFile = program_path('src/javascript/mathjax_config_svg.jsconfig')
+        else:
+            mathjaxConfigFile = program_path('src/javascript/mathjax_config.jsconfig')
+        scriptFile = open(mathjaxConfigFile, 'r')
         contents = scriptFile.read()
         scriptFile.close()
         mathjaxConfig.text = contents
          
         mathjaxScript = HTML.Element('script')
         mathjaxScript.attrib['type'] = 'text/javascript'
-        mathjaxScript.attrib['src'] = 'file:' + urllib.pathname2url(program_path('mathjax/MathJax.js')) #+ r'?config=TeX-AMS-MML_HTMLorMML-full.js'
+        mathjaxScript.attrib['src'] = 'file:' + urllib.pathname2url(program_path('mathjax/MathJax.js'))
          
         jqueryScript = HTML.Element('script')
         jqueryScript.attrib['type'] = 'text/javascript'

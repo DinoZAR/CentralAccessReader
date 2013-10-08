@@ -11,8 +11,8 @@ from lxml import html
 from lxml.etree import ParserError, XMLSyntaxError
 from HTMLParser import HTMLParser
 from PyQt4 import QtGui
-from PyQt4.QtCore import Qt, QUrl, QMutex, pyqtSignal, QThread
-from PyQt4.QtWebKit import QWebPage, QWebInspector, QWebSettings
+from PyQt4.QtCore import Qt, QUrl, QMutex, pyqtSignal
+from PyQt4.QtWebKit import QWebInspector, QWebSettings
 from forms.mainwindow_ui import Ui_MainWindow
 from gui.bookmarks import BookmarksTreeModel, BookmarkNode
 from gui.configuration import Configuration
@@ -20,8 +20,9 @@ from gui.npa_webview import NPAWebView
 from gui.prepare_speech import PrepareSpeechProgressWidget
 from gui.search_settings import SearchSettings
 from gui.save_mp3_pages_dialog import SaveMP3PagesDialog
+from gui.export_to_html_dialog import ExportToHtmlDialog
 from mathml.tts import MathTTS
-from speech.assigner import Assigner, PrepareSpeechThread
+from speech.assigner import Assigner
 from speech.worker import SpeechWorker
 import misc
 from updater import GetUpdateThread, RunUpdateInstallerThread, SETUP_FILE, SETUP_TEMP_FILE, run_update_installer, is_update_downloaded, save_server_version_to_temp
@@ -207,9 +208,6 @@ class MainWindow(QtGui.QMainWindow):
     def resizeEvent(self, event):
         self.prepareSpeechProgress.updatePos()
         
-    def updateGUI(self):
-        QtGui.qApp.processEvents()
-        
     def connect_signals(self):
         '''
         A method I made to connect all of my signals to the correct functions.
@@ -229,6 +227,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.actionOpen_Docx.triggered.connect(self.showOpenDocxDialog)
         self.ui.actionSave_All_to_MP3.triggered.connect(self.saveMP3All)
         self.ui.actionSave_Selection_to_MP3.triggered.connect(self.saveMP3Selection)
+        self.ui.actionExport_to_HTML.triggered.connect(self.exportToHTML)
         self.ui.actionQuit.triggered.connect(self.quit)
         
         # Functions
@@ -674,7 +673,22 @@ class MainWindow(QtGui.QMainWindow):
                     messageBox.exec_()
                     
                     misc.open_file_browser_to_location(folder)
-        
+                    
+    def exportToHTML(self):
+        '''
+        Exports the current document to a MathPage-like web document that can
+        be opened in the web browser.
+        '''
+        if self.document is not None:
+             
+            defaultFileName = os.path.splitext(str(self.lastDocumentFilePath))[0] + '.htm'
+            fileName = unicode(QtGui.QFileDialog.getSaveFileName(self, 'Export HTML...', defaultFileName, '(*.htm)'))
+             
+            if len(fileName) > 0:
+                self.exportToHtmlDialog = ExportToHtmlDialog(self.document, fileName, self.assigner)
+                self.exportToHtmlDialog.show()
+                self.exportToHtmlDialog.start()
+                
     def zoomIn(self):
         self.ui.webView.zoomIn()
     
@@ -822,7 +836,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def showDocNotSupported(self):
         result = QtGui.QMessageBox.information(self, 'CAR does not support 1997-2003 Word document', 
-                                               'Sorry, this is a 1997-2003 Word file than we don\'t support. Open it in Microsoft Word 2007 or later and save it as "Word Document."' 
+                                               'Sorry, this is a 1997-2003 Word document that we don\'t support. Open it in Microsoft Word 2007 or later and save it as "Word Document" (.docx)' 
                                                )
             
     def openTutorial(self):

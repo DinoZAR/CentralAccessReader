@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace\nifty-prose-articulator\src\forms/document_load_progress.ui'
+# Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace\nifty-prose-articulator\src\forms/export_to_html.ui'
 #
-# Created: Mon Oct 07 14:47:01 2013
+# Created: Mon Oct 07 16:53:45 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -23,46 +23,46 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-class Ui_DocumentLoadProgressDialog(object):
-    def setupUi(self, DocumentLoadProgressDialog):
-        DocumentLoadProgressDialog.setObjectName(_fromUtf8("DocumentLoadProgressDialog"))
-        DocumentLoadProgressDialog.setWindowModality(QtCore.Qt.ApplicationModal)
-        DocumentLoadProgressDialog.resize(432, 77)
+class Ui_ExportToHtmlDialog(object):
+    def setupUi(self, ExportToHtmlDialog):
+        ExportToHtmlDialog.setObjectName(_fromUtf8("ExportToHtmlDialog"))
+        ExportToHtmlDialog.resize(471, 83)
         font = QtGui.QFont()
         font.setPointSize(12)
-        DocumentLoadProgressDialog.setFont(font)
+        ExportToHtmlDialog.setFont(font)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/document_open.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        DocumentLoadProgressDialog.setWindowIcon(icon)
-        self.verticalLayout = QtGui.QVBoxLayout(DocumentLoadProgressDialog)
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/CAR_Logo.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        ExportToHtmlDialog.setWindowIcon(icon)
+        ExportToHtmlDialog.setModal(True)
+        self.verticalLayout = QtGui.QVBoxLayout(ExportToHtmlDialog)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.label = QtGui.QLabel(DocumentLoadProgressDialog)
+        self.label = QtGui.QLabel(ExportToHtmlDialog)
         self.label.setObjectName(_fromUtf8("label"))
         self.verticalLayout.addWidget(self.label)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        self.progressBar = QtGui.QProgressBar(DocumentLoadProgressDialog)
+        self.progressBar = QtGui.QProgressBar(ExportToHtmlDialog)
         self.progressBar.setProperty("value", 0)
         self.progressBar.setTextVisible(False)
         self.progressBar.setObjectName(_fromUtf8("progressBar"))
         self.horizontalLayout.addWidget(self.progressBar)
-        self.cancelButton = QtGui.QPushButton(DocumentLoadProgressDialog)
+        self.cancelButton = QtGui.QPushButton(ExportToHtmlDialog)
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/prepare_speech_stop.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.cancelButton.setIcon(icon1)
         self.cancelButton.setIconSize(QtCore.QSize(24, 24))
         self.cancelButton.setObjectName(_fromUtf8("cancelButton"))
         self.horizontalLayout.addWidget(self.cancelButton)
-        self.horizontalLayout.setStretch(0, 1)
         self.verticalLayout.addLayout(self.horizontalLayout)
-        self.verticalLayout.setStretch(1, 1)
+        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem)
 
-        self.retranslateUi(DocumentLoadProgressDialog)
-        QtCore.QMetaObject.connectSlotsByName(DocumentLoadProgressDialog)
+        self.retranslateUi(ExportToHtmlDialog)
+        QtCore.QMetaObject.connectSlotsByName(ExportToHtmlDialog)
 
-    def retranslateUi(self, DocumentLoadProgressDialog):
-        DocumentLoadProgressDialog.setWindowTitle(_translate("DocumentLoadProgressDialog", "Loading Document...", None))
-        self.label.setText(_translate("DocumentLoadProgressDialog", "Something...", None))
-        self.cancelButton.setText(_translate("DocumentLoadProgressDialog", "Cancel", None))
+    def retranslateUi(self, ExportToHtmlDialog):
+        ExportToHtmlDialog.setWindowTitle(_translate("ExportToHtmlDialog", "Export to HTML...", None))
+        self.label.setText(_translate("ExportToHtmlDialog", "Starting up...", None))
+        self.cancelButton.setText(_translate("ExportToHtmlDialog", "Cancel", None))
 
 import resource_rc

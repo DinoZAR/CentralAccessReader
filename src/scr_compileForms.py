@@ -34,7 +34,7 @@ def main():
                 lastTime2 = os.path.getmtime(os.path.join(mydir, pyExportName))
                 if lastTime2 < lastTime:
                     print 'Compiling', file, 'at path', os.path.join(mydir, file)
-                    data = subprocess.check_output('pyuic4 ' + os.path.join(mydir, file), stdin=subprocess.PIPE, shell=True)
+                    data = subprocess.check_output('pyuic4 "' + os.path.join(mydir, file) + '"', stdin=subprocess.PIPE, shell=True)
                     pyfile = open(os.path.join(mydir, pyExportName), 'wb')
                     pyfile.write(data)
                     pyfile.close()
@@ -42,7 +42,7 @@ def main():
             else:
                 print 'Compiling', file, 'at path', os.path.join(mydir, file)
                 pyfile = open(os.path.join(mydir, pyExportName), 'w')
-                data = subprocess.check_output('pyuic4 ' + os.path.join(mydir, file), stdin=subprocess.PIPE, shell=True)
+                data = subprocess.check_output('pyuic4 "' + os.path.join(mydir, file) + '"', stdin=subprocess.PIPE, shell=True)
                 pyfile = open(os.path.join(mydir, pyExportName), 'wb')
                 pyfile.write(data)
                 pyfile.close()
@@ -57,14 +57,14 @@ def main():
                 lastTime2 = os.path.getmtime(os.path.join(mydir, pyExportName))
                 if lastTime2 < lastTime:
                     print 'Compiling', file, 'at path', os.path.join(mydir, file)
-                    data = subprocess.check_output('pyrcc4 ' + os.path.join(mydir, file), stdin=subprocess.PIPE, shell=True)
+                    data = subprocess.check_output('pyrcc4 "' + os.path.join(mydir, file) + '"', stdin=subprocess.PIPE, shell=True)
                     pyfile = open(os.path.join(mydir, pyExportName), 'wb')
                     pyfile.write(data)
                     pyfile.close()
             
             else:
                 print 'Compiling', file, 'at path', os.path.join(mydir, file)
-                data = subprocess.check_output('pyrcc4 ' + os.path.join(mydir, file), stdin=subprocess.PIPE, shell=True)
+                data = subprocess.check_output('pyrcc4 "' + os.path.join(mydir, file) + '"', stdin=subprocess.PIPE, shell=True)
                 pyfile = open(os.path.join(mydir, pyExportName), 'wb')
                 pyfile.write(data)
                 pyfile.close()
