@@ -2,7 +2,7 @@
 // Common Signs
 // ------------
 //
-//--------------
+// --------------
 // Order Matters!
 // --------------
 //
@@ -16,7 +16,7 @@
 // -----------------
 //
 // In order for patterns to match correctly, you should have patterns grouped
-// and have those groups ordered in the following way:
+// and have those groups ordered in the following way: 
 //
 // 1. Symbol Code (like variables and Unicode)
 // 2. Fraction-Based (like derivatives)
