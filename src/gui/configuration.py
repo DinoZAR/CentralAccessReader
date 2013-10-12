@@ -389,7 +389,13 @@ class Configuration(object):
         configFile.write(etree.tostring(root, pretty_print=True))
         configFile.close()
         
-        self._writeCSS(temp_path('import/defaultStyle.css'))
+        outtext = self._writeCSS()
+        cssPath = temp_path('import/defaultStyle.css')
+        if not os.path.exists(cssPath):
+            os.makedirs(os.path.dirname(cssPath))
+        cssFile = open(cssPath, 'w')
+        cssFile.write(outtext)
+        cssFile.close()
     
     def _createQColorFromCommaSeparated(self, colorString):
         tokens = colorString.split(',')
@@ -404,9 +410,10 @@ class Configuration(object):
     def _createCommaSeparatedFromQColor(self, color):
         return str(color.red()) + ',' + str(color.green()) + ',' + str(color.blue())
         
-    def _writeCSS(self, filePath):
+    def _writeCSS(self):
         '''
-        Writes out the CSS file that has my configurations in it.
+        Writes out the CSS file that has my configurations in it as a byte
+        string.
         '''
         
         # If text highlighting is disabled, I will give it a completely clear
@@ -525,6 +532,14 @@ padding: 5px 0px 0px 25px;
 font-size: 150%;
 }
 
+h6
+{
+border-style:solid;
+border-width: 1px 0px 0px 0px;
+padding: 5px 0px 0px 25px;
+font-size: 150%;
+}
+
 .ui-tooltip 
 {
 background: ''' + self._createRGBStringFromQColor(self.color_contentBackground) + ''';
@@ -557,8 +572,4 @@ z-index: 2;
         # -------------------------------------------
         # END CSS FILE
         
-        if not os.path.exists(os.path.dirname(filePath)):
-            os.makedirs(os.path.dirname(filePath))
-        cssFile = open(filePath, 'w')
-        cssFile.write(outtext)
-        cssFile.close()
+        return outtext

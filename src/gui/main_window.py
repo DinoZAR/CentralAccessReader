@@ -681,11 +681,11 @@ class MainWindow(QtGui.QMainWindow):
         '''
         if self.document is not None:
              
-            defaultFileName = os.path.splitext(str(self.lastDocumentFilePath))[0] + '.htm'
-            fileName = unicode(QtGui.QFileDialog.getSaveFileName(self, 'Export HTML...', defaultFileName, '(*.htm)'))
+            defaultFileName = os.path.splitext(str(self.lastDocumentFilePath))[0] + '.html'
+            fileName = unicode(QtGui.QFileDialog.getSaveFileName(self, 'Export HTML...', defaultFileName, '(*.html)'))
              
             if len(fileName) > 0:
-                self.exportToHtmlDialog = ExportToHtmlDialog(self.document, fileName, self.assigner)
+                self.exportToHtmlDialog = ExportToHtmlDialog(self.document, fileName, self.assigner, self.configuration)
                 self.exportToHtmlDialog.show()
                 self.exportToHtmlDialog.start()
                 

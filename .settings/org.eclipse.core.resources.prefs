@@ -1,4 +1,6 @@
 eclipse.preferences.version=1
+encoding//src/cairosvg/parser.py=utf-8
+encoding//src/cairosvg/surface/__init__.py=utf-8
 encoding//src/forms/about_ui.py=utf-8
 encoding//src/forms/bug_report_ui.py=utf-8
 encoding//src/forms/color_settings_ui.py=utf-8

@@ -296,7 +296,7 @@ class DocxDocument(object):
                 myDict[key] = value
         return myDict
     
-    def _prepareHead(self, head, mathOutput='svg'):
+    def _prepareHead(self, head, mathOutput='html'):
         mathjaxConfig = HTML.Element('script')
         mathjaxConfig.set('type', 'text/x-mathjax-config')
         mathjaxConfigFile = ''
