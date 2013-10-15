@@ -223,6 +223,10 @@ class ExportToHtmlDialog(QDialog):
                 prose += speech[0]
                 break
             
+            # Remove all of the quotes from the math equation. JAWS reads all
+            # of the quotes aloud, so it can get annoying
+            prose = prose.replace('"', '')
+            
             # Remove all children of the soon-to-be image
             for child in equations[i]:
                 child.getparent().remove(child)
