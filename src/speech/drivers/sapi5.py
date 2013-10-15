@@ -117,8 +117,6 @@ class SAPI5Driver(object):
         generator object or iterable that returns tuples of the following:
         (text, label)
         '''
-        print 'driver: setting the speech generator'
-        
         # Create an output list of all the speech that it would generate. This
         # effectively "caches" the generator so that I don't have to wait for
         # anything from it.
@@ -218,8 +216,6 @@ class SAPI5Driver(object):
                     self._requestSpeechHook()
                 self._alreadyRequestedSpeech = True
                 
-            print 'driver: Finished requesting more speech'
-            
             # Spin here until my queue is gone, or I'm done
             while len(self._queue) > 0 and self._running:
                 pythoncom.PumpWaitingMessages()

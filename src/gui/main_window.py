@@ -689,6 +689,19 @@ class MainWindow(QtGui.QMainWindow):
                 self.exportToHtmlDialog.show()
                 self.exportToHtmlDialog.start()
                 
+                if self.exportToHtmlDialog.isSuccessful():
+                    messageBox = QtGui.QMessageBox()
+                    messageText = 'Success!\nYour HTML file was saved in:\n' + fileName
+                    messageBox.setText(messageText)
+                    messageBox.setStandardButtons(QtGui.QMessageBox.Ok)
+                    messageBox.setDefaultButton(QtGui.QMessageBox.Ok)
+                    messageBox.setWindowTitle('HTML File Saved Successfully')
+                    messageBox.setIcon(QtGui.QMessageBox.Information)
+                    messageBox.exec_()
+                    
+                    misc.open_file_browser_to_location(fileName)
+                    
+                
     def zoomIn(self):
         self.ui.webView.zoomIn()
     
@@ -960,9 +973,6 @@ class MainWindow(QtGui.QMainWindow):
             # Set the content views and prepare assigner
             self.assigner.prepare(docxHtml)
             self.ui.webView.setHtml(docxHtml, baseUrl)
-        
-#         if len(self.lastDocumentFilePath) > 0:
-#             self.openDocx(self.lastDocumentFilePath)
 
     def showUpdateButton(self):
         '''
@@ -1067,6 +1077,10 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.actionOpen_Docx.setEnabled(False)
             self.ui.actionTutorial.setEnabled(False)
             self.ui.actionSearch.setEnabled(False)
+            self.ui.actionEntire_Document.setEnabled(False)
+            self.ui.actionCurrent_Selection.setEnabled(False)
+            self.ui.actionBy_Page.setEnabled(False)
+            self.ui.actionExport_to_HTML.setEnabled(False)
             
             # Search bar
             for w in self.searchWidgets:
@@ -1092,6 +1106,10 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.actionOpen_Docx.setEnabled(True)
             self.ui.actionTutorial.setEnabled(True)
             self.ui.actionSearch.setEnabled(True)
+            self.ui.actionEntire_Document.setEnabled(True)
+            self.ui.actionCurrent_Selection.setEnabled(True)
+            self.ui.actionBy_Page.setEnabled(True)
+            self.ui.actionExport_to_HTML.setEnabled(True)
             
             # Search bar
             for w in self.searchWidgets:

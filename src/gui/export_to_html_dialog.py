@@ -107,13 +107,25 @@ class ExportToHtmlDialog(QDialog):
                 
         self._finished = True
         self.close()
+        
+    def isSuccessful(self):
+        '''
+        Returns true if the export ran successfully.
+        '''
+        return self._finished and not self._canceled
     
     def _convertPageNumbersToH6(self, myHtml):
         '''
         Converts all of the page numbers into H6 headings so that they are
         easily navigable by JAWS and other screen-reading software.
         '''
-        pass
+        # Get all of the page numbers
+        pageNumbers = myHtml.xpath("//p[@class='pageNumber']")
+        
+        # Convert each page number to an h6 element
+        for p in pageNumbers:
+            p.tag = 'h6'
+            p.attrib.pop('class')
     
     def _insertCSS(self, head):
         '''
@@ -128,10 +140,60 @@ class ExportToHtmlDialog(QDialog):
         '''
         Removes the highlighter from the document, if any.
         '''
-        highlighter = myHtml.xpath("//span[@id='npaHighlight']")
+        highlights = myHtml.xpath("//span[@id='npaHighlight']")
+        highlightLines = myHtml.xpath("//span[@id='npaHighlightLine']")
         
-        if len(highlighter > 0):
-            highlighter = highlighter[0]
+        for h in highlights:
+            self._replaceWithChildren(h)
+        
+        for h in highlightLines:
+            self._replaceWithChildren(h)
+            
+    def _replaceWithChildren(self, elem):
+        '''
+        Replaces the element with its own children.
+        '''
+        p = elem.getparent()
+        i = p.index(elem)
+        
+        # Mess with the text
+        if elem.text is not None:
+            firstHalf = p[:i]
+            if len(firstHalf) > 0:
+                if firstHalf[-1].tail is not None:
+                    firstHalf[-1].tail += elem.text
+                else:
+                    firstHalf[-1].tail = elem.text
+            else:
+                if p.text is not None:
+                    p.text += elem.text
+                else:
+                    p.text = elem.text
+        
+        # Mess with the tail
+        if elem.tail is not None:
+            if len(elem) > 0:
+                if elem[-1].tail is not None:
+                    elem[-1].tail += elem.tail
+                else:
+                    elem[-1].tail = elem.tail
+            else:
+                if elem.text is not None:
+                    p.text += elem.tail
+                else:
+                    p.text = elem.tail
+        
+        # Get all of the children of element and insert
+        # them in the parent, in correct order
+        childs = []
+        for c in elem:
+            childs.append(c)
+        childs.reverse()
+        for c in childs:
+            p.insert(i, c)
+            
+        # Remove the element
+        p.remove(elem)
     
     def _convertMathEquations(self, myHtml):
         '''
@@ -152,7 +214,7 @@ class ExportToHtmlDialog(QDialog):
             
             # Get the SVG graphic inside the span and convert to PNG
             svg = equations[i].xpath('.//svg')[0]
-            pngContents = self._renderSVGToPNG(svg, defXMLs)
+            pngContents = self._renderMathSVGToPNG(svg, defXMLs)
             dataString = 'data:image/png;base64,' + base64.b64encode(pngContents)
             
             # Get the prose for the math equation
@@ -171,10 +233,10 @@ class ExportToHtmlDialog(QDialog):
             equations[i].set('alt', prose)
             equations[i].set('title', prose)
             
-    def _renderSVGToPNG(self, svg, defXMLs):
+    def _renderMathSVGToPNG(self, svg, defXMLs):
         '''
-        Renders the SVG (and lxml Element) into a PNG. Returns the bytestring
-        containing the PNG data.
+        Renders the Math SVG (an lxml Element) into a PNG. Returns the
+        bytestring containing the PNG data.
         '''
         # Create my own SVG with valid namespaces
         SVG_NS = '{http://www.w3.org/2000/svg}'
@@ -212,6 +274,17 @@ class ExportToHtmlDialog(QDialog):
             data = u.get('href')
             u.attrib.pop('href')
             u.set('{0}href'.format(XLINK_NS), data)
+        
+        # Change the color of every element in the svg to the text color defined
+        # in user preferences
+        strokes = myMath.xpath(".//*[@stroke]")
+        fills = myMath.xpath(".//*[@fill]")
+        for s in strokes:
+            if not ('none' in s.get('stroke')):
+                s.set('stroke', self._configuration._createRGBStringFromQColor(self._configuration.color_contentText))
+        for f in fills:
+            if not ('none' in f.get('fill')):
+                f.set('fill', self._configuration._createRGBStringFromQColor(self._configuration.color_contentText))
         
         # Write to temp file, run CairoSVG through it, then push it out
         with open(misc.temp_path('tmp.svg'), 'wb') as f:
