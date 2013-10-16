@@ -9,7 +9,8 @@ import urllib
 import urllib2
 import urlparse
 
-from PyQt4.QtCore import QUrl
+from PyQt4.QtCore import QUrl, QThread, pyqtSignal
+from PyQt4 import QtGui
 from PyQt4.QtGui import QDialog, qApp
 from PyQt4.QtWebKit import QWebPage
 
@@ -84,28 +85,30 @@ class ExportToHtmlDialog(QDialog):
                 self.ui.progressBar.setValue(progress)
                 self._mathTypeset = webpage.mainFrame().evaluateJavaScript(misc.js_command('IsMathTypeset', [])).toBool()
                 
-            # If I haven't canceled yet, let's convert the document
-            if not self._canceled:            
-                # Get the document back from the page, altered by MathJax
-                myHtml = html.fromstring(unicode(webpage.mainFrame().evaluateJavaScript(misc.js_command('GetBodyHTML', [])).toString()))
-                self._convertPageNumbersToH6(myHtml)
-                self._removeHighlighter(myHtml)
-                self._embedImages(myHtml)
-                self._convertMathEquations(myHtml)
-                
-                root = html.Element('html')
-                head = html.Element('head')
-                body = html.Element('body')
-                body.append(myHtml)
-                root.append(head)
-                root.append(body)
-                
-                self._insertCSS(head)
-                
-                with open(self._filePath, 'wb') as f:
-                    f.write(html.tostring(root))
-                
+            # If I haven't canceled yet, let's convert the document in a 
+            # separate thread
+            if not self._canceled:
+                self._thread = ExportToHtmlThread(unicode(webpage.mainFrame().evaluateJavaScript(misc.js_command('GetBodyHTML', [])).toString()), self._configuration, self._assigner, self._filePath)
+                self._thread.onProgress.connect(self.ui.progressBar.setValue)
+                self._thread.onProgressLabel.connect(self.ui.label.setText)
+                self._thread.finished.connect(self._threadFinished)
+                self.ui.cancelButton.clicked.connect(self._thread.quit)
+                self._thread.start()
+    
+    def _threadFinished(self):
         self._finished = True
+        
+        messageBox = QtGui.QMessageBox()
+        messageText = 'Success!\nYour HTML file was saved in:\n' + self._filePath
+        messageBox.setText(messageText)
+        messageBox.setStandardButtons(QtGui.QMessageBox.Ok)
+        messageBox.setDefaultButton(QtGui.QMessageBox.Ok)
+        messageBox.setWindowTitle('HTML File Saved Successfully')
+        messageBox.setIcon(QtGui.QMessageBox.Information)
+        messageBox.exec_()
+        
+        misc.open_file_browser_to_location(self._filePath)
+        
         self.close()
         
     def isSuccessful(self):
@@ -113,6 +116,51 @@ class ExportToHtmlDialog(QDialog):
         Returns true if the export ran successfully.
         '''
         return self._finished and not self._canceled
+
+    def cancelPressed(self):
+        self._canceled = True
+        self.close()
+        
+
+class ExportToHtmlThread(QThread):
+    '''
+    Thread responsible for converting a document to portable HTML.
+    '''
+    
+    onProgress = pyqtSignal(int)
+    onProgressLabel = pyqtSignal(unicode)
+    
+    def __init__(self, rootHtml, configuration, assigner, filePath):
+        QThread.__init__(self)
+        self._myHtml = html.fromstring(rootHtml)
+        self._configuration = configuration
+        self._assigner = assigner
+        self._filePath = filePath
+        self._canceled = False
+    
+    def quit(self):
+        self._canceled = True
+        
+    def run(self):
+        # Get the document back from the page, altered by MathJax
+        self._convertPageNumbersToH6(self._myHtml)
+        self._removeHighlighter(self._myHtml)
+        self._embedImages(self._myHtml)
+        self._convertMathEquations(self._myHtml)
+        
+        if not self._canceled:
+            root = html.Element('html')
+            head = html.Element('head')
+            body = html.Element('body')
+            body.append(self._myHtml)
+            root.append(head)
+            root.append(body)
+            
+            self._insertCSS(head)
+            
+            if not self._canceled:
+                with open(self._filePath, 'wb') as f:
+                    f.write(html.tostring(root))
     
     def _convertPageNumbersToH6(self, myHtml):
         '''
@@ -124,6 +172,8 @@ class ExportToHtmlDialog(QDialog):
         
         # Convert each page number to an h6 element
         for p in pageNumbers:
+            if self._canceled:
+                break
             p.tag = 'h6'
             p.attrib.pop('class')
     
@@ -144,9 +194,13 @@ class ExportToHtmlDialog(QDialog):
         highlightLines = myHtml.xpath("//span[@id='npaHighlightLine']")
         
         for h in highlights:
+            if self._canceled:
+                break
             self._replaceWithChildren(h)
         
         for h in highlightLines:
+            if self._canceled:
+                break
             self._replaceWithChildren(h)
             
     def _replaceWithChildren(self, elem):
@@ -206,11 +260,15 @@ class ExportToHtmlDialog(QDialog):
         defs = myHtml.xpath('//svg/defs')
         defXMLs = []
         for d in defs:
+            if self._canceled:
+                break
             defXMLs.append(etree.fromstring(html.tostring(d)))
         
         for i in range(len(equations)):
-            self.ui.label.setText('Converting equation ' + str(i + 1) + ' of ' + str(len(equations)) + '...')
-            self.ui.progressBar.setValue((float(i) / float(len(equations)) * 50.0) + 50.0)
+            if self._canceled:
+                break
+            self.onProgressLabel.emit('Converting equation ' + str(i + 1) + ' of ' + str(len(equations)) + '...')
+            self.onProgress.emit(int((float(i) / float(len(equations)) * 50.0) + 50.0))
             
             # Get the SVG graphic inside the span and convert to PNG
             svg = equations[i].xpath('.//svg')[0]
@@ -298,7 +356,7 @@ class ExportToHtmlDialog(QDialog):
         
         return cairosvg.svg2png(url=tmpURL)
         
-    def _embedImages(self, myHtml, progressHook=None, cancelHook=None):
+    def _embedImages(self, myHtml):
         '''
         It goes through all of the image tags, reads the original image it is
         referencing, and embeds the image data into the tag so that the document
@@ -307,15 +365,10 @@ class ExportToHtmlDialog(QDialog):
         images = myHtml.xpath("//img")
         
         for i in range(len(images)):
-            self.ui.label.setText('Embedding image ' + str(i + 1) + ' of ' + str(len(images)) + '...')
-            self.ui.progressBar.setValue((float(i) / float(len(images)) * 50.0))
-            
-            if cancelHook is not None:
-                if cancelHook():
-                    return
-            
-            if progressHook is not None:
-                progressHook(int(float(i + 1) * float(len(images)) * 100.0))
+            if self._canceled:
+                break
+            self.onProgressLabel.emit('Embedding image ' + str(i + 1) + ' of ' + str(len(images)) + '...')
+            self.onProgress.emit(int((float(i) / float(len(images)) * 50.0)))
             
             p = images[i].get('src')
             images[i].set('src', self._createEmbeddedDataURL(p))
@@ -339,6 +392,4 @@ class ExportToHtmlDialog(QDialog):
         dataString += contents
         
         return dataString
-
-    def cancelPressed(self):
-        self.close()
+        

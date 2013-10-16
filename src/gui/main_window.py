@@ -689,19 +689,6 @@ class MainWindow(QtGui.QMainWindow):
                 self.exportToHtmlDialog.show()
                 self.exportToHtmlDialog.start()
                 
-                if self.exportToHtmlDialog.isSuccessful():
-                    messageBox = QtGui.QMessageBox()
-                    messageText = 'Success!\nYour HTML file was saved in:\n' + fileName
-                    messageBox.setText(messageText)
-                    messageBox.setStandardButtons(QtGui.QMessageBox.Ok)
-                    messageBox.setDefaultButton(QtGui.QMessageBox.Ok)
-                    messageBox.setWindowTitle('HTML File Saved Successfully')
-                    messageBox.setIcon(QtGui.QMessageBox.Information)
-                    messageBox.exec_()
-                    
-                    misc.open_file_browser_to_location(fileName)
-                    
-                
     def zoomIn(self):
         self.ui.webView.zoomIn()
     
