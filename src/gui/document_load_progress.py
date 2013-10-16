@@ -3,11 +3,11 @@ Created on Jul 19, 2013
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtGui import QWidget
+from PyQt4.QtGui import QDialog
 from PyQt4.QtCore import pyqtSignal, Qt
 from forms.document_load_progress_ui import Ui_DocumentLoadProgressDialog
 
-class DocumentLoadProgressDialog(QWidget):
+class DocumentLoadProgressDialog(QDialog):
     '''
     This is a custom-made progress bar that looks better and I can control when
     it closes, not the other way around.
@@ -15,7 +15,7 @@ class DocumentLoadProgressDialog(QWidget):
     canceled = pyqtSignal()
 
     def __init__(self, parent=None):
-        QWidget.__init__(self, parent)
+        QDialog.__init__(self, parent)
         
         self.ui = Ui_DocumentLoadProgressDialog()
         self.ui.setupUi(self)

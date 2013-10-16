@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace\nifty-prose-articulator\src\forms/document_load_progress.ui'
+# Form implementation generated from reading ui file '/Users/atrctech/Desktop/workspace/NiftyProseArticulator/src/forms/document_load_progress.ui'
 #
-# Created: Mon Oct 07 14:47:01 2013
-#      by: PyQt4 UI code generator 4.10
+# Created: Wed Oct 16 12:37:37 2013
+#      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,14 +26,14 @@ except AttributeError:
 class Ui_DocumentLoadProgressDialog(object):
     def setupUi(self, DocumentLoadProgressDialog):
         DocumentLoadProgressDialog.setObjectName(_fromUtf8("DocumentLoadProgressDialog"))
-        DocumentLoadProgressDialog.setWindowModality(QtCore.Qt.ApplicationModal)
-        DocumentLoadProgressDialog.resize(432, 77)
+        DocumentLoadProgressDialog.resize(455, 100)
         font = QtGui.QFont()
         font.setPointSize(12)
         DocumentLoadProgressDialog.setFont(font)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/document_open.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         DocumentLoadProgressDialog.setWindowIcon(icon)
+        DocumentLoadProgressDialog.setModal(True)
         self.verticalLayout = QtGui.QVBoxLayout(DocumentLoadProgressDialog)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.label = QtGui.QLabel(DocumentLoadProgressDialog)
@@ -55,7 +55,6 @@ class Ui_DocumentLoadProgressDialog(object):
         self.horizontalLayout.addWidget(self.cancelButton)
         self.horizontalLayout.setStretch(0, 1)
         self.verticalLayout.addLayout(self.horizontalLayout)
-        self.verticalLayout.setStretch(1, 1)
 
         self.retranslateUi(DocumentLoadProgressDialog)
         QtCore.QMetaObject.connectSlotsByName(DocumentLoadProgressDialog)

@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>DocumentLoadProgressDialog</class>
- <widget class="QWidget" name="DocumentLoadProgressDialog">
-  <property name="windowModality">
-   <enum>Qt::ApplicationModal</enum>
-  </property>
+ <widget class="QDialog" name="DocumentLoadProgressDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>432</width>
-    <height>77</height>
+    <width>455</width>
+    <height>100</height>
    </rect>
   </property>
   <property name="font">
@@ -25,7 +22,10 @@
    <iconset resource="resource.qrc">
     <normaloff>:/icons/icons/document_open.png</normaloff>:/icons/icons/document_open.png</iconset>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1">
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
