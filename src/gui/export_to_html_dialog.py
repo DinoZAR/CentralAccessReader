@@ -283,7 +283,9 @@ class ExportToHtmlThread(QThread):
             
             # Remove all of the quotes from the math equation. JAWS reads all
             # of the quotes aloud, so it can get annoying
-            prose = prose.replace('"', '')
+            punctuationRemoval = ['"', '.', ',', ':', ';']
+            for p in punctuationRemoval:
+                prose = prose.replace(p, '')
             
             # Remove all children of the soon-to-be image
             for child in equations[i]:
