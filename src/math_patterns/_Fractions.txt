@@ -1,7 +1,7 @@
 under = munder(? ?) -> '{1} over {2}'
 over = mover(? ?) -> '{1} under {2}'
 
-fraction = mfrac(? ?) -> '{1} over {2}'
+fraction = mfrac(? ?) -> 'begin fraction. {1}. over. {2}. end fraction.'
 
 andFraction = zero fraction -> '{1} and {2}'
 andFraction = one fraction -> '{1} and {2}'
