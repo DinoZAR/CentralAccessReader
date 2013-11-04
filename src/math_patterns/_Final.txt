@@ -9,6 +9,10 @@ subscript = msub(? ?) -> '{1} sub {2}'
 superscript = msup(? ?) -> '{1} to the {2} power'
 subsuperscript = msubsup(? ? ?) -> '{1} to the {3} power sub {2}'
 
+underover = munderover(? ? mrow()) -> 'underscripted. {1}. under. {2}. end under.'
+underover = munderover(? mrow() ?) -> 'overscripted. {1}. over. {2}. end over.'
+underover = munderover(? ? ?) -> '{1}. over. {2}. under. {3}. end.'
+
 row = mrow(+) -> '{1}'
 row = mrow() -> ''
 style = mstyle(+) -> '{1}'

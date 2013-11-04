@@ -4,7 +4,7 @@ fencedRSCS = mfenced<open="[",close="]">(+) -> 'open square bracket, {1}, closed
 fencedCS = mfenced<open="",close="]">(+) -> '{1}, closed square bracket,'
 fencedRS = mfenced<open="[",close="">(+) -> 'open square bracket, {1},'
 
-fencedOPCP = mfenced<open="(",close=")">(+) -> 'open parentheses {1} closed parentheses'
+fencedOPCP = mfenced<open="(",close=")">(+) -> 'open parentheses, {1}, closed parentheses'
 
 fencedOCCC = mfenced<open="{",close="}",separators="|">(mrow(+) mrow(+) mrow(+)) -> 'open curly bracket, {1}, vertical bar, {2}, vertical bar, {3}, closed curly bracket,'
 fencedOCCC = mfenced<open="{",close="}",separators="|">(mrow(+) mrow(+)) -> 'open curly bracket, {1}, vertical bar, {2}, closed curly bracket,'
@@ -95,4 +95,4 @@ fencedOPCP = mfenced<open="">(+) -> '{1}, closed parentheses'
 
 fenced = mfenced<separators="|">(mrow(+) mrow(+) mrow(+)) -> 'open parentheses {1}, vertical bar, {2}, vertical bar, {3}, closed parentheses'
 fenced = mfenced<separators="|">(mrow(+) mrow(+)) -> 'open parentheses {1}, vertical bar, {2}, closed parentheses'
-fenced = mfenced(+) -> 'open parentheses {1} closed parentheses'
+fenced = mfenced(+) -> 'open parentheses {1}, closed parentheses'
