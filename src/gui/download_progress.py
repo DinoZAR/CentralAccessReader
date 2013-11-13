@@ -139,7 +139,7 @@ class DownloadThread(QThread):
                 while not self._stop:
                     print 'update_download: restarting connection...'
                     try:
-                        response = urllib2.urlopen(self._url, timeout=0.5)
+                        response = urllib2.urlopen(self._url, timeout=5.0)
                         size = int(response.info().getheader('Content-Length').strip())
                         numBytes = 0
                         contents = ''

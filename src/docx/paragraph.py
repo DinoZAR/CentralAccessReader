@@ -153,9 +153,12 @@ def parseTable(elem, otherData):
             
             # Column contents
             if child.tag == '{0}tc'.format(w_NS):
-                # Get the paragraph in there
-                myP = child.find('./{0}p'.format(w_NS))
-                rowData['columns'].append(parseParagraph(myP, otherData))
+                # Get the paragraphs in there
+                paras = child.findall('./{0}p'.format(w_NS))
+                myParas = []
+                for p in paras:
+                    myParas.append(parseParagraph(p, otherData))
+                rowData['columns'].append(myParas)
                 
         parseData['rows'].append(rowData)
         
@@ -398,7 +401,9 @@ def _generateTableHTMLNode(t):
          
         for c in r['columns']:
             cRoot = etree.SubElement(rRoot, 'td')
-            cRoot.append(c)
+            for p in c:
+                print 'Paragraph!', p
+                cRoot.append(p)
              
     return tRoot
  
