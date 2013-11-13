@@ -265,35 +265,39 @@ class ExportToHtmlThread(QThread):
             defXMLs.append(etree.fromstring(html.tostring(d)))
         
         for i in range(len(equations)):
-            if self._canceled:
-                break
-            self.onProgressLabel.emit('Converting equation ' + str(i + 1) + ' of ' + str(len(equations)) + '...')
-            self.onProgress.emit(int((float(i) / float(len(equations)) * 50.0) + 50.0))
-            
-            # Get the SVG graphic inside the span and convert to PNG
-            svg = equations[i].xpath('.//svg')[0]
-            pngContents = self._renderMathSVGToPNG(svg, defXMLs)
-            dataString = 'data:image/png;base64,' + base64.b64encode(pngContents)
-            
-            # Get the prose for the math equation
-            prose = ''
-            for speech in self._assigner.generateSpeech(equations[i], self._configuration):
-                prose += speech[0]
-                break
-            
-            # Remove all of the quotes from the math equation. JAWS reads all
-            # of the quotes aloud, so it can get annoying
-            prose = prose.replace('"', '')
-            
-            # Remove all children of the soon-to-be image
-            for child in equations[i]:
-                child.getparent().remove(child)
-            
-            # Transform math equation into an image with prose as alt text
-            equations[i].tag = 'img'
-            equations[i].set('src', dataString)
-            equations[i].set('alt', prose)
-            equations[i].set('title', prose)
+            try:
+                if self._canceled:
+                    break
+                self.onProgressLabel.emit('Converting equation ' + str(i + 1) + ' of ' + str(len(equations)) + '...')
+                self.onProgress.emit(int((float(i) / float(len(equations)) * 50.0) + 50.0))
+                
+                # Get the SVG graphic inside the span and convert to PNG
+                svg = equations[i].xpath('.//svg')[0]
+                pngContents = self._renderMathSVGToPNG(svg, defXMLs)
+                dataString = 'data:image/png;base64,' + base64.b64encode(pngContents)
+                
+                # Get the prose for the math equation
+                prose = ''
+                for speech in self._assigner.generateSpeech(equations[i], self._configuration):
+                    prose += speech[0]
+                    break
+                
+                # Remove all of the quotes from the math equation. JAWS reads all
+                # of the quotes aloud, so it can get annoying
+                prose = prose.replace('"', '')
+                
+                # Remove all children of the soon-to-be image
+                for child in equations[i]:
+                    child.getparent().remove(child)
+                
+                # Transform math equation into an image with prose as alt text
+                equations[i].tag = 'img'
+                equations[i].set('src', dataString)
+                equations[i].set('alt', prose)
+                equations[i].set('title', prose)
+                
+            except Exception:
+                print 'Equation', i, 'did not parse correctly!'
             
     def _renderMathSVGToPNG(self, svg, defXMLs):
         '''
