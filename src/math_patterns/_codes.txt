@@ -379,6 +379,7 @@ frakturR = mi("&#8476;") -> 'Fraktur cap R'
 invertedOhm = mi("&#8487;") -> 'inverted Ohm sign'
 planckConsOverTwoPi = mi("&#8463;") -> 'Planck constant over two pi'
 scriptI = mi("&#8467;") -> 'Script I'
+scriptR = mi("&#8475;") -> 'Script R'
 smallLamExtraStroke = mi("&#411;") -> 'Small lambda with extra stroke'
 weierstrassEll = mi("&#8472;") -> 'Weierstrass ellipsis'
 
