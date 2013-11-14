@@ -117,6 +117,7 @@ dubsub = msub( + mrow( + comma + )) -> '{1} double subscript {2} comma {4}'
 import _Trig.txt
 import _Integrals.txt
 import _PowersPrimes.txt
+import _FunctionsLimits.txt
 
 // Syntax Quirks
 doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'

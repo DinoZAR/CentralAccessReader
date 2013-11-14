@@ -126,6 +126,7 @@ import _Integrals.txt
 
 //Powers and Primes
 import _PowersPrimes.txt
+import _FunctionsLimits.txt
 
 // Syntax Quirks
 doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'
