@@ -11,7 +11,6 @@ from cStringIO import StringIO
 import os
 import urllib
 import re
-from cStringIO import StringIO
 from threading import Thread
 from gui.bookmarks import BookmarkNode
 from misc import program_path, temp_path
