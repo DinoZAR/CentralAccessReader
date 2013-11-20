@@ -50,6 +50,8 @@ times = mi("&#8727;") -> 'dot'
 times = mi("&#8901;") -> 'dot'
 times = mi("&#59791;") -> 'dot'
 
+import _Negatives.txt
+
 // Parentheses, Brackets, Braces, and Bars
 closeBrace = mo("}") -> 'close curly bracket'
 closeBracket = mo("]") -> 'close square bracket'
@@ -116,8 +118,14 @@ dubsub = msub( + mrow( + comma + )) -> '{1} double subscript {2} comma {4}'
 //---------------------------------------------------------------
 import _Trig.txt
 import _Integrals.txt
+
+apostrophe = apostrophe -> 'prime'
+supDubPrime = msup(? doublePrime) -> '{1} double prime,'
+supPrime = msup(? prime) -> '{1} prime,'
+
 import _PowersPrimes.txt
 import _FunctionsLimits.txt
+
 
 // Syntax Quirks
 doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'

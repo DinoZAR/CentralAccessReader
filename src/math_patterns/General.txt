@@ -34,6 +34,7 @@ import _Numbers.txt
 
 // Unicodes and MathML codes for operators
 import _Unicodes.txt
+import _Negatives.txt
 
 e [variable] = mi("e") -> '"e"'
 i [variable] = mi("i") -> '"i"'
@@ -56,8 +57,13 @@ import _Trig.txt
 import _Integrals.txt
 
 //Powers and Primes
+apostrophe = apostrophe -> 'prime'
+supDubPrime = msup(? doublePrime) -> '{1} double prime,'
+supPrime = msup(? prime) -> '{1} prime,'
+
 import _PowersPrimes.txt
 import _FunctionsLimits.txt
+
 
 // Syntax Quirks
 doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'
@@ -124,6 +130,8 @@ tableRow = mtr(+) -> 'row {1}'
 import _SoftFractions.txt
 import _Dollars.txt
 import _Fractions.txt
+
+
 
 fencedABS = mfenced<open="|",close="|",separators="|">(mrow(+) mrow(+) mrow(+)) -> 'vertical bar, {1}, vertical bar, {2}, vertical bar, {3}, vertical bar,'
 fencedABS = mfenced<open="|",close="|",separators="|">(mrow(+) mrow(+)) -> 'vertical bar, {1}, vertical bar, {2}, vertical bar,'

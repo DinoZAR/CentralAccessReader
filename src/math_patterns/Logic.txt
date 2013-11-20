@@ -39,6 +39,7 @@ divide = mo("/") -> 'forward slash,'
 
 import _codes.txt
 import _Numbers.txt
+import _Negatives.txt
 
 // Unicodes and MathML codes for operators
 //backSlash = divideBack -> ', back slash,'//forwardSlash = divide -> ', forward slash,'
@@ -125,8 +126,13 @@ import _Trig.txt
 import _Integrals.txt
 
 //Powers and Primes
+apostrophe = apostrophe -> 'prime'
+supDubPrime = msup(? doublePrime) -> '{1} double prime,'
+supPrime = msup(? prime) -> '{1} prime,'
+
 import _PowersPrimes.txt
 import _FunctionsLimits.txt
+
 
 // Syntax Quirks
 doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'
