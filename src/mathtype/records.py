@@ -186,31 +186,31 @@ def convertRecords(i, records, parentStack, debug):
             else:
                 elem = etree.Element('mi')
                 
-                set = False
+                valueSet = False
                 
                 # Double-struck
 #                 if records[i].typeface in CharRecord.DOUBLE_STRUCK:
                 if records[i].mtCode in CharRecord.DOUBLE_STRUCK:
                     elem.set('mathvariant', 'double-struck')
                     elem.text = unichr(CharRecord.DOUBLE_STRUCK[records[i].mtCode])
-                    set = True
+                    valueSet = True
                 
                 # Fraktur
 #                 if records[i].typeface in CharRecord.FRAKTUR:
                 if records[i].mtCode in CharRecord.FRAKTUR:
                     elem.set('mathvariant', 'fraktur')
                     elem.text = unichr(CharRecord.FRAKTUR[records[i].mtCode])
-                    set = True
+                    valueSet = True
                         
                 # Script
 #                 if records[i].typeface in CharRecord.SCRIPT:
                 if records[i].mtCode in CharRecord.SCRIPT:
                     elem.set('mathvariant', 'script')
                     elem.text = unichr(CharRecord.SCRIPT[records[i].mtCode])
-                    set = True
+                    valueSet = True
                 
                 # Everything else
-                if not set:
+                if not valueSet:
                     elem.text = character
                 
             if len(records[i].embellishments) > 0:

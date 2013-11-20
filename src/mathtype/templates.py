@@ -237,6 +237,18 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records, mathmlBefore, d
     
     elif templateRecord.selector == TM_INTEG:
         data = BigOpBoxClass(templateRecord, debug)
+        
+        # Test the variations. I may have to change the operator to match the
+        # correct integral.
+        if not (_testVariation(templateRecord.variation, TV_INT_LOOP) or
+                _testVariation(templateRecord.variation, TV_INT_CW_LOOP) or
+                _testVariation(templateRecord.variation, TV_INT_CCW_LOOP) or
+                _testVariation(templateRecord.variation, TV_INT_EXPAND)):
+            if _testVariation(templateRecord.variation, TV_INT_3):
+                data.operator.text = unichr(8749) # Triple integral
+            elif _testVariation(templateRecord.variation, TV_INT_2):
+                data.operator.text = unichr(8748) # Double integral
+        
         mathml = etree.Element('munderover')
         mathml.attrib['align'] = 'center'
         mathml.append(data.operator)
@@ -570,7 +582,7 @@ def getMathMLFromTemplate(templateRecord, currentIndex, records, mathmlBefore, d
     return (mathmlElements, removePrevious)
 
 def _testVariation(variationBits, variationConstant):
-    return (variationBits & variationConstant) > 0
+    return (variationBits & variationConstant) == variationConstant
 
 TV_AR_SINGLE = 0
 TV_AR_DOUBLE = 1
@@ -602,6 +614,14 @@ class ArrowBoxClass():
         convertRecords(0, [templateRecord.childRecords[2]], [self.arrow], debug)
         self.arrow = self.arrow[0]
 
+
+TV_INT_1 = 0x1
+TV_INT_2 = 0x2
+TV_INT_3 = 0x3
+TV_INT_LOOP = 0x4
+TV_INT_CW_LOOP = 0x8
+TV_INT_CCW_LOOP = 0xC
+TV_INT_EXPAND = 0x100
 class BigOpBoxClass():
     def __init__(self, templateRecord, debug=False):
         self.mainSlot = etree.Element('mrow')
