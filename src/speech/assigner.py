@@ -11,6 +11,7 @@ try:
     from mathml_fast.tts import MathTTS
 except ImportError:
     from mathml.tts import MathTTS
+
 from speech.math_parser_thread import MathParserThread
 import time
 

@@ -309,7 +309,7 @@ def _convertExpressions(tree, expressions):
 			newChild.attributes = {}
 			if len(ex['attributes']) > 0:
 				for attr in ex['attributes']:
-					newChild.attributes[attr['name']] = attr['value']
+					newChild.attributes[attr['name']] = htmlParser.unescape(attr['value'])
 			_convertExpressions(newChild, ex['children'])
 			
 		# For this one, differentiate between a regular expression for a literal
