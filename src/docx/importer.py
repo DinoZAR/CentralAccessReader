@@ -14,7 +14,7 @@ import re
 from threading import Thread
 from gui.bookmarks import BookmarkNode
 from misc import program_path, temp_path
-from docx.paragraph import parseParagraph, parseTable, IMAGE_TRANSLATION
+from docx.paragraph import parseParagraph, parseTable, addToBody, IMAGE_TRANSLATION
 
 ROOT_PATH = program_path('src/docx')
 
@@ -113,7 +113,9 @@ class DocxDocument(object):
         otherData['rels'] = self._getRels(docxZip)
         otherData['styles'] = self._getStyles(docxZip)
         otherData['paraStyles'] = self._getParaStyles(otherData['styles'])
-        #otherData['numbering'] = self._getNumberingDict(docxZip)
+        otherData['numbering'] = self._getNumberingDict(docxZip)
+        
+        print 'My numbering!', otherData['numbering']
         
         print 'Opening my document file...'
         
@@ -295,6 +297,50 @@ class DocxDocument(object):
                 myDict[key] = value
         return myDict
     
+    def _getNumberingDict(self, docxZip):
+        '''
+        Returns a dictionary of the numbering styles present in the document.
+        '''        
+        if 'word/numbering.xml' in docxZip.namelist():
+            numberingFile = docxZip.open('word/numbering.xml', 'r')
+            numberingXML = etree.parse(numberingFile)
+            
+            # Get all of the numbers used in the document and their references
+            # to the abstract numbers.
+            nums = numberingXML.findall('{0}num'.format(w_NS))
+            
+            # Map all of the num's to the abstract numbers
+            numMapping = {}
+            for n in nums:
+                numId = n.get('{0}numId'.format(w_NS))
+                abstractNumId = n.find('./{0}abstractNumId'.format(w_NS)).get('{0}val'.format(w_NS))
+                numMapping[numId] = abstractNumId
+                
+            # Now, get the relevant data for the numbering from the abstract
+            # numbers
+            for k in numMapping.keys():
+                abstractNum = numberingXML.find('./{0}abstractNum[@{0}abstractNumId=\''.format(w_NS) + numMapping[k] + '\']')
+                
+                levels = {}
+                for level in abstractNum.findall('./{0}lvl'.format(w_NS)):
+                    levelKey = level.get('{0}ilvl'.format(w_NS))
+                    data = {}
+                    if level.find('./{0}start'.format(w_NS)):
+                        data['start'] = level.find('./{0}start'.format(w_NS)).get('{0}val'.format(w_NS))
+                    else:
+                        data['start'] = '1'
+                    data['format'] = level.find('./{0}numFmt'.format(w_NS)).get('{0}val'.format(w_NS))
+                    levels[levelKey] = data
+                    
+                # Save all of that data to the big numbering dictionary
+                numMapping[k] = levels
+            
+            return numMapping
+        
+        else:
+            return None
+            
+    
     def _prepareHead(self, head, mathOutput='html'):
         mathjaxConfig = HTML.Element('script')
         mathjaxConfig.set('type', 'text/x-mathjax-config')
@@ -352,10 +398,8 @@ class DocxDocument(object):
         head.append(css)
         
     def _prepareBody(self, body):
-        #sortedParas = sorted(self.paragraphData.iteritems(), key=lambda x: x[0])
-        for p in self.paragraphData:
-            if p is not None:
-                body.append(p)
+        
+        addToBody(body, self.paragraphData)
                 
         # Get all of the headings and add anchor ids to them
         headings = body.xpath('//h1 | //h2 | //h3 | //h4 | //h5 | //h6')
@@ -363,7 +407,6 @@ class DocxDocument(object):
         for h in headings:
             h.set('id', str(anchorCount))
             anchorCount += 1
-
 
 if __name__ == '__main__':
     pass

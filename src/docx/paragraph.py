@@ -78,14 +78,15 @@ def parseParagraph(elem, otherData):
     parseData['data'] = []
     
     # Add bullet or numbered list information if any
-#         if _isList(elem):
-#             numId = elem.find('./{0}pPr/{0}numPr/{0}numId'.format(w_NS)).attrib['{0}val'.format(w_NS)]
-#             levelId = elem.find('./{0}pPr/{0}numPr/{0}ilvl'.format(w_NS)).attrib['{0}val'.format(w_NS)]
-#             myNumDict = numberingDict[numId][levelId]
-#             parseData['list'] = True
-#             parseData['format'] = myNumDict['format']
-#             parseData['start'] = int(myNumDict['start'])
-#             parseData['level'] = int(levelId)
+    if _isNumbered(elem):
+        numId = elem.find('./{0}pPr/{0}numPr/{0}numId'.format(w_NS)).attrib['{0}val'.format(w_NS)]
+        levelId = elem.find('./{0}pPr/{0}numPr/{0}ilvl'.format(w_NS)).attrib['{0}val'.format(w_NS)]
+        myNumDict = otherData['numbering'][numId][levelId]
+        parseData['list_id'] = numId
+        parseData['numbered'] = True
+        parseData['format'] = myNumDict['format']
+        parseData['start'] = myNumDict['start']
+        parseData['level'] = int(levelId)
     
     for child in elem:
         
@@ -166,6 +167,107 @@ def parseTable(elem, otherData):
     htmlContent = _generateTableHTMLNode(parseData)
                 
     return htmlContent
+
+
+def addToBody(bodyElem, paras):
+    '''
+    Adds a list of paragraphs and puts them in the body. This is set as a
+    separate function so that some paragraphs can be formatted correctly, like
+    inserting them into a list form.
+    '''
+    parentStack = [[bodyElem, -1, -1]]
+    for p in paras:
+        if p is not None:
+            if 'CAR_numbered' in p.attrib:
+                
+                # Change the parent stack to reflect level of the paragraph
+                paraLevel = int(p.get('CAR_level'))
+                
+                # Check if the previous list (if there is one) is a
+                # different list type from this paragraph's list. If so,
+                # collapse that previous list down.
+                if parentStack[-1][1] >= 0: # Check if it is not a body
+                    if parentStack[-1][2] != p.get('CAR_list_id'):
+                        while len(parentStack) > 1:
+                            parentStack[-2][0].append(parentStack[-1][0])
+                            parentStack.pop()
+                
+                # Collapse down to the level we need first, then go up
+                # incrementally
+                while paraLevel < parentStack[-1][1]:
+                    parentStack[-2][0].append(parentStack[-1][0])
+                    parentStack.pop()
+                
+                # Now go up to the level we want
+                while paraLevel > parentStack[-1][1]:
+                    newLevel = parentStack[-1][1] + 1
+                    listElem = _createNumberedElem(p)
+                    listId = p.get('CAR_list_id')
+                    parentStack.append([listElem, newLevel, listId])
+                
+                # Cleanup the extra markup for the list data
+                p.attrib.pop('CAR_numbered')
+                p.attrib.pop('CAR_list_id')
+                p.attrib.pop('CAR_format')
+                p.attrib.pop('CAR_start')
+                p.attrib.pop('CAR_level')
+                
+                # Add the paragraph to this level
+                li = HTML.Element('li')
+                li.append(p)
+                parentStack[-1][0].append(li)
+            
+            else:
+                # Collapse the parent stack until we are back at the body
+                while len(parentStack) > 1:
+                    parentStack[-2][0].append(parentStack[-1][0])
+                    parentStack.pop()
+                
+                parentStack[0][0].append(p)
+        
+        else:
+            # Collapse the parent stack to body
+            while len(parentStack) > 1:
+                parentStack[-2][0].append(parentStack[-1][0])
+                parentStack.pop()
+    
+    # In the end, collapse everything back to the body
+    while len(parentStack) > 1:
+        parentStack[-2][0].append(parentStack[-1][0])
+        parentStack.pop()
+                
+def _createNumberedElem(paraElem):
+    '''
+    Uses the attributes tagged onto a HTML paragraph element to create an
+    HTML numbered list.
+    '''
+    numberTypeMap = {'decimal' : '1',
+                    'lowerLetter' : 'a',
+                    'upperLetter' : 'A',
+                    'lowerRoman' : 'i',
+                    'upperRoman' : 'I'}
+    
+    numberedElem = None
+    formatType = paraElem.get('CAR_format')
+    
+    if formatType == 'bullet':
+        numberedElem = HTML.Element('ul')
+    else:
+        numberedElem = HTML.Element('ol')
+        if formatType in numberTypeMap:
+            numberedElem.set('type', numberTypeMap[formatType])
+        else:
+            # Default to decimal
+            numberedElem.set('type', '1')
+        numberedElem.set('start', paraElem.get('CAR_start'))
+    
+    return numberedElem
+
+def _isNumbered(paraElem):
+    '''
+    Returns True if this paragraph element is numbered or bulleted.
+    '''
+    return paraElem.find('./{0}pPr/{0}numPr'.format(w_NS)) is not None
 
 def _replaceWithWebFriendly(s):
     '''
@@ -314,17 +416,15 @@ def _convertOMMLToMathML(ommlNode):
     '''
     mathml = ommlTransform(ommlNode)
     
-    # Convert the transformed XML into UTF-8 while removing a bunch of
-    # prefix crap
+    # Convert the transformed XML into UTF-8 while removing a bunch of prefix
+    # crap
     mathml = etree.fromstring(etree.tostring(mathml, encoding='utf-8', xml_declaration=False).replace('mml:', '').replace(':mml', ''))
     
     return mathml
  
 def _generateParagraphHTMLNode(p):
     '''
-    From a paragraph dictionary, create the HTML for it, and whether the
-    anchorID needs to be increased:
-    (htmlELement, boolean)
+    From a paragraph dictionary, create the HTML for it.
     '''
     pRoot = None
      
@@ -335,6 +435,15 @@ def _generateParagraphHTMLNode(p):
             level = heirarchyStyles[p['style']]
              
     pRoot = HTML.Element(htmlLevels[level])
+    
+    # Append numbering information to the element as attributes. Will be removed
+    # upon conversion to list structure.
+    if 'numbered' in p:
+        pRoot.set('CAR_numbered', '1')
+        pRoot.set('CAR_list_id', p['list_id'])
+        pRoot.set('CAR_format', p['format'])
+        pRoot.set('CAR_start', p['start'])
+        pRoot.set('CAR_level', unicode(p['level']))
      
     # Loop through the content in the paragraph
     currTextNode = pRoot
@@ -401,57 +510,6 @@ def _generateTableHTMLNode(t):
          
         for c in r['columns']:
             cRoot = etree.SubElement(rRoot, 'td')
-            for p in c:
-                print 'Paragraph!', p
-                cRoot.append(p)
+            addToBody(cRoot, c)
              
     return tRoot
- 
-#     def _isList(self, elem):
-#         '''
-#         Returns whether the element is numbered, or in other words, a part of an
-#         ordered list or unordered list
-#         '''
-#         return elem.find('./{0}pPr/{0}numPr'.format(w_NS)) != None
-
-#     def _getNumberingDict(self, zip):
-#         '''
-#         Returns a nested dictionary that looks like the following:
-#         
-#         {numId : {levelId : {"format" : "decimal|bullet", "start" : 0}, levelId : {...}, ...}}
-#         '''
-#         myDict = {}
-#         
-#         if 'word/numbering.xml' in zip.namelist():
-#             # Get the numbering XML
-#             numberingFile = zip.open('word/numbering.xml', 'r')
-#             numXML = etree.parse(numberingFile)
-#             numberingFile.close()
-#             
-#             # Get all numberings and get the abstract element they refer to
-#             # (pointless indirection in my opinion)
-#             nums = numXML.findall('./{0}num'.format(w_NS))
-#             for e in nums:
-#                 abstractId = e.find('./{0}abstractNumId'.format(w_NS)).attrib['{0}val'.format(w_NS)]
-#                 abstractNum = numXML.find('./{0}abstractNum[@{0}abstractNumId=\''.format(w_NS) + abstractId + '\']')
-#                 
-#                 # Get list of levels in that particular element
-#                 levels = abstractNum.findall('./{0}lvl'.format(w_NS))
-#                 levelDicts = {}
-#                 for l in levels:
-#                     key = l.attrib['{0}ilvl'.format(w_NS)]
-#                     levelDicts[key] = {}
-#                     format = l.find('./{0}numFmt'.format(w_NS)).attrib['{0}val'.format(w_NS)]
-#                     
-#                     if l.find('./{0}start'.format(w_NS)):
-#                         levelDicts[key]['start'] = l.find('./{0}start'.format(w_NS)).attrib['{0}val'.format(w_NS)]
-#                     else:
-#                         levelDicts[key]['start'] = 1
-#                     
-#                     #start = l.find('./{0}start'.format(w_NS)).attrib['{0}val'.format(w_NS)]
-#                     levelDicts[key]['format'] = format
-#                 
-#                 key = e.attrib['{0}numId'.format(w_NS)]
-#                 myDict[key] = levelDicts
-#                 
-#         return myDict
