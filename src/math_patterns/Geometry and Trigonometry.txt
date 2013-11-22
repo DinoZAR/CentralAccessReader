@@ -35,6 +35,7 @@ import _Numbers.txt
 
 // Unicodes and MathML codes for operators
 import _Unicodes.txt
+import _Negatives.txt
 
 e [variable] = mi("e") -> '"e"'
 i [variable] = mi("i") -> '"i"'
@@ -57,7 +58,9 @@ import _Trig.txt
 import _Integrals.txt
 
 //Powers and Primes
+apostrophe = apostrophe -> 'minutes'
 import _PowersPrimes.txt
+import _FunctionsLimits.txt
 
 // Syntax Quirks
 doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'

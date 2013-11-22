@@ -297,7 +297,6 @@ powerFortyEight = msup(? fortyEight) -> '{1} to the forty eighth power,'
 powerFortyNine = msup(? fortyNine) -> '{1} to the forty ninth power,'
 powerFifty = msup(? fifty) -> '{1} to the fiftieth power,'
 
-apostrophe = apostrophe -> 'minutes'
 cubed = msup(? mrow(three)) -> '{1} cubed,'
 cubed = msup(? three) -> '{1} cubed,'
 degress = msup(? mrow(composition)) -> '{1} degrees,'

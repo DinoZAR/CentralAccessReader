@@ -1,3 +1,11 @@
+// Overbars & Underbars
+underBar = munder(mrow(+) bar) -> 'begin underbar. {1}. End underbar.'
+overBar = mover(mrow(+) bar) -> 'begin overbar. {1}. End overbar.'
+
+// single character overbars and unerbars 
+underBar = munder(+ bar) -> 'begin underbar. {1}. End underbar.'
+overBar = mover(+ bar) -> 'begin overbar. {1}. End overbar.'
+
 under = munder(? ?) -> '{1} over {2}'
 over = mover(? ?) -> '{1} under {2}'
 

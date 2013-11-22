@@ -36,6 +36,7 @@ import _Numbers.txt
 
 // Unicodes and MathML codes for operators
 import _Unicodes.txt
+import _Negatives.txt
 
 e [variable] = mi("e") -> '"e"'
 i [variable] = mi("i") -> '"i"'
@@ -86,8 +87,14 @@ import _BordersSlashes.txt
 import _Trig.txt
 
 // Powers and Primes
+apostrophe = apostrophe -> 'prime'
+supDubPrime = msup(? doublePrime) -> '{1} double prime,'
+supPrime = msup(? prime) -> '{1} prime,'
+
 import _Integrals.txt
 import _PowersPrimes.txt
+import _FunctionsLimits.txt
+
 
 // Syntax Quirks
 doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'

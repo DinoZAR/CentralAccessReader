@@ -64,7 +64,7 @@ divideBack = mi("\") -> 'divided by,'
 divide = mo("/") -> 'divided by,'
 dollarSign = mi("$") -> 'dollar sign,'
 
-equals = mo("=") -> 'equals'
+equals = mo("=") -> 'equals.'
 equivalent = mi("&#8764;") -> 'is equivalent to'
 greaterThanOrEqual = mi("&#8805;") -> 'is greater than or equal to'
 greaterThanOrEqual = mo("&#8805;") -> 'is greater than or equal to'
