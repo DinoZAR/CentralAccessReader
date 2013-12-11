@@ -9,7 +9,7 @@ min = m i n -> 'min'
 max = m a x -> 'max'
 sup = s u p -> 'supremum'
 inf = i n f -> 'infimum'
-lim = l i m -> 'limit'
+limit = l i m -> 'limit'
 
 add = a d d -> 'add'
 add = A d d -> 'add'

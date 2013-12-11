@@ -1,4 +1,5 @@
 // Specifically for twos
+starSup = msup(? mrow(times)) -> '{1} star,'
 
 powerOne = msup(mrow( two ) mrow(one)) -> '{1} , to the first power,'
 powerFour = msup(mrow( two ) mrow(four)) -> '{1} , to the fourth power,'
@@ -311,6 +312,7 @@ leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left super
 leftSub = msub( mrow() mrow(?)) -> 'left subscript {1},'
 leftSup = msup( mrow() mrow(?)) -> 'left superscript {1},'
 
+starSup = msup(? mrow(asterisk)) -> '{1} star,'
 Sub = msub(mrow(?) mrow(?)) -> '{1} sub {2},'
 Sup = msup(mrow(?) mrow(?)) -> '{1} to the {2} power,'
 

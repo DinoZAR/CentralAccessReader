@@ -55,6 +55,7 @@ import _Trig.txt
 
 // Products and Unions
 import _Integrals.txt
+import _Sums.txt
 
 //Powers and Primes
 apostrophe = apostrophe -> 'prime'
@@ -62,8 +63,8 @@ supDubPrime = msup(? doublePrime) -> '{1} double prime,'
 supPrime = msup(? prime) -> '{1} prime,'
 
 import _PowersPrimes.txt
+//import _JustLimits.txt
 import _FunctionsLimits.txt
-
 
 // Syntax Quirks
 doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'

@@ -93,7 +93,8 @@ supPrime = msup(? prime) -> '{1} prime,'
 
 import _Integrals.txt
 import _PowersPrimes.txt
-import _FunctionsLimits.txt
+//import _JustLimits.txt
+//import _FunctionsLimits.txt
 
 
 // Syntax Quirks

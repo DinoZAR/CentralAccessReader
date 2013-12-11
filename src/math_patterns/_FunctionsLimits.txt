@@ -1,4 +1,12 @@
 // Products and Unions
+
+limitSyn = munderover(mrow(limit) mrow(? rightArrow ?) ?) -> 'The limit, as {2} approaches {4}, of' 
+limitSyn = munderover(mrow(limit) mrow(? downArrow ?)) -> 'the limit, as {2}, decreases from {4}, of'
+limitSyn = munderover(mrow(limit) mrow(? rightArrow ?))-> 'the limit, as {2}, approaches {4}, of'
+limitSyn = munderover(mrow(limit) mrow(? upArrow ?)) -> 'the limit, as {2}, increases to {4}, of'
+limitSyn = munderover(mrow(limit) mrow(? diagTopRightArrow ?)) -> 'the limit, as {2}, approaches {4} from the negative direction, of'
+limitSyn = munderover(mrow(limit) mrow(? diagBotRightArrow ?)) -> 'the limit, as {2}, approaches {4} from the positive direction, of'
+
 change = c h a n g e -> 'change'
 intercept = i n t e r c e p t -> 'intercept'
 in = i n -> 'in'

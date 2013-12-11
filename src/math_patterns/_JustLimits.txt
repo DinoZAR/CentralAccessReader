@@ -1,4 +1,11 @@
 // Limits
+
+limitSyn = munderover(limit mrow(+ downArrow +)) -> 'the limit as {4}, decreases from {6}, of'
+limitSyn = munderover(mrow( l i m ) mrow(+ rightArrow +))-> 'the limit as {4}, approaches {6}, of'
+limitSyn = munderover(mrow( l i m ) mrow(+ upArrow +)) -> 'the limit as {4}, increases to {6}, of'
+limitSyn = munderover(mrow( l i m ) mrow(? diagTopRightArrow ?)) -> 'the limit as {4}, approaches {6} from the negative direction, of'
+limitSyn = munderover(mrow( l i m ) mrow(? diagBotRightArrow ?)) -> 'the limit as {4}, approaches {6} from the positive direction, of'
+
 limitSyn = munderover(mrow(mover(mrow(l i m) bar)) mrow(? downArrow +) ?) -> 'the superior limit as {5}, decreases from {7}, of'
 limitSyn = munderover(mrow(mover(mrow(l i m) bar)) mrow(? rightArrow ?) ?)-> 'the superior limit as {5}, approaches {7}, of'
 limitSyn = munderover(mrow(mover(mrow(l i m) bar)) mrow(? upArrow ?) ?) -> 'the superior limit as {5}, increases to {7}, of'
