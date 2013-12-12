@@ -41,7 +41,11 @@ import _Negatives.txt
 e [variable] = mi("e") -> '"e"'
 i [variable] = mi("i") -> '"i"'
 z [variable] = mi("z") -> '"z"'
+e [variable] = mo("e") -> '"e"'
+i [variable] = mo("i") -> '"i"'
+z [variable] = mo("z") -> '"z"'
 
+bbcapR = mi("&#8477;") -> 'all real numbers'
 bbcapR = mi("&#8477;") -> 'all real numbers'
 
 //Functions
@@ -110,6 +114,7 @@ integralFrac = msub([integral] ?) -> '{1} sub {2} of,'
 // Other symbols
 infinity = mi("&#8734;") -> 'infinity'
 infinity = mn("&#8734;") -> 'infinity'
+infinity = mo("&#8734;") -> 'infinity'
 
 // ------------------------------------------------------------------------------
 // Conditions for arrows based on over or under
