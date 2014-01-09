@@ -161,7 +161,18 @@ class MainWindow(QtGui.QMainWindow):
             voiceList = self.speechThread.getVoiceList()
             if len(voiceList) > 0:
                 self.configuration.voice = voiceList[0][1]
-        self.updateSettings()
+
+        # Check if my voice exists. If it doesn't, then replace it with the
+        # first voice available
+        voiceAvailable = False
+        for v in self.speechThread.getVoiceList():
+            if self.configuration.voice == v[1]:
+                voiceAvailable = True
+                break
+        if not voiceAvailable:
+            voiceList = self.speechThread.getVoiceList()
+            if len(voiceList) > 0:
+                self.configuration.voice = voiceList[0][1]
         
         # Set the search settings to use the configuration
         self.searchSettings.setConfig(self.configuration)
