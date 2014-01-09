@@ -209,6 +209,8 @@ class MainWindow(QtGui.QMainWindow):
         self.prepareSpeechProgress = PrepareSpeechProgressWidget(self.ui.playButton, self)
         self.ui.splitter.splitterMoved.connect(self.prepareSpeechProgress.updatePos_splitterMoved)
         self.prepareSpeechProgress.hide()
+		
+        self.updateSettings()
             
     def closeEvent(self, event):
         # Save the current configuration
@@ -305,6 +307,7 @@ class MainWindow(QtGui.QMainWindow):
         self.changeVoice.emit(self.configuration.voice)
         
         # Update the math database to use
+        print 'Updating math database'
         try:
             self.changeMathDatabase.emit(misc.pattern_databases()[self.configuration.math_database])
         except KeyError:
