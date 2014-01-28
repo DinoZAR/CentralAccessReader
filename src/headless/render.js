@@ -48,13 +48,14 @@ page.open(url, function (status) {
         waitFor(function() {
             // Check in the page if a specific element is now visible
             return page.evaluate(function() {
-            	console.log(GetMathTypesetProgress());
+            	console.log('[The Math Typeset Progress Is:' + GetMathTypesetProgress());
                 return IsMathTypeset();
             });
         }, function() {
 			var myHtml = page.evaluate(function() {
 				return document.documentElement.innerHTML;
 			});
+			console.log('[Exporting the document to HTML]');
 			console.log(myHtml);
 			phantom.exit();
         },

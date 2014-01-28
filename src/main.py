@@ -12,7 +12,6 @@ def main():
     
     # Append the parent of this file so that my paths are correct when running
     # it from command-line
-    
     from PyQt4.QtGui import QApplication, QPixmap, QSplashScreen
     
     QApplication.setGraphicsSystem('raster')

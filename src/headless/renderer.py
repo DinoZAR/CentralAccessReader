@@ -72,15 +72,16 @@ class HeadlessRendererThread(QThread):
                     except Exception:
                         pass
                 
-                newStuff = ps.stdout.readline();
+                newStuff = ps.stdout.readline();                
                 
                 if not grabbingNewHtml:
-                    if newStuff.find('<{') == 0:
-                        typesetProgress = newStuff[2:]
+                    checkString = '<{[The Math Typeset Progress Is:'
+                    finishedCheckString = '[Exporting the document to HTML]'
+                    if newStuff.find(checkString) == 0:
+                        typesetProgress = newStuff[len(checkString):]
                         self.progress.emit(int(typesetProgress), 'Typesetting math equations...')
-                    else:
+                    elif newStuff.find(finishedCheckString) == 0:
                         grabbingNewHtml = True
-                        self._renderedHtml += newStuff
                         
                 else:
                     self._renderedHtml += newStuff
