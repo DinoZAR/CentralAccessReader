@@ -72,7 +72,7 @@ class HeadlessRendererThread(QThread):
                     except Exception:
                         pass
                 
-                newStuff = ps.stdout.readline();                
+                newStuff = ps.stdout.readline();
                 
                 if not grabbingNewHtml:
                     checkString = '<{[The Math Typeset Progress Is:'
@@ -87,5 +87,6 @@ class HeadlessRendererThread(QThread):
                     self._renderedHtml += newStuff
         
         except Exception as e:
+            print 'Something bad happened:', e
             print traceback.print_exc()
             ps.terminate()
