@@ -57,6 +57,7 @@ page.open(url, function (status) {
 			});
 			console.log('[Exporting the document to HTML]');
 			console.log(myHtml);
+            console.log('[End exporting HTML document]');
 			phantom.exit();
         },
         30000000);

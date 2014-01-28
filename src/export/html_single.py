@@ -62,6 +62,10 @@ class HTMLSingleExportThread(ExportThread):
                 headlessRender.stop()
             QThread.yieldCurrentThread()
         
+        # DEBUG PURPOSES
+        with open(os.path.expanduser('~/Desktop/test.txt'), 'w') as f:
+            f.write(headlessRender.getRenderedHTML())
+        
         self._htmlContent = html.fromstring(unicode(headlessRender.getRenderedHTML(), encoding='utf-8'))
         
         if self._running:

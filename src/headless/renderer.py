@@ -18,6 +18,10 @@ class HeadlessRendererThread(QThread):
     
     TEMP_ID = 0
     
+    MATH_TYPESET_CHECKSTRING = '<{[The Math Typeset Progress Is:'
+    STARTING_DOCUMENT_EXPORT = '[Exporting the document to HTML]'
+    END_DOCUMENT_EXPORT = '[End exporting HTML document]'
+    
     progress = pyqtSignal(int, unicode)
     
     def __init__(self, htmlContent):
@@ -62,6 +66,7 @@ class HeadlessRendererThread(QThread):
         ps = subprocess.Popen([phantomPath, os.path.basename(jsPath), os.path.basename(htmlPath)], stdout=subprocess.PIPE, cwd=os.path.dirname(htmlPath))
         
         grabbingNewHtml = False
+        doneGettingHtml = False
         
         try:
             while ps.poll() is None:
@@ -72,19 +77,23 @@ class HeadlessRendererThread(QThread):
                     except Exception:
                         pass
                 
-                newStuff = ps.stdout.readline();
+                newStuff = ps.stdout.readline()
                 
                 if not grabbingNewHtml:
-                    checkString = '<{[The Math Typeset Progress Is:'
                     finishedCheckString = '[Exporting the document to HTML]'
-                    if newStuff.find(checkString) == 0:
+                    if newStuff.find(self.MATH_TYPESET_CHECKSTRING) == 0:
                         typesetProgress = newStuff[len(checkString):]
                         self.progress.emit(int(typesetProgress), 'Typesetting math equations...')
-                    elif newStuff.find(finishedCheckString) == 0:
+                    elif newStuff.find(self.STARTING_DOCUMENT_EXPORT) == 0:
                         grabbingNewHtml = True
+                        print 'Grabbing new HTML...'
                         
                 else:
-                    self._renderedHtml += newStuff
+                    if newStuff.find(self.END_DOCUMENT_EXPORT) == 0:
+                        doneGettingHtml = True
+                    
+                    if not doneGettingHtml:
+                        self._renderedHtml += newStuff
         
         except Exception as e:
             print 'Something bad happened:', e
