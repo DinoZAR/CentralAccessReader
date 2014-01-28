@@ -6,10 +6,51 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXFileReference section */
+		7A7E62EA18985DBF008B8ECB /* CreateInstaller_Mac.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = CreateInstaller_Mac.sh; sourceTree = "<group>"; };
+		7A7E62EB18985DBF008B8ECB /* CreateInstaller_Windows.bat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CreateInstaller_Windows.bat; sourceTree = "<group>"; };
+		7A7E62EC18985DBF008B8ECB /* External Module Modifications.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "External Module Modifications.txt"; sourceTree = "<group>"; };
+		7A7E62ED18985DBF008B8ECB /* generate_inno_setup_script.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_inno_setup_script.py; sourceTree = "<group>"; };
+		7A7E62EE18985DBF008B8ECB /* generate_nsis_script.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_nsis_script.py; sourceTree = "<group>"; };
+		7A7E62EF18985DBF008B8ECB /* generate_spec.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_spec.py; sourceTree = "<group>"; };
+		7A7E62F018985DBF008B8ECB /* HOW TO CREATE INSTALLER.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "HOW TO CREATE INSTALLER.txt"; sourceTree = "<group>"; };
+		7A7E62F118985DBF008B8ECB /* jquery-1.9.1.min.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "jquery-1.9.1.min.js"; sourceTree = "<group>"; };
+		7A7E62F218985DBF008B8ECB /* jquery-ui */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "jquery-ui"; sourceTree = "<group>"; };
+		7A7E62F318985DBF008B8ECB /* jquery.scrollTo-1.4.3.1-min.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "jquery.scrollTo-1.4.3.1-min.js"; sourceTree = "<group>"; };
+		7A7E62F418985DBF008B8ECB /* license.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = license.txt; sourceTree = "<group>"; };
+		7A7E62F518985DBF008B8ECB /* mathjax */ = {isa = PBXFileReference; lastKnownFileType = folder; path = mathjax; sourceTree = "<group>"; };
+		7A7E62F618985DBF008B8ECB /* nextindom.jquery.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = nextindom.jquery.js; sourceTree = "<group>"; };
+		7A7E62F718985DBF008B8ECB /* notes */ = {isa = PBXFileReference; lastKnownFileType = folder; path = notes; sourceTree = "<group>"; };
+		7A7E62F818985DBF008B8ECB /* old_stuff */ = {isa = PBXFileReference; lastKnownFileType = folder; path = old_stuff; sourceTree = "<group>"; };
+		7A7E62F918985DBF008B8ECB /* RunCARFromUpdate.bat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RunCARFromUpdate.bat; sourceTree = "<group>"; };
+		7A7E62FA18985DBF008B8ECB /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; path = src; sourceTree = "<group>"; };
+		7A7E62FB18985DBF008B8ECB /* Tutorial.docx */ = {isa = PBXFileReference; lastKnownFileType = file; path = Tutorial.docx; sourceTree = "<group>"; };
+		7A7E62FC18985DBF008B8ECB /* version.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = version.txt; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
 /* Begin PBXGroup section */
 		7A7E62DF18985A1D008B8ECB = {
 			isa = PBXGroup;
 			children = (
+				7A7E62EA18985DBF008B8ECB /* CreateInstaller_Mac.sh */,
+				7A7E62EB18985DBF008B8ECB /* CreateInstaller_Windows.bat */,
+				7A7E62EC18985DBF008B8ECB /* External Module Modifications.txt */,
+				7A7E62ED18985DBF008B8ECB /* generate_inno_setup_script.py */,
+				7A7E62EE18985DBF008B8ECB /* generate_nsis_script.py */,
+				7A7E62EF18985DBF008B8ECB /* generate_spec.py */,
+				7A7E62F018985DBF008B8ECB /* HOW TO CREATE INSTALLER.txt */,
+				7A7E62F118985DBF008B8ECB /* jquery-1.9.1.min.js */,
+				7A7E62F218985DBF008B8ECB /* jquery-ui */,
+				7A7E62F318985DBF008B8ECB /* jquery.scrollTo-1.4.3.1-min.js */,
+				7A7E62F418985DBF008B8ECB /* license.txt */,
+				7A7E62F518985DBF008B8ECB /* mathjax */,
+				7A7E62F618985DBF008B8ECB /* nextindom.jquery.js */,
+				7A7E62F718985DBF008B8ECB /* notes */,
+				7A7E62F818985DBF008B8ECB /* old_stuff */,
+				7A7E62F918985DBF008B8ECB /* RunCARFromUpdate.bat */,
+				7A7E62FA18985DBF008B8ECB /* src */,
+				7A7E62FB18985DBF008B8ECB /* Tutorial.docx */,
+				7A7E62FC18985DBF008B8ECB /* version.txt */,
 			);
 			sourceTree = "<group>";
 		};
@@ -163,6 +204,7 @@
 				7A7E62E918985A1D008B8ECB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
