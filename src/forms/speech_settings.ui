@@ -16,11 +16,11 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Speech</string>
+   <string>General</string>
   </property>
   <property name="windowIcon">
    <iconset resource="resource.qrc">
-    <normaloff>:/icons/icons/system_config_services.png</normaloff>:/icons/icons/system_config_services.png</iconset>
+    <normaloff>:/classic/icons/speech_settings_classic.png</normaloff>:/classic/icons/speech_settings_classic.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1,0">
    <item>
@@ -202,6 +202,9 @@
       <widget class="QSlider" name="pauseSlider">
        <property name="maximum">
         <number>10</number>
+       </property>
+       <property name="pageStep">
+        <number>1</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>

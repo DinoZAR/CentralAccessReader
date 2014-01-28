@@ -4,8 +4,7 @@ Created on Jul 17, 2013
 @author: Spencer Graffe
 '''
 import copy
-from src.mathml_fast cimport pattern_tree
-from src.mathml_fast.pattern_tree cimport PatternTree, MatchResult, GatherResult
+from mathml_fast cimport pattern_tree
 
 def transform(tree, pattern, gotMatchFlag=None):
     '''
@@ -58,15 +57,15 @@ def _testMatch(startNode, pattern):
 
     return True
     
-cpdef PatternTree _transformNode(PatternTree start, PatternTree pattern):
+cpdef pattern_tree.PatternTree _transformNode(pattern_tree.PatternTree start, pattern_tree.PatternTree pattern):
     '''
     Transforms the start node into a Variable that conveys the pattern. The
     other elements that were a part of the match are serialized as an expression
     list that is put into the new Variable
     '''
-    cdef GatherResult gatherData
-    cdef PatternTree newNode
-    cdef PatternTree curr
+    cdef pattern_tree.GatherResult gatherData
+    cdef pattern_tree.PatternTree newNode
+    cdef pattern_tree.PatternTree curr
     
     curr = start
     nodes = []
@@ -79,7 +78,7 @@ cpdef PatternTree _transformNode(PatternTree start, PatternTree pattern):
         curr = gatherData.next
         
     # Create Variable node
-    newNode = PatternTree(pattern.name)
+    newNode = pattern_tree.PatternTree(pattern.name)
     newNode.type = pattern_tree.VARIABLE
     newNode.categories = pattern.categories
     newNode.output = pattern.output

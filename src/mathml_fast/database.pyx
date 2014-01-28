@@ -8,8 +8,7 @@ Author: Spencer Graffe
 '''
 
 import os
-from src.mathml_fast cimport pattern_tree
-from src.mathml_fast.pattern_tree cimport PatternTree
+from mathml_fast cimport pattern_tree
 import HTMLParser
 
 WILDCARD_TOKENS = ['?', '+', '#']
@@ -25,7 +24,7 @@ def convertToPatternTree(databasePattern):
 	Converts a pattern in a database into a PatternTree 
 	'''
 	expressions = databasePattern['expressions']
-	myTree = PatternTree(databasePattern['variable']['value'])
+	myTree = pattern_tree.PatternTree(databasePattern['variable']['value'])
 	myTree.type = pattern_tree.VARIABLE
 	if 'categories' in databasePattern:
 		myTree.categories = databasePattern['categories']['value']
@@ -41,16 +40,16 @@ def _convertExpressions(tree, expressions):
 		ex = i['expression']    # This is a little indirect, but hey
 			
 		if ex['type'] == 'variable':
-			newChild = PatternTree(ex['value'], tree)
+			newChild = pattern_tree.PatternTree(ex['value'], tree)
 			newChild.type = pattern_tree.VARIABLE
 				
 		elif ex['type'] == 'categories':
-			newChild = PatternTree('<categories>', tree)
+			newChild = pattern_tree.PatternTree('<categories>', tree)
 			newChild.type = pattern_tree.CATEGORY
 			newChild.categories = ex['value']
 				
 		elif ex['type'] == 'xml':
-			newChild = PatternTree(ex['value'], tree)
+			newChild = pattern_tree.PatternTree(ex['value'], tree)
 			newChild.type = pattern_tree.XML
 			newChild.attributes = {}
 			if len(ex['attributes']) > 0:
@@ -62,9 +61,9 @@ def _convertExpressions(tree, expressions):
 		# or a collector token, such as a +, ?, or #
 		elif ex['type'] == 'literal':
 			if ex['value'] in WILDCARD_TOKENS:
-				newChild = PatternTree(ex['value'], tree)
+				newChild = pattern_tree.PatternTree(ex['value'], tree)
 				newChild.type = pattern_tree.WILDCARD
 				
 			else:
-				newChild = PatternTree(htmlParser.unescape(ex['value'][1:-1]), tree)
+				newChild = pattern_tree.PatternTree(htmlParser.unescape(ex['value'][1:-1]), tree)
 				newChild.type = pattern_tree.TEXT

@@ -9,10 +9,10 @@ from PyQt4 import QtGui
 from PyQt4.QtCore import QUrl
 from PyQt4.QtWebKit import QWebInspector, QWebSettings
 
-from src.script_test_environment.forms.mainwindow_ui import Ui_MainWindow
-from src.script_test_environment.script_editor import ScriptEditor
+from script_test_environment.forms.mainwindow_ui import Ui_MainWindow
+from script_test_environment.script_editor import ScriptEditor
 
-from src.docx.importer import DocxDocument
+from docx.importer import DocxDocument
 
 class MainWindow(QtGui.QMainWindow):
     '''

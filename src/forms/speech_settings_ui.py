@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/atrctech/Desktop/workspace/NiftyProseArticulator/src/forms/speech_settings.ui'
+# Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace\nifty-prose-articulator\src\forms/speech_settings.ui'
 #
-# Created: Mon Sep 16 16:34:05 2013
-#      by: PyQt4 UI code generator 4.10.3
+# Created: Mon Jan 20 16:56:07 2014
+#      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -31,7 +31,7 @@ class Ui_SpeechSettings(object):
         font.setPointSize(12)
         SpeechSettings.setFont(font)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/system_config_services.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/classic/icons/speech_settings_classic.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         SpeechSettings.setWindowIcon(icon)
         self.verticalLayout = QtGui.QVBoxLayout(SpeechSettings)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
@@ -96,6 +96,7 @@ class Ui_SpeechSettings(object):
         self.formLayout.setLayout(8, QtGui.QFormLayout.FieldRole, self.horizontalLayout_3)
         self.pauseSlider = QtGui.QSlider(SpeechSettings)
         self.pauseSlider.setMaximum(10)
+        self.pauseSlider.setPageStep(1)
         self.pauseSlider.setOrientation(QtCore.Qt.Horizontal)
         self.pauseSlider.setTickPosition(QtGui.QSlider.TicksAbove)
         self.pauseSlider.setTickInterval(1)
@@ -146,7 +147,7 @@ class Ui_SpeechSettings(object):
         SpeechSettings.setTabOrder(self.restoreButton, self.applyButton)
 
     def retranslateUi(self, SpeechSettings):
-        SpeechSettings.setWindowTitle(_translate("SpeechSettings", "Speech", None))
+        SpeechSettings.setWindowTitle(_translate("SpeechSettings", "General", None))
         self.label.setText(_translate("SpeechSettings", "Rate:", None))
         self.rateSlider.setToolTip(_translate("SpeechSettings", "Words per minute slider (rate)", None))
         self.label_2.setText(_translate("SpeechSettings", "Volume:", None))

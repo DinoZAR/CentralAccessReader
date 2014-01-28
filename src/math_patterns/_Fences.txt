@@ -90,8 +90,9 @@ fencedLTGT = mfenced<open="&lt;",close="&gt;">(+) -> 'less than, {1}, greater th
 
 fencedOPCP = mfenced<close="">(+) -> 'open parentheses {1},'
 fencedOPCP = mfenced<open="">(+) -> '{1}, closed parentheses'
+fencedOPCP = mfenced<open="(",close=")">(mrow(+)) -> 'open parentheses, {1}, closed parentheses'
+fencedOPCP = mfenced<open="(",close=")">(+) -> 'open parentheses, {1}, closed parentheses'
 
 fenced = mfenced<separators="|">(mrow(+) mrow(+) mrow(+)) -> 'open parentheses {1}, vertical bar, {2}, vertical bar, {3}, closed parentheses'
 fenced = mfenced<separators="|">(mrow(+) mrow(+)) -> 'open parentheses {1}, vertical bar, {2}, closed parentheses'
 fenced = mfenced(mrow(+)) -> 'open parentheses {1}, closed parentheses'
-fencedOPCP = mfenced<open="(",close=")">(mrow(+)) -> 'open parentheses, {1}, closed parentheses'

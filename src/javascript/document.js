@@ -3,8 +3,9 @@
  * 
  * @author Spencer Graffe
  */
-var startFromHeading = false;
-var lastHeadingElement = null;
+
+// States for refreshing the math equations
+var lastRefreshedEquation = null;
 
 /**
  * Detect when MathJax is done messing around with the MathML. 
@@ -39,8 +40,96 @@ $(document).ready( function() {
       hide: false,
       show: false
     });
-  
+    
 });
+
+/**
+ * Every time the user clicks on the document somewhere, it will set the
+ * highlight to the element under the cursor. If its text, it will select the
+ * closest word.
+ */
+document.onclick = function (ev) {
+	if (!isHighlighting) {
+		
+		var myR = window.getSelection();
+		if (myR.isCollapsed) {
+
+			// Get the range of where my caret is
+		    var r = document.caretRangeFromPoint(ev.clientX, ev.clientY);
+		    var elem = document.elementFromPoint(ev.clientX, ev.clientY);
+		    
+		    // Check if it is an equation or an image first
+		    if (!IsInsideHighlight(elem)) {	    	
+		    	if (elem.nodeName == "IMG") {
+		    		r.selectNode(elem);
+		    		SetHighlight(false, r, true);
+		    		AlmightyGod._emitNavigationBarUpdate();
+		    		return;
+		    	}
+		    	
+		    	var eq = GetEquation(elem);
+		    	if (eq !== null) {
+		    		r.selectNode(eq);
+		    		SetHighlight(false, r, true);
+		    		AlmightyGod._emitNavigationBarUpdate();
+		    		return;
+		    	}
+		    }
+		    
+		    // Now check for text
+		    if (!IsInsideHighlight(r.startContainer)) {
+			    if (r.startContainer.nodeType === Node.TEXT_NODE) {
+			    	var word = GetWordRange(r.startContainer.data, r.startOffset);
+			    	if (word.start != word.end) {
+			    		r.setStart(r.startContainer, word.start);
+			    		r.setEnd(r.startContainer, word.end);
+			    		
+			    		// Set the highlight around it
+			    		SetHighlight(false, r, true);
+			    		AlmightyGod._emitNavigationBarUpdate();
+			    		return;
+			    	}
+			    	else {
+			    		// Try getting the deepest element and seeing if I get an
+			    		// image or math equation from that
+			    		elem = DeepestChild(elem);
+			    		
+			    		if (!IsInsideHighlight(elem)) {	    	
+			    	    	if (elem.nodeName == "IMG") {
+			    	    		r.selectNode(elem);
+			    	    		SetHighlight(false, r, true);
+			    	    		AlmightyGod._emitNavigationBarUpdate();
+			    	    		return;
+			    	    	}
+			    	    	
+			    	    	var eq = GetEquation(elem);
+			    	    	if (eq !== null) {
+			    	    		r.selectNode(eq);
+			    	    		SetHighlight(false, r, true);
+			    	    		AlmightyGod._emitNavigationBarUpdate();
+			    	    		return;
+			    	    	}
+			    	    }
+			    	}
+			    }
+			    else {
+			    	var myOffset = r.startOffset;
+			    	if (myOffset >= r.startContainer.children.length) {
+			    		myOffset = r.startContainer.children.length - 1;
+			    	}
+			    	
+			    	var elem = r.startContainer.children[myOffset];
+			    	r.selectNode(elem);
+			    	
+		    		// Set the highlight around it
+		    		SetHighlight(false, r, true);
+		    		AlmightyGod._emitNavigationBarUpdate();
+		    		return;
+			    }
+		    }
+		}
+	}
+}
 
 /**
  * Returns true when the document has been completely loaded, except MathJax.
@@ -79,9 +168,9 @@ function GetMathTypesetProgress() {
 function GotoPageAnchor(anchorName) {
 	//console.debug("GotoPageAnchor()");
 	element_to_scroll_to = document.getElementById(anchorName);
-	startFromHeading = true;
-	lastHeadingElement = element_to_scroll_to;
-	$.scrollTo(element_to_scroll_to, {duration: 200});
+	
+	// Set the highlight to the beginning of that anchor
+	MoveCursorToBeginningOfNode(DeepestChild(element_to_scroll_to), true);
 }
 
 /**
@@ -92,16 +181,77 @@ function ClearUserSelection() {
 	sel.collapse();
 }
 
+/**
+ * Refreshes the document to update the styles. This should cause the document
+ * to change colors, not to reload everything.
+ */
+function RefreshDocument() {
+	var links = document.getElementsByTagName("link");
+
+	for (var x in links) {
+	    var link = links[x];
+	    
+	    if (link.getAttribute) {
+		    if (link.getAttribute("type").indexOf("css") > -1) {
+		        link.href = link.href + "?id=" + new Date().getMilliseconds();
+		    }
+	    }
+	}
+	
+	// Also set the colors of all the math equations to their correct colors
+	lastRefreshedEquation = $('.MathJax_SVG').first()[0];
+	setTimeout(RefreshMathEquation, 70);
+}
+
+/**
+ * Refreshes the math equation, then refreshes the next one after it. If there
+ * are no more math equations, this function stops calling itself. This function
+ * is set up this way so that it gives some of the control to the UI thread.
+ */
+function RefreshMathEquation() {
+	SetMathColors(lastRefreshedEquation);
+	lastRefreshedEquation = GetNext(lastRefreshedEquation, '.MathJax_SVG');
+	
+	if (lastRefreshedEquation !== null) {
+		setTimeout(RefreshMathEquation, 70);
+	}
+}
+
 /*******************************************************************************
 Heading Functions
 *******************************************************************************/
 
 /**
- * Resets the states relating to the heading selection and playback.
+ * Gets the current heading that the highlight is under.
+ * @returns {String}
  */
-function ResetHeadingStates() {
-    startFromHeading = false;
-    lastHeadingElement = null;
+function GetCurrentHeading() {
+	
+	var elemSel = $(highlight);
+	var headingSel = $("h1, h2, h3, h4, h5, h6");
+	var elem = GetPreviousOccurrence(elemSel, headingSel);
+	
+	if (elem !== null) {
+		return elem.id;
+	}
+	
+	return '';
+}
+
+/**
+ * Gets the current page that the highlight is under.
+ * @returns {String}
+ */
+function GetCurrentPage() {
+	var elemSel = $(highlight);
+	var headingSel = $("p.pageNumber");
+	var elem = GetPreviousOccurrence(elemSel, headingSel);
+	
+	if (elem !== null) {
+		return elem.id;
+	}
+	
+	return ''
 }
 
 /*******************************************************************************
@@ -154,12 +304,12 @@ function MoveCursorLeft() {
 			var r = document.createRange();
 			r.setStart(elem, start);
 			r.setEnd(elem, offset);
-			SetHighlight(false, r);
+			SetHighlight(false, r, true);
 		}
 		else {
 			var r = document.createRange();
 			r.selectNode(elem);
-			SetHighlight(false, r);
+			SetHighlight(false, r, true);
 		}
 		
 		// Scroll to the highlight
@@ -247,7 +397,9 @@ function MoveCursorToNextBookmark() {
  * Moves to the beginning of whatever the node is.
  * @param elem
  */
-function MoveCursorToBeginningOfNode(elem) {
+function MoveCursorToBeginningOfNode(elem, isGradual) {
+	isGradual = typeof isGradual !== 'undefined' ? isGradual : false;
+	
 	var start = -1;
 	var offset = -1;
 	while (elem !== null) {
@@ -281,20 +433,29 @@ function MoveCursorToBeginningOfNode(elem) {
 	
 	// If there is something next, get that next element highlighted
 	if (elem !== null) {
-		if (start >= 0) {
-			var r = document.createRange();
-			r.setStart(elem, start);
-			r.setEnd(elem, offset);
-			SetHighlight(false, r);
+		if (!IsInsideHighlight(elem)) {
+			if (start >= 0) {
+				var r = document.createRange();
+				r.setStart(elem, start);
+				r.setEnd(elem, offset);
+				SetHighlight(false, r, true);
+			}
+			else {
+				var r = document.createRange();
+				r.selectNode(elem);
+				SetHighlight(false, r, true);
+			}
+			
+			// Scroll to the highlight
+			if (isGradual) {
+				var myVerticalOffset = window.innerHeight * (1.0 / 6.0);
+			    var myHorizOffset = window.innerWidth * (1.0 / 3.0);
+			    $.scrollTo(highlight, {duration: 200, offset: {top: -myVerticalOffset, left: -myHorizOffset}});
+			}
+			else {
+				ScrollToHighlight(true);
+			}
 		}
-		else {
-			var r = document.createRange();
-			r.selectNode(elem);
-			SetHighlight(false, r);
-		}
-		
-		// Scroll to the highlight
-		ScrollToHighlight(true);
 	}
 }
 
@@ -341,12 +502,12 @@ function MoveCursorToEndOfNode(elem) {
 			var r = document.createRange();
 			r.setStart(elem, start);
 			r.setEnd(elem, offset);
-			SetHighlight(false, r);
+			SetHighlight(false, r, true);
 		}
 		else {
 			var r = document.createRange();
 			r.selectNode(elem);
-			SetHighlight(false, r);
+			SetHighlight(false, r, true);
 		}
 		
 		// Scroll to the highlight

@@ -10,66 +10,130 @@ var isHighlighting = false;
 var highlightBeginOffset = 0;
 var isFirstHighlight = false;
 
+var mySelectionRange = null;
+
 /**
  * Flags that the highlighter can start.
  */
 function StartHighlighting() {
+	if (isHighlighting) {
+		StopHighlighting();
+	}
+	
 	//console.debug('StartHighlighting()');
+	content = SetStreamBeginning();
+	
 	isHighlighting = true;
 	isFirstHighlight = true;
+	
+	return content
 }
 
 /**
  * Flags that the highlighter should not be highlighting anymore.
  */
 function StopHighlighting() {
-	//console.debug('StopHighlighting()');
-	isHighlighting = false;
-	isFirstHighlight = false;
 	
-	// If there isn't a highlight present, make sure to create one
-	if (highlight === null) {
-		var range = GetSelectionRange();
-	    var startElem = range.startContainer;
-	    var myRange = document.createRange();
-	    
-	    var eq = GetEquation(startElem);
-	    if (eq !== null) {
-	    	startElem = eq;
-	    	myRange.setStart(startElem, range.startOffset);
-		    myRange.setEndAfter(startElem);
-	    }
-	    else if (startElem.nodeType === Node.TEXT_NODE) {
-	    	// See if I can't get the first word from the text. If I can't, I'll
-	    	// just select all of the text.
-	    	var regex = /\w+/g;
-			var m = regex.exec(startElem.data.substring(range.startOffset));
-			var start = -1;
-			var offset = -1;
-			if (m !== null) {
-				start = regex.lastIndex - m[0].length;
-				offset = regex.lastIndex;
+	if (isHighlighting) {
+		//console.debug('StopHighlighting()');
+		isHighlighting = false;
+		isFirstHighlight = false;
+		
+		// If there isn't a highlight present, make sure to create one
+		if (highlight === null) {
+			
+			//console.debug('Trying to create highlight...');
+			
+			var range = GetSelectionRange();
+			var startElem = range.startContainer;
+			
+			// Modify it to select the first word if I'm in a text node
+			if (startElem.nodeType === Node.TEXT_NODE) {
+		    	var regex = /\w+/g;
+				var m = regex.exec(startElem.data.substring(range.startOffset));
+				var start = -1;
+				var offset = -1;
+				if (m !== null) {
+					start = regex.lastIndex - m[0].length;
+					offset = regex.lastIndex;
+				}
+		    	
+				if (start >= 0) {
+					var myRangeStart = range.startOffset;
+					range.setStart(startElem, start + myRangeStart);
+					range.setEnd(startElem, offset + myRangeStart);
+				}
+				else {
+					range.selectNode(startElem);
+				}
 			}
-	    	
-			if (start >= 0) {
-				var myRangeStart = range.startOffset;
-				myRange.setStart(startElem, start + myRangeStart);
-				myRange.setEnd(startElem, offset + myRangeStart);
-			}
+			
 			else {
-				myRange.selectNode(startElem);
+				startElem = DeepestChild(startElem.children[range.startOffset]);
+				
+				// Check if I get a math equation. If I do, select that instead
+				var eq = GetEquation(startElem);
+				if (eq !== null) {
+					range.selectNode(eq);
+				}
+				else{
+					range.selectNode(startElem);
+				}
 			}
-	    }
-	    else {
-	    	myRange.selectNode(startElem);
-	    }
-	    
-	    SetHighlight(false, myRange);
-	    ScrollToHighlight(true);
+			
+			SetHighlight(false, range, true);
+		}
+		
+		ClearLineHighlight();
+		ClearUserSelection();
 	}
 	
-	ClearLineHighlight();
-	ClearUserSelection();
+	else {
+		
+		isFirstHighlight = false;
+		
+		// Check if we have a highlight somewhere. If we don't, get the
+		// highlight set
+		if (highlight === null) {
+			var range = GetSelectionRange();
+		    var startElem = range.startContainer;
+		    var myRange = document.createRange();
+		    
+		    var eq = GetEquation(startElem);
+		    if (eq !== null) {
+		    	startElem = eq;
+		    	myRange.setStart(startElem, range.startOffset);
+			    myRange.setEndAfter(startElem);
+		    }
+		    else if (startElem.nodeType === Node.TEXT_NODE) {
+		    	// See if I can't get the first word from the text. If I can't, I'll
+		    	// just select all of the text.
+		    	var regex = /\w+/g;
+				var m = regex.exec(startElem.data.substring(range.startOffset));
+				var start = -1;
+				var offset = -1;
+				if (m !== null) {
+					start = regex.lastIndex - m[0].length;
+					offset = regex.lastIndex;
+				}
+		    	
+				if (start >= 0) {
+					var myRangeStart = range.startOffset;
+					myRange.setStart(startElem, start + myRangeStart);
+					myRange.setEnd(startElem, offset + myRangeStart);
+				}
+				else {
+					myRange.selectNode(startElem);
+				}
+		    }
+		    else {
+		    	myRange.selectNode(startElem);
+		    }
+		    
+		    SetHighlight(false, myRange, true);
+		    //ScrollToHighlight(true);
+		}
+	}
 }
 
 /**
@@ -81,16 +145,18 @@ function StopHighlighting() {
  * @param wordOffset
  * @param wordLength
  */
-function HighlightNextWord(doLine, word, wordOffset, wordLength) {
-	//console.debug('HighlightNextWord()');
-	if (isHighlighting === true) {
+function HighlightNextWord(doLine, word, wordOffset, wordLength, shouldFollow) {
+	
+	shouldFollow = typeof shouldFollow !== 'undefined' ? shouldFollow : false;
+	
+	if (isHighlighting) {
+		//console.debug('HighlightNextWord()');
 		
 		var reference = GetReferencePoint();
 		var elem = reference.element;
 		var startOffset = reference.offset;
 		var needScroll = false;
 		
-		ResetHeadingStates();
 		
 		// Search for a text node that has the word I want.
 		while (true) {
@@ -99,34 +165,6 @@ function HighlightNextWord(doLine, word, wordOffset, wordLength) {
 			if (elem === null) {
 				break;
 			}
-			
-			// Check that my word offset is at or ahead of the start offset.
-			// Otherwise, this may mean a previous occurrence of a word that's
-			// already visited.
-			//if ((wordOffset + highlightBeginOffset) >= (startOffset - wordLength)) {
-				// Check the node's properties
-				//if (elem.nodeType === Node.TEXT_NODE) {
-					// Check if my proposed offset and length are within my text 
-					// element
-					//if ((wordOffset + highlightBeginOffset + wordLength) <= elem.data.length) {
-						// Check if it is not inside an equation
-						//if (IsInsideEquation(elem) !== true) {
-							//break;
-						//}
-						//console.debug('Failed: inside equation');
-					//}
-					//console.debug('Failed: bound not in length');
-				//}
-				//console.debug('Failed: not text node');
-			//}
-			//console.debug('Failed: not beyond last highlight');
-			
-			//console.debug('word:' + word);
-			//console.debug('wordOffset: ' + wordOffset);
-			//console.debug('wordLength: ' + wordLength);
-			//console.debug('startOffset: ' + startOffset);
-			//console.debug('highlightBeginOffset: ' + highlightBeginOffset);
-			//console.debug('elem: ' + elem);
 			
 			if (elem.nodeType === Node.TEXT_NODE) {
 				if ((wordOffset + highlightBeginOffset) >= (startOffset - wordLength)) {
@@ -159,8 +197,17 @@ function HighlightNextWord(doLine, word, wordOffset, wordLength) {
 		window.getSelection().empty()
 		
 		// Scroll to highlight if necessary
-		if ((needScroll === true) || (isFirstHighlight === true)) {
+		if ((needScroll === true) || isFirstHighlight) {
 			ScrollToHighlight();
+		}
+		else {
+			if (shouldFollow) {
+				// If the highlight is not in view, move the view to the highlight
+				// itself (previously, it was the parent of the highlight)
+				if (!ElementInViewport(highlight)) {
+					ScrollToElement(highlight, true);
+				}
+			}
 		}
 		
 		isFirstHighlight = false;
@@ -174,16 +221,14 @@ function HighlightNextWord(doLine, word, wordOffset, wordLength) {
  * @param lastElementType
  */
 function HighlightNextImage(doLine) {
-	//console.debug('HighlightNextImage()');
-	if (isHighlighting === true) {
+	if (isHighlighting) {
+		//console.debug('HighlightNextImage()');
 		var reference = GetReferencePoint();
 		var elem = DeepestChild(reference.element);
 		
 		if ((reference.element.nodeType !== Node.TEXT_NODE) && (reference.element.children.length > 0)) {
 			elem = $(reference.element).contents()[reference.offset];
 		}
-		
-		ResetHeadingStates();
 		
 		// Search until I get an image
 		while (true) {
@@ -212,11 +257,11 @@ function HighlightNextImage(doLine) {
 		// Clear the user selection
 		window.getSelection().empty()
 		
-		ScrollToHighlight();
+		// Scroll to highlight
+		ScrollToElement(highlight);
 		
 		highlightBeginOffset = 0;
-		
-		isFirstHighlight = true;
+		isFirstHighlight = false;
 	}
 }
 
@@ -227,12 +272,11 @@ function HighlightNextImage(doLine) {
  * @param lastElementType
  */
 function HighlightNextMath(doLine) {
-	//console.debug('HighlightNextMath()');
-	if (isHighlighting === true) {
+	if (isHighlighting) {
+		//console.debug('HighlightNextMath()');
+		
 		var reference = GetReferencePoint();
 		var elem = reference.element;
-		
-		ResetHeadingStates();
 		
 		// Search until I get a math equation
 		while (true) {
@@ -264,8 +308,7 @@ function HighlightNextMath(doLine) {
 		ScrollToHighlight();
 		
 		highlightBeginOffset = 0;
-		
-		isFirstHighlight = true;
+		isFirstHighlight = false;
 	}
 }
 
@@ -357,7 +400,7 @@ function GetHighlightChildIndex() {
  * @param range
  * @param doLine
  */
-function SetHighlight(doLine, range) {
+function SetHighlight(doLine, range, isSelection) {
     //console.debug("SetHighlight()");
 	if (highlight != null) {
 		ClearHighlight();
@@ -368,7 +411,13 @@ function SetHighlight(doLine, range) {
 	}
 
 	highlight = document.createElement("span");
-	highlight.setAttribute("id", "npaHighlight");
+	
+	if (isSelection == true) {	
+		highlight.setAttribute("id", "npaHighlightSelection");
+	}
+	else {
+		highlight.setAttribute("id", "npaHighlight");
+	}
 
 	var contents = range.extractContents();
 	highlight.appendChild(contents);
@@ -382,6 +431,8 @@ function SetHighlight(doLine, range) {
 	}
 
 	range.insertNode(highlight);
+	
+	SetMathColors(highlight);
 
 	if (doLine == true) {
 		SetLineHighlight();
@@ -389,29 +440,73 @@ function SetHighlight(doLine, range) {
 }
 
 function SetHighlightToBeginning() {
-	// Highlight the first element in the document. This will act as the cursor.
-	var r = GetRangeToEntireDocument();
-	var start = DeepestChild(r.startContainer);
-	var offset = 0;
 	
-	// Get the first word, of that is the case
-	if (start.nodeType == Node.TEXT_NODE) {
-		var regex = /\b\w+\b/g;
-		var m = start.data.match(regex);
-		if (m !== null) {
-			r.setStart(start, regex.lastIndex);
-			r.setEnd(start, regex.lastIndex + m[0].length);
-			SetHighlight(false, r);
+	// Get the first word, image, or math equation, whichever comes first
+	var done = false;
+	var elem = DeepestChild(document.body);
+	var range = document.createRange();
+	
+	while (!done) {
+		
+		// Calculate whether the element is visible
+		var s = window.getComputedStyle(elem);
+		var isVisible = false;
+		if (s === null) {
+			isVisible = true;
 		}
 		else {
-			r.selectNode(start);
-			SetHighlight(false, r);
+			isVisible = s.getPropertyValue('visible')
+			if (isVisible === null) {
+				isVisible = true;
+			}
+			else {
+				if (isVisible.find('hidden') >= 0) {
+					isVisible = false;
+				}
+				else {
+					isVisible = true;
+				}
+			}
+		}
+		
+		// Only consider it if it is visible
+		if (isVisible) {
+			
+			// Check if math equation
+			var eq = GetEquation(elem);
+			if (eq !== null) {
+				range.selectNode(eq);
+				done = true;
+			}
+			
+			// Check if an image
+			else if (elem.nodeName == 'IMG') {
+				range.selectNode(elem);
+				done = true;
+			}
+			
+			// Check if a text element
+			if (elem.nodeType == Node.TEXT_NODE) {
+				
+				// Get first word, if found. Otherwise, move on.
+				var regex = /\b\w+\b/g;
+				var m = elem.data.match(regex);
+				if (m !== null) {
+					range.setStart(elem, regex.lastIndex);
+					range.setEnd(elem, regex.lastIndex + m[0].length);		
+					done = true;
+				}
+			}
+		}
+		
+		elem = NextElement(elem);
+		
+		if (elem === null) {
+			done = true
 		}
 	}
-	else {
-		r.selectNode(start);
-		SetHighlight(false, r);
-	}
+	
+	SetHighlight(false, range, true);
 }
 
 /**
@@ -462,15 +557,11 @@ function SetLineHighlight() {
 			}
 		}
 	}
-
-	// Create the range for my highlighter line thing
-	//var range = document.createRange();
-	//range.setStart(startNode, startOffset);
-	//range.setEnd(endNode, endOffset);
 	
 	var contents = range.extractContents();
 	highlightLine.appendChild(contents);
 	range.insertNode(highlightLine);
+	SetMathColors(highlightLine);
 }
 
 /**
@@ -482,9 +573,10 @@ function ClearAllHighlights() {
 		ClearLineHighlight();
 	}
 
-	if (highlight != null) {
+	if (highlight !== null) {
 		ClearHighlight();
 	}
+	
 }
 
 /**
@@ -501,6 +593,8 @@ function ClearHighlight() {
 	p.removeChild(highlight);
 	p.normalize();
 	highlight = null;
+	
+	SetMathColors(p);
 }
 
 /**
@@ -513,12 +607,21 @@ function ClearLineHighlight() {
 
 		InsertAllChildNodes(p, highlightLine);
 
-		// Recapture my highlight element reference
-		highlight = document.getElementById("npaHighlight");
-
 		p.removeChild(highlightLine);
 		p.normalize();
 		highlightLine = null;
+		
+		SetMathColors(p);
+	}
+	
+	// Recapture my highlight element reference while changing its style to that
+	// of a selection.
+	highlight = document.getElementById("npaHighlight");
+	if (highlight !== null) {
+		highlight.id = "npaHighlightSelection";
+	}
+	else {
+		highlight = document.getElementById('npaHighlightSelection');
 	}
 }
 
@@ -529,8 +632,17 @@ function ClearLineHighlight() {
 function ScrollToHighlight(isInstant) {
     //console.debug("ScrollToHighlight()");
 	isInstant = typeof isInstant !== 'undefined' ? isInstant : false;
+	ScrollToElement(highlight.parentNode, isInstant);
+}
+
+/**
+ * Scrolls the view to show the element. If isInstant is false, the view will
+ * smoothly scroll to show the element. Otherwise, the view will jump to it.
+ */
+function ScrollToElement(elem, isInstant) {
+	isInstant = typeof isInstant !== 'undefined' ? isInstant : false;
 	
-    // Calculate the top offset making it the top 1/6 of the document viewport.
+	// Calculate the top offset making it the top 1/6 of the document viewport.
     // This will scale correctly for different zoom sizes
     var myVerticalOffset = window.innerHeight * (1.0 / 6.0);
     
@@ -543,9 +655,40 @@ function ScrollToHighlight(isInstant) {
 		myDuration = 0;
 	}
 	if (highlightLine != null) {
-		$.scrollTo(highlightLine.parentNode, {duration: myDuration, offset: {top: -myVerticalOffset, left: -myHorizOffset}});
+		$.scrollTo(elem, {duration: myDuration, offset: {top: -myVerticalOffset, left: -myHorizOffset}});
 	}
 	else {
-		$.scrollTo(highlight.parentNode, {duration: myDuration, offset: {top: -myVerticalOffset, left: -myHorizOffset}});
+		$.scrollTo(elem, {duration: myDuration, offset: {top: -myVerticalOffset, left: -myHorizOffset}});
 	}
+}
+
+/**
+ * Sets the colors of the math to the color as defined in the style of the
+ * parent element.
+ */
+function SetMathColors(parentElem) {
+	
+//	for (var i = 0; i < parentElem.children.length; i++) {
+//		var myElem = parentElem.children[i];
+//		myStyle = window.getComputedStyle(myElem);
+//		if (myElem.hasAttribute('stroke')) {
+//			myElem.setAttribute('stroke', myStyle.getPropertyValue('color'));
+//		}
+//		if (myElem.hasAttribute('fill')) {
+//			myElem.setAttribute('fill', myStyle.getPropertyValue('color'));
+//		}
+//		
+//		SetMathColors(parentElem.children[i]);
+//	}
+	
+	$(parentElem).find('*[stroke]').each(function (index, element) {
+		var myStyle = window.getComputedStyle(element);
+		element.setAttribute('stroke', myStyle.getPropertyValue('color'));
+	});
+	
+	// Set the fills
+	$(parentElem).find('*[fill]').each(function (index, element) {
+		var myStyle = window.getComputedStyle(element);
+		element.setAttribute('fill', myStyle.getPropertyValue('color'));
+	});
 }

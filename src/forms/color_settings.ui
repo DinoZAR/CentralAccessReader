@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>463</width>
-    <height>301</height>
+    <width>501</width>
+    <height>388</height>
    </rect>
   </property>
   <property name="font">
@@ -20,38 +20,21 @@
   </property>
   <property name="windowIcon">
    <iconset resource="resource.qrc">
-    <normaloff>:/icons/icons/color_settings.png</normaloff>:/icons/icons/color_settings.png</iconset>
+    <normaloff>:/classic/icons/color_settings_classic.png</normaloff>:/classic/icons/color_settings_classic.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <layout class="QGridLayout" name="gridLayout_3" rowstretch="0,0,0">
+    <layout class="QGridLayout" name="gridLayout_3" rowstretch="0,0,0,0">
      <property name="verticalSpacing">
       <number>15</number>
      </property>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_9">
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Font</string>
+        <string>Theme</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="Line" name="line_5">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_7">
-       <property name="text">
-        <string>Colors</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
@@ -182,33 +165,6 @@
        </item>
       </layout>
      </item>
-     <item row="1" column="1">
-      <widget class="Line" name="line_4">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="Line" name="line_3">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_8">
-       <property name="text">
-        <string>Highlighting</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="2">
-      <widget class="QFontComboBox" name="fontComboBox"/>
-     </item>
      <item row="0" column="2">
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
@@ -225,7 +181,78 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QCheckBox" name="followInsideParagraphCheckBox">
+         <property name="text">
+          <string>Follow Inside Paragraph</string>
+         </property>
+        </widget>
+       </item>
       </layout>
+     </item>
+     <item row="0" column="1">
+      <widget class="Line" name="line_3">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Colors</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="Line" name="line_4">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="2">
+      <widget class="QComboBox" name="themeComboBox"/>
+     </item>
+     <item row="3" column="1">
+      <widget class="Line" name="line_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>Highlighting</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_9">
+       <property name="text">
+        <string>Font</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="Line" name="line_5">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QFontComboBox" name="fontComboBox"/>
      </item>
     </layout>
    </item>
@@ -303,7 +330,6 @@
   <tabstop>highlighterTextButton</tabstop>
   <tabstop>highlighterLineBackgroundButton</tabstop>
   <tabstop>highlighterLineTextButton</tabstop>
-  <tabstop>fontComboBox</tabstop>
   <tabstop>restoreButton</tabstop>
   <tabstop>previewButton</tabstop>
   <tabstop>applyButton</tabstop>

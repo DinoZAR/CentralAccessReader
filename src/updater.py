@@ -3,7 +3,7 @@ Created on Jun 21, 2013
 
 @author: Spencer Graffe
 '''
-from threading import Thread
+from PyQt4.QtCore import QThread, pyqtSignal
 import platform
 import re
 import urllib2
@@ -28,24 +28,23 @@ VERSION_TEMP = misc.temp_path(os.path.join('update', 'version.txt'))
 VERSION_THERE = UPDATE_URL + 'version.txt'
 VERSION_HERE = misc.program_path('version.txt')
 
-class GetUpdateThread(Thread):
+class GetUpdateThread(QThread):
     '''
     Used to check to see if there is an update for this program. If there is,
     then it will check to see if it the update was already downloaded. Then, it
     will prompt the GUI to either ask the user to download it or to install the
     update.
     '''
+    showUpdate = pyqtSignal()
     
-    def __init__(self, updateCallback):
-        Thread.__init__(self)
-        self._updateCallback = updateCallback
+    def __init__(self):
+        QThread.__init__(self)
         
     def run(self):
         
         # Check the version number, if I can
         gotNewOne = False
         try:
-            print 'Checking version number...'
             gotNewOne = check_program_update()
         except Exception:
             print 'Couldn\'t check version number for some reason.'
@@ -73,7 +72,7 @@ class GetUpdateThread(Thread):
                     alreadyDownloaded = True
             
             if alreadyDownloaded:
-                self._updateCallback()
+                self.showUpdate.emit()
             else:
                 # Go online and grab the version number
                 response = urllib2.urlopen(VERSION_THERE)
@@ -91,26 +90,20 @@ class GetUpdateThread(Thread):
 #                     fv = open(VERSION_TEMP, 'w')
 #                     fv.write(contents)
 #                     fv.close()
-                    self._updateCallback()
-        
-        print 'Done checking for updates!'
+                    self.showUpdate.emit()
                 
 def check_program_update():
     '''
     Checks to see if there is an update to this program. It pings the server for
     a version file and then compares that version number to the one here. 
     '''
-    print 'Getting version number here...'
     # Get the version here
-    versionHere = get_version_number(VERSION_HERE)
-    print versionHere
+    versionHere = get_version_number(VERSION_HERE)    
     
-    print 'Getting version number there...'
     # Get the version number there
     response = urllib2.urlopen(VERSION_THERE)
     stuff = response.read()
-    versionThere = float(re.search(r'[0-9]+.[0-9]+', stuff).group(0))
-    print versionThere
+    versionThere = float(re.search(r'[0-9]+.[0-9]+', stuff).group(0))    
     
     return versionThere > versionHere
 
@@ -181,8 +174,6 @@ def open_dmg(dmgPath):
     kwargs.update(close_fds=True)
     kwargs.update(shell=True)
     
-    print 'misc: opening DMG', dmgPath
-    
     p = subprocess.Popen('open "' + dmgPath + '"', **kwargs)
 
 def run_update_installer():
@@ -196,20 +187,20 @@ def run_update_installer():
         elif platform.system() == 'Darwin':
             open_dmg(SETUP_TEMP_FILE)
 
-class RunUpdateInstallerThread(Thread):
-    
-    def __init__(self):
-        Thread.__init__(self)
-        self._closeUpdateSignal = None
-        
-    def setUpdateFinishSignal(self, closeFunction):
-        self._closeUpdateSignal = closeFunction
-        
-    def run(self):
-        '''
-        Runs the update installer. It will use the correct mechanisms depending on
-        the platform.
-        '''
-        run_update_installer()
-        print 'Done with update installer thread!'
-        self._closeUpdateSignal.emit()
+# class RunUpdateInstallerThread(Thread):
+#     
+#     def __init__(self):
+#         Thread.__init__(self)
+#         self._closeUpdateSignal = None
+#         
+#     def setUpdateFinishSignal(self, closeFunction):
+#         self._closeUpdateSignal = closeFunction
+#         
+#     def run(self):
+#         '''
+#         Runs the update installer. It will use the correct mechanisms depending on
+#         the platform.
+#         '''
+#         run_update_installer()
+#         print 'Done with update installer thread!'
+#         self._closeUpdateSignal.emit()

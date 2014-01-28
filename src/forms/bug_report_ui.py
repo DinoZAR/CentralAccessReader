@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'bug_report.ui'
+# Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace\nifty-prose-articulator\src\forms/bug_report.ui'
 #
-# Created: Wed Sep 18 09:31:09 2013
+# Created: Tue Jan 07 09:32:08 2014
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -31,13 +31,13 @@ class Ui_BugReporter(object):
         font.setPointSize(12)
         BugReporter.setFont(font)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/report_bug.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/classic/icons/report_bug_classic.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         BugReporter.setWindowIcon(icon)
         self.horizontalLayout_2 = QtGui.QHBoxLayout(BugReporter)
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         self.label_2 = QtGui.QLabel(BugReporter)
         self.label_2.setText(_fromUtf8(""))
-        self.label_2.setPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/report_bug.png")))
+        self.label_2.setPixmap(QtGui.QPixmap(_fromUtf8(":/classic/icons/report_bug_classic.png")))
         self.label_2.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.label_2.setObjectName(_fromUtf8("label_2"))
         self.horizontalLayout_2.addWidget(self.label_2)

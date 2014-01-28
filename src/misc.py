@@ -8,15 +8,17 @@ practically universally applicable.
 '''
 import sys
 import os
+import re
 import platform
 import subprocess
 import inspect
 from PyQt4.QtCore import QThread, pyqtSignal
+from PyQt4 import uic
 
 _PROGRAM_ROOT = 'Central Access Reader'
 
 REPORT_BUG_URL = 'http://www.cwu.edu/central-access/report-bug-central-access-reader'
-SURVEY_URL = 'http://www.cwu.edu/central-access/central-access-reader-survey'
+SURVEY_URL = 'http://www.cwu.edu/central-access/car-comments-and-suggestions'
 
 MATHML_PATTERNS_FOLDER = 'src/math_patterns'
 
@@ -195,23 +197,51 @@ def prepare_bug_report(traceback, configuration, detailMessage=None):
     
     return out
 
-class UpdateQtThread(QThread):
+class SplitRegex(object):
     '''
-    Used to process events in the PyQt main thread while something else is
-    hogging up my main thread.
+    Allows a string to be split by a regex, iterated over by matches, and each
+    match individually modified.
     '''
-    
-    updateGUI = pyqtSignal()
-    
-    def __init__(self):
-        QThread.__init__(self)
-        self._stopping = False
-        
-    def run(self):
-        print 'Gui updator running...'
-        while not self._stopping:
-            self.updateGUI.emit()
-    
-    def stop(self):
-        self._stopping = True
-    
+
+    def __init__(self, regex, data, group=None):
+        # Split up the data by the regex
+        self._myList = []
+
+        # Keep grabbing matches out of it until I have nothing left
+        myData = data
+        while len(myData) > 0:
+            m = re.search(regex, myData)
+            if m is not None:
+                beforeSub = myData[:m.start(0)]
+                if len(beforeSub) > 0:
+                    self._myList.append({'value' : beforeSub, 'isMatch' : False})
+                self._myList.append({'value' : m.group(0), 'isMatch' : True, 'matchObj' : m})
+                myData = myData[m.end(0):]
+            else:
+                self._myList.append({'value' : myData, 'isMatch' : False})
+                myData = ''
+            
+    def __iter__(self):
+        '''
+        Returns a list of pointers for all of the matches.
+        Users can read from it as well as replace them with
+        something else.
+        '''
+        for item in self._myList:
+            if item['isMatch']:
+                yield item
+
+    def __str__(self):
+        '''
+        Returns the original string back if nothing is modified. However,
+        if one used the iteration features to change something, then
+        this returns the string modified.
+        '''
+        s = ''
+        for item in self._myList:
+            s += item['value']
+
+        return s
+
+    def __repr__(self):
+        return str(self)

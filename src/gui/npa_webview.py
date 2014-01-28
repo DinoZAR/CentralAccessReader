@@ -4,76 +4,68 @@ Created on Apr 18, 2013
 @author: Spencer Graffe
 '''
 from PyQt4.QtWebKit import QWebView, QWebPage
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QApplication
+from PyQt4.QtCore import Qt, pyqtSignal, QMimeData
+from PyQt4.QtGui import QApplication, QMenu, QAction, QKeySequence
 import webbrowser
-import os
+import re
 import misc
 
 class NPAWebView(QWebView):
     '''
     This subclass is meant to override some of the mouse behavior, most notably the zoom feature.
     '''
-    
-    ZOOM_LEVELS = [.25, .5, .75, 1, 1.25, 1.5, 2, 3, 4, 5, 7, 9, 12]
+    ZOOM_LEVELS = [.25, .5, .75, 1, 1.25, 1.5, 2, 3, 4, 5, 7, 9, 12, 15, 18, 21]
     DEFAULT_ZOOM_INDEX = 3
+    
+    toggleSpeechPlayback = pyqtSignal()
+    contentCommand = pyqtSignal(unicode)
+    
+    cursorMoved = pyqtSignal()
+    
+    # Signals for my custom context menu
+    requestPaste = pyqtSignal()
+    requestReadFromSelection = pyqtSignal()
+    requestSaveSelectionToMP3 = pyqtSignal()
 
-    def __init__(self, mainWindow, parent=None):
+    def __init__(self, parent=None):
         '''
         Constructor
         '''
         QWebView.__init__(self, parent)
-        self.mainWindow = mainWindow
-        self.setAcceptDrops(True)
         self._zoomIndex = self.DEFAULT_ZOOM_INDEX
         
-        self.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
+        self.setAcceptDrops(False)
         
-        # Disable the context menu if in a release environment
-        if misc.is_release_environment():
-            def nothing(s, event):
-                pass
-            self.contextMenuEvent = nothing
+        self.setMouseTracking(True)
+        
+        self.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
             
         self.linkClicked.connect(self.myLinkClicked)
-        
         self._keyboardNavEnabled = True
         
-    def dragEnterEvent(self, e):
-        if e.mimeData().hasUrls:
-            url = unicode(e.mimeData().urls()[0].toLocalFile())
-            ext = os.path.splitext(url)[1]
-            if ext == '.docx' or ext == '.doc':
-                e.setDropAction(Qt.CopyAction)
-                e.accept()
-            else:
-                e.ignore()
-        else:
-            e.ignore()
-            
-    def dragMoveEvent(self, e):
-        if e.mimeData().hasUrls:
-            url = unicode(e.mimeData().urls()[0].toLocalFile())
-            ext = os.path.splitext(url)[1]
-            if ext == '.docx' or ext == '.doc':
-                e.setDropAction(Qt.CopyAction)
-                e.accept()
-            else:
-                e.ignore()
-        else:
-            e.ignore()
-            
-    def dropEvent(self, e):
-        if e.mimeData().hasUrls:
-            e.setDropAction(Qt.CopyAction)
-            e.accept()
-            url = unicode(e.mimeData().urls()[0].toLocalFile())
-            if os.path.splitext(url)[1] == '.docx':
-                self.mainWindow.activateWindow()
-                self.mainWindow.raise_()
-                self.mainWindow.openDocx(url)
-            elif os.path.splitext(url)[1] == '.doc':
-                self.mainWindow.showDocNotSupported()
+        # Create my copy shortcut
+        self.copyAction = QAction('Copy', self)
+        self.copyAction.triggered.connect(self.copyToClipboard)
+        self.copyAction.setShortcut(QKeySequence.Copy)
+        self.addAction(self.copyAction)
+    
+#     def contextMenuEvent(self, ev):
+#         '''
+#         Make up my own context menu called when user right-clicks on window.
+#         '''
+#         menu = QMenu()
+#         menu.addAction(self.copyAction)
+#         menu.addAction('Paste', self.requestPaste)
+#         menu.addSeparator()
+#         menu.addAction('Start Reading From Selection', self.requestReadFromSelection)
+#         menu.addAction('Save Selection to MP3', self.requestSaveSelectionToMP3)
+#         menu.exec_(ev.globalPos())
+        
+    def copyToClipboard(self):
+        # Get the content I am selecting
+        myData = QMimeData()
+        myData.setHtml(self.selectedHtml())
+        QApplication.clipboard().setMimeData(myData)
         
     def wheelEvent(self, event):
         modifiers = QApplication.keyboardModifiers()
@@ -101,53 +93,62 @@ class NPAWebView(QWebView):
         self.page().triggerAction(QWebPage.SelectAll)
         
     def keyPressEvent(self, event):
-        
         # Ctrl+A (Select All)
         if (event.key() == Qt.Key_A) and (event.nativeModifiers() and Qt.ControlModifier):
             self.page().triggerAction(QWebPage.SelectAll)
             event.ignore()
         
         elif event.key() == Qt.Key_Space:
-            self.mainWindow.toggleSpeech()
+            self.toggleSpeechPlayback.emit()
         
         if self._keyboardNavEnabled:
             # Arrow Up
             if event.key() == Qt.Key_Up:
                 self.page().mainFrame().evaluateJavaScript(misc.js_command('MoveCursorUp', []))
+                self.cursorMoved.emit()
                 event.ignore()
     
             # Arrow Down
             elif event.key() == Qt.Key_Down:
                 self.page().mainFrame().evaluateJavaScript(misc.js_command('MoveCursorDown', []))
+                self.cursorMoved.emit()
                 event.ignore()
                 
             # Arrow left
             elif event.key() == Qt.Key_Left:
                 self.page().mainFrame().evaluateJavaScript(misc.js_command('MoveCursorLeft', []))
+                self.cursorMoved.emit()
                 event.ignore()
     
             # Arrow right
             elif event.key() == Qt.Key_Right:
                 self.page().mainFrame().evaluateJavaScript(misc.js_command('MoveCursorRight', []))
+                self.cursorMoved.emit()
                 event.ignore()
                 
             # Home
             elif event.key() == Qt.Key_Home:
                 self.page().mainFrame().evaluateJavaScript(misc.js_command('MoveCursorToStart', []))
+                self.cursorMoved.emit()
                 event.ignore()
 
             # End                
             elif event.key() == Qt.Key_End:
                 self.page().mainFrame().evaluateJavaScript(misc.js_command('MoveCursorToEnd', []))
+                self.cursorMoved.emit()
                 event.ignore()
                 
             # Page Up
             elif event.key() == Qt.Key_PageUp:
                 self.page().mainFrame().evaluateJavaScript(misc.js_command('MoveCursorToPreviousBookmark', []))
+                self.cursorMoved.emit()
+                event.ignore()
             
             # Page Down
             elif event.key() == Qt.Key_PageDown:
                 self.page().mainFrame().evaluateJavaScript(misc.js_command('MoveCursorToNextBookmark', []))
+                self.cursorMoved.emit()
+                event.ignore()
         
     def keyReleaseEvent(self, event):
         event.ignore()
@@ -211,7 +212,15 @@ class NPAWebView(QWebView):
         self.page().mainFrame().evaluateJavaScript(misc.js_command('ScrollToHighlight', [True]))
         
     def myLinkClicked(self, url):
-        webbrowser.open_new(str(url.toString()))
+        # Check if the link was actually a command from a button
+        m = re.search('Central Access Reader/command/[a-zA-Z]*', unicode(url))
+        if m is not None:
+            # Get the command string out and emit it as a signal
+            command = m.group(0).split('/')[2]
+            self.contentCommand.emit(command)
+            
+        else:
+            webbrowser.open_new(str(url.toString()))
     
     def setKeyboardNavEnabled(self, isEnabled):
         '''

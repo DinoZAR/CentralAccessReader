@@ -23,8 +23,8 @@ class DownloadProgressWidget(QWidget):
         self.ui.setupUi(self)
         
         # Connect up the signals of my widgets
-        self.ui.retryButton.clicked.connect(self.retryDownload)
-        self.ui.cancelButton.clicked.connect(self.stopDownload)
+        self.ui.downloadRetryButton.clicked.connect(self.retryDownload)
+        self.ui.downloadCancelButton.clicked.connect(self.stopDownload)
         
         self._downloadThread = DownloadThread()
         self._downloadThread.downloadProgress.connect(self._reportProgress)

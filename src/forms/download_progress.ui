@@ -7,14 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>735</width>
-    <height>32</height>
+    <height>33</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="resource.qrc">
+   <iconset>
     <normaloff>:/icons/icons/update_down_arrow.png</normaloff>:/icons/icons/update_down_arrow.png</iconset>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1,0,0">
@@ -29,6 +29,9 @@
      <property name="text">
       <string>Downloading update...</string>
      </property>
+     <property name="margin">
+      <number>7</number>
+     </property>
     </widget>
    </item>
    <item>
@@ -39,13 +42,13 @@
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="retryButton">
+    <widget class="QPushButton" name="downloadRetryButton">
      <property name="text">
       <string>Retry</string>
      </property>
      <property name="icon">
       <iconset resource="resource.qrc">
-       <normaloff>:/icons/icons/reload.png</normaloff>:/icons/icons/reload.png</iconset>
+       <normaloff>:/classic/icons/reload_classic.png</normaloff>:/classic/icons/reload_classic.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -59,13 +62,13 @@
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="cancelButton">
+    <widget class="QPushButton" name="downloadCancelButton">
      <property name="text">
       <string>Cancel</string>
      </property>
      <property name="icon">
       <iconset resource="resource.qrc">
-       <normaloff>:/icons/icons/dialog_close.png</normaloff>:/icons/icons/dialog_close.png</iconset>
+       <normaloff>:/classic/icons/close_with_circle_classic.png</normaloff>:/classic/icons/close_with_circle_classic.png</iconset>
      </property>
      <property name="iconSize">
       <size>

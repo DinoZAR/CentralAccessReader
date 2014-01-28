@@ -45,6 +45,24 @@ class PagesTreeModel(QAbstractItemModel):
         for page in pageNumbers:
             PageNode(self.root, page, 'page' + page)
     
+    def getIndexFromId(self, pageId, parent=QModelIndex()):
+        '''
+        Returns a QModelIndex for the item that has the anchor ID.
+        '''
+        currRow = 0
+        
+        while self.hasIndex(currRow, 0, parent):
+            myIndex = self.index(currRow, 0, parent)
+            if myIndex.internalPointer().anchorId == pageId:
+                return myIndex
+            else:
+                results = self.getIndexFromId(pageId, myIndex)
+                if results is not None:
+                    return results
+            currRow += 1
+        
+        return None
+    
     def flags(self, index):
         """Returns the item flags for the given index. """
         return Qt.ItemIsEnabled|Qt.ItemIsSelectable
@@ -53,7 +71,6 @@ class PagesTreeModel(QAbstractItemModel):
     def data(self, index, role):
         """Returns the data stored under the given role for the item
         referred to by the index."""
-
         if not index.isValid():
             return None
         node = index.internalPointer()
@@ -70,7 +87,6 @@ class PagesTreeModel(QAbstractItemModel):
 
     def rowCount(self, parent):
         """The number of rows of the given index."""
-
         if not parent.isValid():
             parent_node = self.root
         else:
@@ -80,7 +96,6 @@ class PagesTreeModel(QAbstractItemModel):
 
     def index(self, row, column, parent=QModelIndex()):
         """Creates an index in the model for a given node and returns it."""
-        
         obj = None
         if parent.internalPointer() != None:
             parentNode = parent.internalPointer()
@@ -91,7 +106,6 @@ class PagesTreeModel(QAbstractItemModel):
 
     def parent(self, child):
         """The parent index of a given index."""
-        
         node = child.internalPointer()
         if node is None:
             return QModelIndex()

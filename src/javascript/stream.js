@@ -11,21 +11,24 @@ var nextStreamElement = null;
  */
 function SetStreamBeginning() {
     //console.debug('SetStreamBeginning()');
-    
     var range = GetSelectionRange();
     nextStreamElement = range.startContainer;
-    
-    var eq = GetEquation(nextStreamElement);
-    if (eq !== null) {
-    	nextStreamElement = eq;
-    }
     
     var myRange = document.createRange();
     myRange.setStart(nextStreamElement, range.startOffset);
     myRange.setEndAfter(nextStreamElement);
     highlightBeginOffset = range.startOffset;
     
-    nextStreamElement = NextElement(nextStreamElement)
+    nextStreamElement = NextElement(nextStreamElement);
+    
+    if (nextStreamElement !== null) {
+    	var eq = GetEquation(nextStreamElement);
+        if (eq !== null) {
+        	nextStreamElement = eq;
+        }
+    }
+    
+    mySelectionRange = myRange;
     
     return GetHTMLSource(myRange);
 }
@@ -36,12 +39,10 @@ function SetStreamBeginning() {
  */
 function StreamNextElement() {
     //console.debug('StreamNextElement()');
-    
     var eq = null;
     if (nextStreamElement != null) {
         eq = GetEquation(nextStreamElement);
     }
-    
     if (eq !== null) {
         nextStreamElement = eq;
     }

@@ -5,6 +5,7 @@ Created on May 6, 2013
 '''
 from PyQt4.QtGui import QDialog, QWidget
 from forms.about_ui import Ui_AboutDialog
+from gui import loader
 from misc import program_path
 
 class AboutDialog(QDialog):

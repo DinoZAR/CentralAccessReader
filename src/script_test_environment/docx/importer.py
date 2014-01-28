@@ -10,8 +10,8 @@ from lxml import html as HTML
 import os
 import sys
 import inspect
-from src.gui.bookmarks import BookmarkNode
-from src.misc import resource_path
+from gui.bookmarks import BookmarkNode
+from misc import resource_path
 
 # The path to this particular module
 #rootPath = os.path.dirname(inspect.getfile(inspect.currentframe()))

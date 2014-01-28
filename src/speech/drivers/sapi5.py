@@ -12,6 +12,7 @@ import time
 import platform
 import subprocess
 import re
+import os
 from misc import program_path, temp_path
 
 from speech.drivers.SapiCOM import SpVoice, SpFileStream, constants
@@ -49,6 +50,8 @@ class SAPI5Driver(object):
         self._grabbingSpeech = False
         self._alreadyRequestedSpeech = False
         self._requestSpeechHook = requestSpeechHook
+        
+        self._finished = True
         
     def destroy(self):
         '''
@@ -151,7 +154,7 @@ class SAPI5Driver(object):
         The main loop of the SAPI driver. It runs as a server, constantly
         listening for instructions.
         '''
-        #print 'Starting SAPI5 loop...'
+        self._finished = False
         
         self._speechCounter = 0
         
@@ -229,16 +232,14 @@ class SAPI5Driver(object):
             self._checkSettingsChange()
                 
         # Use this empty message to completely clear queue
-        #print 'driver: Emptying out queue in SAPI voice'
         self._voice.Speak('', 3) # SPF_PURGEBEFORESPEAK
-            
-        #print 'driver: Publishing OnFinish'
-        for c in self._delegator['onFinish']:
-            c[1]()
-            
+        
         pythoncom.PumpWaitingMessages()
         
-        #print 'SAPI5 driver done!'
+        for c in self._delegator['onFinish']:
+            c[1]()
+        
+        self._finished = True
         
         return
         
@@ -255,7 +256,7 @@ class SAPI5Driver(object):
         '''
         Returns true if the driver is currently playing.
         '''
-        return self._running
+        return not self._finished
     
     def _checkSettingsChange(self):
         '''
@@ -275,7 +276,7 @@ class SAPI5Driver(object):
         #print 'driver: flagging no more speech'
         self._grabbingSpeech = False
         
-    def speakToFile(self, mp3Path, speechGenerator, progressCallback, labelCallback, checkStopFunction):
+    def speakToFile(self, mp3Path, speechGenerator, tempDirectory, progressCallback, labelCallback, checkStopFunction):
         '''
         Writes the speech output given by the speech generator as an MP3 file
         that will be saved to mp3Path.
@@ -290,10 +291,18 @@ class SAPI5Driver(object):
         stop creation, False being don't stop, and True being stop.
         '''
         pythoncom.CoInitialize()
+        
+        wavPath = os.path.join(tempDirectory, 'tmp.wav')
+        
+        # Try to remove it, if one exists already
+        try:
+            os.remove(wavPath)
+        except OSError:
+            pass
     
         saveFileStream = SpFileStream()
         saveFileStream.Format.Type = constants.SAFT32kHz16BitStereo
-        saveFileStream.Open(temp_path('tmp.wav'), 3)
+        saveFileStream.Open(wavPath, 3)
     
         self._voice = SpVoice()
         self._voice.AudioOutputStream = saveFileStream
@@ -342,7 +351,7 @@ class SAPI5Driver(object):
             startupInfo = subprocess.STARTUPINFO()
             startupInfo.dwFlags = subprocess.STARTF_USESTDHANDLES | subprocess.STARTF_USESHOWWINDOW
             startupInfo.wShowWindow = subprocess.SW_HIDE
-            lameCommand = lameExe + ' -h "' + temp_path('tmp.wav') + '" "' + mp3Path + '"'
+            lameCommand = lameExe + ' -h "' + wavPath + '" "' + mp3Path + '"'
             ps = subprocess.Popen(lameCommand, stdout=subprocess.PIPE, stderr=subprocess.PIPE, startupinfo=startupInfo)
              
             while ps.poll() == None:
@@ -418,50 +427,50 @@ class SAPI5Driver(object):
             
     def handle_onWord(self, stream, pos, char, length):
         #print 'driver: OnWord!'
-        
-        if self._signalsEnabled:
-            # Get the _queue item associated with the stream
-            i = -1
-            for k in self._queue.keys():
-                if self._queue[k][2] == stream:
-                    i = k
-                    break
-            
-            if i >= 0:
-                if self._queue[i][1] != '_silence_':
-                    word = self._queue[i][0][char:char+length]
-                    
-                    # Publish onStart if it is so
-                    myIsFirst = self._isFirstSpeech
-                    if self._isFirstSpeech:
-                        #print 'driver: Publishing onStart'
-                        for c in self._delegator['onStart']:
-                            c[1](char, length, self._queue[i][1], i, word)
-                        self._isFirstSpeech = False
-                    
-                    # Publish onWord
-                    #print 'driver: Publishing onWord'
-                    for c in self._delegator['onWord']:
-                        c[1](char, length, self._queue[i][1], i, word, myIsFirst)
+        if self._running:
+            if self._signalsEnabled:
+                # Get the _queue item associated with the stream
+                i = -1
+                for k in self._queue.keys():
+                    if self._queue[k][2] == stream:
+                        i = k
+                        break
+                
+                if i >= 0:
+                    if self._queue[i][1] != '_silence_':
+                        word = self._queue[i][0][char:char+length]
+                        
+                        # Publish onStart if it is so
+                        myIsFirst = self._isFirstSpeech
+                        if self._isFirstSpeech:
+                            #print 'driver: Publishing onStart'
+                            for c in self._delegator['onStart']:
+                                c[1](char, length, self._queue[i][1], i, word)
+                            self._isFirstSpeech = False
+                        
+                        # Publish onWord
+                        #print 'driver: Publishing onWord'
+                        for c in self._delegator['onWord']:
+                            c[1](char, length, self._queue[i][1], i, word, myIsFirst)
     
     def handle_onEndStream(self, stream, pos):
         #print 'driver: OnEndStream!'
-        
-        if self._signalsEnabled:
-            # Figure out what stream ended and remove it from my queue
-            i = 0
-            self.queueLock.acquire()
-            for k in self._queue.keys():
-                if self._queue[k][2] == stream:
-                    
-                    # Tell all of the people that a stream ended
-                    for c in self._delegator['onEndStream']:
-                        #print 'driver: Publishing onEndStream callbacks'
-                        c[1](stream, self._queue[k][1])
+        if self._running:
+            if self._signalsEnabled:
+                # Figure out what stream ended and remove it from my queue
+                i = 0
+                self.queueLock.acquire()
+                for k in self._queue.keys():
+                    if self._queue[k][2] == stream:
                         
-                    del self._queue[k]
-                    break
-            self.queueLock.release()
+                        # Tell all of the people that a stream ended
+                        for c in self._delegator['onEndStream']:
+                            #print 'driver: Publishing onEndStream callbacks'
+                            c[1](stream, self._queue[k][1])
+                            
+                        del self._queue[k]
+                        break
+                self.queueLock.release()
         
 class SAPIEventSink(object):
     '''

@@ -43,13 +43,31 @@ cp -R ../jquery-ui "./dist/Central Access Reader.app/Contents/Resources/"
 echo "Copying JQuery Scroll-to..."
 cp ../jquery.scrollTo-1.4.3.1-min.js "./dist/Central Access Reader.app/Contents/Resources/"
 
+echo "Copying JQuery Next In DOM..."
+cp ../nextindom.jquery.js "./dist/Central Access Reader.app/Contents/Resources/"
+
 echo "Copying JavaScript functions and configurations..."
 mkdir -p "./dist/Central Access Reader.app/Contents/Resources/src/javascript"
 cp -R ./javascript "./dist/Central Access Reader.app/Contents/Resources/src/"
 
 #
+# GUI forms
+#
+echo "Copying themes..."
+mkdir -p "./dist/Central Access Reader.app/Contents/Resources/src/forms/theme"
+cp -R ./forms/theme "./dist/Central Access Reader.app/Contents/Resources/src/forms/"
+
+echo "Copying resource file..."
+cp ./forms/resource_rc.py "./dist/Central Access Reader.app/Contents/Resources/src/forms/"
+
+#
 # Other files
 #
+echo "Copying files for the headless renderer..."
+mkdir -p "./dist/Central Access Reader.app/Contents/Resources/src/headless"
+cp ./headless/phantomjs_mac "./dist/Central Access Reader.app/Contents/Resources/src/headless/"
+cp ./headless/render.js "./dist/Central Access Reader.app/Contents/Resources/src/headless/"
+
 echo "Make small revision to the Qt image plugins folder..."
 mv "./dist/Central Access Reader.app/Contents/Resources/qt_pluginst4/plugins" "./dist/Central Access Reader.app/Contents/Resources/qt_plugins"
 
@@ -61,8 +79,8 @@ echo "Copying LAME MP3 encoder..."
 cp ./lame_mac "./dist/Central Access Reader.app/Contents/Resources/src/"
 
 echo "Copying OMML to MathML XSLT..."
-mkdir -p "./dist/Central Access Reader.app/Contents/Resources/src/docx"
-cp ./docx/OMMLToMathML.xsl "./dist/Central Access Reader.app/Contents/Resources/src/docx/"
+mkdir -p "./dist/Central Access Reader.app/Contents/Resources/src/document/docx"
+cp ./document/docx/OMMLToMathML.xsl "./dist/Central Access Reader.app/Contents/Resources/src/document/docx/"
 
 echo "Copying tutorial..."
 cp ../Tutorial.docx "./dist/Central Access Reader.app/Contents/Resources/"

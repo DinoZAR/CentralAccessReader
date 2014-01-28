@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>598</width>
-    <height>322</height>
+    <width>666</width>
+    <height>309</height>
    </rect>
   </property>
   <property name="font">
@@ -19,19 +19,19 @@
    <string>About</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="resource.qrc">
+   <iconset>
     <normaloff>:/icons/icons/help_about.png</normaloff>:/icons/icons/help_about.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QLabel" name="label_5">
+      <widget class="QLabel" name="logoLabel">
        <property name="text">
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="resource.qrc">:/icons/icons/CAR_Logo_256.png</pixmap>
+        <pixmap resource="resource.qrc">:/all/icons/CAR_About.png</pixmap>
        </property>
       </widget>
      </item>
@@ -91,7 +91,7 @@
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>40</height>
+           <height>20</height>
           </size>
          </property>
         </spacer>
@@ -111,7 +111,20 @@
        <item>
         <widget class="QLabel" name="label_4">
          <property name="text">
-          <string>Author: Spencer Graffe</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Author: &lt;a href=&quot;http://www.cwu.edu/central-access/developer-bio&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Spencer Graffe&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="openExternalLinks">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Contributers: &lt;a href=&quot;http://www.cwu.edu/central-access/developer-bio&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Justin Wilson&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="openExternalLinks">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -146,6 +159,8 @@
  </widget>
  <resources>
   <include location="resource.qrc"/>
+  <include location="resource.qrc"/>
+  <include location="../../resource.qrc"/>
  </resources>
  <connections>
   <connection>

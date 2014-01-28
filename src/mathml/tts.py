@@ -15,13 +15,13 @@ class MathTTS():
     def __init__(self, initialDatabaseFile):
         
         # Load and generate the pattern trees
-        databaseFile = open(initialDatabaseFile)
+        databaseFile = open(initialDatabaseFile, 'r')
         contents = databaseFile.read()
         databaseFile.close()
         
         self.parserTree = database.parse(contents, initialDatabaseFile)
         
-    def parse(self, mathmlString, stageSink=None):
+    def parse(self, mathmlString):
         root = ET.fromstring(mathmlString)
         mathTree = convertDOMToPatternTree(root)
         

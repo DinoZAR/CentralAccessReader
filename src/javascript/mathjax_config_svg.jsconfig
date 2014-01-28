@@ -6,3 +6,19 @@ MathJax.Hub.Config({
     showMathMenu: false,
     showMathMenuMSIE: false
 });
+
+// This will color all of the mathematics to the correct default color for
+// each math equation. This way, the progress bar doesn't hang on the very end
+MathJax.Hub.Register.MessageHook("New Math", function (message) {
+	var elem = document.getElementById(message[1]).parentNode;
+	SetMathColors(elem);
+	
+	// If on Windows, make the font size twice as large
+	if (navigator.platform.indexOf('Win') != -1) {
+		$(elem, '.MathJax_SVG').each(function (index, element) {
+			var myStyle = window.getComputedStyle(element);
+			$(this).css('font-size', '180%');
+		});
+	}
+	
+});

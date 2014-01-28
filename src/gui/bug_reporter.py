@@ -5,8 +5,8 @@ Created on May 20, 2013
 '''
 from PyQt4 import QtGui
 import webbrowser
-
 from forms.bug_report_ui import Ui_BugReporter
+from gui import loader
 import misc
 
 class BugReporter(QtGui.QDialog):

@@ -35,7 +35,7 @@ class BookmarkNode(object):
             return self.parent.children.index(self)
 
         return 0
-    
+            
     def __repr__(self):
         myString =  '(' + self.name + ': ' + self.anchorId + ')'
         return myString
@@ -51,12 +51,28 @@ class BookmarksTreeModel(QAbstractItemModel):
 
         # Populate the model
         self.root = bookmarkRoot
-
+        
+    def getIndexFromId(self, anchorId, parent=QModelIndex()):
+        '''
+        Returns a QModelIndex for the item that has the anchor ID.
+        '''
+        currRow = 0
+        
+        while self.hasIndex(currRow, 0, parent):
+            myIndex = self.index(currRow, 0, parent)
+            if myIndex.internalPointer().anchorId == anchorId:
+                return myIndex
+            else:
+                results = self.getIndexFromId(anchorId, myIndex)
+                if results is not None:
+                    return results
+            currRow += 1
+        
+        return None
 
     def flags(self, index):
         """Returns the item flags for the given index. """
         return Qt.ItemIsEnabled|Qt.ItemIsSelectable
-
 
     def data(self, index, role):
         """Returns the data stored under the given role for the item

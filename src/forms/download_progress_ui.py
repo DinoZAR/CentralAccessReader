@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/atrctech/Desktop/workspace/NiftyProseArticulator/src/forms/download_progress.ui'
+# Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace\nifty-prose-articulator\src\forms/download_progress.ui'
 #
-# Created: Mon Sep 16 16:34:04 2013
+# Created: Tue Jan 07 09:31:58 2014
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_DownloadProgressWidget(object):
     def setupUi(self, DownloadProgressWidget):
         DownloadProgressWidget.setObjectName(_fromUtf8("DownloadProgressWidget"))
-        DownloadProgressWidget.resize(735, 32)
+        DownloadProgressWidget.resize(735, 33)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/update_down_arrow.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         DownloadProgressWidget.setWindowIcon(icon)
@@ -35,28 +35,29 @@ class Ui_DownloadProgressWidget(object):
         self.horizontalLayout.setMargin(0)
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.label = QtGui.QLabel(DownloadProgressWidget)
+        self.label.setMargin(7)
         self.label.setObjectName(_fromUtf8("label"))
         self.horizontalLayout.addWidget(self.label)
         self.progressBar = QtGui.QProgressBar(DownloadProgressWidget)
         self.progressBar.setProperty("value", 0)
         self.progressBar.setObjectName(_fromUtf8("progressBar"))
         self.horizontalLayout.addWidget(self.progressBar)
-        self.retryButton = QtGui.QPushButton(DownloadProgressWidget)
+        self.downloadRetryButton = QtGui.QPushButton(DownloadProgressWidget)
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/reload.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.retryButton.setIcon(icon1)
-        self.retryButton.setIconSize(QtCore.QSize(24, 24))
-        self.retryButton.setFlat(True)
-        self.retryButton.setObjectName(_fromUtf8("retryButton"))
-        self.horizontalLayout.addWidget(self.retryButton)
-        self.cancelButton = QtGui.QPushButton(DownloadProgressWidget)
+        icon1.addPixmap(QtGui.QPixmap(_fromUtf8(":/classic/icons/reload_classic.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.downloadRetryButton.setIcon(icon1)
+        self.downloadRetryButton.setIconSize(QtCore.QSize(24, 24))
+        self.downloadRetryButton.setFlat(True)
+        self.downloadRetryButton.setObjectName(_fromUtf8("downloadRetryButton"))
+        self.horizontalLayout.addWidget(self.downloadRetryButton)
+        self.downloadCancelButton = QtGui.QPushButton(DownloadProgressWidget)
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/dialog_close.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.cancelButton.setIcon(icon2)
-        self.cancelButton.setIconSize(QtCore.QSize(24, 24))
-        self.cancelButton.setFlat(True)
-        self.cancelButton.setObjectName(_fromUtf8("cancelButton"))
-        self.horizontalLayout.addWidget(self.cancelButton)
+        icon2.addPixmap(QtGui.QPixmap(_fromUtf8(":/classic/icons/close_with_circle_classic.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.downloadCancelButton.setIcon(icon2)
+        self.downloadCancelButton.setIconSize(QtCore.QSize(24, 24))
+        self.downloadCancelButton.setFlat(True)
+        self.downloadCancelButton.setObjectName(_fromUtf8("downloadCancelButton"))
+        self.horizontalLayout.addWidget(self.downloadCancelButton)
         self.horizontalLayout.setStretch(1, 1)
 
         self.retranslateUi(DownloadProgressWidget)
@@ -65,7 +66,7 @@ class Ui_DownloadProgressWidget(object):
     def retranslateUi(self, DownloadProgressWidget):
         DownloadProgressWidget.setWindowTitle(_translate("DownloadProgressWidget", "Form", None))
         self.label.setText(_translate("DownloadProgressWidget", "Downloading update...", None))
-        self.retryButton.setText(_translate("DownloadProgressWidget", "Retry", None))
-        self.cancelButton.setText(_translate("DownloadProgressWidget", "Cancel", None))
+        self.downloadRetryButton.setText(_translate("DownloadProgressWidget", "Retry", None))
+        self.downloadCancelButton.setText(_translate("DownloadProgressWidget", "Cancel", None))
 
 import resource_rc

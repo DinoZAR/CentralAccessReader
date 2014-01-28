@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/atrctech/Desktop/workspace/NiftyProseArticulator/src/forms/document_load_progress.ui'
+# Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace\nifty-prose-articulator\src\forms/document_load_progress.ui'
 #
-# Created: Wed Oct 16 12:37:37 2013
+# Created: Tue Jan 07 09:32:02 2014
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -31,7 +31,7 @@ class Ui_DocumentLoadProgressDialog(object):
         font.setPointSize(12)
         DocumentLoadProgressDialog.setFont(font)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/document_open.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/classic/icons/add_document_classic.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         DocumentLoadProgressDialog.setWindowIcon(icon)
         DocumentLoadProgressDialog.setModal(True)
         self.verticalLayout = QtGui.QVBoxLayout(DocumentLoadProgressDialog)
@@ -47,10 +47,7 @@ class Ui_DocumentLoadProgressDialog(object):
         self.progressBar.setObjectName(_fromUtf8("progressBar"))
         self.horizontalLayout.addWidget(self.progressBar)
         self.cancelButton = QtGui.QPushButton(DocumentLoadProgressDialog)
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/prepare_speech_stop.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.cancelButton.setIcon(icon1)
-        self.cancelButton.setIconSize(QtCore.QSize(24, 24))
+        self.cancelButton.setMinimumSize(QtCore.QSize(0, 32))
         self.cancelButton.setObjectName(_fromUtf8("cancelButton"))
         self.horizontalLayout.addWidget(self.cancelButton)
         self.horizontalLayout.setStretch(0, 1)

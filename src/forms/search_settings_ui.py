@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/atrctech/Desktop/workspace/NiftyProseArticulator/src/forms/search_settings.ui'
+# Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace\nifty-prose-articulator\src\forms/search_settings.ui'
 #
-# Created: Mon Sep 16 16:34:05 2013
+# Created: Tue Jan 07 09:31:55 2014
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,12 +26,12 @@ except AttributeError:
 class Ui_SearchSettings(object):
     def setupUi(self, SearchSettings):
         SearchSettings.setObjectName(_fromUtf8("SearchSettings"))
-        SearchSettings.resize(184, 121)
+        SearchSettings.resize(184, 136)
         font = QtGui.QFont()
         font.setPointSize(12)
         SearchSettings.setFont(font)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/CAR_Logo.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/all/icons/CAR_Logo.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         SearchSettings.setWindowIcon(icon)
         self.verticalLayout_2 = QtGui.QVBoxLayout(SearchSettings)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))

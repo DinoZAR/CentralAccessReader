@@ -3,498 +3,463 @@ Created on Apr 12, 2013
 
 @author: Spencer Graffe
 '''
+from datetime import datetime
+
 from PyQt4.QtGui import QColor
 from lxml import etree
-import platform
-from misc import app_data_path, temp_path, pattern_databases
-import os
-import traceback
+try:
+    from mathml_fast.tts import MathTTS
+except ImportError:
+    print 'Loading slower MathTTS...'
+    from mathml.tts import MathTTS
 
-class Configuration(object):
+from misc import pattern_databases
+    
+# Contains the data for the configuration. The format is as follows:
+#
+# {key : [value, default, isCached, cacheValue, lastCachedValue]}
+#
+# value - string representing the value of the key
+# default - string representing the default value of the key
+# isCached - boolean flagging whether this configuration requires to be cached
+#            as an object
+# cacheValue - object representing the value for the key
+# lastCachedValue - string representing the value for when the cache was
+#                   generated.
+#
+# NOTE: The cache is not created on load. The underlying function must manage
+# the cache.
+
+_CONFIG_DATA = {}
+
+INDEX_VALUE = 0
+INDEX_DEFAULT = 1
+INDEX_IS_CACHED = 2
+INDEX_CACHE_VALUE = 3
+INDEX_LAST_CACHED_VALUE = 4
+
+# ------------------------------------------------------------------------------
+#
+# BASE FUNCTIONS
+#
+# ------------------------------------------------------------------------------
+
+def getValue(key, defaultValue=None, isCached=False):
     '''
-    Object that holds all of the settings for the Nifty Prose Articulator
+    Gets the value for the key. If the key didn't exist before, the key will be 
+    set to the default value, and the default value will be returned.
+    
+    If no defaultValue was given, and the key doesn't exist, a KeyError is
+    raised.
     '''
+    if key in _CONFIG_DATA:
+        return _CONFIG_DATA[key][INDEX_VALUE]
+    else:
+        if defaultValue is None:
+            raise KeyError('Key ' + key + ' does not exist in configuration, and no default value was provided.')
+        else:
+            #print 'Creating key:', key, ',', defaultValue
+            _CONFIG_DATA[key] = [defaultValue, defaultValue, isCached, None, '']
+            return defaultValue
+
+def setValue(key, value, defaultValue=None, isCached=False):
+    '''
+    Sets the key to the value. If the key didn't exist before, it will add the
+    key as a new entry. In this case, if the defaultValue is NOT used, the
+    default value for that key will be the value given.
+    '''
+    if key in _CONFIG_DATA:
+        _CONFIG_DATA[key][INDEX_VALUE] = value
+    else:
+        #print 'Creating key:', key, ',', value, ',', defaultValue
+        if defaultValue is not None:
+            _CONFIG_DATA[key] = [value, defaultValue, isCached, None, '']
+        else:
+            _CONFIG_DATA[key] = [value, value, isCached, None, '']
+            
+def restoreDefaults():
+    '''
+    Restores all keys to their default values.
+    '''
+    for k in _CONFIG_DATA.keys():
+        setValue(k, _CONFIG_DATA[k][INDEX_DEFAULT])
+
+# ------------------------------------------------------------------------------
+#
+# COMPLEX TYPES
+#
+# ------------------------------------------------------------------------------
+
+def getMathDatabase(key, defaultValue=None):
+    '''
+    Gets the value from the key as a MathTTS object. The MathTTS object is
+    cached, so it will only be regenerated if the value changes. Otherwise, 
+    same behavior applies as getValue.
     
-    def __init__(self):
-        '''
-        Fill it with all of the basic stuff.
-        '''
-        self.restoreDefaults()
-        
-        # Show Tutorial (first time thing)
-        self.showTutorial = True
-        
-    def restoreDefaults(self):
-        '''
-        As it implies, restores the configuration back to its default settings.
-        '''
-        # Speech settings
-        self.volume = 100
-        self.rate = 50
-        self.voice = ''
-        self.pause_length = 0  # unit between 0-10
-        
-        # Tagging
-        self.tag_image = False
-        self.tag_math = False
-        
-        # Math database
-        self.math_database = 'General'
-        
-        # Highlighter settings
-        self.highlight_text_enable = True
-        self.highlight_line_enable = True
-        
-        # Color settings
-        self.color_contentText = QColor(255,255,255)
-        self.color_contentBackground = QColor(10,10,10)
-        
-        self.color_highlightText = QColor(0,0,0)
-        self.color_highlightBackground = QColor(255,255,0)
-        
-        self.color_highlightLineText = QColor(0,0,0)
-        self.color_highlightLineBackground = QColor(0,255,0)
-        
-        # Zoom settings
-        self.zoom_content = 1.0
-        self.zoom_navigation_ptsize = 14
-        
-        # Search settings
-        self.search_whole_word = False
-        self.search_match_case = False
-        
-        # Font settings
-        self.font_all = 'Arial'
-        
-    def getBugReportString(self):
-        '''
-        Returns a string describing the settings for the bug report. It will
-        not include information that is not anonymous.
-        '''
-        out = 'Settings:\n'
-        out += '----------------------------------------------\n\n'
-        
-        # Speech
-        out += 'Speech:\n'
-        out += '- Volume: ' + str(self.volume) + '\n'
-        out += '- Rate: ' + str(self.rate) + '\n'
-        out += '- Voice: ' + self.voice + '\n'
-        out += '- Tag Images: ' + str(self.tag_image) + '\n'
-        out += '- Tag Math: ' + str(self.tag_math) + '\n'
-        out += '- Math Database: ' + os.path.basename(self.math_database) + '\n'
-        out += '\n'
-        
-        # Colors
-        out += 'Colors:\n'
-        out += '- Enable Word Highlight: ' + str(self.highlight_text_enable) + '\n'
-        out += '- Enable Sentence Highlight: ' + str(self.highlight_line_enable) + '\n'
-        out += '- Content Text: ' + self._createRGBStringFromQColor(self.color_contentText) + '\n'
-        out += '- Content Background: ' + self._createRGBStringFromQColor(self.color_contentBackground) + '\n'
-        out += '- Highlight Text: ' + self._createRGBStringFromQColor(self.color_highlightText) + '\n'
-        out += '- Highlight Background: ' + self._createRGBStringFromQColor(self.color_highlightBackground) + '\n'
-        out += '- Highlight Line Text: ' + self._createRGBStringFromQColor(self.color_highlightLineText) + '\n'
-        out += '- Highlight Line Background: ' + self._createRGBStringFromQColor(self.color_highlightLineBackground) + '\n'
-        out += '\n'
-        
-        # Font
-        out += 'Font: ' + self.font_all + '\n'
-        
-        # Zoom
-        out += 'Zoom:\n'
-        out += '- Content: ' + str(self.zoom_content) + '\n'
-        out += '- Navigation: ' + str(self.zoom_navigation_ptsize) + '\n'
-        out += '\n'
-        
-        # Search
-        out += 'Search:\n'
-        out += '- Whole Word: ' + str(self.search_whole_word) + '\n'
-        out += '- Match Case: ' + str(self.search_match_case) + '\n'
-        
-        return out
-        
-    def loadFromFile(self, filePath):
-        print 'Loading config...'
-        
-        # Check if the file exists first. Otherwise, create the file
-        configFile = None
-        configDOM = None
-        success = False
-        try:
-            configFile = open(filePath, 'r')
-            configDOM = etree.parse(configFile)
-            configFile.close()
-            success = True
-        except Exception:
-            # If the thing doesn't parse, then destroy settings and make new one
-            print 'Exception occurred in loading configuration'
-            print traceback.format_exc()                        
-            self.restoreDefaults()
-            self.saveToFile(filePath)
-        
-        if success:
-            
-            # Speech Settings
-            query = configDOM.xpath('/Configuration/Volume')
-            if len(query) > 0:
-                self.volume = int(query[0].text)
-            else:
-                self.volume = 100
-            
-            query = configDOM.xpath('/Configuration/Rate')
-            if len(query) > 0:
-                self.rate = int(query[0].text)
-            else:
-                self.rate = 50
-                
-            query = configDOM.xpath('/Configuration/PauseLength')
-            if len(query) > 0:
-                self.pause_length = int(query[0].text)
-            else:
-                self.pause_length = 0
-            
-            query = configDOM.xpath('/Configuration/Voice')
-            if len(query) > 0:
-                self.voice = query[0].text
-                if self.voice is None:
-                    self.voice = ''
-            else:
-                self.voice = ''
-            
-            # Tagging math or images
-            query = configDOM.xpath('/Configuration/TagImage')
-            if len(query) > 0:
-                self.tag_image = int(query[0].text)
-            else:
-                self.tag_image = 0
-            if self.tag_image == 1:
-                self.tag_image = True
-            else:
-                self.tag_image = False
-            
-            query = configDOM.xpath('/Configuration/TagMath')
-            if len(query) > 0:
-                self.tag_math = int(query[0].text)
-            else:
-                self.tag_math = 0
-            if self.tag_math == 1:
-                self.tag_math = True
-            else:
-                self.tag_math = False
-            
-            # Math database
-            query = configDOM.xpath('/Configuration/MathDatabase')
-            if len(query) > 0:
-                self.math_database = os.path.splitext(os.path.basename(query[0].text))[0]
-            else:
-                self.math_database = 'General'
-                
-            # Highlighter Settings
-            query = configDOM.xpath('/Configuration/EnableTextHighlight')
-            if len(query) > 0:
-                self.highlight_text_enable = int(query[0].text)
-            else:
-                self.highlight_text_enable = 1
-            if self.highlight_text_enable == 1:
-                self.highlight_text_enable = True
-            else:
-                self.highlight_text_enable = False
-            
-            query = configDOM.xpath('/Configuration/EnableLineHighlight')
-            if len(query) > 0:
-                self.highlight_line_enable = int(query[0].text)
-            else:
-                self.highlight_line_enable = 1
-            if self.highlight_line_enable == 1:
-                self.highlight_line_enable = True
-            else:
-                self.highlight_line_enable = False
-            
-            # Color Settings
-            query = configDOM.xpath('/Configuration/Colors/ContentText')
-            if len(query) > 0:
-                self.color_contentText = self._createQColorFromCommaSeparated(query[0].text)
-            else:
-                self.color_contentText = QColor(255,255,255)
-            query = configDOM.xpath('/Configuration/Colors/ContentBackground')
-            if len(query) > 0:
-                self.color_contentBackground = self._createQColorFromCommaSeparated(query[0].text)
-            else:
-                self.color_contentBackground = QColor(0,0,0)
-            
-            query = configDOM.xpath('/Configuration/Colors/HighlightText')
-            if len(query) > 0:
-                self.color_highlightText = self._createQColorFromCommaSeparated(query[0].text)
-            else:
-                self.color_highlightText = QColor(0,0,0)
-            query = configDOM.xpath('/Configuration/Colors/HighlightBackground')
-            if len(query) > 0:
-                self.color_highlightBackground = self._createQColorFromCommaSeparated(query[0].text)
-            else:
-                self.color_highlightBackground = QColor(255,255,0)
-            
-            query = configDOM.xpath('/Configuration/Colors/HighlightLineText')
-            if len(query) > 0:
-                self.color_highlightLineText = self._createQColorFromCommaSeparated(query[0].text)
-            else:
-                self.color_highlightLineText = QColor(0,0,0)
-                
-            query = configDOM.xpath('/Configuration/Colors/HighlightLineBackground')
-            if len(query) > 0:
-                self.color_highlightLineBackground = self._createQColorFromCommaSeparated(query[0].text)
-            else:
-                self.color_highlightLineBackground = QColor(0,255,0)
-            
-            # Font Settings
-            query = configDOM.xpath('/Configuration/Fonts/All')
-            if len(query) > 0:
-                self.font_all = query[0].text
-            else:
-                self.font_all = 'Arial'
-            
-            # Zoom Settings
-            query = configDOM.xpath('/Configuration/Zooms/Content')
-            if len(query) > 0:
-                self.zoom_content = float(query[0].text)
-            else:
-                self.zoom_content = 1.0
-            query = configDOM.xpath('/Configuration/Zooms/Navigation')
-            if len(query) > 0:
-                self.zoom_navigation_ptsize = int(query[0].text)
-            else:
-                self.zoom_navigation_ptsize = 14
-            
-            query = configDOM.xpath('/Configuration/Search/WholeWord')
-            if len(query) > 0:
-                self.search_whole_word = int(query[0].text)
-            else:
-                self.search_whole_word = 0
-            if self.search_whole_word == 1:
-                self.search_whole_word = True
-            else:
-                self.search_whole_word = False
-            
-            query = configDOM.xpath('/Configuration/Search/MatchCase')
-            if len(query) > 0:
-                self.search_match_case = int(query[0].text)
-            else:
-                self.search_match_case = 0
-            if self.search_match_case == 1:
-                self.search_match_case = True
-            else:
-                self.search_match_case = False
-            
-            # Show Tutorial
-            query = configDOM.xpath('/Configuration/ShowTutorial')
-            if len(query) > 0:
-                self.showTutorial = query[0].text
-            else:
-                self.showTutorial = '1'
-            if self.showTutorial == '1':
-                self.showTutorial = True
-            else:
-                self.showTutorial = False
-            
-        
-    def saveToFile(self, filePath):
-        print 'Saving config...'
-        
-        root = etree.Element("Configuration")
-        
-        # Speech Settings
-        volumeElem = etree.SubElement(root, 'Volume')
-        volumeElem.text = str(self.volume)
-        rateElem = etree.SubElement(root, 'Rate')
-        rateElem.text = str(self.rate)
-        voiceElem = etree.SubElement(root, 'Voice')
-        voiceElem.text = self.voice
-        pauseElem = etree.SubElement(root, 'PauseLength')
-        pauseElem.text = str(self.pause_length)
-        
-        elem = etree.SubElement(root, 'TagImage')
-        if self.tag_image:
-            elem.text = '1'
-        else:
-            elem.text = '0'
-            
-        elem = etree.SubElement(root, 'TagMath')
-        if self.tag_math:
-            elem.text = '1'
-        else:
-            elem.text = '0'
-            
-        elem = etree.SubElement(root, 'MathDatabase')
-        elem.text = self.math_database
-        
-        # Highlighter Settings
-        elem = etree.SubElement(root, 'EnableTextHighlight')
-        if self.highlight_text_enable:
-            elem.text = '1'
-        else:
-            elem.text = '0'
-            
-        elem = etree.SubElement(root, 'EnableLineHighlight')
-        if self.highlight_line_enable:
-            elem.text = '1'
-        else:
-            elem.text = '0'
-        
-        # Color Settings
-        colorRoot = etree.SubElement(root, 'Colors')
-        elem = etree.SubElement(colorRoot, 'ContentText')
-        elem.text = self._createCommaSeparatedFromQColor(self.color_contentText)
-        elem = etree.SubElement(colorRoot, 'ContentBackground')
-        elem.text = self._createCommaSeparatedFromQColor(self.color_contentBackground)
-        elem = etree.SubElement(colorRoot, 'HighlightText')
-        elem.text = self._createCommaSeparatedFromQColor(self.color_highlightText)
-        elem = etree.SubElement(colorRoot, 'HighlightBackground')
-        elem.text = self._createCommaSeparatedFromQColor(self.color_highlightBackground)
-        elem = etree.SubElement(colorRoot, 'HighlightLineText')
-        elem.text = self._createCommaSeparatedFromQColor(self.color_highlightLineText)
-        elem = etree.SubElement(colorRoot, 'HighlightLineBackground')
-        elem.text = self._createCommaSeparatedFromQColor(self.color_highlightLineBackground)
-        
-        # Font settings
-        fontRoot = etree.SubElement(root, 'Fonts')
-        elem = etree.SubElement(fontRoot, 'All')
-        elem.text = self.font_all
-        
-        # Zoom settings
-        zoomRoot = etree.SubElement(root, 'Zooms')
-        elem = etree.SubElement(zoomRoot, 'Content')
-        elem.text = str(self.zoom_content)
-        elem = etree.SubElement(zoomRoot, 'Navigation')
-        elem.text = str(self.zoom_navigation_ptsize)
-        
-        # Search Settings
-        searchRoot = etree.SubElement(root, 'Search')
-        elem = etree.SubElement(searchRoot, 'WholeWord')
-        if self.search_whole_word:
-            elem.text = '1'
-        else:
-            elem.text = '0'
-        elem = etree.SubElement(searchRoot, 'MatchCase')
-        if self.search_match_case:
-            elem.text = '1'
-        else:
-            elem.text = '0'
-        
-        # Show Tutorial
-        elem = etree.SubElement(root, 'ShowTutorial')
-        if self.showTutorial:
-            elem.text = '1'
-        else:
-            elem.text = '0'
-        
-        configFile = open(filePath, 'w')
-        configFile.write(etree.tostring(root, pretty_print=True))
-        configFile.close()
-        
-        outtext = self._writeCSS()
-        cssPath = temp_path('import/defaultStyle.css')
-        if not os.path.exists(cssPath):
-            os.makedirs(os.path.dirname(cssPath))
-        cssFile = open(cssPath, 'w')
-        cssFile.write(outtext)
-        cssFile.close()
+    defaultValue is assumed to be a string.
+    '''
+    myDatabase = getValue(key, defaultValue, isCached=True)
     
-    def _createQColorFromCommaSeparated(self, colorString):
-        tokens = colorString.split(',')
-        for i in range(len(tokens)):
-            tokens[i] = tokens[i].strip()
+    # Check if value is same as cache value. If not, the math database must
+    # be regenerated
+    if _CONFIG_DATA[key][INDEX_VALUE] != _CONFIG_DATA[key][INDEX_LAST_CACHED_VALUE]:
+        newDatabase = MathTTS(pattern_databases()[myDatabase])
+        _CONFIG_DATA[key][INDEX_CACHE_VALUE] = newDatabase
+        _CONFIG_DATA[key][INDEX_LAST_CACHED_VALUE] = myDatabase
         
-        return QColor(int(tokens[0]), int(tokens[1]), int(tokens[2]))
+    return _CONFIG_DATA[key][INDEX_CACHE_VALUE]
+
+def setMathDatabase(key, value, defaultValue=None):
+    '''
+    Sets the value to the key. The value and defaultValue are strings describing
+    the database. If the value has changed from the previous value, the database
+    will be re-cached. Otherwise, same behavior applies as setValue.
+    '''
+    setValue(key, value, defaultValue, isCached=True)
+    myDatabase = getValue(key, value, defaultValue)
     
-    def _createRGBStringFromQColor(self, color):
-        return 'rgb(' + str(color.red()) + ', ' + str(color.green()) + ', ' + str(color.blue()) + ')'
+    # If last value is not the same as current value, then cache must be updated
+    if myDatabase != _CONFIG_DATA[key][INDEX_LAST_CACHED_VALUE]:
+        database = MathTTS(pattern_databases()[myDatabase])
+        _CONFIG_DATA[key][INDEX_CACHE_VALUE] = database
+        _CONFIG_DATA[key][INDEX_LAST_CACHED_VALUE] = myDatabase
+        
+    return _CONFIG_DATA[key][INDEX_CACHE_VALUE]
+
+def getColor(key, defaultValue=None):
+    '''
+    Gets the color from the key as a QColor. Same behavior applies as getValue.
     
-    def _createCommaSeparatedFromQColor(self, color):
-        return str(color.red()) + ',' + str(color.green()) + ',' + str(color.blue())
+    defaultValue is assumed to be a QColor.
+    '''
+    myDefaultValue = defaultValue
+    if defaultValue is not None:
+        myDefaultValue = _createCommaSeparatedFromQColor(defaultValue)
+    
+    return _createQColorFromCommaSeparated(getValue(key, myDefaultValue))
         
-    def _writeCSS(self):
-        '''
-        Writes out the CSS file that has my configurations in it as a byte
-        string.
-        '''
+def setColor(key, value, defaultValue=None):
+    '''
+    Sets the QColor as a value for the key. Same behavior applies as setValue.
+    
+    defaultValue is assumed to be a QColor.
+    '''
+    myValue = _createCommaSeparatedFromQColor(value)
+    myDefaultValue = defaultValue
+    if defaultValue is not None:
+        myDefaultValue = _createCommaSeparatedFromQColor(defaultValue)
+    
+    setValue(key, myValue, myDefaultValue)
+
+def _createQColorFromCommaSeparated(colorString):
+    '''
+    Creates a QColor from a comma separated string. Good for retrieving a color
+    from a configuration value.
+    '''
+    tokens = colorString.split(',')
+    for i in range(len(tokens)):
+        tokens[i] = tokens[i].strip()
+    
+    return QColor(int(tokens[0]), int(tokens[1]), int(tokens[2]))
+
+def _createCommaSeparatedFromQColor(color):
+    '''
+    Converts a QColor into a comma separated string, which is good for setting
+    as a configuration value.
+    '''
+    return str(color.red()) + ',' + str(color.green()) + ',' + str(color.blue())
+
+def getDate(key, defaultValue=None):
+    '''
+    Gets a datetime object from the value of the key. Same behavior applies as
+    getValue.
+    
+    defaultValue is assumed to be a datetime object.
+    '''
+    myDefaultValue = defaultValue
+    if defaultValue is not None:
+        myDefaultValue = defaultValue.isoformat().split('T')[0]
+    
+    return datetime.strptime(getValue(key, myDefaultValue), '%Y-%M-%d')
+
+def setDate(key, value, defaultValue=None):
+    '''
+    Sets the value to a key using a datetime object. Same behavior applies as
+    setValue.
+    
+    defaultValue is assumed to be a datetime object.
+    '''
+    myValue = value.isoformat().split('T')[0]
+    myDefaultValue = defaultValue
+    if defaultValue is not None:
+        myDefaultValue = defaultValue.isoformat().split('T')[0]
+    
+    setValue(key, myValue, myDefaultValue)
+    
+# ------------------------------------------------------------------------------
+#
+# PRIMITIVE TYPES
+#
+# ------------------------------------------------------------------------------
         
-        # If text highlighting is disabled, I will give it a completely clear
-        # background to imitate that it is off.
-        highlightTextColor = ''
-        highlightTextBackgroundColor = ''
-        if self.highlight_text_enable:
-            highlightTextColor = self._createRGBStringFromQColor(self.color_highlightText)
-            highlightTextBackgroundColor = self._createRGBStringFromQColor(self.color_highlightBackground)
+def getBool(key, defaultValue=None):
+    '''
+    Gets a boolean as value from a key. Same behavior applies as getValue.
+    
+    defaultValue is assumed to be a boolean.
+    '''
+    myDefaultValue = defaultValue
+    if defaultValue is not None:
+        myDefaultValue = _convertBoolToString(defaultValue)
+        
+    #print 'Getting bool:', key, ',', getValue(key, myDefaultValue)
+    return _convertStringToBool(getValue(key, myDefaultValue))
+        
+def setBool(key, value, defaultValue=None):
+    '''
+    Sets a value for a key with a boolean. Same behavior applies as setValue.
+    
+    defaultValue is assumed to be a boolean.
+    '''
+    myValue = _convertBoolToString(value)
+    myDefaultValue = defaultValue
+    if defaultValue is not None:
+        myDefaultValue = _convertBoolToString(defaultValue)
+    
+    #print 'Setting value for:', key, myValue
+    setValue(key, myValue, myDefaultValue)
+    
+def _convertStringToBool(s):
+    if '1' in s:
+        return True
+    else:
+        return False
+
+def _convertBoolToString(b):
+    if b:
+        return '1'
+    else:
+        return '0'
+
+def getInt(key, defaultValue=None):
+    '''
+    Gets the value from a key as an integer. Same behavior applies as getValue.
+    
+    defaultValue is assumed to be an integer.
+    '''
+    myDefaultValue = defaultValue
+    if defaultValue is not None:
+        myDefaultValue = str(defaultValue)
+    
+    return float(getValue(key, myDefaultValue))
+
+def setInt(key, value, defaultValue=None):
+    '''
+    Sets the value of a key using an integer. Same behavior applies as setValue.
+    
+    defaultValue is assumed to be an integer.
+    '''
+    myValue = str(value)
+    myDefaultValue = defaultValue
+    if defaultValue is not None:
+        myDefaultValue = str(defaultValue)
+    
+    setValue(key, myValue, myDefaultValue)
+
+def load(filePath):
+    '''
+    Loads the configuration to file.
+    '''
+    print 'Loading configuration file...'
+    try:
+        with open(filePath, 'r') as f:
+            root = etree.fromstring(f.read())
+        
+        for e in root:
+            key = e.tag
+            value = e.xpath('.//Value')[0].text
+            defaultValue = e.xpath('.//Default')[0].text
+            setValue(key, value, defaultValue)
+            
+    except Exception as e:
+        print 'Problem reading configuration from file:', e
+
+def save(filePath):
+    '''
+    Saves the configuration to file.
+    '''
+    print 'Saving configuration file...'
+    
+    root = etree.Element('Configuration')
+    
+    for k in _CONFIG_DATA.keys():
+        elem = etree.SubElement(root, k)
+        value = etree.SubElement(elem, 'Value')
+        value.text = _CONFIG_DATA[k][0]
+        defaultValue = etree.SubElement(elem, 'Default')
+        defaultValue.text = _CONFIG_DATA[k][1]
+    
+    with open(filePath, 'w') as f:
+        f.write(etree.tostring(root))
+        
+# ------------------------------------------------------------------------------
+#
+# USEFUL UTILITIES
+#
+# ------------------------------------------------------------------------------
+
+def getReport():
+    '''
+    Returns a formatted string reporting on the setting values. Can be used
+    for bug reports and things of that nature.
+    '''
+    out = 'Configuration:\n'
+    out += '--------------\n'
+    
+    for k in _CONFIG_DATA.keys():
+        out += ' - ' + k + ': ' + _CONFIG_DATA[k][0] + ', [default: ' + _CONFIG_DATA[k][1] + ']\n'
+        
+    return out
+
+def getRGBStringFromQColor(color):
+    return 'rgb(' + str(color.red()) + ','+ str(color.green()) +',' + str(color.blue()) + ')'
+
+def getCSS():
+    '''
+    Gets the CSS associated with the configuration. Returns the CSS as a string.
+    '''
+    contentTextColor = 'rgb(' + getValue('ContentTextColor', '255,255,255') + ')'
+    contentBackgroundColor = 'rgb(' + getValue('ContentBackgroundColor', '0,0,0') + ')'
+    
+    highlightTextColor = 'rgb(' + getValue('HighlightTextColor', '0,0,0') + ')'
+    highlightBackgroundColor = 'rgb(' + getValue('HighlightBackgroundColor', '255,255,0') + ')'
+    
+    highlightLineTextColor = 'rgb(' + getValue('HighlightLineTextColor', '0,0,0') + ')'
+    highlightLineBackgroundColor = 'rgb(' + getValue('HighlightLineBackgroundColor', '0,255,0') + ')'
+    
+    # If text highlighting is disabled, I will give it a completely clear
+    # background to imitate that it is off.
+    myHighlightText = ''
+    myHighlightBackground = ''
+    
+    if getBool('HighlightTextEnable', True):
+        myHighlightText = 'rgb(' + getValue('HighlightTextColor', '0,0,0') + ')'
+        myHighlightBackground = 'rgb(' + getValue('HighlightBackgroundColor', '255,255,0') + ')'
+    else:
+        if getBool('HighlightLineEnable', True):
+            myHighlightText = 'rgb(' + getValue('ContentTextColor', '255,255,255') + ')'
         else:
-            if not self.highlight_line_enable:
-                highlightTextColor = self._createRGBStringFromQColor(self.color_contentText)
-            else:
-                highlightTextColor = self._createRGBStringFromQColor(self.color_highlightLineText)
-            highlightTextBackgroundColor = 'transparent'
+            myHighlightText = 'rgb(' + getValue('HighlightLineTextColor', '0,0,0') + ')'
+        myHighlightBackground = 'transparent'
         
-        # BEGIN CSS FILE
-        # -------------------------------------------
-        
-        outtext = '''
+    # BEGIN CSS FILE
+    # -------------------------------------------
+    
+    outtext = '''
 body
 {
-background: ''' + self._createRGBStringFromQColor(self.color_contentBackground) + ''';
-color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
+background: ''' + contentBackgroundColor + ''';
+color: ''' + contentTextColor + ''';
 font-size: 12pt;
-font-family: "''' + self.font_all + '''";
+font-family: "''' + getValue('Font', 'Arial') + '''";
+}
+
+::selection {
+    background: ''' + highlightBackgroundColor + ''';
+    color: ''' + highlightTextColor + ''';
 }
 
 h1
 {
-color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
+color: ''' + contentTextColor + ''';
 text-align: center;
 font-size: 300%;
 }
 
 h2
 {
-color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
+color: ''' + contentTextColor + ''';
 border-style: dashed;
 border-width: 0px 0px 1px 0px;
-border-color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
+border-color: ''' + contentTextColor + ''';
 padding: 15px;
 font-size: 200%;
 }
 
 h3
 {
-color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
+color: ''' + contentTextColor + ''';
 padding: 10px;
 font-size: 175%;
 }
 
 h4
 {
-color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
+color: ''' + contentTextColor + ''';
 font-size: 150%;
 }
 
 p
 {
-color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
+color: ''' + contentTextColor + ''';
 }
 
 a:link
 {
-color: ''' + self._createRGBStringFromQColor(self.color_highlightLineBackground) + ''';
+color: ''' + highlightLineBackgroundColor + ''';
 }
 
 a:visited
 {
-color: ''' + self._createRGBStringFromQColor(self.color_highlightLineBackground) + ''';
+color: ''' + highlightLineBackgroundColor + ''';
 }
 
 a:hover
 {
-color: ''' + self._createRGBStringFromQColor(self.color_highlightBackground) + ''';
+color: ''' + highlightBackgroundColor + ''';
 }
 
 a:active
 {
-color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
+color: ''' + contentTextColor + ''';
+}
+
+a.button {
+text-decoration: none;
+padding: 10px 15px;
+margin: 10px;
+background: ''' + contentBackgroundColor + ''';
+color: ''' + contentTextColor + ''';
+-webkit-border-radius: 4px;
+-moz-border-radius: 4px;
+border-radius: 4px;
+border: solid 1px ''' + contentTextColor + ''';
+text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.4);
+-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 1px rgba(0, 0, 0, 0.2);
+-moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 1px rgba(0, 0, 0, 0.2);
+box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 1px rgba(0, 0, 0, 0.2);
+-webkit-transition-duration: 0.2s;
+-moz-transition-duration: 0.2s;
+transition-duration: 0.2s;
+-webkit-user-select:none;
+-moz-user-select:none;
+-ms-user-select:none;
+user-select:none;
+}
+
+a.button:hover {
+background: ''' + highlightBackgroundColor + ''';
+color: ''' + highlightTextColor + ''';
+border: solid 1px #2A4E77;
+}
+
+a.button:active {
+-webkit-box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
+-moz-box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
+background: ''' + highlightLineBackgroundColor + ''';
+color: ''' + highlightLineTextColor + ''';
+box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
+border: solid 1px
 }
 
 img
@@ -508,20 +473,12 @@ table, th, td
 margin-top: 2em;
 margin-bottom: 2em;
 border-collapse: collapse;
-border: 1px solid ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
+border: 1px solid ''' + contentTextColor + ''';
 padding: 15px;
 }
 
 .mathmlEquation
 {
-'''
-        # If we are on Windows, make it bigger to better match surrounding text
-        if platform.system() == 'Windows':
-            outtext += r'font-size: 230%;'
-        else:
-            outtext += r'font-size: 100%;'
-    
-        outtext += '''
 }
 
 .pageNumber
@@ -542,34 +499,43 @@ font-size: 150%;
 
 .ui-tooltip 
 {
-background: ''' + self._createRGBStringFromQColor(self.color_contentBackground) + ''';
-border: 2px solid ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
+background: ''' + contentBackgroundColor + ''';
+border: 2px solid ''' + contentTextColor + ''';
 padding: 10px 20px;
 margin-left: 10px;
-color: ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
+color: ''' + contentTextColor + ''';
 border-radius: 20px;
-box-shadow: 0 0 7px ''' + self._createRGBStringFromQColor(self.color_contentText) + ''';
+box-shadow: 0 0 7px ''' + contentTextColor + ''';
 -webkit-user-select: none;
 -moz-user-select: -moz-none;
 }
 
 #npaHighlightLine
 {
-background-color: ''' + self._createRGBStringFromQColor(self.color_highlightLineBackground) + ''';
-color: ''' + self._createRGBStringFromQColor(self.color_highlightLineText) + ''';
+background-color: ''' + highlightLineBackgroundColor + ''';
+color: ''' + highlightLineTextColor + ''';
 -webkit-border-radius: 5px;
 }
 
 #npaHighlight
 {
-background-color: ''' + highlightTextBackgroundColor + ''';
-color: ''' + highlightTextColor + ''';
-box-shadow: 1px 1px 7px ''' + highlightTextBackgroundColor + ''';
+background-color: ''' + myHighlightBackground + ''';
+color: ''' + myHighlightText + ''';
 -webkit-border-radius: 3px;
 display: inline-block;
 z-index: 2;
-}'''
-        # -------------------------------------------
-        # END CSS FILE
-        
-        return outtext
+}
+
+#npaHighlightSelection
+{
+background-color: ''' + highlightBackgroundColor + ''';
+color: ''' + highlightTextColor + ''';
+-webkit-border-radius: 3px;
+display: inline-block;
+z-index: 2;
+}
+'''
+    # -------------------------------------------
+    # END CSS FILE
+    
+    return outtext

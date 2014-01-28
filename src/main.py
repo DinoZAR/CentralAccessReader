@@ -10,12 +10,18 @@ def main():
     import sys
     import os
     
+    # Append the parent of this file so that my paths are correct when running
+    # it from command-line
+    
     from PyQt4.QtGui import QApplication, QPixmap, QSplashScreen
+    
+    QApplication.setGraphicsSystem('raster')
+    
     app = QApplication(sys.argv)
-      
+    
     # Create a splash screen
     from forms import resource_rc
-    pixmap = QPixmap(':/icons/icons/CAR Splash.png')
+    pixmap = QPixmap(':/all/icons/CAR Splash.png')
     splash = QSplashScreen(pixmap)
     splash.show()
     app.processEvents()
@@ -25,17 +31,46 @@ def main():
     
     if not os.path.exists(os.path.dirname(program_path('test.txt'))):
         os.makedirs(os.path.dirname(program_path('test.txt')))
-    if not os.path.exists(os.path.dirname(app_data_path('test.txt'))):
+    if not os.path.exists(os.path.dirname(app_data_path('test.txt'))): 
         os.makedirs(os.path.dirname(app_data_path('test.txt')))
     if not os.path.exists(os.path.dirname(temp_path('test.txt'))):
         os.makedirs(os.path.dirname(temp_path('test.txt')))
+        
+    # Clear out all items in temp folder
+    for path, dirnames, filenames in os.walk(temp_path('')):
+        for f in filenames:
+            os.remove(os.path.join(path, f))
+    
+    # Load and set default values for the configuration
+    import misc
+    from gui import configuration
+    configuration.load(misc.app_data_path('configuration.xml'))
+    
+    # Set the default math database. If it has already been set, this caches it.
+    configuration.setMathDatabase('MathDatabase', configuration.getValue('MathDatabase', 'General'))
+    
+    # Write out the CSS that styles all of the documents
+    if not os.path.exists(os.path.dirname(misc.temp_path('import/test.css'))):
+        os.makedirs(os.path.dirname(misc.temp_path('import/test.css')))
+    with open(misc.temp_path('import/defaultStyle.css'), 'w') as f:
+        f.write(configuration.getCSS())
+    
+    # Set the theme for CAR
+    from gui import loader
+    loader.load_theme(app, configuration.getValue('Theme', 'Crimson'))
     
     from gui.main_window import MainWindow
     
     window = MainWindow(app)
     window.show()
     splash.finish(window)
-    sys.exit(app.exec_())
+    app.exec_()
+    
+    # Save the configuration before close
+    print 'Saving before close...'
+    configuration.save(misc.app_data_path('configuration.xml'))
+    
+    sys.exit(0)
 
 if __name__ == '__main__':
     main()

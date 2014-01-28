@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'about.ui'
+# Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace\nifty-prose-articulator\src\forms/about.ui'
 #
-# Created: Tue Sep 17 11:30:24 2013
-#      by: PyQt4 UI code generator 4.10
+# Created: Tue Jan 07 09:35:31 2014
+#      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_AboutDialog(object):
     def setupUi(self, AboutDialog):
         AboutDialog.setObjectName(_fromUtf8("AboutDialog"))
-        AboutDialog.resize(598, 322)
+        AboutDialog.resize(666, 309)
         font = QtGui.QFont()
         font.setPointSize(12)
         AboutDialog.setFont(font)
@@ -37,11 +37,11 @@ class Ui_AboutDialog(object):
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        self.label_5 = QtGui.QLabel(AboutDialog)
-        self.label_5.setText(_fromUtf8(""))
-        self.label_5.setPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/CAR_Logo_256.png")))
-        self.label_5.setObjectName(_fromUtf8("label_5"))
-        self.horizontalLayout_2.addWidget(self.label_5)
+        self.logoLabel = QtGui.QLabel(AboutDialog)
+        self.logoLabel.setText(_fromUtf8(""))
+        self.logoLabel.setPixmap(QtGui.QPixmap(_fromUtf8(":/all/icons/CAR_About.png")))
+        self.logoLabel.setObjectName(_fromUtf8("logoLabel"))
+        self.horizontalLayout_2.addWidget(self.logoLabel)
         self.verticalLayout = QtGui.QVBoxLayout()
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.label = QtGui.QLabel(AboutDialog)
@@ -61,7 +61,7 @@ class Ui_AboutDialog(object):
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.verticalLayout.addLayout(self.horizontalLayout)
-        spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
+        spacerItem1 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
         self.verticalLayout.addItem(spacerItem1)
         self.label_2 = QtGui.QLabel(AboutDialog)
         font = QtGui.QFont()
@@ -70,8 +70,13 @@ class Ui_AboutDialog(object):
         self.label_2.setObjectName(_fromUtf8("label_2"))
         self.verticalLayout.addWidget(self.label_2)
         self.label_4 = QtGui.QLabel(AboutDialog)
+        self.label_4.setOpenExternalLinks(True)
         self.label_4.setObjectName(_fromUtf8("label_4"))
         self.verticalLayout.addWidget(self.label_4)
+        self.label_7 = QtGui.QLabel(AboutDialog)
+        self.label_7.setOpenExternalLinks(True)
+        self.label_7.setObjectName(_fromUtf8("label_7"))
+        self.verticalLayout.addWidget(self.label_7)
         spacerItem2 = QtGui.QSpacerItem(20, 39, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem2)
         self.horizontalLayout_2.addLayout(self.verticalLayout)
@@ -93,6 +98,7 @@ class Ui_AboutDialog(object):
         self.label_3.setText(_translate("AboutDialog", "Version:", None))
         self.versionLabel.setText(_translate("AboutDialog", "(something)", None))
         self.label_2.setText(_translate("AboutDialog", "Central Washington University", None))
-        self.label_4.setText(_translate("AboutDialog", "Author: Spencer Graffe", None))
+        self.label_4.setText(_translate("AboutDialog", "<html><head/><body><p>Author: <a href=\"http://www.cwu.edu/central-access/developer-bio\"><span style=\" text-decoration: underline; color:#0000ff;\">Spencer Graffe</span></a></p></body></html>", None))
+        self.label_7.setText(_translate("AboutDialog", "<html><head/><body><p>Contributers: <a href=\"http://www.cwu.edu/central-access/developer-bio\"><span style=\" text-decoration: underline; color:#0000ff;\">Justin Wilson</span></a></p></body></html>", None))
 
 import resource_rc

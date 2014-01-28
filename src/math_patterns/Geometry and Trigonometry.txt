@@ -40,12 +40,8 @@ import _Negatives.txt
 e [variable] = mi("e") -> '"e"'
 i [variable] = mi("i") -> '"i"'
 z [variable] = mi("z") -> '"z"'
-e [variable] = mo("e") -> '"e"'
-i [variable] = mo("i") -> '"i"'
-z [variable] = mo("z") -> '"z"'
 
 bbcapR = mi("&#8477;") -> 'all real numbers'
-bbcapR = mo("&#8477;") -> 'all real numbers'
 
 // Other symbols
 
@@ -65,7 +61,6 @@ import _Integrals.txt
 apostrophe = apostrophe -> 'minutes'
 import _PowersPrimes.txt
 import _FunctionsLimits.txt
-//import _JustLimits.txt
 
 // Syntax Quirks
 doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'
@@ -80,7 +75,6 @@ integral = msub([integral] ?) -> '{1} sub {2} of,'
 // Other symbols
 infinity = mi("&#8734;") -> 'infinity'
 infinity = mn("&#8734;") -> 'infinity'
-infinity = mo("&#8734;") -> 'infinity'
 
 // ------------------------------------------------------------------------------
 // Geometry Specific
@@ -91,8 +85,8 @@ parallels = parallel s -> 'parallels'
 perpendiculars = perpendicular s -> 'perpendiculars'
 underBothArrow = mover(? bar) -> 'the line segment {1},'
 underBothArrow = mover(? arc) -> 'the arc {1},'
-underBothArrow = mover(? leftArrow) -> 'vecktor {1},'
-underBothArrow = mover(? rightArrow) -> 'vecktor {1},'
+underBothArrow = mover(? leftArrow) -> 'the directed line segment {1},'
+underBothArrow = mover(? rightArrow) -> 'the directed line segment {1},'
 thePoint = p colon openParen + comma + closeParen -> 'the point {4}, {6},'
 thePoint = p openParen + comma + closeParen -> 'the point {3}, {5},'
 thePoint = openParen + comma + closeParen -> 'the point {2}, {4},'
@@ -106,8 +100,6 @@ thePoint = openBrace + closeBrace -> 'the set {2},'
 thePoint = p colon mfenced<open="{",close="}">(mrow(+)) -> 'the set {3},'
 thePoint = p mfenced<open="{",close="}">(mrow(+)) -> 'the set {2},'
 thePoint = mfenced<open="{",close="}">(mrow(+)) -> 'the set {1},'
-
-gradient = del underBothArrow -> 'the gradient of {2}'
 
 // Postulates (do we want these?)
 angleangleside = a a s -> 'angle angle side'
@@ -136,8 +128,8 @@ overUnderArrowB = munderover(rightHarpoon mrow(+) mrow(+)) -> '{2}, above {1}, s
 backPrimes = mmultiscripts(? ? ? ?) -> '{4} {1}'
 
 // Limits
-//limit = munderover(mrow(l i m) mrow(? ? ?) ?) -> 'the limit as {4}, approaches {6}, of'
-//limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4}, of'
+limit = munderover(mrow(l i m) mrow(? ? ?) ?) -> 'the limit as {4}, approaches {6}, of'
+limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4}, of'
 
 // ------------------------------------------------------------------------------
 // Parenthetical Expressions

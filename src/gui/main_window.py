@@ -4,28 +4,30 @@ Created on Jan 21, 2013
 @author: Spencer Graffe
 '''
 import os
-import re
-import math
-import traceback
-from lxml import html
-from lxml.etree import ParserError, XMLSyntaxError
-from HTMLParser import HTMLParser
+
 from PyQt4 import QtGui
-from PyQt4.QtCore import Qt, QUrl, QMutex, pyqtSignal
-from PyQt4.QtWebKit import QWebInspector, QWebSettings
+from PyQt4.QtGui import qApp, QItemSelectionModel
+from PyQt4.QtWebKit import QWebSettings
+from PyQt4.QtCore import Qt, QMutex, pyqtSignal, QTimer
+import sip
+
+from announcements import AnnouncementPullThread
+from document.clipboard_document import ClipboardDocument
+from document.landing_page_document import LandingPageDocument
+from document.update_prompt_document import UpdatePromptDocument
+from document.rss.rss_document import RSSDocument
+from document.widget import DocumentWidget
 from forms.mainwindow_ui import Ui_MainWindow
+from gui import configuration
+from gui import loader
 from gui.bookmarks import BookmarksTreeModel, BookmarkNode
-from gui.configuration import Configuration
-from gui.npa_webview import NPAWebView
-from gui.prepare_speech import PrepareSpeechProgressWidget
-from gui.search_settings import SearchSettings
-from gui.save_mp3_pages_dialog import SaveMP3PagesDialog
-from gui.export_to_html_dialog import ExportToHtmlDialog
-from mathml.tts import MathTTS
-from speech.assigner import Assigner
-from speech.worker import SpeechWorker
+from gui.document_load_progress import DocumentLoadProgressDialog
+from gui import download_progress
+from gui.export_batch import ExportBatchDialog
+from gui.pages import PagesTreeModel
 import misc
-from updater import GetUpdateThread, RunUpdateInstallerThread, SETUP_FILE, SETUP_TEMP_FILE, run_update_installer, is_update_downloaded, save_server_version_to_temp
+from speech.worker import SpeechWorker
+from updater import GetUpdateThread, SETUP_FILE, SETUP_TEMP_FILE, run_update_installer, is_update_downloaded, save_server_version_to_temp
 
 class MainWindow(QtGui.QMainWindow):
     loc = 0
@@ -43,14 +45,13 @@ class MainWindow(QtGui.QMainWindow):
     changeRate = pyqtSignal(int)
     changePauseLength = pyqtSignal(int)
     changeVoice = pyqtSignal(str)
-    changeMathDatabase = pyqtSignal(str)
     
     # Program update notification
     notifyProgramUpdate = pyqtSignal()
     programUpdateFinish = pyqtSignal()
     
-    # JavaScript mutex
-    javascriptMutex = QMutex()
+    # Mutex so that only one document is added at a time
+    documentAddMutex = QMutex()
     
     def __init__(self, app, parent=None):
         QtGui.QMainWindow.__init__(self, parent)
@@ -60,37 +61,35 @@ class MainWindow(QtGui.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         
-        # Replace the web view in my designer with my custom web view
-        self.ui.webViewLayout.removeWidget(self.ui.webView)
-        self.ui.webView.close()
-        self.ui.webView = NPAWebView(mainWindow=self, parent=self.ui.centralwidget)
-        self.ui.webViewLayout.insertWidget(2, self.ui.webView, stretch=1)
-        self.ui.webViewLayout.update()
+        # Clear all of the tabs in my document tab widget
+        self.ui.documentTabWidget.clear()
         
-        # Also set the path for the web cache to save at temp
+        # If the mainMenuButton exists, I have to hide the main menu bar and
+        # shove all of its actions onto the mainMenuButton
+        menu = QtGui.QMenu()
+        menu.addActions(self.menuBar().actions())
+        self.ui.mainMenuButton.setMenu(menu)
+        self.menuBar().hide()
+            
+        # For the play button, set a custom property on it so that I can style
+        # its state change (from play to stop)
+        self.ui.playButton.setProperty('isPlaying', False)
+        
+        # Add the MP3 menu items to the MP3 button
+        menu = QtGui.QMenu()
+        menu.addAction('Save All', self.saveMP3All)
+        menu.addAction('Save Selection', self.saveMP3Selection)
+        menu.addAction('Save By Page', self.saveMP3ByPage)
+        self.ui.saveToMP3Button.setMenu(menu)
+        
+        # Set the path for the web cache to save at temp
         QWebSettings.setOfflineStoragePath(misc.temp_path('storageCache'))
         QWebSettings.setOfflineWebApplicationCachePath(misc.temp_path('webAppCache'))
-        QWebSettings.globalSettings().setAttribute(QWebSettings.LocalContentCanAccessRemoteUrls, True);
-        QWebSettings.globalSettings().setAttribute(QWebSettings.LocalContentCanAccessFileUrls, True);
-        QWebSettings.globalSettings().setAttribute(QWebSettings.LocalStorageEnabled, True);
-        QWebSettings.globalSettings().setAttribute(QWebSettings.AutoLoadImages, True);
-        
-        # Get the search function widgets
-        self.searchWidgets = []
-        self.searchWidgets.append(self.ui.searchLabel)
-        self.searchWidgets.append(self.ui.searchUpButton)
-        self.searchWidgets.append(self.ui.searchDownButton)
-        self.searchWidgets.append(self.ui.searchTextBox)
-        self.searchWidgets.append(self.ui.searchSettingsButton)
-        self.searchWidgets.append(self.ui.closeSearchButton)
-        self.hideSearch()
-        
-        # Hide the update button
-        self.ui.getUpdateButton.hide()
-        
-        # Set the search settings dialog so I can make it non-modal
-        self.searchSettings = SearchSettings()
-        self.searchSettings.setWindowFlags(self.searchSettings.windowFlags() | Qt.WindowStaysOnTopHint)
+        QWebSettings.globalSettings().setAttribute(QWebSettings.LocalContentCanAccessRemoteUrls, True)
+        QWebSettings.globalSettings().setAttribute(QWebSettings.LocalContentCanAccessFileUrls, True)
+        QWebSettings.globalSettings().setAttribute(QWebSettings.LocalStorageEnabled, True)
+        QWebSettings.globalSettings().setAttribute(QWebSettings.AutoLoadImages, True)
+        QWebSettings.globalSettings().setAttribute(QWebSettings.JavascriptCanAccessClipboard, True)
         
         # Connect all of my signals
         self.connect_signals()
@@ -99,33 +98,10 @@ class MainWindow(QtGui.QMainWindow):
         self.bookmarksModel = BookmarksTreeModel(BookmarkNode(None, 'Something'))
         self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
         
-        # Hide and other disable development tools if we are in a release
+        # Hide and disable development tools if we are in a release
         # environment
         if misc.is_release_environment():
             self.ui.menuMathML.menuAction().setVisible(False)
-        else:
-            # This is my web inspector for debugging my JavaScript code
-            self.webInspector = QWebInspector()
-            self.ui.webView.settings().setAttribute(QWebSettings.DeveloperExtrasEnabled, True)
-            self.webInspector.setPage(self.ui.webView.page())
-        
-        # Set the math TTS using the general pattern database
-        try:
-            dList = misc.pattern_databases()
-            self.mathTTS = MathTTS(dList['General'])
-        except Exception:
-            self.mathTTS = None
-            tb = traceback.format_exc()
-            print tb            
-            message = QtGui.QMessageBox()
-            message.setText('The math parser is not working right now. Don\'t read anything math-related for now.')            
-        
-        # TTS states
-        self.resetTTSStates()
-        
-        # This class is used for assigning the different parts of the content
-        # to a specific method of how to speak it
-        self.assigner = Assigner()
         
         # Set up my speech driver and start it
         self.speechThread = SpeechWorker()
@@ -144,103 +120,139 @@ class MainWindow(QtGui.QMainWindow):
         self.changeRate.connect(self.speechThread.setRate)
         self.changePauseLength.connect(self.speechThread.setPauseLength)
         self.changeVoice.connect(self.speechThread.setVoice)
-        self.changeMathDatabase.connect(self.assigner.setMathDatabase)
                 
         self.speechThread.start()
                 
         # Create the general-purpose progress dialog
         self.progressDialog = QtGui.QProgressDialog('Stuff', 'Cancel', 0, 100, self)
         
-        # Load the configuration file
-        self.configuration = Configuration()
-        self.configuration.loadFromFile(misc.app_data_path('configuration.xml'))
-        
         # Check to see if I have a voice. If I don't, grab the first one from
         # the TTS driver
-        if len(self.configuration.voice) == 0:
+        if len(configuration.getValue('Voice', '')) == 0:
             voiceList = self.speechThread.getVoiceList()
             if len(voiceList) > 0:
-                self.configuration.voice = voiceList[0][1]
-
+                configuration.setValue('Voice', voiceList[0][1])
+        
         # Check if my voice exists. If it doesn't, then replace it with the
         # first voice available
+        voiceList = self.speechThread.getVoiceList()
         voiceAvailable = False
-        for v in self.speechThread.getVoiceList():
-            if self.configuration.voice == v[1]:
+        for v in voiceList:
+            if configuration.getValue('Voice') == v[1]:
                 voiceAvailable = True
                 break
         if not voiceAvailable:
-            voiceList = self.speechThread.getVoiceList()
             if len(voiceList) > 0:
-                self.configuration.voice = voiceList[0][1]
+                configuration.setValue('Voice', voiceList[0][1])
         
-        # Set the search settings to use the configuration
-        self.searchSettings.setConfig(self.configuration)
+        self.updateSettings()
         
-        # Set the zoom of the content view (separate from the bookmarks zoom)
-        self.ui.webView.setZoom(self.configuration.zoom_content)
+        # Add the landing page
+        doc = LandingPageDocument('', None, None)
+        self.addDocument(doc, silent=True, icon=None, hasCommands=True)
         
-        # Used for refreshing the document later to make changes. Also store
-        # the data for the document itself.
-        self.lastDocumentFilePath = ''
-        self.document = None
-        self.stopDocumentLoad = False
-        
-        # Show the tutorial if I user hasn't seen it yet
-        if self.configuration.showTutorial:
+        # Show the tutorial if the user hasn't seen it yet
+        if configuration.getBool('ShowTutorial', True):
             self.openTutorial()
             
             # Immediately turn the switch off
-            self.configuration.showTutorial = False
+            configuration.setBool('ShowTutorial', False)
             self.updateSettings()
         
-        # Run an update check thread
-        self.checkUpdateThread = GetUpdateThread(self.showUpdateButton)
-        self.checkUpdateThread.start()
+        # Hide the download update progress widget
+        self.ui.updateDownloadProgress.hide()
         
         # Program updater threads and dialogs
-        self.updateInstallProgressDialog = None
-        self.updateDoneDialog = None
-        self.updator = RunUpdateInstallerThread()
         self.programUpdateFinish.connect(self.finishUpdateDownload)
         
-        # Prepare speech widget that pops up every time you press Play
-        # Connect all event handlers that may be relevant to update the position
-        self.prepareSpeechProgress = PrepareSpeechProgressWidget(self.ui.playButton, self)
-        self.ui.splitter.splitterMoved.connect(self.prepareSpeechProgress.updatePos_splitterMoved)
-        self.prepareSpeechProgress.hide()
-		
-        self.updateSettings()
+        # Hide the rate slider
+        self.ui.rateSlider.hide()
+        
+        # Run an update check thread
+        self.checkUpdateThread = GetUpdateThread()
+        self.checkUpdateThread.showUpdate.connect(self.showUpdatePrompt)
+        QTimer.singleShot(5000, self.checkUpdateThread.start)
+         
+        # Run the announcement pull thread after a certain amount of time
+        self.announcementPullThread = AnnouncementPullThread()
+        self.announcementPullThread.gotAnnouncement.connect(self.showAnnouncement)
+        QTimer.singleShot(10000, self.announcementPullThread.start)
+    
+    def showEvent(self, event):
+        # Set the size for the splitter so that the navigation tab widget takes up the least space
+        self.toggleNavigationPane(True)
             
     def closeEvent(self, event):
-        # Save the current configuration
-        self.configuration.zoom_content = self.ui.webView.getZoom()
-        self.configuration.saveToFile(misc.app_data_path('configuration.xml'))
         self.speechThread.quit()
         
-    def resizeEvent(self, event):
-        self.prepareSpeechProgress.updatePos()
+    def dragEnterEvent(self, e):
+        if e.mimeData().hasUrls:
+            url = unicode(e.mimeData().urls()[0].toLocalFile())
+            ext = os.path.splitext(url)[1]
+            if ext == '.docx' or ext == '.doc':
+                e.setDropAction(Qt.CopyAction)
+                e.accept()
+            else:
+                e.ignore()
+        else:
+            e.ignore()
+            
+    def dragMoveEvent(self, e):
+        if e.mimeData().hasUrls:
+            url = unicode(e.mimeData().urls()[0].toLocalFile())
+            ext = os.path.splitext(url)[1]
+            if ext == '.docx' or ext == '.doc':
+                e.setDropAction(Qt.CopyAction)
+                e.accept()
+            else:
+                e.ignore()
+        else:
+            e.ignore()
+            
+    def dropEvent(self, e):
+        if e.mimeData().hasUrls:
+            e.setDropAction(Qt.CopyAction)
+            e.accept()
+            url = unicode(e.mimeData().urls()[0].toLocalFile())
+            if os.path.splitext(url)[1] == '.docx':
+                self.activateWindow()
+                self.raise_()
+                self.openDocument(url)
+            elif os.path.splitext(url)[1] == '.doc':
+                self.showDocNotSupported()
+        
+    def quit(self):
+        self.close()
         
     def connect_signals(self):
         '''
         A method I made to connect all of my signals to the correct functions.
         '''
         # Toolbar buttons
-        self.ui.playButton.clicked.connect(self.playSpeech)
-        self.ui.pauseButton.clicked.connect(self.stopSpeech)
+        self.ui.openDocumentButton.clicked.connect(self.showOpenDocumentDialog)
+        
+        self.ui.playButton.clicked.connect(self.toggleSpeech)
         self.ui.colorSettingsButton.clicked.connect(self.showColorSettings)
         self.ui.speechSettingsButton.clicked.connect(self.showSpeechSettings)
-        self.ui.saveToMP3Button.clicked.connect(self.saveMP3All)
         self.ui.zoomInButton.clicked.connect(self.zoomIn)
         self.ui.zoomOutButton.clicked.connect(self.zoomOut)
         self.ui.zoomResetButton.clicked.connect(self.zoomReset)
         
+        self.ui.splitterButton.toggled.connect(self.toggleNavigationPane)
+        self.ui.splitter.splitterMoved.connect(self.toggleSplitterButton)
+        
+        # Document tabs
+        self.ui.documentTabWidget.tabCloseRequested.connect(self.closeDocumentTab)
+        self.ui.documentTabWidget.currentChanged.connect(self.currentDocumentChanged)
+        
         # Main Menu
+        
         # File
-        self.ui.actionOpen_Docx.triggered.connect(self.showOpenDocxDialog)
-        self.ui.actionSave_All_to_MP3.triggered.connect(self.saveMP3All)
-        self.ui.actionSave_Selection_to_MP3.triggered.connect(self.saveMP3Selection)
+        self.ui.actionOpen_Docx.triggered.connect(self.showOpenDocumentDialog)
+        self.ui.actionClose_Document.triggered.connect(self.closeCurrentDocument)
+        self.ui.actionPaste_From_Clipboard.triggered.connect(self.pasteFromClipboard)
         self.ui.actionExport_to_HTML.triggered.connect(self.exportToHTML)
+        self.ui.actionBatch.triggered.connect(self.showBatch)
         self.ui.actionQuit.triggered.connect(self.quit)
         
         # Functions
@@ -252,8 +264,8 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.actionSearch.triggered.connect(self.toggleSearchBar)
         
         # MP3
-        self.ui.actionEntire_Document.triggered.connect(self.saveMP3All)
-        self.ui.actionCurrent_Selection.triggered.connect(self.saveMP3Selection)
+        self.ui.actionSave_All_to_MP3.triggered.connect(self.saveMP3All)
+        self.ui.actionSave_Selection_to_MP3.triggered.connect(self.saveMP3Selection)
         self.ui.actionBy_Page.triggered.connect(self.saveMP3ByPage)
         
         # Settings
@@ -261,7 +273,6 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.actionSpeech.triggered.connect(self.showSpeechSettings)
         
         # MathML
-        self.ui.actionOpen_Pattern_Editor.triggered.connect(self.openPatternEditor)
         self.ui.actionShow_All_MathML.triggered.connect(self.showAllMathML)
         
         # Help
@@ -270,15 +281,8 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.actionReport_a_Bug.triggered.connect(self.openReportBugWindow)
         self.ui.actionTake_A_Survey.triggered.connect(self.openSurveyWindow)
         
-        # Search bar
-        self.ui.searchUpButton.clicked.connect(self.searchBackwards)
-        self.ui.searchDownButton.clicked.connect(self.searchForwards)
-        self.ui.searchTextBox.returnPressed.connect(self.searchForwards)
-        self.ui.searchSettingsButton.clicked.connect(self.openSearchSettings)
-        self.ui.closeSearchButton.clicked.connect(self.closeSearchBar)
-        
         # Sliders
-        self.ui.volumeSlider.valueChanged.connect(self.changeSpeechVolume)
+        self.ui.rateSliderButton.toggled.connect(self.showRateSlider)
         self.ui.rateSlider.valueChanged.connect(self.changeSpeechRate)
         
         self.ui.actionIncrease_Volume.triggered.connect(self.increaseVolume)
@@ -292,87 +296,80 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.pagesTreeView.clicked.connect(self.pagesTree_clicked)
         self.ui.bookmarkZoomInButton.clicked.connect(self.bookmarkZoomInButton_clicked)
         self.ui.bookmarkZoomOutButton.clicked.connect(self.bookmarkZoomOutButton_clicked)
-        #self.ui.expandBookmarksButton.clicked.connect(self.expandBookmarksButton_clicked)
-        #self.ui.collapseBookmarksButton.clicked.connect(self.collapseBookmarksButton_clicked)
-        
-        # Update button
-        self.ui.getUpdateButton.clicked.connect(self.runUpdate)
         
     def updateSettings(self):
         
+        # Change the rate on the slider
+        self.ui.rateSlider.setValue(configuration.getInt('Rate', 50))
+        
         # Update speech thread with my stuff
-        self.changeVolume.emit(self.configuration.volume)
-        self.changeRate.emit(self.configuration.rate)
-        self.changePauseLength.emit(self.configuration.pause_length)
-        self.changeVoice.emit(self.configuration.voice)
-        
-        # Update the math database to use
-        print 'Updating math database'
-        try:
-            self.changeMathDatabase.emit(misc.pattern_databases()[self.configuration.math_database])
-        except KeyError:
-            self.changeMathDatabase.emit(misc.pattern_databases()['General'])
-        
-        try:
-            if self.document is not None:
-                self.assigner.prepare(self.document.getMainPage())
-        except AttributeError:
-            pass
-        
-        # Update main window sliders to match
-        self.ui.rateSlider.setValue(self.configuration.rate)
-        self.ui.volumeSlider.setValue(int(self.configuration.volume))
+        self.changeVolume.emit(configuration.getInt('Volume', 100))
+        self.changeRate.emit(configuration.getInt('Rate', 50))
+        self.changePauseLength.emit(configuration.getInt('PauseLength', 0))
+        self.changeVoice.emit(configuration.getValue('Voice'))
         
         # Zoom settings
         currentFont = self.ui.bookmarksTreeView.font()
-        currentFont.setPointSize(self.configuration.zoom_navigation_ptsize)
+        currentFont.setPointSize(int(configuration.getValue('NavigationFontSize', '14')))
         self.ui.bookmarksTreeView.setFont(currentFont)
         self.ui.pagesTreeView.setFont(currentFont)
         
-        # Finally, save it all to file
-        self.configuration.saveToFile(misc.app_data_path('configuration.xml'))
-        
-    def hideSearch(self):
-        for w in self.searchWidgets:
-            w.hide()
-        #self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('ClearAllHighlights', []))
+        # Write out the CSS that styles all of the documents
+        with open(misc.temp_path('import/defaultStyle.css'), 'w') as f:
+            f.write(configuration.getCSS())
     
-    def showSearch(self):
-        for w in self.searchWidgets:
-            w.show()
-        self.ui.searchTextBox.setFocus()
-        self.ui.searchTextBox.selectAll()
+    def updateNavigationBar(self, headingId, pageId):
+        '''
+        Sets the highlight of the tree view to the heading and page string
+        provided.
+        '''
+        #print 'New selection to:', headingId, pageId
+        myHeading = unicode(headingId)
+        myPage = unicode(pageId)
         
-    def openSearchSettings(self):
-        self.searchSettings.show()
+        if len(myHeading) > 0:
+            myIndex = self.bookmarksModel.getIndexFromId(myHeading)
+            if myIndex is not None:
+                self.ui.bookmarksTreeView.setCurrentIndex(myIndex)
+        
+        if len(myPage) > 0:
+            myIndex = self.pagesModel.getIndexFromId(myPage)
+            if myIndex is not None:
+                self.ui.pagesTreeView.setCurrentIndex(myIndex)
+            
             
     def playSpeech(self):
-        
         # Stop whatever the speech thread may be saying
         self.stopPlayback.emit()
         
-        # Reset the TTS states
-        self.resetTTSStates()
-        self.setSettingsEnableState(False)
+        # Wait for the TTS to stop
+        while self.speechThread.isPlaying():
+            pass
         
-        # Set the beginning of the streamer
-        contents = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SetStreamBeginning', [])).toString())
-        
-        # Convert the HTML to DOM
-        root = None
-        try:
-            root = html.fromstring(contents)
-        except XMLSyntaxError:
-            root = html.Element('p')
-        
-        # Set the speech generator and start playback
-        self.setSpeechGenerator.emit(self.assigner.generateSpeech(root, self.configuration))
-        self.startPlayback.emit()
+        if self.currentDocument() is not None:
+            
+            # Disable all controls and settings except for playback
+            self.setSettingsEnableState(False)
+            
+            # Set the beginning of the streamer
+            dom = self.currentDocumentWidget().setStreamBeginning()
+            
+            # Set the speech generator and start playback
+            self.setSpeechGenerator.emit(self.currentDocument().generateSpeech(dom))
+            self.startPlayback.emit()
+            
+            self.currentDocumentWidget().setContentFocus()
     
     def stopSpeech(self):
         self.stopPlayback.emit()
+        
+        # Wait for the TTS to stop
+        while self.speechThread.isPlaying():
+            pass
+        
         self.setSettingsEnableState(True)
-        self.ui.webView.setFocus()
+        if self.currentDocumentWidget() is not None:
+            self.currentDocumentWidget().setContentFocus()
         
     def toggleSpeech(self):
         '''
@@ -382,48 +379,19 @@ class MainWindow(QtGui.QMainWindow):
             self.stopSpeech()
         else:
             self.playSpeech()
-        
-    def resetTTSStates(self):
-        self.ttsStates = {'lastElement' : ['', -1, '', -1], 
-                          'hasWorded' : False}
     
     def onStart(self, offset, length, label, stream, word):
-        #print 'window: OnStart;', offset, length, label, stream, word
-        self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('StartHighlighting', []))
+        self.currentDocumentWidget().onStart(offset, length, label, stream, word)
         
     def onWord(self, offset, length, label, stream, word, isFirst):
-        #print 'window: OnWord; offset', offset, ',length', length, ', label', label, ', stream', stream, ', word', [word], ', isFirst', isFirst
-        self.hasWorded = True
-        lastElement = self.ttsStates['lastElement']
-        
-        if label == 'text':
-            self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextWord', [self.configuration.highlight_line_enable, unicode(word), offset, length]))
-            
-        elif label == 'math':
-            if label != lastElement[2] or stream != lastElement[3] and (lastElement[3] >= 0):
-                self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextMath', [self.configuration.highlight_line_enable]))
-                    
-        elif label == 'image':
-            if label != lastElement[2] or stream != lastElement[3] and (lastElement[3] >= 0):
-                self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HighlightNextImage', [self.configuration.highlight_line_enable]))
-        else:
-            print 'ERROR: I don\'t know what this label refers to for highlighting:', label
-        
-        self.ttsStates['lastElement'] = [offset, length, label, stream]
+        self.currentDocumentWidget().onWord(offset, length, label, stream, word, isFirst)
         
     def onEndStream(self, stream, label):
-        #print 'window: OnEndStream'
-        pass
+        self.currentDocumentWidget().onEndStream(stream, label)
         
     def onSpeechFinished(self):
-        #print 'window: OnSpeechFinished'
-        
-        # Tell JavaScript to not highlight further
-        self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('StopHighlighting', []))
-        
+        self.currentDocumentWidget().onSpeechFinished()
         self.setSettingsEnableState(True)
-        self.resetTTSStates()
-        self.ui.webView.setFocus()
         
     def sendMoreSpeech(self):
         '''
@@ -431,72 +399,92 @@ class MainWindow(QtGui.QMainWindow):
         It will either get more speech for the TTS and send it, or tell it that
         no more speech is available.
         '''
-        hasMoreSpeech = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('HasMoreElements', [])).toBool()
-        if hasMoreSpeech:
-            nextContent = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('StreamNextElement', [])).toString())
-            
-            # Create the HTML DOM from content
-            elem = None
-            if len(nextContent) > 0:
-                try:
-                    isMatch = re.search(r'<.+>', nextContent)
-                    if isMatch is None:
-                        elem = html.Element('p')
-                        h = HTMLParser()
-                        elem.text = h.unescape(nextContent)
-                    else:
-                        elem = html.fromstring(nextContent)
-                except ParserError as e:
-                    elem = html.Element('p')
-            else:
-                elem = html.Element('p')
-            
-            # Create and send the speech generator
-            self.setSpeechGenerator.emit(self.assigner.generateSpeech(elem, self.configuration))
+        if self.currentDocumentWidget().hasMoreSpeech():
+            self.setSpeechGenerator.emit(self.currentDocument().generateSpeech(self.currentDocumentWidget().streamNextElement()))
             
         else:
             self.noMoreSpeech.emit()
+    
+    def showRateSlider(self, isOn):
+        '''
+        Shows a popup slider for the speech rate.
+        '''
+        self.ui.rateSlider.setVisible(isOn)        
             
     def changeSpeechRate(self, value):
-        self.configuration.rate = value
-        self.changeRate.emit(self.configuration.rate)
+        configuration.setInt('Rate', value)
+        self.changeRate.emit(configuration.getInt('Rate'))
         
     def increaseRate(self):
-        self.configuration.rate += 10
-        if self.configuration.rate > 100:
-            self.configuration.rate = 100
-        self.ui.rateSlider.setValue(self.configuration.rate)
+        myRate = configuration.getInt('Rate')
+        myRate += 10
+        if myRate > 100:
+            myRate = 100
+        configuration.setInt('Rate', myRate)
+        self.changeRate.emit(myRate)
     
     def decreaseRate(self):
-        self.configuration.rate -= 10
-        if self.configuration.rate < 0:
-            self.configuration.rate = 0
-        self.ui.rateSlider.setValue(self.configuration.rate)
+        myRate = configuration.getInt('Rate')
+        myRate -= 10
+        if myRate < 0:
+            myRate = 0
+        configuration.setInt('Rate', myRate)
+        self.changeRate.emit(myRate)
 
     def changeSpeechVolume(self, value):
-        self.configuration.volume = value
-        self.changeVolume.emit(self.configuration.volume)
+        configuration.setInt('Volume', value)
+        self.changeVolume.emit(configuration.getInt('Volume'))
     
     def increaseVolume(self):
-        self.configuration.volume += 10
-        if self.configuration.volume > 100:
-            self.configuration.volume = 100
-        self.ui.volumeSlider.setValue(self.configuration.volume)
+        myVolume = configuration.getInt('Volume')
+        myVolume += 10
+        if myVolume > 100:
+            myVolume = 100
+        self.changeSpeechVolume(myVolume)
     
     def decreaseVolume(self):
-        self.configuration.volume -= 10
-        if self.configuration < 0:
-            self.configuration.volume = 0
-        self.ui.volumeSlider.setValue(self.configuration.volume)
+        myVolume = configuration.getInt('Volume')
+        myVolume -= 10
+        if myVolume < 0:
+            myVolume = 0
+        self.changeSpeechVolume(myVolume)
+        
+    def saveMP3All(self):
+        if self.currentDocumentWidget() is not None:
+            self.currentDocumentWidget().saveMP3All()
+        
+    def saveMP3Selection(self):
+        if self.currentDocumentWidget() is not None:
+            self.currentDocumentWidget().saveMP3Selection()
+    
+    def saveMP3ByPage(self):
+        if self.currentDocument() is not None:
+            self.currentDocumentWidget().saveMP3ByPage()
         
     def showColorSettings(self):
         from gui.color_settings import ColorSettings
         dialog = ColorSettings(self)
         result = dialog.exec_()
-        self.configuration.loadFromFile(misc.app_data_path('configuration.xml'))
-        if result == ColorSettings.RESULT_NEED_REFRESH:
+        
+        # Show a message asking the user to restart the system if they have
+        # changed the layout
+        if (result & ColorSettings.RESULT_NEED_RESTART) > 0:
+            messageBox = QtGui.QMessageBox()
+            messageBox.setText('Your layout changes will take effect after restarting the Central Access Reader.')
+            messageBox.setStandardButtons(QtGui.QMessageBox.Ok)
+            messageBox.setDefaultButton(QtGui.QMessageBox.Ok)
+            messageBox.setWindowTitle('Restart CAR to Apply Layout Changes')
+            messageBox.setIcon(QtGui.QMessageBox.Information)
+            messageBox.exec_()
+        
+        if (result & ColorSettings.RESULT_NEED_REFRESH) > 0:
             self.refreshDocument()
+        
+        # Set the theme
+        loader.load_theme(qApp, configuration.getValue('Theme'))
         self.updateSettings()
+        if self.currentDocumentWidget() is not None:
+            self.currentDocumentWidget().setContentFocus()
         
     def showSpeechSettings(self):
 
@@ -511,10 +499,12 @@ class MainWindow(QtGui.QMainWindow):
         from gui.speech_settings import SpeechSettings
         dialog = SpeechSettings(self)
         self.speechThread.requestMoreSpeech.connect(dialog.requestMoreSpeech)
-        dialog.exec_()
         self.stopPlayback.emit()
         self.speechThread.requestMoreSpeech.disconnect(dialog.requestMoreSpeech)
-        self.configuration.loadFromFile(misc.app_data_path('configuration.xml')) 
+        dialog.exec_()
+        
+        # Reload settings
+        #configuration.loadFromFile(misc.app_data_path('configuration.xml')) 
         self.updateSettings()
 
         # Reconnect my highlighter signals
@@ -524,337 +514,294 @@ class MainWindow(QtGui.QMainWindow):
         self.speechThread.onFinish.connect(self.onSpeechFinished)
         self.speechThread.requestMoreSpeech.connect(self.sendMoreSpeech)
         
-    def saveMP3All(self):
-        self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('ClearAllHighlights', []))
-        self.ui.webView.selectAll()
-        self.saveMP3Selection()
-        self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SetHighlightToBeginning', []))
-        
-    def saveMP3Selection(self):
-        # Generate a filename that is basically the original file but with the
-        # .mp3 extension at the end
-        defaultFileName = os.path.splitext(str(self.lastDocumentFilePath))[0] + '.mp3'
-        fileName = unicode(QtGui.QFileDialog.getSaveFileName(self, 'Save MP3...', defaultFileName, '(*.mp3)'))
-        print 'Saving to...', fileName
-        
-        if len(fileName) > 0:
-            # Show a progress dialog
-            self.progressDialog.setWindowModality(Qt.WindowModal)
-            self.progressDialog.setWindowTitle('Saving to MP3...')
-            self.progressDialog.setLabelText('Generating speech...')
-            self.progressDialog.setProgress(0)
-            self.progressDialog.show()
-            QtGui.qApp.processEvents()
-            
-            # Get my speech output list
-            selectedHTML = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetSelectionHTML', [])).toString())
-            speechGenerator = self.assigner.generateSpeech(html.fromstring(selectedHTML), self.configuration)
-            
-            # Get the progress of the thing from the speech thread
-            def myOnProgress(percent):
-                self.progressDialog.setProgress(percent)
-                QtGui.qApp.processEvents()
-                
-            def myOnProgressLabel(newLabel):
-                self.progressDialog.setLabelText(newLabel)
-                QtGui.qApp.processEvents()
-                
-            self.speechThread.onProgress.connect(myOnProgress)
-            self.speechThread.onProgressLabel.connect(myOnProgressLabel)
-            self.progressDialog.canceled.connect(self.speechThread.stopMP3)
-            self.speechThread.saveToMP3(fileName, speechGenerator)
-            
-            # Just hide it so that we can use it later
-            self.progressDialog.hide()
-            
-            # Show a message box saying the file was successfully saved
-            if not self.speechThread.mp3Interrupted():
-                messageBox = QtGui.QMessageBox()
-                messageText = 'Success!\nYour MP3 was saved as:\n' + fileName
-                messageBox.setText(messageText)
-                messageBox.setStandardButtons(QtGui.QMessageBox.Ok)
-                messageBox.setDefaultButton(QtGui.QMessageBox.Ok)
-                messageBox.setWindowTitle('MP3 Saved Successfully')
-                messageBox.setIcon(QtGui.QMessageBox.Information)
-                messageBox.exec_()
-                
-                misc.open_file_browser_to_location(fileName)
-        
-        self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('ClearUserSelection', []))
-    
-    def saveMP3ByPage(self):
-        
-        if self.document is not None:
-            # Open a dialog to select the folder
-            folder = unicode(QtGui.QFileDialog.getExistingDirectory(self, 
-                                                            'Select Folder to Save Pages',
-                                                            os.path.join(os.path.expanduser('~'), 'Desktop')))
-            print 'Saving pages to:', folder
-            
-            if len(folder) > 0:
-                
-                # Show the dialog that facilitates the per-page export
-                success = True
-                dialog = SaveMP3PagesDialog(self)
-                dialog.show()
-                
-                htmlString = unicode(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetBodyHTML', [])).toString())
-                myHTML = html.fromstring(htmlString)
-                
-                # Split up the body into a list of elements, split by page.
-                pages = []
-                currentPage = [[], 'Front']
-                largestNumberLength = 1
-                for e in myHTML:
-                    if e.get('class') == 'pageNumber':
-                        
-                        if len(e.text_content()) > 0:
-                            
-                            # Figure out the number of decimal places of the page number, if possible
-                            try:
-                                num = math.ceil(math.log10(int(e.text_content())))
-                                if num > largestNumberLength:
-                                    largestNumberLength = int(num)
-                            except ValueError:
-                                pass
-                                
-                        if len(currentPage[0]) > 0:
-                            pages.append(currentPage)
-                        currentPage = [[], e.text_content()]
-                    currentPage[0].append(e)
-                
-                if len(currentPage[0]) > 0:
-                    pages.append(currentPage)
-                
-                # Save all of the pages!
-                for i in range(len(pages)):
-                    page = pages[i]
-                    
-                    # Tell the dialog what page we are on
-                    dialog.setPageLabel('Page ' + page[1] + '...')
-                    dialog.setPageProgress(int((i+1.0) / len(pages) * 100.0))
-                    QtGui.qApp.processEvents()
-                    
-                    # Prepare the speech of the page
-                    dialog.setStatusLabel('Preparing...')
-                    dialog.setStatusProgress(0)
-                    QtGui.qApp.processEvents()
-                    myHTML = ''
-                    for e in page[0]:
-                        myHTML += html.tostring(e)
-                        
-                    speechGenerator = self.assigner.generateSpeech(html.fromstring(myHTML), self.configuration)
-                
-                    # Generate a file name for saving the page number
-                    fileName = ''
-                    if misc.is_number(page[1]):
-                        fileName = 'Pg ' + page[1].zfill(largestNumberLength) + ' ' + os.path.splitext(os.path.basename(self.lastDocumentFilePath))[0]
-                    else:
-                        fileName = 'Pg ' + page[1] + ' ' + os.path.splitext(os.path.basename(self.lastDocumentFilePath))[0]
-                    fileName += '.mp3'
-                    fileName = os.path.join(folder, fileName)
-                
-                    # Get the progress of the thing from the speech thread
-                    def myOnProgress(percent):
-                        dialog.setStatusProgress(percent)
-                        QtGui.qApp.processEvents()
-                        
-                    def myOnProgressLabel(newLabel):
-                        dialog.setStatusLabel(newLabel)
-                        QtGui.qApp.processEvents()
-                    
-                    self.speechThread.onProgress.connect(myOnProgress)
-                    self.speechThread.onProgressLabel.connect(myOnProgressLabel)
-                    dialog.canceled.connect(self.speechThread.stopMP3)
-                    
-                    self.speechThread.saveToMP3(fileName, speechGenerator)
-                    
-                    if self.speechThread.mp3Interrupted():
-                        success = False
-                        break
-    
-                dialog.close()
-                
-                # Show the success message, if I was indeed successful
-                if success:
-                    messageBox = QtGui.QMessageBox()
-                    messageText = 'Success!\nYour MP3 files were saved in:\n' + folder
-                    messageBox.setText(messageText)
-                    messageBox.setStandardButtons(QtGui.QMessageBox.Ok)
-                    messageBox.setDefaultButton(QtGui.QMessageBox.Ok)
-                    messageBox.setWindowTitle('MP3 Files Saved Successfully')
-                    messageBox.setIcon(QtGui.QMessageBox.Information)
-                    messageBox.exec_()
-                    
-                    misc.open_file_browser_to_location(folder)
+        # Set the keyboard focus to the current document
+        if self.currentDocumentWidget() is not None:
+            self.currentDocumentWidget().setContentFocus()
                     
     def exportToHTML(self):
         '''
         Exports the current document to a MathPage-like web document that can
         be opened in the web browser.
         '''
-        if self.document is not None:
-             
-            defaultFileName = os.path.splitext(str(self.lastDocumentFilePath))[0] + '.html'
-            fileName = unicode(QtGui.QFileDialog.getSaveFileName(self, 'Export HTML...', defaultFileName, '(*.html)'))
-             
-            if len(fileName) > 0:
-                self.exportToHtmlDialog = ExportToHtmlDialog(self.document, fileName, self.assigner, self.configuration)
-                self.exportToHtmlDialog.show()
-                self.exportToHtmlDialog.start()
+        if self.currentDocumentWidget() is not None:
+            self.currentDocumentWidget().saveToHTML()
+    
+    def showBatch(self):
+        '''
+        Shows the batch conversion window.
+        '''
+        self.batchWindow = ExportBatchDialog()
+        self.batchWindow.show()
                 
     def zoomIn(self):
-        self.ui.webView.zoomIn()
+        if self.currentDocumentWidget() is not None:
+            configuration.setInt('Zoom', self.currentDocumentWidget().zoomIn(), 1)
+            self.currentDocumentWidget().setContentFocus()
     
     def zoomOut(self):
-        self.ui.webView.zoomOut()
+        if self.currentDocumentWidget() is not None:
+            configuration.setInt('Zoom', self.currentDocumentWidget().zoomOut(), 1)
+            self.currentDocumentWidget().setContentFocus()
         
     def zoomReset(self):
-        self.ui.webView.zoomReset()
-            
-#     def openHTML(self):
-#         fileName = QtGui.QFileDialog.getOpenFileName(self, 'Open HTML...','./tests','(*.html)')
-#         f = open(fileName, 'r')
-#         content = f.read()
-#         f.close()
-#         self.assigner.prepare(content)
-#         baseUrl = QUrl.fromLocalFile(fileName)
-#         self.ui.webView.setHtml(content, baseUrl)
-
-
-    def openDocx(self, filePath):
+        if self.currentDocumentWidget() is not None:
+            configuration.setInt('Zoom', self.currentDocumentWidget().zoomReset(), 1)
+            self.currentDocumentWidget().setContentFocus()
+        
+    def addDocument(self, doc, silent=False, icon=None, hasCommands=False):
         '''
-        Opens a .docx file. It will spawn a progress bar and run the task in the
+        Adds the document to the tabs correctly.
+        '''
+        #self.documentAddMutex.lock()
+        
+        if self.ui.documentTabWidget.count() == 1:
+            if isinstance(self.currentDocument(), LandingPageDocument):
+                self.ui.documentTabWidget.removeTab(0)
+        
+        name = doc.getName()
+        widget = DocumentWidget()
+        if not silent:
+            widget.loadProgress.connect(self.reportDocumentProgress)
+            widget.loadFinished.connect(self.progressDialog.close)
+            self.progressDialog.closeEvent = self._unlockAddDocumentMutex
+        widget.toggleSpeechPlayback.connect(self.toggleSpeech)
+        widget.requestPaste.connect(self.pasteFromClipboard)
+        widget.requestReadFromSelection.connect(self.playSpeech)
+        widget.requestUpdateNavigation.connect(self.updateNavigationBar)
+        widget.setZoom(configuration.getInt('Zoom', 1))
+        widget.setDocument(doc)
+        
+        if hasCommands:
+            widget.contentCommand.connect(self.documentContentCommand)
+        
+        if icon is not None:
+            self.ui.documentTabWidget.addTab(widget, icon, name)
+        else:
+            self.ui.documentTabWidget.addTab(widget, name)
+        
+        if silent:
+            pass
+            #self.documentAddMutex.unlock()
+    
+    def _unlockAddDocumentMutex(self, event):
+        pass
+        #self.documentAddMutex.unlock()
+
+    def openDocument(self, filePath):
+        '''
+        Opens a file. It will spawn a progress bar and run the task in the
         background to prevent GUI from freezing up.
         '''
         filePath = str(filePath)
         if len(filePath) > 0:
             
-            from docx.thread import DocxImporterThread
-            from gui.document_load_progress import DocumentLoadProgressDialog
+            from document.loader import DocumentLoadingThread
              
-            # Create my .docx importer thread
-            self.docxImporterThread = DocxImporterThread(filePath)
-            self.docxImporterThread.reportProgress.connect(self.reportProgressOpenDocx)
-            self.docxImporterThread.reportError.connect(self.reportErrorOpenDocx)
-            self.docxImporterThread.finished.connect(self.finishOpenDocx)
+            # Create my importer thread
+            self.documentLoadingThread = DocumentLoadingThread(filePath)
+            self.documentLoadingThread.progress.connect(self.reportDocumentProgress)
+            self.documentLoadingThread.error.connect(self.reportErrorOpenDocument)
+            self.documentLoadingThread.finished.connect(self.finishOpenDocument)
             
             # Show a progress dialog
             self.progressDialog = DocumentLoadProgressDialog()
             self.progressDialog.setLabelText('Reading ' + os.path.basename(str(filePath)) + '...')
             self.progressDialog.setProgress(0)
-            self.progressDialog.canceled.connect(self.docxImporterThread.stop)
+            self.progressDialog.canceled.connect(self.documentLoadingThread.stop)
             self.progressDialog.show()
            
-            self.docxImporterThread.start()
+            self.documentLoadingThread.start()
         
-    def reportProgressOpenDocx(self, percent):
+    def reportDocumentProgress(self, percent, text):
         self.progressDialog.setProgress(percent - 1)
-        
-    def reportTextOpenDocx(self, text):
         self.progressDialog.setLabelText(text)
         
-    def reportErrorOpenDocx(self, exception, tb):
-        from mathtype.parser import MathTypeParseError
-        from gui.bug_reporter import BugReporter
+    def reportErrorOpenDocument(self, exception, tb):
+        pass
         
-        if isinstance(exception, MathTypeParseError):
-            out = misc.prepare_bug_report(tb, self.configuration, detailMessage=exception.message)
-            dialog = BugReporter(out)
-            dialog.exec_()
+    def finishOpenDocument(self):
+        
+        if self.documentLoadingThread.isSuccess():
+            doc = self.documentLoadingThread.getDocument()
+            self.addDocument(doc)
+            
+            # Set the current tab to the last tab
+            self.ui.documentTabWidget.setCurrentIndex(self.ui.documentTabWidget.count() - 1)
+            self.currentDocumentWidget().setContentFocus()
+            
+            # NOTE: The progress bar will still be up to allow the page to load
+            # and for MathJax to finish typesetting.
+        
         else:
-            out = misc.prepare_bug_report(tb, self.configuration)
-            dialog = BugReporter(out)
-            dialog.exec_()
-            
-        if self.progressDialog is not None:
-            self.progressDialog.enableCancel()
             self.progressDialog.close()
+            del self.progressDialog
         
-    def finishOpenDocx(self):
-        
-        print 'Finishing up...'
-        
-        if self.docxImporterThread.isSuccessful():
-            
-            # Disable the cancel in the progress thing, since we can't cancel
-            # here anyways
-            self.progressDialog.disableCancel()
-            
-            url = misc.temp_path('import')
-            baseUrl = QUrl.fromLocalFile(url)
-            
-            # Clear the cache in the web view
-            QWebSettings.clearIconDatabase()
-            QWebSettings.clearMemoryCaches()
-            
-            # Set the content views and prepare assigner
-            self.progressDialog.setLabelText('Loading content into view...')
-            
-            docxHtml = self.docxImporterThread.getHTML()
-            self.assigner.prepare(docxHtml)
-            self.ui.webView.loadProgress.connect(self.progressDialog.setProgress)
-            
-            # Use the web view to figure out when the view is done loading
-            self.pageLoaded = False
-            def setLoadedFinished():
-                self.pageLoaded = True
-            self.ui.webView.loadFinished.connect(setLoadedFinished)
-            self.ui.webView.setHtml(docxHtml, baseUrl)
-            
-            # Get and set the bookmarks
-            self.bookmarksModel = BookmarksTreeModel(self.docxImporterThread.getHeadings())
-            self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
-            self.ui.bookmarksTreeView.expandAll()
-                    
-            # Get and set the pages
-            from gui.pages import PagesTreeModel
-            
-            self.pagesModel = PagesTreeModel(self.docxImporterThread.getPages())
-            self.ui.pagesTreeView.setModel(self.pagesModel)
-            self.ui.pagesTreeView.expandAll()
-            
-            self.document = self.docxImporterThread.getDocument()
-            self.lastDocumentFilePath = self.docxImporterThread.getFilePath()
-            
-            # Wait until page is done loading
-            while not self.pageLoaded:
-                QtGui.qApp.processEvents()
-            self.progressDialog.enableCancel()
-             
-            # Wait until MathJax is done typesetting
-            self.progressDialog.setLabelText('Typesetting math equations...')
-            self.mathjax_loaded = False
-             
-            # Allow the user to cancel this. Sometimes MathJax freaks out and
-            # the user should say no to it
-            self.progressDialog.enableCancel()
-            def myCancelHandler():
-                self.mathjax_loaded = True
-            self.progressDialog.canceled.connect(myCancelHandler)
-             
-            while not self.mathjax_loaded:
-                QtGui.qApp.processEvents()
-                progress = int(self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GetMathTypesetProgress', [])).toInt()[0])
-                self.progressDialog.setProgress(progress)
-                self.mathjax_loaded = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('IsMathTypeset', [])).toBool()
-
-        self.progressDialog.close()
-        self.stopDocumentLoad = False
-        self.ui.webView.setFocus()
-        QtGui.qApp.processEvents()
-        
-    def showOpenDocxDialog(self):
-        filePath = QtGui.QFileDialog.getOpenFileName(self, 'Open Docx...',os.path.join(os.path.expanduser('~'), 'Documents'),'(*.docx)')
-        self.openDocx(filePath)
+    def showOpenDocumentDialog(self):
+        filePath = QtGui.QFileDialog.getOpenFileName(self, 'Open Document...',os.path.join(os.path.expanduser('~'), 'Documents'),'(*.docx)')
+        self.openDocument(filePath)
         
     def showDocNotSupported(self):
         result = QtGui.QMessageBox.information(self, 'CAR does not support 1997-2003 Word document', 
-                                               'Sorry, this is a 1997-2003 Word document that we don\'t support. Open it in Microsoft Word 2007 or later and save it as "Word Document" (.docx)' 
+                                               'Sorry, this is a 1997-2003 Word document that CAR doesn\'t support. Open it in Microsoft Word 2007 or later and save it as "Word Document" (.docx)' 
                                                )
-            
+        
     def openTutorial(self):
-        self.openDocx(misc.program_path('Tutorial.docx'))
+        self.openDocument(misc.program_path('Tutorial.docx'))
+    
+    def pasteFromClipboard(self):
+        '''
+        Adds a document containing the contents of the clipboard.
+        '''
+        from document.loader import DocumentLoadingThread
+             
+        # Create my importer thread
+        self.documentLoadingThread = DocumentLoadingThread('', isClipboard=True)
+        self.documentLoadingThread.progress.connect(self.reportDocumentProgress)
+        self.documentLoadingThread.error.connect(self.reportErrorOpenDocument)
+        self.documentLoadingThread.finished.connect(self.finishOpenDocument)
+        
+        # Show a progress dialog
+        self.progressDialog = DocumentLoadProgressDialog()
+        self.progressDialog.setLabelText('Reading...')
+        self.progressDialog.setProgress(0)
+        self.progressDialog.canceled.connect(self.documentLoadingThread.stop)
+        self.progressDialog.show()
+       
+        self.documentLoadingThread.start()
+        
+    def closeDocumentTab(self, index):
+        '''
+        Closes the document in response to a tab close button being pressed.
+        '''
+        self.stopSpeech()
+        
+        if not isinstance(self.currentDocument(), LandingPageDocument):   
+            
+            # Disconnect all signals associated with this widget
+            myWidget = self.ui.documentTabWidget.widget(index)
+            myWidget.disconnectSignals()            
+                     
+            self.ui.documentTabWidget.removeTab(index)
+            
+            if self.ui.documentTabWidget.count() == 0:
+                doc = LandingPageDocument('', None, None)
+                self.addDocument(doc, silent=True, icon=None, hasCommands=True)
+        
+    def closeCurrentDocument(self):
+        '''
+        Closes the current document in focus.
+        '''
+        self.stopSpeech()
+        
+        if not isinstance(self.currentDocument(), LandingPageDocument):
+            self.ui.documentTabWidget.removeTab(self.ui.documentTabWidget.currentIndex())
+            
+            if self.ui.documentTabWidget.count() == 0:
+                doc = LandingPageDocument('', None, None)
+                self.addDocument(doc, silent=True, icon=None, hasCommands=True)
+        
+    def currentDocumentWidget(self):
+        '''
+        Returns the current document widget in view.
+        '''
+        return self.ui.documentTabWidget.currentWidget()
+    
+    def currentDocument(self):
+        '''
+        Returns the Document object of the current document widget in view.
+        '''
+        if self.currentDocumentWidget() is not None:
+            return self.currentDocumentWidget().document
+        else:
+            return None
+        
+    def currentDocumentChanged(self, index):
+        '''
+        Alerts when the current document in focus changes because of clicking
+        on a different tab.
+        '''
+        if index >= 0:
+            doc = self.ui.documentTabWidget.widget(index).document
+            
+            # Load the bookmarks
+            self.bookmarksModel = BookmarksTreeModel(doc.getHeadings())
+            self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
+            self.ui.bookmarksTreeView.expandAll()
+            
+            # Load the pages
+            self.pagesModel = PagesTreeModel(doc.getPages())
+            self.ui.pagesTreeView.setModel(self.pagesModel)
+            self.ui.pagesTreeView.expandAll()
+            
+        else:
+            self.ui.bookmarksTreeView.setModel(None)
+            self.ui.pagesTreeView.setModel(None)
+            
+    def documentContentCommand(self, commandString):
+        '''
+        For some types of documents, like the document for the update prompt, it
+        can issue a command string that can issue a function.
+        '''
+        
+        if 'openDocument' == commandString:
+            self.showOpenDocumentDialog()
+        
+        elif 'updateDownloadYes' == commandString:
+            # Show the update download progress widget
+            self.ui.updateDownloadProgress.setUrl(SETUP_FILE)
+            self.ui.updateDownloadProgress.setDestination(SETUP_TEMP_FILE)
+        
+            self.ui.updateDownloadProgress.downloadFinished.connect(self.finishUpdateDownload)
+        
+            self.ui.updateDownloadProgress.show()
+            self.ui.updateDownloadProgress.startDownload()
+            
+            # Close all UpdatePromptDocuments
+            i = 0
+            while i < self.ui.documentTabWidget.count():
+                self.ui.documentTabWidget.count()
+                if isinstance(self.ui.documentTabWidget.widget(i).document, UpdatePromptDocument):
+                    self.ui.documentTabWidget.removeTab(i)
+                    i = 0
+                else:
+                    i += 1
+            
+        elif 'updateDownloadNo' == commandString:
+            # Close all UpdatePromptDocuments
+            i = 0
+            while i < self.ui.documentTabWidget.count():
+                self.ui.documentTabWidget.count()
+                if isinstance(self.ui.documentTabWidget.widget(i).document, UpdatePromptDocument):
+                    self.ui.documentTabWidget.removeTab(i)
+                    i = 0
+                else:
+                    i += 1
+        
+        elif 'updateInstallYes' == commandString:
+            # Close all UpdatePromptDocuments
+            i = 0
+            while i < self.ui.documentTabWidget.count():
+                self.ui.documentTabWidget.count()
+                if isinstance(self.ui.documentTabWidget.widget(i).document, UpdatePromptDocument):
+                    self.ui.documentTabWidget.removeTab(i)
+                    i = 0
+                else:
+                    i += 1
+            
+            # Run the installer
+            run_update_installer()
+            self.close()
+                    
+        elif 'updateInstallNo' == commandString:
+            # Close all UpdatePromptDocuments
+            i = 0
+            while i < self.ui.documentTabWidget.count():
+                self.ui.documentTabWidget.count()
+                if isinstance(self.ui.documentTabWidget.widget(i).document, UpdatePromptDocument):
+                    self.ui.documentTabWidget.removeTab(i)
+                    i = 0
+                else:
+                    i += 1
             
     def openAboutDialog(self):
         from gui.about import AboutDialog
@@ -869,51 +816,6 @@ class MainWindow(QtGui.QMainWindow):
         import webbrowser
         webbrowser.open_new(misc.SURVEY_URL)
         
-    def toggleSearchBar(self):
-        if self.searchWidgets[0].isHidden():
-            self.showSearch()
-        else:
-            self.hideSearch()
-            
-    def searchBackwards(self):
-        text = unicode(self.ui.searchTextBox.text())
-        args = [text, False, self.configuration.search_whole_word, self.configuration.search_match_case]
-        result = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SearchForText', args))
-        if not result:
-            self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('ClearAllHighlights', []))
-            message = QtGui.QMessageBox()
-            message.setText('No other occurrences of "' + text + '" in document.')
-            message.exec_()
-    
-    def searchForwards(self):
-        text = unicode(self.ui.searchTextBox.text())
-        args = [text, True, self.configuration.search_whole_word, self.configuration.search_match_case]
-        result = self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('SearchForText', args))
-        if not result:
-            self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('ClearAllHighlights', []))
-            message = QtGui.QMessageBox()
-            message.setText('No other occurrences of "' + text + '" in document.')
-            message.exec_()
-            
-    def closeSearchBar(self):
-        self.hideSearch()
-            
-    def quit(self):
-        self.close()
-        
-    def openPatternEditor(self):
-        
-        from mathml.pattern_editor.gui.patterneditorwindow import PatternEditorWindow
-
-        patternFilePath = self.configuration.math_database
-        
-        self.patternWindow = PatternEditorWindow(patternFilePath, '')
-        self.patternWindow.changedPattern.connect(self.onChangedPatternEditor)
-        self.patternWindow.show()
-        
-    def onChangedPatternEditor(self, databaseFileName):
-        self.mathTTS.setPatternDatabase(databaseFileName)
-        
     def showAllMathML(self):
         from gui.mathmlcodes_dialog import MathMLCodesDialog
         self.mathmlDialog = MathMLCodesDialog(self.assigner._maths)
@@ -921,19 +823,21 @@ class MainWindow(QtGui.QMainWindow):
         
     def bookmarksTree_clicked(self, index):
         node = index.internalPointer()
-        self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GotoPageAnchor', [node.anchorId]))
+        self.currentDocumentWidget().gotoAnchor(node.anchorId)
         
     def pagesTree_clicked(self, index):
         node = index.internalPointer()
-        self.ui.webView.page().mainFrame().evaluateJavaScript(misc.js_command('GotoPageAnchor', [node.anchorId]))
+        self.currentDocumentWidget().gotoPage(node.anchorId)
         
     def bookmarkZoomInButton_clicked(self):
         # Get the current font
         currentFont = self.ui.bookmarksTreeView.font()
         
         # Make it a litter bigger
-        self.configuration.zoom_navigation_ptsize += 2
-        currentFont.setPointSize(self.configuration.zoom_navigation_ptsize)
+        myPointSize = int(configuration.getValue('NavigationFontSize', '14'))
+        myPointSize += 2
+        currentFont.setPointSize(myPointSize)
+        configuration.setValue('NavigationFontSize', str(myPointSize))
         
         # Set the font
         self.ui.bookmarksTreeView.setFont(currentFont)
@@ -944,10 +848,12 @@ class MainWindow(QtGui.QMainWindow):
         currentFont = self.ui.bookmarksTreeView.font()
         
         # Make it a litter smaller
-        self.configuration.zoom_navigation_ptsize -= 2
-        if self.configuration.zoom_navigation_ptsize < 4:
-            self.configuration.zoom_navigation_ptsize = 4
-        currentFont.setPointSize(self.configuration.zoom_navigation_ptsize)
+        myPointSize = int(configuration.getValue('NavigationFontSize', '14'))
+        myPointSize -= 2
+        if myPointSize < 4:
+            myPointSize = 4
+        currentFont.setPointSize(myPointSize)
+        configuration.setValue('NavigationFontSize', str(myPointSize))
         
         # Set the font
         self.ui.bookmarksTreeView.setFont(currentFont)
@@ -959,115 +865,109 @@ class MainWindow(QtGui.QMainWindow):
     def collapseBookmarksButton_clicked(self):
         self.ui.bookmarksTreeView.collapseAll()
         
-    def refreshDocument(self):
+    def toggleNavigationPane(self, isOn):
         
-        if self.document != None:
-            url = misc.temp_path('import')
-            baseUrl = QUrl.fromLocalFile(url)
+        # Make the tab widget on the left side disappear if in, appear if out
+        if isOn:
+            # Reveal
+            sizes = self.ui.splitter.sizes()
+            sizes[0] = self.ui.navigationTabWidget.minimumSizeHint().width()
+            self.ui.splitter.setSizes(sizes)
+        
+        else:
+            # Hide
+            sizes = self.ui.splitter.sizes()
+            sizes[1] += sizes[0]
+            sizes[0] = 0
+            self.ui.splitter.setSizes(sizes)
             
-            docxHtml = self.document.getMainPage()
-                        
-            # Clear the cache in the web view
-            QWebSettings.clearIconDatabase()
-            QWebSettings.clearMemoryCaches()
-                        
-            # Set the content views and prepare assigner
-            self.assigner.prepare(docxHtml)
-            self.ui.webView.setHtml(docxHtml, baseUrl)
-
-    def showUpdateButton(self):
+    def toggleSplitterButton(self, pos, index):
         '''
-        Shows the Update button if there is an update available. This should
-        only be done by the thread that checks for it.
+        Toggles the splitter button, if it exists, based on whether the side
+        holding the navigation pane is visible or not.
         '''
-        self.ui.getUpdateButton.show()
-        
-    def runUpdate(self):
-        '''
-        Runs the setup file to update this program, when one exists.
-        '''
-        # Depending on whether the update has already downloaded or not, make
-        # the prompt tell the user the appropriate action (download it or
-        # install it)
-        from gui.update_prompt import UpdatePromptDialog
-        
         try:
-            if is_update_downloaded():
-                question = UpdatePromptDialog(self)
-                question.setText('Update has already downloaded. Want to install it?')
-                result = question.exec_()
-                
-                if result == QtGui.QMessageBox.Yes:
-                    # Run the installer and close this window down
-                    run_update_installer()
-                    self.close()
-                                
+            self.ui.splitterButton.blockSignals(True)
+            if index == 1 and pos == 0:
+                self.ui.splitterButton.setChecked(False)
             else:
-                question = UpdatePromptDialog(self)
-                result = question.exec_()
+                self.ui.splitterButton.setChecked(True)
+            self.ui.splitterButton.blockSignals(False)
+        except Exception:
+            pass
+        
+    def refreshDocument(self):
+        print 'Trying to refresh the document...'        
+        for i in range(self.ui.documentTabWidget.count()):
+            self.ui.documentTabWidget.widget(i).refreshDocument()
             
-                if result == QtGui.QMessageBox.Yes:
-                    
-                    from gui.download_progress import DownloadProgressWidget
-                    
-                    # Create the widget for the download right below the content 
-                    # view
-                    self.updateDownloadProgress = DownloadProgressWidget(self)
-                    self.updateDownloadProgress.setUrl(SETUP_FILE)
-                    self.updateDownloadProgress.setDestination(SETUP_TEMP_FILE)
-                
-                    self.updateDownloadProgress.downloadFinished.connect(self.finishUpdateDownload)
-                    self.ui.webViewLayout.addWidget(self.updateDownloadProgress, stretch=0)
-                
-                    self.updateDownloadProgress.startDownload()
-                    
-        except Exception as e:
-            # Generate a bug report for it
-            import traceback
-            from misc import prepare_bug_report
-            from gui.bug_reporter import BugReporter
-            out = prepare_bug_report(traceback.format_exc(), self.configuration)
-            dialog = BugReporter(out)
-            dialog.exec_()
+    def showUpdatePrompt(self):
+        '''
+        Shows the update prompt when there is one as a new tab.
+        '''
+        doc = UpdatePromptDocument('', None, None, hasDownloaded=is_update_downloaded())
+        self.addDocument(doc, silent=True, icon=QtGui.QIcon(':/classic/icons/update_classic.png'), hasCommands=True)
             
     def finishUpdateDownload(self, success):
         '''
         Does the cleanup logic for downloading an update.
         '''
-        self.ui.webViewLayout.removeWidget(self.updateDownloadProgress)
-        self.updateDownloadProgress.hide()
+        # Close all UpdatePromptDocuments
+        i = 0
+        while i < self.ui.documentTabWidget.count():
+            self.ui.documentTabWidget.count()
+            if isinstance(self.ui.documentTabWidget.widget(i).document, UpdatePromptDocument):
+                self.ui.documentTabWidget.removeTab(i)
+                i = 0
+            else:
+                i += 1
+        
+        self.ui.updateDownloadProgress.hide()
         if success:
-            
             # Save the version from over there to here
             versionInfo = save_server_version_to_temp()
             
             # Prompt the user if they want to install it
             if len(versionInfo) > 0:
-                from gui.update_prompt import UpdatePromptDialog
-                question = UpdatePromptDialog(self)
-                question.setText('Downloaded update! Want to install it?')
-                result = question.exec_()
-                if result == QtGui.QMessageBox.Yes:
-                    
-                    # Run the installer
-                    run_update_installer()
-                    self.app.exit(0)
+                self.showUpdatePrompt()
+    
+    def showAnnouncement(self, doc):
+        '''
+        Shows the announcement, given in the provided document.
+        '''
+        self.addDocument(doc, silent=True,)
             
     def setSettingsEnableState(self, isEnable):
         '''
         Disables or enables the other widgets that shouldn't be active during
         TTS playback.
         '''
+        # Set the icon for the play button by changing a property and resetting
+        # its style
+        self.ui.playButton.setProperty('isPlaying', not isEnable)
+        self.ui.playButton.setStyle(qApp.style())
+        if isEnable:
+            self.ui.playButton.setToolTip('Start')
+        else:
+            self.ui.playButton.setToolTip('Stop')
+        
         if not isEnable:
+            
+            # Disable all other document tabs except the current tab
+            for i in range(self.ui.documentTabWidget.count()):
+                if i != self.ui.documentTabWidget.currentIndex():
+                    self.ui.documentTabWidget.setTabEnabled(i, False)
+                    
+            if hasattr(self.ui, 'openDocumentButton'):
+                self.ui.openDocumentButton.setEnabled(False)
+                
             self.ui.colorSettingsButton.setEnabled(False)
             self.ui.speechSettingsButton.setEnabled(False)
             self.ui.saveToMP3Button.setEnabled(False)
-            self.ui.playButton.setEnabled(False)
             
             # Disable slider bars if TTS is not interactive
             if not self.speechThread.areSettingsInteractive():
-                self.ui.rateSlider.setEnabled(False)
-                self.ui.volumeSlider.setEnabled(False)
+                self.ui.rateSliderButton.setEnabled(False)
             
             # Actions
             self.ui.actionPlay.setEnabled(False)
@@ -1082,21 +982,23 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.actionCurrent_Selection.setEnabled(False)
             self.ui.actionBy_Page.setEnabled(False)
             self.ui.actionExport_to_HTML.setEnabled(False)
-            
-            # Search bar
-            for w in self.searchWidgets:
-                w.setEnabled(False)
                 
             # Cursor
-            self.ui.webView.setKeyboardNavEnabled(False)
+            self.currentDocumentWidget().setKeyboardNavEnabled(False)
             
         else:
-            self.ui.rateSlider.setEnabled(True)
-            self.ui.volumeSlider.setEnabled(True)
+            
+            # Enable all tabs
+            for i in range(self.ui.documentTabWidget.count()):
+                self.ui.documentTabWidget.setTabEnabled(i, True)
+                
+            self.ui.openDocumentButton.setEnabled(True)
+            
+            self.ui.rateSliderButton.setEnabled(True)
+                
             self.ui.colorSettingsButton.setEnabled(True)
             self.ui.speechSettingsButton.setEnabled(True)
             self.ui.saveToMP3Button.setEnabled(True)
-            self.ui.playButton.setEnabled(True)
             
             # Actions
             self.ui.actionPlay.setEnabled(True)
@@ -1112,9 +1014,11 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.actionBy_Page.setEnabled(True)
             self.ui.actionExport_to_HTML.setEnabled(True)
             
-            # Search bar
-            for w in self.searchWidgets:
-                w.setEnabled(True)
-            
             # Cursor
-            self.ui.webView.setKeyboardNavEnabled(True)
+            self.currentDocumentWidget().setKeyboardNavEnabled(True)
+            
+    def toggleSearchBar(self):
+        '''
+        Toggles the search bar of the current document.
+        '''
+        self.currentDocumentWidget().toggleSearchBar()

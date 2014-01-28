@@ -5,7 +5,9 @@ Created on Apr 8, 2013
 '''
 from PyQt4.QtCore import QThread, QMutex, pyqtSignal
 from PyQt4.QtGui import qApp
-import driver
+
+from speech import driver
+from gui import configuration
 
 class SpeechWorker(QThread):
     
@@ -43,6 +45,8 @@ class SpeechWorker(QThread):
         self._isChange = False
         
     def run(self):
+        
+        self.setPriority(QThread.HighPriority)
         
         def myOnStart(offset, length, label, stream, word):
             #print 'worker: OnStart'
@@ -109,11 +113,9 @@ class SpeechWorker(QThread):
             pass
     
     def startPlayback(self):
-        #print 'worker: Trying to start TTS'
         self.ttsEngine.start()
     
     def stopPlayback(self):
-        #print 'worker: Trying to stop TTS'
         self.ttsEngine.stop()
         
     def isPlaying(self):
@@ -125,7 +127,7 @@ class SpeechWorker(QThread):
     def mp3Interrupted(self):
         return self._stopMP3Creation
             
-    def saveToMP3(self, mp3Path, speechGenerator):
+    def saveToMP3(self, mp3Path, speechGenerator, tempDirectory):
         self._stopMP3Creation = False
         
         def myIsStop():
@@ -136,10 +138,15 @@ class SpeechWorker(QThread):
         
         def myLabelUpdater(label):
             self.onProgressLabel.emit(label)
-            
+        
+        # Wait until my TTS engine is fully created
+        while not self._ttsCreated:
+            pass
+        
         # Turn off my signals so that window doesn't try and update
         self.ttsEngine.disableSignals()
-        self.ttsEngine.speakToFile(mp3Path, speechGenerator, myOnProgress, myLabelUpdater, myIsStop)
+        
+        self.ttsEngine.speakToFile(mp3Path, speechGenerator, tempDirectory, myOnProgress, myLabelUpdater, myIsStop)
         self.ttsEngine.enableSignals()
     
     def setVolume(self, v):
@@ -158,6 +165,17 @@ class SpeechWorker(QThread):
         self._voice = voice
         self._isChange = True
         
+    def setConfiguration(self):
+        '''
+        Convenience function for setting all of the TTS settings at once. This
+        allows me to add other qualities to the TTS transparent of those who
+        use it.
+        '''
+        self.setVolume(configuration.getInt('Volume'))
+        self.setRate(configuration.getInt('Rate'))
+        self.setPauseLength(configuration.getInt('PauseLength'))
+        self.setVoice(configuration.getValue('Voice'))
+        
     def areSettingsInteractive(self):
         '''
         Returns true if the TTS settings can be changed interactively.
@@ -167,7 +185,7 @@ class SpeechWorker(QThread):
     def getVoiceList(self):
         # Wait until the TTS is created before attempting what I want to do next
         while not self._ttsCreated:
-            pass
+            QThread.yieldCurrentThread()
         return self.ttsEngine.getVoiceList()
     
     def setSpeechGenerator(self, gen):

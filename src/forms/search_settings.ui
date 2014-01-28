@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>184</width>
-    <height>121</height>
+    <height>136</height>
    </rect>
   </property>
   <property name="font">
@@ -20,7 +20,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="resource.qrc">
-    <normaloff>:/icons/icons/CAR_Logo.ico</normaloff>:/icons/icons/CAR_Logo.ico</iconset>
+    <normaloff>:/all/icons/CAR_Logo.ico</normaloff>:/all/icons/CAR_Logo.ico</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>

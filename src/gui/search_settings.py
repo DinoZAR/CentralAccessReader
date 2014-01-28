@@ -3,20 +3,20 @@ Created on Jun 4, 2013
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtGui import QDialog, QWidget
-
+from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QDialog
 from forms.search_settings_ui import Ui_SearchSettings
 
 class SearchSettings(QDialog):
-    '''
-    classdocs
-    '''
     
     def __init__(self, parent=None):
         QDialog.__init__(self, parent)
         
         self.ui = Ui_SearchSettings()
         self.ui.setupUi(self)
+        
+        self.setWindowFlags(Qt.WindowStaysOnTopHint)
+        
         self.connect_signals()
         
         self.mainConfig = None
@@ -31,18 +31,16 @@ class SearchSettings(QDialog):
         
         # Set the checkboxes
         self.ui.wholeWordCheckBox.blockSignals(True)
-        self.ui.wholeWordCheckBox.setChecked(self.mainConfig.search_whole_word)
+        self.ui.wholeWordCheckBox.setChecked(self.mainConfig['whole_word'])
         self.ui.wholeWordCheckBox.blockSignals(False)
         
         self.ui.matchCaseCheckBox.blockSignals(True)
-        self.ui.matchCaseCheckBox.setChecked(self.mainConfig.search_match_case)
+        self.ui.matchCaseCheckBox.setChecked(self.mainConfig['match_case'])
         self.ui.matchCaseCheckBox.blockSignals(False)
     
     def setWholeWord(self, isWholeWord):
-        print 'isWholeWord:', isWholeWord
-        self.mainConfig.search_whole_word = isWholeWord
+        self.mainConfig['whole_word'] = isWholeWord
     
     def setMatchCase(self, isMatchCase):
-        print 'isMatchCase:', isMatchCase
-        self.mainConfig.search_match_case = isMatchCase
+        self.mainConfig['match_case'] = isMatchCase
         

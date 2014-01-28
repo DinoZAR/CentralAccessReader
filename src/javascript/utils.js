@@ -13,54 +13,55 @@ Selection Functions
  */
 function GetSelectionRange() {
 	//console.debug('GetSelectionRange()');
-	range = ConvertUserSelectionToRange();
+	var range = ConvertUserSelectionToRange();
 
 	// Check if I have don't have a user selection.
 	if (range.collapsed) {
-		// Start from beginning or last navigated heading
-		if (startFromHeading) {
-			range.selectNodeContents(DeepestChild(lastHeadingElement));
-			range.startOffset = 0;
-		}
-		else {
+		
+		if (highlight !== null) {
 			
-			if (highlight !== null) {
-				// Make a range that starts from the highlighter/cursor
-				var parent = highlight.parentNode;
-				
-				if (highlight.previousSibling !== null) {
-				
-					if (highlight.previousSibling.nodeType === Node.TEXT_NODE) {
-						var elem = highlight.previousSibling;
-						var startOffset = elem.length;
-						var startIndex = GetChildIndex(elem);
-						
-						ClearHighlight();
-						
-						elem = $(parent).contents()[startIndex];
-						range.setStart(elem, startOffset);
-						range.setEndAfter(parent.lastChild);
-					}
-					else {
-						var index = GetChildIndex(highlight);
-						ClearHighlight();
-						range.selectNode($(parent).contents()[index]);
-					}
+			// Make a range that starts from the highlighter/cursor
+			var parent = highlight.parentNode;
+			
+			if (highlight.previousSibling !== null) {
+			
+				if (highlight.previousSibling.nodeType === Node.TEXT_NODE) {
+					var elem = highlight.previousSibling;
+					var startOffset = elem.length;
+					var startIndex = GetChildIndex(elem);
+					
+					ClearHighlight();
+					
+					elem = $(parent).contents()[startIndex];
+					range.setStart(elem, startOffset);
+					range.setEndAfter(parent.lastChild);
 				}
 				else {
+					var index = GetChildIndex(highlight);
 					ClearHighlight();
-					range.selectNode(DeepestChild(parent));
+					range.selectNode($(parent).contents()[index]);
 				}
 			}
+			else {
+				ClearHighlight();
+				range.selectNode(DeepestChild(parent));
+			}
+		}
+		
+		else {
 			
+			if (mySelectionRange !== null) {
+				range = mySelectionRange;
+			}
 			else {
 				// Select the entire document and start at beginning
 				range = GetRangeToEntireDocument();
 			}
 		}
 	}
-	else {
+	else {		
 		// Start from the user selection. Do some random fixes to it
+		ClearAllHighlights();
 		MoveRangeAfterWhitespace(range);
 		MoveRangeStartToDeepestInBody(range);
 		SurroundMathEquation(range);
@@ -68,7 +69,8 @@ function GetSelectionRange() {
 	}
 
 	ClearAllHighlights();
-	SetUserSelection(range);
+	
+	mySelectionRange = range;
 
 	return range;
 }
@@ -100,7 +102,7 @@ function GetBodyHTML() {
 function GetHTMLSource(range) {
 	//console.debug("GetHTMLSource()");
 	var clonedSelection = range.cloneContents();
-	div = document.createElement('div');
+	var div = document.createElement('div');
 	div.appendChild(clonedSelection);
 	return div.innerHTML;
 }
@@ -144,6 +146,7 @@ function MoveRangeStartToDeepestInBody(range) {
  * @param range
  */
 function SurroundMathEquation(range) {
+	
 	if (IsInsideEquation(range.startContainer) === true) {
 		var startEq = GetEquation(range.startContainer);
 		range.setStart(startEq, 0);
@@ -170,10 +173,13 @@ function MoveRangeOverEmptyParagraph(range) {
  * 
  * @param range 
  */
-function SetUserSelection(range) {
+function SetUserSelection(newRange) {
+	//console.debug('SetUserSelection()');
+	newRange.startOffset = 0;
+	
 	var sel = window.getSelection();
 	sel.removeAllRanges();
-	sel.addRange(range);
+	sel.addRange(newRange);
 }
 
 /**
@@ -186,6 +192,7 @@ function ConvertUserSelectionToRange() {
 	if (range.isCollapsed !== true) {
 		var newRange = range.getRangeAt(0);
 	}
+	ClearUserSelection();
 	return newRange;
 }
 
@@ -195,6 +202,7 @@ function ConvertUserSelectionToRange() {
  * @param range 
  */
 function GetRangeToEntireDocument() {
+	//console.debug('GetRangeToEntireDocument()');
 	r = window.getSelection();
 	r.selectAllChildren(document.body);
 	range = document.createRange();
@@ -227,7 +235,6 @@ function InsertAllChildNodes(parent, node) {
 
 	r = document.createRange();
 	r.selectNode(parent);
-	//console.debug('Contents inside parent: ' + GetHTMLSource(r));
 }
 
 /**
@@ -334,7 +341,7 @@ function GetPreviousOccurrence($elemSel, $sel) {
 
 /**
  * Gets the next occurrence of $sel from $elemSel. Both parameters are JQuery
- * objects. Returns a JQuery object.
+ * objects. Returns an Element object.
  * @param $elemSel
  * @param $sel
  * @returns
@@ -360,6 +367,63 @@ function GetNextOccurrence($elemSel, $sel) {
 	}
 	
 	return next;
+}
+
+/**
+ * Gets the next element after the current that matches the JQuery selector.
+ * @param elem
+ * @param nextSel
+ * @returns
+ */
+function GetNext(elem, nextSel) {
+	
+	// Make this an iterative process so that it doesn't overflow the stack
+	while (elem !== null) {
+		
+		// Change the current element. If it has a child, go to the
+		// child. If it has a sibling, go to the sibling. If it has
+		// a parent, go up and get the sibling of that parent. If
+		// that sibling does not have a sibling, keep going up until
+		// the parent doesn't exist.
+		
+		if (elem.firstChild !== null) {
+			// First child
+			elem = elem.firstChild;
+		}
+		else {
+			// Next sibling
+			if (elem.nextSibling !== null) {
+				elem = elem.nextSibling;
+			}
+			else {
+				// Sibling of parent
+				var done = false;
+				while (!done) {
+					if (elem.parentNode === null) {
+                        elem = null;
+						done = true;
+					}
+					else {
+						if (elem.parentNode.nextSibling !== null) {
+							elem = elem.parentNode.nextSibling;
+							done = true;	
+						}
+						else {
+							elem = elem.parentNode;
+						}
+					}
+				}
+			}
+		}
+		
+		// Now test the element to see if it matches
+		if ($(elem).is(nextSel)) {
+			return elem;
+		}
+	}
+	
+	// If I'm down here, it means I didn't find it
+	return elem;
 }
 
 /**
@@ -405,7 +469,7 @@ function GetChildIndex(el) {
 }
 
 /**
- * Returns whether an element is in the client viewport. 
+ * Returns whether an element is completely in the client viewport. 
  * 
  * @param el
  */
@@ -465,6 +529,31 @@ function GetEquation(node) {
 function IsInsideEquation(node) {
 	var myNode = GetEquation(node);
 	return myNode !== null;
+}
+
+/**
+ * Returns whether the element is or is inside the highlight node.
+ * 
+ * @param elem
+ * @returns {Boolean}
+ */
+function IsInsideHighlight(elem) {
+	var myNode = elem;
+
+	// Check to see if this node is an equation
+	if (myNode.id == "npaHighlightSelection") {
+		return true;
+	}
+
+	while (myNode.parentNode !== null) {
+		myNode = myNode.parentNode;
+
+		// Check to see if it is an equation by checking its class
+		if (myNode.id == "npaHighlightSelection") {
+			return true;
+		}
+	}
+	return false;
 }
 
 /**
@@ -541,4 +630,41 @@ function IsChildrenJustText(elem) {
 		}
 	}
 	return false;
+}
+
+/**
+ * Retrieves the closest whole word in a string to the index. By default, a
+ * word that wraps around the index is the closest. If there are no words in
+ * the string, then it returns a range with equal start and end points.
+ * 
+ * The returned object is as follows:
+ * {'word' : the word it found,
+ *  'start' : start index of word in string,
+ *  'end' : end index of word in string}
+ * 
+ * @param myString
+ * @param startIndex
+ * @returns {object}
+ */
+function GetWordRange(myString, startIndex) {
+
+    var regex = /\b\w+\b/g;
+    var m = null;
+    
+    // Pick the range that either intersects with the start index
+    // or is the closest in distance.
+    var start = 0,
+        end = 0;
+    
+    while ((m = regex.exec(myString)) !== null) {
+        start = regex.lastIndex - m[0].length;
+        end = regex.lastIndex;
+        if (regex.lastIndex > startIndex) {
+            break;
+        }
+    }
+    
+    return {'word' : myString.substring(start, end),
+            'start' : start,
+            'end' : end};
 }

@@ -7,11 +7,7 @@ import sys
 import os
 from PyQt4.QtGui import QApplication
 
-# Because we have local stuff, we need to append this local directory
-# to the Python path
-sys.path.append(os.path.abspath('..'))
-
-from src.script_test_environment.gui.main_window import MainWindow
+from script_test_environment.gui.main_window import MainWindow
 
 def main():
     

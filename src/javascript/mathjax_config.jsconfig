@@ -1,6 +1,9 @@
 MathJax.Ajax.timeout = 15000; // 1 second rather than 15 seconds
 MathJax.Hub.Config({
     messageStyle: 'none',
+    availableFonts: ['STIX'],
+    webFont: 'STIX-Web',
+    preferredFont: null,
     jax: ["input/MathML", "output/HTML-CSS"],
     extensions: ["mml2jax.js"],
     showMathMenu: false,

@@ -1,0 +1,102 @@
+:: Creates an installer for Windows. Here is how the command should be run:
+:: CreateInstaller_Windows {debug | release}
+
+@echo off
+
+:: Add Inno Setup and Python to my path
+set PATH=%PATH%;C:\Program Files (x86)\Inno Setup 5;C:\Python27
+
+:: Deleting
+echo Deleting previous distribution folder...
+RMDIR dist /S /Q
+
+:: Generating the spec for the PyInstaller
+echo Creating spec...
+python generate_spec.py %1
+
+:: Creating the executable
+echo Creating executable...
+python ../../pyinstaller-2.0/utils/Build.py "Central Access Reader.spec"
+
+:: Importing my external JavaScript libraries
+
+:: MathJax
+echo Copying MathJax...
+XCOPY mathjax "dist\Central Access Reader\mathjax\" /S /D /Y /I /Q
+
+:: JQuery
+echo Copying JQuery...
+XCOPY jquery-1.9.1.min.js "dist\Central Access Reader\" /D /Y /Q
+
+:: JQuery UI
+echo Copying JQuery UI...
+XCOPY jquery-ui "dist\Central Access Reader\jquery-ui\" /S /D /Y /I /Q
+
+:: JQuery Scroll-To
+echo Copying JQuery Scroll-to...
+XCOPY jquery.scrollTo-1.4.3.1-min.js "dist\Central Access Reader\" /D /Y /Q
+
+:: JQuery NextInDOM plugin...
+echo Copying JQuery NextInDOM plugin...
+XCOPY nextindom.jquery.js "dist\Central Access Reader\" /D /Y /Q
+
+:: Other Files
+
+:: Grabbing the headless renderer
+echo Copying the headless renderer...
+XCOPY src\headless\phantomjs.exe "dist\Central Access Reader\src\headless\" /D /Y /Q
+XCOPY src\headless\render.js "dist\Central Access Reader\src\headless\" /D /Y /Q
+
+:: Copy the pattern databases
+echo Copying the MathML pattern databases...
+XCOPY src\math_patterns "dist\Central Access Reader\src\math_patterns\" /S /D /Y /I /Q
+
+:: Grabbing the LAME encoder executable
+echo Copying LAME MP3 encoder...
+XCOPY src\lame_64.exe "dist\Central Access Reader\src\" /D /Y /Q
+
+:: Grabbing JavaScript functions
+echo Copying JavaScript functions and configurations...
+XCOPY src\javascript "dist\Central Access Reader\src\javascript\" /D /Y /Q
+
+:: Get the OMML to MathML XSLT
+echo Copying OMML to MathML XSLT...
+XCOPY src\document\docx\OMMLToMathML.xsl "dist\Central Access Reader\src\document\docx\" /D /Y /Qe
+
+:: Get all of the layout and themes for my GUI
+echo Copying theming files...
+XCOPY src\forms\theme "dist\Central Access Reader\src\forms\theme\" /S /D /Y /I /Q
+XCOPY src\forms\resource_rc.py "dist\Central Access Reader\src\forms\" /D /Y /Q
+
+:: Also getting Tutorial
+echo Copying tutorial...
+XCOPY Tutorial.docx "dist\Central Access Reader\" /D /Y /Q
+
+:: Get the version file
+echo Copying version file...
+XCOPY version.txt "dist\Central Access Reader\" /D /Y /Q
+
+:: Get the batch file to run CAR
+echo Copying CAR runner...
+XCOPY RunCARFromUpdate.bat "dist\Central Access Reader\" /D /Y /Q
+
+:: Create the Inno Setup script
+echo Creating Inno Setup script...
+python generate_inno_setup_script.py 64
+
+:: Compile Inno Setup script
+echo Compiling Inno Setup script into installer...
+iscc CAR_Setup.iss
+
+:: Copy the setup file to the top of the Central Access Reader directory
+echo Moving setup file to top...
+move /Y CAR_Setup_64.exe ..\..\
+
+:: Also copy the version text file to put up there too
+XCOPY version.txt "..\..\" /D /Y /Q
+
+echo ----------------------------------
+echo Done!
+echo Your file can be found as CAR_Setup_64.exe.
+echo The version file is called version.txt
+echo ----------------------------------

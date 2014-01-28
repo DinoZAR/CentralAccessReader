@@ -58,4 +58,4 @@ class DocumentLoadProgressDialog(QDialog):
         '''
         Reports to everyone that the operation was canceled and closes itself.
         '''
-        self.canceled.emit()
+        self.close()

@@ -34,6 +34,14 @@ class NSSpeechSynthesizerDriver(NSObject):
             self._signalsEnabled = True
             self._requestSpeechHook = requestSpeechHook
             
+            # Create my voice list
+            self._voiceList = []
+            vList = NSSpeechSynthesizer.availableVoices()
+            self._voiceList = []
+            for v in vList:
+                descr = v.split('.')[-1]
+                self._voiceList.append((unicode(descr), unicode(v)))
+            
             self._tts = NSSpeechSynthesizer.alloc().initWithVoice_(None)
             self._tts.setDelegate_(self)
             
@@ -98,14 +106,7 @@ class NSSpeechSynthesizerDriver(NSObject):
         
         The keyOrId is what you would use to set the voice later on.
         '''
-        voiceList = NSSpeechSynthesizer.availableVoices()
-        
-        myList = []
-        for v in voiceList:
-            descr = v.split('.')[-1]
-            myList.append((unicode(descr), unicode(v)))
-        
-        return myList
+        return self._voiceList
 
     def setSpeechGenerator(self, gen):
         '''
@@ -154,7 +155,7 @@ class NSSpeechSynthesizerDriver(NSObject):
                         break
                     
                     # Pause here if it is set
-                    if self._grabbingSpeech and self._running:
+                    if self._grabbingSpeech:
                         #print 'driver: pausing between paragraphs'
                         time.sleep(self._pauseLength / 5.0)
             
@@ -163,7 +164,7 @@ class NSSpeechSynthesizerDriver(NSObject):
             self.generatorLock.unlock()
             
             # Request to get some more speech, if I didn't already
-            if not self._alreadyRequestedSpeech:
+            if not self._alreadyRequestedSpeech and self._running:
                 self._alreadyRequestedSpeech = True
                 if self._requestSpeechHook is not None:
                     self._requestSpeechHook()
@@ -185,6 +186,7 @@ class NSSpeechSynthesizerDriver(NSObject):
         #print 'driver: stopping TTS'
         self._running = False
         self._tts.stopSpeaking()
+        self._done = True
         
     def isPlaying(self):
         '''
@@ -198,7 +200,7 @@ class NSSpeechSynthesizerDriver(NSObject):
         '''
         self._grabbingSpeech = False
 
-    def speakToFile(self, mp3Path, speechGenerator, progressCallback, labelCallback, checkStopFunction):
+    def speakToFile(self, mp3Path, speechGenerator, tempDirectory, progressCallback, labelCallback, checkStopFunction):
         '''
         Writes the speech output given by the speech generator as an MP3 file
         that will be saved to mp3Path.
@@ -215,11 +217,11 @@ class NSSpeechSynthesizerDriver(NSObject):
         
         self._tts.stopSpeaking()
         
+        aiffPath = os.path.join(tempDirectory, 'tmp.aiff')
         try:
-            os.remove(temp_path('tmp.aiff'))
+            os.remove(aiffPath)
         except OSError:
             pass
-        aiffPath = unicode(temp_path('tmp.aiff'))
         
         # Create a single string that will be sent to the TTS
         myString = ''
