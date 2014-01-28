@@ -63,13 +63,7 @@ def main():
     window = MainWindow(app)
     window.show()
     splash.finish(window)
-    app.exec_()
-    
-    # Save the configuration before close
-    print 'Saving before close...'
-    configuration.save(misc.app_data_path('configuration.xml'))
-    
-    sys.exit(0)
+    sys.exit(app.exec_())
 
 if __name__ == '__main__':
     main()

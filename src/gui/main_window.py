@@ -183,6 +183,10 @@ class MainWindow(QtGui.QMainWindow):
         self.toggleNavigationPane(True)
             
     def closeEvent(self, event):
+        # Save the configuration before close
+        print 'Saving before close...'
+        configuration.save(misc.app_data_path('configuration.xml'))
+        
         self.speechThread.quit()
         
     def dragEnterEvent(self, e):

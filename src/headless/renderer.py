@@ -69,7 +69,8 @@ class HeadlessRendererThread(QThread):
         doneGettingHtml = False
         
         try:
-            while ps.poll() is None:
+            done = False
+            while not done:
                 
                 if not self._running:
                     try:
@@ -80,21 +81,20 @@ class HeadlessRendererThread(QThread):
                 newStuff = ps.stdout.readline()
                 
                 if not grabbingNewHtml:
-                    finishedCheckString = '[Exporting the document to HTML]'
                     if newStuff.find(self.MATH_TYPESET_CHECKSTRING) == 0:
-                        typesetProgress = newStuff[len(checkString):]
+                        typesetProgress = newStuff[len(self.MATH_TYPESET_CHECKSTRING):]
                         self.progress.emit(int(typesetProgress), 'Typesetting math equations...')
                     elif newStuff.find(self.STARTING_DOCUMENT_EXPORT) == 0:
                         grabbingNewHtml = True
-                        print 'Grabbing new HTML...'
                         
                 else:
                     if newStuff.find(self.END_DOCUMENT_EXPORT) == 0:
                         doneGettingHtml = True
+                        done = True
                     
                     if not doneGettingHtml:
                         self._renderedHtml += newStuff
-        
+                        
         except Exception as e:
             print 'Something bad happened:', e
             print traceback.print_exc()
