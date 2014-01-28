@@ -1,0 +1,170 @@
+//    ___    ___    ___    ___    ___    ___    ___    ___   
+//   /\  \  /\\\\  /\__\  /\\\\  /\__\  /\\\\  /\__\  /\\\\  
+//  /::\  \/##\\\\/:/  / /##\\\\/:/ _/_/#//// /:/ _/_/##\\\\ 
+// /:/\:\__\#\#\\\\/__/ /#/\#\\\\/_/\__\//// /:/_/\__\#\#\\\\
+// \:\ \/__/\##////\  \ \#\\\////\/:/  /\\\\ \:\/:/  /\#\////
+//  \:\__\  /#////\:\__\ \#\\\\ \::/  /\#\\\\ \::/  /\##//// 
+//   \/__/  \////  \/__/  \////  \/__/  \////  \/__/  \////  
+//                                                                          
+// --------------
+// Order Matters!
+// --------------
+//
+// The MathML parser is entirely sequential. Once it finds all cases of the
+// current pattern and combines the different pattern's elements into singular
+// entities, the pattern is no longer used in later matching. This means you
+// must order patterns correctly to produce results you expect.
+//
+// -----------------
+// Expected Ordering
+// -----------------
+//
+// In order for patterns to match correctly, you should have patterns grouped
+// and have those groups ordered in the following way: 
+//
+// 1. Symbol Code (like variables and Unicode)
+// 2. Fraction-Based (like derivatives)
+// 3. Over-Under (like sums and integrals)
+// 4. Parenthetical Expressions (like square roots or things in parenthesis)
+// 5. Generic Fallbacks (like fractions, superscripting, and subscripting)
+// ------------------------------------------------------------------------------
+// Symbol Code
+// ------------------------------------------------------------------------------
+
+import _codes.txt
+import _Numbers.txt
+
+// Unicodes and MathML codes for operators
+import _Unicodes.txt
+import _Negatives.txt
+
+e [variable] = mi("e") -> '"e"'
+i [variable] = mi("i") -> '"i"'
+z [variable] = mi("z") -> '"z"'
+
+bbcapR = mi("&#8477;") -> 'all real numbers'
+
+//Functions
+//function = f mrow(openParen + closeParen) -> 'function {1} of {3}'
+//function = f openParen + closeParen -> 'function {1} of {3}'
+//function = f mfenced(+) -> 'function {1} of {2}'
+//functionPrime = f apostrophe mfenced(+) -> 'function {1} prime of {3}'
+//functionPrime = f prime mfenced(+) -> 'function {1} prime of {3}'
+
+// ------------------------------------------------------------------------------
+// Fraction-based
+// ------------------------------------------------------------------------------
+//darbouxIntUpper = munder(integral mrow(?) mrow(?) bar) -> 'lower Darboux integral from {2} to {3}'
+integral = msub([integral] ?) -> '{1} sub {2} of'
+
+// ------------------------------------------------------------------------------
+// Calculus-Specific
+// ------------------------------------------------------------------------------
+argumentOf = a r g -> 'argument of'
+conjugateOf = c o n j -> 'conjugate of'
+deriv = y comma -> 'derivative'
+inferior = i n f -> 'inferior'
+greatestLowerBound = g l b -> 'greatest lower bound'
+greatestLowerBound = g point l point b point -> 'greatest lower bound'
+leastUpperBound = l u b -> 'least upper bound'
+leastUpperBound = l point u point b point -> 'least upper bound'
+nthDeriv = msup(y mrow(openParen n closeParen)) -> 'nth derivative'
+complexConj = z timesStar -> 'complex conjugate'
+supremum = s u p -> 'supremum'
+timeDeriv = mover(y dot) -> 'time derivative'
+timeSecondDeriv = mover(y doubleDot) -> 'time second derivative'
+unitVector = mover(mrow(x) caret) -> 'unit vector'
+vector = mover(x rightArrow) -> 'vector'
+yields = y i e l d s -> '"yields"'
+
+// Strikes and Slashes
+import _Vocab.txt
+import _BordersSlashes.txt
+
+//---------------------------------------------------------------
+// Trigonometry-Specific
+//---------------------------------------------------------------
+import _Trig.txt
+
+// Powers and Primes
+apostrophe = apostrophe -> 'prime'
+supDubPrime = msup(? doublePrime) -> '{1} double prime,'
+supPrime = msup(? prime) -> '{1} prime,'
+
+import _Integrals.txt
+import _PowersPrimes.txt
+import _FunctionsLimits.txt
+
+
+// Syntax Quirks
+doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'
+doubleBarSyn = munder(munder(mrow(+) bar) bar) -> '{1} over double bar'
+doubleDagger = dagger dagger -> 'double dagger'
+
+// ------------------------------------------------------------------------------
+// Fraction-based
+// ------------------------------------------------------------------------------
+integralFrac = msub([integral] ?) -> '{1} sub {2} of,'
+
+// Other symbols
+infinity = mi("&#8734;") -> 'infinity'
+infinity = mn("&#8734;") -> 'infinity'
+
+// ------------------------------------------------------------------------------
+// Conditions for arrows based on over or under
+// ------------------------------------------------------------------------------
+//darbouxIntegralLower = munder(munderover(integral mrow(+) mrow(+)) mrow() ?) -> 'lower darboux integral from {2}, to {3}, of' 
+overBothArrow = munder(? [arrow]) -> '{1}, over {2},'
+underBothArrow = mover(? [arrow]) -> '{1}, under {2},'
+overUnderArrowB = munderover(rightArrow mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
+overUnderArrowB = munderover(leftArrow mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
+overUnderArrowB = munderover(bothArrow mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
+overUnderArrowB = munderover(rightHarpoon mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
+
+// ------------------------------------------------------------------------------
+// Under-Over, Integrals, Products, and Summations
+// ------------------------------------------------------------------------------
+backPrimes = mmultiscripts(? ? ? backPrime) -> '{4}, {1}'
+leftSubSup = mmultiscripts(? ? ? ?) -> 'left subscript {3}, left superscript {4}, {1}'
+
+import _FunctionsLimits.txt
+
+// ------------------------------------------------------------------------------
+// Parenthetical Expressions
+// ------------------------------------------------------------------------------
+absoluteValue = verticalBar + verticalBar -> 'absolute value {2} end absolute'
+cuberoot = mroot(mrow(+) mrow(three)) -> 'the cube root of {1},'
+squareRoot = mroot(mrow(+) mrow(two)) -> 'the square root of {1},'
+fourthRoot = mroot(mrow(+) mrow(four)) -> 'the fourth root of {1},'
+rootPowers = mroot(mrow(+) mrow(+)) -> 'the {2} root of {1},'
+squareRoot = msqrt(+) -> 'the square root of {1},'
+
+leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left superscript {2},'
+leftSub = msup( mrow() mrow(?)) -> 'left subscript {1},'
+leftSup = msub( mrow() mrow(?)) -> 'left superscript {1},'
+
+// ------------------------------------------------------------------------------
+// Matrices
+// ------------------------------------------------------------------------------
+matrix = mrow(mtable(#)) -> 'matrix {1}'
+matrix = mtable(#) -> 'matrix {1}'
+matrixPar = mfenced(mrow(mtable(+))) -> 'matrix {1}'
+tableColumn = mtd(+) -> '{1},'
+tableRow = mtr(+) -> 'row {1}'
+
+// ------------------------------------------------------------------------------
+// Generic Fallbacks, Final Collectors
+// ------------------------------------------------------------------------------
+import _SoftFractions.txt
+import _Dollars.txt
+
+leftSubSup = mmultiscipts(mrow(+) ? mrow(+) mrow(+)) -> 'left subscript {2}, left superscript {3}, {1}'
+
+import _Fractions.txt
+
+fencedABS = mfenced<open="|",close="|",separators="|">(mrow(+) mrow(+) mrow(+)) -> 'vertical bar, {1}, vertical bar, {2}, vertical bar, {3}, vertical bar,'
+fencedABS = mfenced<open="|",close="|",separators="|">(mrow(+) mrow(+)) -> 'vertical bar, {1}, vertical bar, {2}, vertical bar,'
+fencedABS = mfenced<open="|",close="|">(+) -> 'absolute value of, {1}, end absolute,'
+
+import _Fences.txt
+import _Final.txt

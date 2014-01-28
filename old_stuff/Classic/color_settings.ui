@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ColorSettings</class>
+ <widget class="QDialog" name="ColorSettings">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>501</width>
+    <height>355</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <pointsize>12</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>Highlighting, Colors, and Fonts</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../../resource.qrc">
+    <normaloff>:/classic/icons/color_settings_classic.png</normaloff>:/classic/icons/color_settings_classic.png</iconset>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <layout class="QGridLayout" name="gridLayout_3" rowstretch="0,0,0,0,0">
+     <property name="verticalSpacing">
+      <number>15</number>
+     </property>
+     <item row="3" column="2">
+      <widget class="QComboBox" name="layoutComboBox"/>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Theme</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Layout</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <layout class="QFormLayout" name="formLayout">
+       <property name="fieldGrowthPolicy">
+        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+       </property>
+       <property name="horizontalSpacing">
+        <number>8</number>
+       </property>
+       <property name="verticalSpacing">
+        <number>8</number>
+       </property>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Content:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QPushButton" name="contentBackgroundButton">
+           <property name="text">
+            <string>Background</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="contentTextButton">
+           <property name="text">
+            <string>Text</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Highlighter Word:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QPushButton" name="highlighterBackgroundButton">
+           <property name="text">
+            <string>Background</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="highlighterTextButton">
+           <property name="text">
+            <string>Text</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Highlighter Sentence:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QPushButton" name="highlighterLineBackgroundButton">
+           <property name="text">
+            <string>Background</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="highlighterLineTextButton">
+           <property name="text">
+            <string>Text</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item row="0" column="2">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QCheckBox" name="enableHTextCheckBox">
+         <property name="text">
+          <string>Word</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="enableHLineCheckBox">
+         <property name="text">
+          <string>Sentence</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="0" column="1">
+      <widget class="Line" name="line_3">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Colors</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="Line" name="line_4">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="2">
+      <widget class="QComboBox" name="themeComboBox"/>
+     </item>
+     <item row="4" column="1">
+      <widget class="Line" name="line_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>Highlighting</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_9">
+       <property name="text">
+        <string>Font</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="Line" name="line_5">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QFontComboBox" name="fontComboBox"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="restoreButton">
+       <property name="toolTip">
+        <string>Restores settings to what they were when you opened the window</string>
+       </property>
+       <property name="text">
+        <string>Restore</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="previewButton">
+       <property name="text">
+        <string>Preview</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="applyButton">
+       <property name="toolTip">
+        <string>Apply new speech settings</string>
+       </property>
+       <property name="text">
+        <string>Apply</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>50</width>
+         <height>50</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>enableHTextCheckBox</tabstop>
+  <tabstop>enableHLineCheckBox</tabstop>
+  <tabstop>contentBackgroundButton</tabstop>
+  <tabstop>contentTextButton</tabstop>
+  <tabstop>highlighterBackgroundButton</tabstop>
+  <tabstop>highlighterTextButton</tabstop>
+  <tabstop>highlighterLineBackgroundButton</tabstop>
+  <tabstop>highlighterLineTextButton</tabstop>
+  <tabstop>restoreButton</tabstop>
+  <tabstop>previewButton</tabstop>
+  <tabstop>applyButton</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../../resource.qrc"/>
+ </resources>
+ <connections/>
+</ui>

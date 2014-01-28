@@ -1,0 +1,169 @@
+//   ________                             __                 
+//  /  _____/  ____  ____   _____   _____/  |________ ___ __
+// /   \  ____/ __ \/  _ \ /     \_/ __ \   __\_  __ \   |  |
+// \    \_\  \  ___(  (_) )  Y Y  \  ___/|  |  |  | \/\___  |
+//  \______  /\___  \____/\  |_|  /\____\|__|  |__|   / ____/
+//         \/     \/       \/   \/                    \/     
+//
+// --------------
+// Order Matters!
+// --------------
+//
+// The MathML parser is entirely sequential. Once it finds all cases of the
+// current pattern and combines the different pattern's elements into singular
+// entities, the pattern is no longer used in later matching. This means you
+// must order patterns correctly to produce results you expect.
+//
+// -----------------
+// Expected Ordering
+// -----------------
+//
+// In order for patterns to match correctly, you should have patterns grouped
+// and have those groups ordered in the following way: 
+//
+// 1. Symbol Code (like variables and Unicode)
+// 2. Fraction-Based (like derivatives)
+// 3. Over-Under (like sums and integrals)
+// 4. Parenthetical Expressions (like square roots or things in parenthesis)
+// 5. Generic Fallbacks (like fractions, superscripting, and subscripting)
+//
+// ------------------------------------------------------------------------------
+// Symbol Code
+// ------------------------------------------------------------------------------
+import _codes.txt
+import _Numbers.txt
+
+// Unicodes and MathML codes for operators
+import _Unicodes.txt
+import _Negatives.txt
+
+e [variable] = mi("e") -> '"e"'
+i [variable] = mi("i") -> '"i"'
+z [variable] = mi("z") -> '"z"'
+
+bbcapR = mi("&#8477;") -> 'all real numbers'
+
+// Other symbols
+
+// Strikes and Slashes
+import _Vocab.txt
+import _BordersSlashes.txt
+
+//---------------------------------------------------------------
+// Trigonometry-Specific
+//---------------------------------------------------------------
+import _Trig.txt
+
+// Products and Unions
+import _Integrals.txt
+
+//Powers and Primes
+apostrophe = apostrophe -> 'minutes'
+import _PowersPrimes.txt
+import _FunctionsLimits.txt
+
+// Syntax Quirks
+doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'
+doubleBarSyn = munder(munder(mrow(+) bar) bar) -> '{1} over double bar'
+doubleDagger = dagger dagger -> 'double dagger'
+
+// ------------------------------------------------------------------------------
+// Fraction-based
+// ------------------------------------------------------------------------------
+integral = msub([integral] ?) -> '{1} sub {2} of,'
+
+// Other symbols
+infinity = mi("&#8734;") -> 'infinity'
+infinity = mn("&#8734;") -> 'infinity'
+
+// ------------------------------------------------------------------------------
+// Geometry Specific
+// ------------------------------------------------------------------------------
+
+angles = angle s -> 'angles'congruent = approxEqualTilde -> 'is congruent to'
+parallels = parallel s -> 'parallels'
+perpendiculars = perpendicular s -> 'perpendiculars'
+underBothArrow = mover(? bar) -> 'the line segment {1},'
+underBothArrow = mover(? arc) -> 'the arc {1},'
+underBothArrow = mover(? leftArrow) -> 'the directed line segment {1},'
+underBothArrow = mover(? rightArrow) -> 'the directed line segment {1},'
+thePoint = p colon openParen + comma + closeParen -> 'the point {4}, {6},'
+thePoint = p openParen + comma + closeParen -> 'the point {3}, {5},'
+thePoint = openParen + comma + closeParen -> 'the point {2}, {4},'
+thePoint = openParen + comma + comma ? closeParen -> 'the point {2}, {4}, {6}'
+thePoint = p colon mfenced<open="(",close=")">(mrow( + comma + )) -> 'the point {3}, {5},'thePoint = p mfenced<open="(",close=")">(mrow( + comma + )) -> 'the point {2}, {4},'
+thePoint = mfenced<open="(",close=")">(mrow( + comma + comma + )) -> 'the point {1}, {3}, {5},'
+thePoint = mfenced<open="(",close=")">(mrow( + comma + )) -> 'the point {1}, {3},'
+thePoint = p colon openBrace + closeBrace -> 'the set {4},'
+thePoint = p openBrace + closeBrace -> 'the set {3},'
+thePoint = openBrace + closeBrace -> 'the set {2},'
+thePoint = p colon mfenced<open="{",close="}">(mrow(+)) -> 'the set {3},'
+thePoint = p mfenced<open="{",close="}">(mrow(+)) -> 'the set {2},'
+thePoint = mfenced<open="{",close="}">(mrow(+)) -> 'the set {1},'
+
+// Postulates (do we want these?)
+angleangleside = a a s -> 'angle angle side'
+angleangleside = a point a point s point -> 'angle angle side'
+anglesideangle = a s a -> 'angle side angle'
+anglesideangle = a point s point a point -> 'angle side angle'
+sideangleside = s a s -> 'side angle side'
+sideangleside = s point a point s point -> 'side angle side'
+sidesideangle = s s a -> 'side side angle'
+sidesideangle = s point s point a point -> 'side side angle'
+sidesideside = s s s -> 'side side side'
+sidesideside = s point s point s point -> 'side side side'
+
+// ------------------------------------------------------------------------------
+// Conditions for arrows based on over or under
+// ------------------------------------------------------------------------------
+overBothArrow = munder(? [arrow]) -> '{1}, over {2},'
+overUnderArrowB = munderover(rightArrow mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
+overUnderArrowB = munderover(leftArrow mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
+overUnderArrowB = munderover(bothArrow mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
+overUnderArrowB = munderover(rightHarpoon mrow(+) mrow(+)) -> '{2}, above {1}, sub {3},'
+
+// ------------------------------------------------------------------------------
+// Under-Over, Integrals, Products, and Summations
+// ------------------------------------------------------------------------------
+backPrimes = mmultiscripts(? ? ? ?) -> '{4} {1}'
+
+// Limits
+limit = munderover(mrow(l i m) mrow(? ? ?) ?) -> 'the limit as {4}, approaches {6}, of'
+limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4}, of'
+
+// ------------------------------------------------------------------------------
+// Parenthetical Expressions
+// ------------------------------------------------------------------------------
+absoluteValue = verticalBar + verticalBar -> 'absolute value {2} end absolute'
+cuberoot = mroot(mrow(+) mrow(three)) -> 'the cube root of {1},'
+squareRoot = mroot(mrow(+) mrow(two)) -> 'the square root of {1},'
+fourthRoot = mroot(mrow(+) mrow(four)) -> 'the fourth root of {1},'
+rootPowers = mroot(mrow(+) mrow(+)) -> 'the {2} root of {1},'
+squareRoot = msqrt(+) -> 'the square root of {1},'
+
+leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left superscript {2},'
+leftSub = msup( mrow() mrow(?)) -> 'left subscript {1},'
+leftSup = msub( mrow() mrow(?)) -> 'left superscript {1},'
+
+// ------------------------------------------------------------------------------
+// Matrices
+// ------------------------------------------------------------------------------
+matrix = mrow(mtable(#)) -> 'matrix {1}'
+matrix = mtable(#) -> 'matrix {1}'
+matrixPar = mfenced(mrow(mtable(+))) -> 'matrix {1}'
+tableColumn = mtd(+) -> '{1},'
+tableRow = mtr(+) -> 'row {1}'
+
+// ------------------------------------------------------------------------------
+// Generic Fallbacks, Final Collectors
+// ------------------------------------------------------------------------------
+import _SoftFractions.txt
+import _Dollars.txt
+import _Fractions.txt
+
+fencedABS = mfenced<open="|",close="|",separators="|">(mrow(+) mrow(+) mrow(+)) -> 'vertical bar, {1}, vertical bar, {2}, vertical bar, {3}, vertical bar,'
+fencedABS = mfenced<open="|",close="|",separators="|">(mrow(+) mrow(+)) -> 'vertical bar, {1}, vertical bar, {2}, vertical bar,'
+fencedABS = mfenced<open="|",close="|">(+) -> 'absolute value of, {1}, end absolute,'
+
+import _Fences.txt
+import _Final.txt

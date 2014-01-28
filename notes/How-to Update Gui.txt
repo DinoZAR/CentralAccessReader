@@ -1,0 +1,49 @@
+Here is how you can update the GUI so that is runs with your changes:
+
+1: Make changes to whatever .ui file you need to update. You can also make one
+   too for the configuration page or something.
+   
+2: Make sure it's saved in folder src.forms
+
+3: Run scr_compileForms.py to recompile the .ui file. This is important.
+
+   (a) If the form is new, the script will compile the .ui file to a python file
+   	   called <name of file>_ui.py
+      
+4: If your form is new, create a class inside the src.gui file named somewhat
+   like your .ui file.
+   
+5: Inside this class, put in the following
+
+from PyQt4 import QtGui
+from PyQt4.QtCore import Qt
+from src.forms.<name of .ui file>_ui import Ui_<whatever you called the form object in .ui>
+
+class <name of form object, camel-cased>(QtGui.<whichever class the form object is>):
+
+    def __init__(self, parent=None):
+        QtGui.QWidget.__init__(self, parent)
+        self.ui = Ui_<whatever you called the form object in .ui>()
+        self.ui.setupUi(self)
+        
+        self.connect_signals(self):
+        	pass    # You have to always put this keyword in if a function or class
+        	        # has nothing in it. Just how Python works.
+
+6: To add a button or other GUI function callback
+
+ 	(a) In self.connect_signals(), add a statement to connect a function to the
+ 		signal that looks like this:
+ 		
+ 		self.ui.<name of button or something>.clicked.connect(self.<some function>)
+ 		
+ 		This also works for signals like valueChanged and others.
+ 		
+ 	(b) Create function you referred to in connect_signals that has the same
+ 	    signature as the signal you're trying to connect (plus self in the
+ 	    beginning. It's analagous to "this", except if you want to access a 
+ 	    class's instance variables, you MUST use self)
+ 	    
+ 	    (i) For a button, it would look like this:
+ 	    
+ 	    	def <whatever name you used in self.connect_signals>(self):

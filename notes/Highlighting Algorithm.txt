@@ -1,0 +1,28 @@
+Notes on the highlighting part:
+-------------------------------------------
+
+
+<h3><#text>Chapter 3 Differentiation</#text></h3>
+
+<h4><#text>Section 3.3: Increasing and Decreasing Functions and the <highlight>First</highlight> Derivative Test</#text></h4>
+
+<p><#text>Determine intervals on which a function is increasing or decreasing.</#text></p>
+
+
+What choices we make to go to next "element"?
+
+ 1) If I'm in <#text> element
+    a. See if I get a word. If I don't get another word, then find the next element to read from.
+
+ 2) If I'm inside an equation
+    a.  Go to next element.
+
+ 3) If I'm inside an image
+    a. Go to next element.
+
+ 4) If I'm in *anything* else
+    a. Get the first child of it
+      i. If it's a #text, then get first word and be done
+      ii. If it's an equation, stop there.
+      iii. If it's an image, stop there.
+      iv. Otherwise, get the first child of that

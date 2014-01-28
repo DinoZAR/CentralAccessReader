@@ -1,0 +1,6 @@
+# Ignore all built directories, like bin and dist
+bin/
+dist/
+
+# No compiled python files either
+*.pyc
