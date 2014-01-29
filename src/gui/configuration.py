@@ -534,6 +534,12 @@ color: ''' + highlightTextColor + ''';
 display: inline-block;
 z-index: 2;
 }
+
+#npaHighlightBorder
+{
+border-size: 3px;
+border-color: ''' + highlightBackgroundColor + ''';
+}
 '''
     # -------------------------------------------
     # END CSS FILE
