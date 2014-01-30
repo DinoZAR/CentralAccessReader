@@ -127,10 +127,7 @@ import _Integrals.txt
 
 //Powers and Primes
 apostrophe = apostrophe -> 'prime'
-supDubPrime = msup(? doublePrime) -> '{1} double prime,'
-supPrime = msup(? prime) -> '{1} prime,'
 
-import _PowersPrimes.txt
 import _FunctionsLimits.txt
 
 
@@ -170,24 +167,11 @@ limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4}, of'
 // ------------------------------------------------------------------------------
 // Parenthetical Expressions
 // ------------------------------------------------------------------------------
-cuberoot = mroot(mrow(+) mrow(three)) -> 'the cube root of {1},'
-squareRoot = mroot(mrow(+) mrow(two)) -> 'the square root of {1},'
-fourthRoot = mroot(mrow(+) mrow(four)) -> 'the fourth root of {1},'
-rootPowers = mroot(mrow(+) mrow(+)) -> 'the {2} root of {1},'
-squareRoot = msqrt(+) -> 'the square root of {1},'
-
-leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left superscript {2},'
-leftSub = msup( mrow() mrow(?)) -> 'left subscript {1},'
-leftSup = msub( mrow() mrow(?)) -> 'left superscript {1},'
+import _Roots.txt
 
 // ------------------------------------------------------------------------------
 // Matrices
 // ------------------------------------------------------------------------------
-matrix = mrow(mtable(#)) -> 'truth table {1}'
-matrix = mtable(#) -> 'truth table {1}'
-matrixPar = mfenced(mrow(mtable(+))) -> 'truth table {1}'
-tableColumn = mtd(+) -> '{1},'
-tableRow = mtr(+) -> 'row {1}'
 
 // ------------------------------------------------------------------------------
 // Generic Fallbacks, Final Collectors

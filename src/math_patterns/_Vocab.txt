@@ -7,6 +7,7 @@ argmax = a r g m a x -> 'argmax'
 argmin = a r g m i n -> 'argmin'
 min = m i n -> 'min'
 max = m a x -> 'max'
+supp = s u p p -> 'support set'
 sup = s u p -> 'supremum'
 inf = i n f -> 'infimum'
 lim = l i m -> 'limit'
@@ -133,3 +134,22 @@ lcd = L C D -> 'l c d'
 by = b y -> 'by'
 
 if = i f -> 'if'
+
+// Abbreviations
+almostSurely = a point s point -> 'almost surely'
+subjectTo = s point t point -> 'subject to'
+variance = v a r -> 'variance'
+covariance = c o v -> 'covariance'
+probability = P r -> 'probability'
+exponential = E x p -> 'exponential'
+
+// Vocab using powers
+matroid = msup(mrow(M) mrow(numberSign)) -> 'matroid'
+matroid = msup(M mrow(numberSign)) -> 'matroid'
+matroid = msup(mrow(M) numberSign) -> 'matroid'
+matroid = msup(M numberSign) -> 'matroid'
+
+lattice = msup(mrow(L) mrow(numberSign)) -> 'lattice'
+lattice = msup(L mrow(numberSign)) -> 'lattice'
+lattice = msup(mrow(L) numberSign) -> 'lattice'
+lattice = msup(L numberSign) -> 'lattice'

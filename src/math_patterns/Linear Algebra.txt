@@ -111,7 +111,6 @@ union = munderover(union mrow() mrow()) -> 'union'
 // Strikes and Slashes
 import _Vocab.txt
 import _BordersSlashes.txt
-dubsub = msub( + mrow( + comma + )) -> '{1} double subscript {2} comma {4}'
 
 //---------------------------------------------------------------
 // Trigonometry-Specific
@@ -120,10 +119,7 @@ import _Trig.txt
 import _Integrals.txt
 
 apostrophe = apostrophe -> 'prime'
-supDubPrime = msup(? doublePrime) -> '{1} double prime,'
-supPrime = msup(? prime) -> '{1} prime,'
 
-import _PowersPrimes.txt
 import _FunctionsLimits.txt
 
 
@@ -159,24 +155,12 @@ limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4}, of'
 // ------------------------------------------------------------------------------
 // Parenthetical Expressions
 // ------------------------------------------------------------------------------
-cuberoot = mroot(mrow(+) mrow(three)) -> 'the cube root of {1},'
-squareRoot = mroot(mrow(+) mrow(two)) -> 'the square root of {1},'
-fourthRoot = mroot(mrow(+) mrow(four)) -> 'the fourth root of {1},'
-rootPowers = mroot(mrow(+) mrow(+)) -> 'the {2} root of {1},'
-squareRoot = msqrt(+) -> 'the square root of {1},'
-
-leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left superscript {2},'
-leftSub = msup( mrow() mrow(?)) -> 'left subscript {1},'
-leftSup = msub( mrow() mrow(?)) -> 'left superscript {1},'
+import _Roots.txt
 
 // ------------------------------------------------------------------------------
 // Matrices
 // ------------------------------------------------------------------------------
-matrix = mrow(mtable(#)) -> 'matrix {1}'
-matrix = mtable(#) -> 'matrix {1}'
-matrixPar = mfenced(mrow(mtable(+))) -> 'matrix {1}'
-tableColumn = mtd(+) -> '{1},'
-tableRow = mtr(+) -> 'row {1}'
+import _Matrix.txt
 detMat = d e t matrixPar -> 'determinant of the {4}'
 detMat = d e t matrix -> 'determinant of the {4}'
 determ = d e t -> 'determinant of the square matrix'
@@ -185,6 +169,9 @@ determ = d e t -> 'determinant of the square matrix'
 // Generic Fallbacks, Final Collectors
 // ------------------------------------------------------------------------------
 fencedABS = mfenced<open="|",close="|">(+) -> 'determinant of the square matrix {1},'
+taxicabNorm = msub(mfenced<open="&#8214;",close="&#8214;">(+) mrow(one)) -> 'the taxicab norm of {1},'
+taxicabNorm = msub(mfenced<open="&#8214;",close="&#8214;">(+) one) -> 'the taxicab norm of {1},'
+norm = mfenced<open="&#8214;",close="&#8214;">(+) -> 'the norm of {1},'
 
 import _SoftFractions.txt
 import _Dollars.txt

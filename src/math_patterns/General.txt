@@ -58,10 +58,7 @@ import _Integrals.txt
 
 //Powers and Primes
 apostrophe = apostrophe -> 'prime'
-supDubPrime = msup(? doublePrime) -> '{1} double prime,'
-supPrime = msup(? prime) -> '{1} prime,'
 
-import _PowersPrimes.txt
 import _FunctionsLimits.txt
 
 
@@ -105,24 +102,11 @@ munder = munderover(mrow(+) mrow(+) mrow()) -> '{1} sub {2}'
 // Parenthetical Expressions
 // ------------------------------------------------------------------------------
 absoluteValue = verticalBar + verticalBar -> 'absolute value {2} end absolute'
-cuberoot = mroot(mrow(+) mrow(three)) -> 'the cube root of {1},'
-squareRoot = mroot(mrow(+) mrow(two)) -> 'the square root of {1},'
-fourthRoot = mroot(mrow(+) mrow(four)) -> 'the fourth root of {1},'
-rootPowers = mroot(mrow(+) mrow(+)) -> 'the {2} root of {1},'
-squareRoot = msqrt(+) -> 'the square root of {1},'
-
-leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left superscript {2},'
-leftSub = msup( mrow() mrow(?)) -> 'left subscript {1},'
-leftSup = msub( mrow() mrow(?)) -> 'left superscript {1},'
+import _Roots.txt
 
 // ------------------------------------------------------------------------------
 // Matrices
 // ------------------------------------------------------------------------------
-matrix = mrow(mtable(#)) -> 'matrix {1}'
-matrix = mtable(#) -> 'matrix {1}'
-matrixPar = mfenced(mrow(mtable(+))) -> 'matrix {1}'
-tableColumn = mtd(+) -> '{1},'
-tableRow = mtr(+) -> 'row {1}'
 
 // ------------------------------------------------------------------------------
 // Generic Fallbacks, Final Collectors
@@ -131,12 +115,9 @@ import _SoftFractions.txt
 import _Dollars.txt
 import _Fractions.txt
 
-
-
 fencedABS = mfenced<open="|",close="|",separators="|">(mrow(+) mrow(+) mrow(+)) -> 'vertical bar, {1}, vertical bar, {2}, vertical bar, {3}, vertical bar,'
 fencedABS = mfenced<open="|",close="|",separators="|">(mrow(+) mrow(+)) -> 'vertical bar, {1}, vertical bar, {2}, vertical bar,'
 fencedABS = mfenced<open="|",close="|">(+) -> 'absolute value of, {1}, end absolute,'
 
 import _Fences.txt
-
 import _Final.txt

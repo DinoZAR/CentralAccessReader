@@ -26,3 +26,5 @@ functionGofF = g mfenced<open="(",close=")">( mrow(f mfenced<open="(",close=")">
 functionGofG = g mfenced<open="(",close=")">( mrow(g mfenced<open="(",close=")">( mrow( + )))) -> 'function g of g of {3}'
 functionF = f mfenced<open="(",close=")">( mrow( + )) -> 'function f of {2}'
 functionG = g mfenced<open="(",close=")">( mrow( + )) -> 'function g of {2}'
+
+import _JustLimits.txt

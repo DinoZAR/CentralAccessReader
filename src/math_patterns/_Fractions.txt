@@ -1,15 +1,18 @@
 // Overbars & Underbars
-underBar = munder(mrow(+) bar) -> 'begin underbar. {1}. End underbar.'
-overBar = mover(mrow(+) bar) -> 'begin overbar. {1}. End overbar.'
+underBar = munder(mrow(+) bar) -> 'begin underbar {1} end underbar'
+underBar = munder(+ bar) -> 'begin underbar {1} end underbar'
+underBar = munder(mrow(+) mrow(bar)) -> 'begin underbar {1} end underbar'
+underBar = munder(+ mrow(bar)) -> 'begin underbar {1} end underbar'
 
-// single character overbars and unerbars 
-underBar = munder(+ bar) -> 'begin underbar. {1}. End underbar.'
-overBar = mover(+ bar) -> 'begin overbar. {1}. End overbar.'
+overBar = mover(mrow(+) bar) -> 'begin overbar {1} end overbar'
+overBar = mover(+ bar) -> 'begin overbar {1} end overbar'
+overBar = mover(mrow(+) mrow(bar)) -> 'begin overbar {1} end overbar'
+overBar = mover(+ mrow(bar)) -> 'begin overbar {1} end overbar'
 
 under = munder(? ?) -> '{1} over {2}'
 over = mover(? ?) -> '{1} under {2}'
 
-fraction = mfrac(? ?) -> 'begin fraction. {1}. over. {2}. end fraction.'
+fraction = mfrac(? ?) -> 'begin fraction {1} over {2} end fraction'
 
 andFraction = zero fraction -> '{1} and {2}'
 andFraction = one fraction -> '{1} and {2}'

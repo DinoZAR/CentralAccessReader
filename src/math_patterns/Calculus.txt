@@ -54,7 +54,7 @@ bbcapR = mi("&#8477;") -> 'all real numbers'
 // ------------------------------------------------------------------------------
 // Fraction-based
 // ------------------------------------------------------------------------------
-//darbouxIntUpper = munder(integral mrow(?) mrow(?) bar) -> 'lower Darboux integral from {2} to {3}'
+//darbouxIntUpper = munder(integral mrow(?) mrow(?) bar) -> 'lower Darboux integral from {2} to {3}'
 integral = msub([integral] ?) -> '{1} sub {2} of'
 
 // ------------------------------------------------------------------------------
@@ -88,13 +88,9 @@ import _Trig.txt
 
 // Powers and Primes
 apostrophe = apostrophe -> 'prime'
-supDubPrime = msup(? doublePrime) -> '{1} double prime,'
-supPrime = msup(? prime) -> '{1} prime,'
 
 import _Integrals.txt
-import _PowersPrimes.txt
 import _FunctionsLimits.txt
-
 
 // Syntax Quirks
 doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'
@@ -124,41 +120,22 @@ overUnderArrowB = munderover(rightHarpoon mrow(+) mrow(+)) -> '{2}, above {1}, s
 // ------------------------------------------------------------------------------
 // Under-Over, Integrals, Products, and Summations
 // ------------------------------------------------------------------------------
-backPrimes = mmultiscripts(? ? ? backPrime) -> '{4}, {1}'
-leftSubSup = mmultiscripts(? ? ? ?) -> 'left subscript {3}, left superscript {4}, {1}'
-
-import _FunctionsLimits.txt
 
 // ------------------------------------------------------------------------------
 // Parenthetical Expressions
 // ------------------------------------------------------------------------------
 absoluteValue = verticalBar + verticalBar -> 'absolute value {2} end absolute'
-cuberoot = mroot(mrow(+) mrow(three)) -> 'the cube root of {1},'
-squareRoot = mroot(mrow(+) mrow(two)) -> 'the square root of {1},'
-fourthRoot = mroot(mrow(+) mrow(four)) -> 'the fourth root of {1},'
-rootPowers = mroot(mrow(+) mrow(+)) -> 'the {2} root of {1},'
-squareRoot = msqrt(+) -> 'the square root of {1},'
-
-leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left superscript {2},'
-leftSub = msup( mrow() mrow(?)) -> 'left subscript {1},'
-leftSup = msub( mrow() mrow(?)) -> 'left superscript {1},'
+import _Roots.txt
 
 // ------------------------------------------------------------------------------
 // Matrices
 // ------------------------------------------------------------------------------
-matrix = mrow(mtable(#)) -> 'matrix {1}'
-matrix = mtable(#) -> 'matrix {1}'
-matrixPar = mfenced(mrow(mtable(+))) -> 'matrix {1}'
-tableColumn = mtd(+) -> '{1},'
-tableRow = mtr(+) -> 'row {1}'
 
 // ------------------------------------------------------------------------------
 // Generic Fallbacks, Final Collectors
 // ------------------------------------------------------------------------------
 import _SoftFractions.txt
 import _Dollars.txt
-
-leftSubSup = mmultiscipts(mrow(+) ? mrow(+) mrow(+)) -> 'left subscript {2}, left superscript {3}, {1}'
 
 import _Fractions.txt
 

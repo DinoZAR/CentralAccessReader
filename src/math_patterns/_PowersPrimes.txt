@@ -1,5 +1,15 @@
-// Specifically for twos
+// Power or subscript used for positive or negative
+powerPositive = msup(? mrow(plus)) -> '{1} positive'
+powerPositive = msup(? plus) -> '{1} positive'
+subscriptPositive = msub(? mrow(plus)) -> '{1} positive'
+subscriptPositive = msub(? plus) -> '{1} positive'
 
+powerNegative = msup(? mrow(minus)) -> '{1} negative'
+powerNegative = msup(? minus) -> '{1} negative'
+subscriptNegative = msub(? mrow(minus)) -> '{1} negative'
+subscriptNegative = msub(? minus) -> '{1} negative'
+
+// Specifically for twos
 powerOne = msup(mrow( two ) mrow(one)) -> '{1} , to the first power,'
 powerFour = msup(mrow( two ) mrow(four)) -> '{1} , to the fourth power,'
 powerFive = msup(mrow( two ) mrow(five)) -> '{1} , to the fifth power,'
@@ -306,14 +316,15 @@ supDubPrime = msup(? doublePrime) -> '{1} seconds,'
 supPrime = msup(? prime) -> '{1} minutes,'
 supTriPrime = msup(? triplePrime) -> '{1} triple prime,'
 
-leftSubSup = msubsup( mrow(?) mrow(?) mrow(?)) -> '{1}, sub {2}, to the power of {3},'
-leftSubSup = msubsup( mrow() mrow(?) mrow(?)) -> 'left subscript {1}, left superscript {2},'
-leftSub = msub( mrow() mrow(?)) -> 'left subscript {1},'
-leftSup = msup( mrow() mrow(?)) -> 'left superscript {1},'
-
-Sub = msub(mrow(?) mrow(?)) -> '{1} sub {2},'
-Sup = msup(mrow(?) mrow(?)) -> '{1} to the {2} power,'
+leftSubSup = msubsup( mrow(?) ? ? ) -> '{1}, sub {2}, to the power of {3},'
+leftSubSup = msubsup( mrow() ? ? ) -> 'left subscript {1}, left superscript {2},'
+leftSub = msub( mrow() ?) -> 'left subscript {1},'
+leftSup = msup( mrow() ?) -> 'left superscript {1},'
+dubsub = msub( + mrow( + comma + )) -> '{1} double subscript {2} comma {4}'
 
 subscript = msub(? ?) -> '{1} sub {2}'
 superscript = msup(? ?) -> '{1} to the {2} power'
 subsuperscript = msubsup(? ? ?) -> '{1} to the {3} power sub {2}'
+
+backPrimes = mmultiscripts(? ? ? backPrime) -> '{4}, {1}'
+leftSubSup = mmultiscripts(? ? ? ?) -> 'left subscript {3}, left superscript {4}, {1}'

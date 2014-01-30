@@ -1,0 +1,12 @@
+squareRoot = mroot(? mrow(two)) -> 'the square root of {1},'
+squareRoot = mroot(? mrow(two)) -> 'the square root of {1},'
+
+cuberoot = mroot(? mrow(three)) -> 'the cube root of {1},'
+cuberoot = mroot(? three) -> 'the cube root of {1},'
+
+fourthRoot = mroot(? mrow(four)) -> 'the fourth root of {1},'
+fourthRoot = mroot(? four) -> 'the fourth root of {1},'
+
+rootPowers = mroot(? ?) -> 'the {2} root of {1},'
+
+squareRoot = msqrt(+) -> 'the square root of {1},'
