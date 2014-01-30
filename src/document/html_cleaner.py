@@ -39,12 +39,12 @@ def clean(htmlElem, progressHook=None, cancelHook=None):
         if cancelHook():
             return htmlElem
     
-    if progressHook is not None:
-        progressHook(60, 'Cleaning up spans...')    
-    htmlElem = _deleteSpans(htmlElem)
-    if cancelHook is not None:
-        if cancelHook():
-            return htmlElem
+#     if progressHook is not None:
+#         progressHook(60, 'Cleaning up spans...')    
+#     htmlElem = _deleteSpans(htmlElem)
+#     if cancelHook is not None:
+#         if cancelHook():
+#             return htmlElem
     
     if progressHook is not None:
         progressHook(80, 'Cleaning up line breaks...')

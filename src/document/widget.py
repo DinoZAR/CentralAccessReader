@@ -10,8 +10,8 @@ import time
 
 from lxml import html
 from lxml.etree import ParserError, XMLSyntaxError
-from PyQt4.QtCore import QUrl, pyqtSignal, QMutex, QTimer, pyqtSlot
-from PyQt4.QtGui import QWidget, QMessageBox, QFileDialog
+from PyQt4.QtCore import QUrl, pyqtSignal, QMutex, QTimer, pyqtSlot, QMimeData
+from PyQt4.QtGui import QWidget, QMessageBox, QFileDialog, QApplication
 from PyQt4.QtWebKit import QWebInspector, QWebSettings
 
 from export.html_single import HTMLSingleExportThread
@@ -110,6 +110,7 @@ class DocumentWidget(QWidget):
         self.ui.progressCancelButton.clicked.connect(self.hideProgressWidgets)
         self.ui.showFilesButton.clicked.connect(self._showFiles)
         
+        self.ui.webView.requestCopy.connect(self.copyToClipboard)
         self.ui.webView.requestPaste.connect(self.requestPaste)
         self.ui.webView.requestReadFromSelection.connect(self.requestReadFromSelection)
         self.ui.webView.requestSaveSelectionToMP3.connect(self.saveMP3Selection)
@@ -139,6 +140,32 @@ class DocumentWidget(QWidget):
 #             self.contentCommand.disconnect()
 #         except Exception as e:
 #             print e
+
+    def copyToClipboard(self):
+        '''
+        Copies the content selected by user to the clipboard. It will also clean
+        up some things so that it works more nicely (like copying math
+        equations, for instance).
+        '''
+        myHtml = html.fromstring(unicode(self.ui.webView.selectedHtml()))
+        
+        # Get all math equations rendered as SVGs and replace them with MathML
+        maths = myHtml.xpath(".//span[@class='mathmlEquation']")
+        for i in range(len(maths)):
+            
+            # Get the ID for the replacement
+            query = maths[i].xpath(".//span[@class='MathJax_SVG']")
+            if len(query) > 0:
+                myId = query[0].get('id')
+                myMathML = self.document.getMathMLFromID(myId)
+                
+                # Replace the span with my MathML
+                maths[i].replace(query[0], myMathML)
+        
+        # Get the content I am selecting
+        myData = QMimeData()
+        myData.setHtml(html.tostring(myHtml))
+        QApplication.clipboard().setMimeData(myData)
     
     def showSearch(self, isShown):
         '''

@@ -4,7 +4,7 @@ Created on Apr 18, 2013
 @author: Spencer Graffe
 '''
 from PyQt4.QtWebKit import QWebView, QWebPage
-from PyQt4.QtCore import Qt, pyqtSignal, QMimeData
+from PyQt4.QtCore import Qt, pyqtSignal
 from PyQt4.QtGui import QApplication, QMenu, QAction, QKeySequence
 import webbrowser
 import re
@@ -23,6 +23,7 @@ class NPAWebView(QWebView):
     cursorMoved = pyqtSignal()
     
     # Signals for my custom context menu
+    requestCopy = pyqtSignal()
     requestPaste = pyqtSignal()
     requestReadFromSelection = pyqtSignal()
     requestSaveSelectionToMP3 = pyqtSignal()
@@ -62,10 +63,7 @@ class NPAWebView(QWebView):
         menu.exec_(ev.globalPos())
         
     def copyToClipboard(self):
-        # Get the content I am selecting
-        myData = QMimeData()
-        myData.setHtml(self.selectedHtml())
-        QApplication.clipboard().setMimeData(myData)
+        self.requestCopy.emit()
         
     def wheelEvent(self, event):
         modifiers = QApplication.keyboardModifiers()

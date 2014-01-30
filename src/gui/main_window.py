@@ -191,39 +191,42 @@ class MainWindow(QtGui.QMainWindow):
         
     def dragEnterEvent(self, e):
         if e.mimeData().hasUrls:
-            url = unicode(e.mimeData().urls()[0].toLocalFile())
-            ext = os.path.splitext(url)[1]
-            if ext == '.docx' or ext == '.doc':
-                e.setDropAction(Qt.CopyAction)
-                e.accept()
-            else:
-                e.ignore()
+            if len(e.mimeData().urls()) > 0:
+                url = unicode(e.mimeData().urls()[0].toLocalFile())
+                ext = os.path.splitext(url)[1]
+                if ext == '.docx' or ext == '.doc':
+                    e.setDropAction(Qt.CopyAction)
+                    e.accept()
+                else:
+                    e.ignore()
         else:
             e.ignore()
             
     def dragMoveEvent(self, e):
         if e.mimeData().hasUrls:
-            url = unicode(e.mimeData().urls()[0].toLocalFile())
-            ext = os.path.splitext(url)[1]
-            if ext == '.docx' or ext == '.doc':
-                e.setDropAction(Qt.CopyAction)
-                e.accept()
-            else:
-                e.ignore()
+            if len(e.mimeData().urls()) > 0:
+                url = unicode(e.mimeData().urls()[0].toLocalFile())
+                ext = os.path.splitext(url)[1]
+                if ext == '.docx' or ext == '.doc':
+                    e.setDropAction(Qt.CopyAction)
+                    e.accept()
+                else:
+                    e.ignore()
         else:
             e.ignore()
             
     def dropEvent(self, e):
         if e.mimeData().hasUrls:
-            e.setDropAction(Qt.CopyAction)
-            e.accept()
-            url = unicode(e.mimeData().urls()[0].toLocalFile())
-            if os.path.splitext(url)[1] == '.docx':
-                self.activateWindow()
-                self.raise_()
-                self.openDocument(url)
-            elif os.path.splitext(url)[1] == '.doc':
-                self.showDocNotSupported()
+            if len(e.mimeData().urls()) > 0:
+                e.setDropAction(Qt.CopyAction)
+                e.accept()
+                url = unicode(e.mimeData().urls()[0].toLocalFile())
+                if os.path.splitext(url)[1] == '.docx':
+                    self.activateWindow()
+                    self.raise_()
+                    self.openDocument(url)
+                elif os.path.splitext(url)[1] == '.doc':
+                    self.showDocNotSupported()
         
     def quit(self):
         self.close()
@@ -570,7 +573,7 @@ class MainWindow(QtGui.QMainWindow):
             self.progressDialog.closeEvent = self._unlockAddDocumentMutex
         widget.toggleSpeechPlayback.connect(self.toggleSpeech)
         widget.requestPaste.connect(self.pasteFromClipboard)
-        widget.requestReadFromSelection.connect(self.playSpeech)
+        widget.requestReadFromSelection.connect(self.toggleSpeech)
         widget.requestUpdateNavigation.connect(self.updateNavigationBar)
         widget.setZoom(configuration.getInt('Zoom', 1))
         widget.setDocument(doc)

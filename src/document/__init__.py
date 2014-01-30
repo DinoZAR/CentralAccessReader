@@ -136,6 +136,12 @@ class Document(object):
         self._prepareBody(self._contentDOM)
         return HTML.tostring(html)
     
+    def getMathMLFromID(self, mathID):
+        '''
+        Returns the MathML for a given ID, as an lxml Element
+        '''
+        return etree.fromstring(self._maths[mathID]['mathml'])
+    
     def stopThreads(self):
         '''
         Stops the threads running on this document. You would do this in
