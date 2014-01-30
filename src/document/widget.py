@@ -485,7 +485,7 @@ class DocumentWidget(QWidget):
         
         # Connect all of the signals
         self.exportThread.progress.connect(self._exportProgress)
-        self.exportThread.finished.connect(self._exportSuccess)
+        self.exportThread.finished.connect(self._exportFinished)
         self.ui.progressCancelButton.clicked.connect(self.exportThread.stop)
         
         # Set the progress to default values
@@ -503,11 +503,25 @@ class DocumentWidget(QWidget):
         self.ui.progressBar.setValue(percent)
         self.ui.progressLabel.setText(label)
     
-    def _exportSuccess(self):
-        self.hideProgressWidgets()
-        self.ui.progressLabel.show()
-        self.ui.progressLabel.setText('Export Successful!')
-        self.ui.showFilesButton.show()
+    def _exportFinished(self):
+        if self.exportThread.isSuccess:
+            self.hideProgressWidgets()
+            self.ui.progressLabel.show()
+            self.ui.progressLabel.setText('Export Successful!')
+            self.ui.showFilesButton.show()
+        
+        else:
+            # If the cancel button was already pressed, the widgets will already
+            # be hidden, so no point in showing them that the export has failed.
+            #
+            # However, if the progress widgets are in view, then it means it did
+            # fail because we didn't cancel it
+            
+            # Hide everything but what we need
+            self.ui.progressBar.hide()
+            self.ui.showFilesButton.hide()
+            
+            self.ui.progressLabel.setText('Export failed.')
     
     def _showCancelExport(self):
         '''
