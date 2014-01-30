@@ -49,17 +49,17 @@ class NPAWebView(QWebView):
         self.copyAction.setShortcut(QKeySequence.Copy)
         self.addAction(self.copyAction)
     
-#     def contextMenuEvent(self, ev):
-#         '''
-#         Make up my own context menu called when user right-clicks on window.
-#         '''
-#         menu = QMenu()
-#         menu.addAction(self.copyAction)
-#         menu.addAction('Paste', self.requestPaste)
-#         menu.addSeparator()
-#         menu.addAction('Start Reading From Selection', self.requestReadFromSelection)
-#         menu.addAction('Save Selection to MP3', self.requestSaveSelectionToMP3)
-#         menu.exec_(ev.globalPos())
+    def contextMenuEvent(self, ev):
+        '''
+        Make up my own context menu called when user right-clicks on window.
+        '''
+        menu = QMenu()
+        menu.addAction(self.copyAction)
+        menu.addAction('Paste', self.requestPaste)
+        menu.addSeparator()
+        menu.addAction('Start Reading From Selection', self.requestReadFromSelection)
+        menu.addAction('Save Selection to MP3', self.requestSaveSelectionToMP3)
+        menu.exec_(ev.globalPos())
         
     def copyToClipboard(self):
         # Get the content I am selecting
