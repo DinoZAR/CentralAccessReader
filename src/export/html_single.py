@@ -319,8 +319,12 @@ class HTMLSingleExportThread(ExportThread):
             myLabel = self.DESCRIPTION_EMBED_IMAGES + str(i + 1) + ' of ' + str(len(images)) + '...'
             self._reportProgress(myProgress, myLabel)
             
-            p = images[i].get('src')
-            images[i].set('src', self._createEmbeddedImageDataURL(p))
+            try:
+                p = images[i].get('src')
+                images[i].set('src', self._createEmbeddedImageDataURL(p))
+            except urllib2.URLError as e:
+                # The URL may already be embedded, so don't do it twice.
+                pass
     
     def _embedFonts(self, myHtml):
         '''

@@ -4,7 +4,7 @@ cd src
 # Setting up the environment
 #
 echo "Setting up the environment..."
-export PATH=/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/:$PATH
+export PATH=/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/:$PATH
 echo $PATH
 
 #
@@ -109,11 +109,10 @@ APP_SIZE=$(du -sk "./dist/Central Access Reader.app" | cut -d'.' -f1 | tr -d ' '
 echo "App size: $APP_SIZE kB"
 
 echo "Creating the temporary DMG..."
-hdiutil create -ov -srcfolder "./dist" -volname "Central Access Reader" -fs HFS+ -fsargs "-c c=64,a=16,e=16" -format UDRW "./dist/tmp.dmg"
+hdiutil create -ov -srcfolder "./dist" -volname "Central Access Reader" -format UDRW "./dist/tmp.dmg"
 
 echo "Modifying DMG..."
-device=$(hdiutil attach -readwrite -noverify -noautoopen "./dist/tmp.dmg" | egrep '^/dev/' | sed 1q | awk '{print $1}')
-echo "Mounted image address: $device"
+hdiutil attach -readwrite -noverify -noautoopen "./dist/tmp.dmg"
 
 #
 # Make the DMG look nice
@@ -159,7 +158,7 @@ end tell
 # Finalize the DMG by compressing and setting the correct permissions on it
 #
 sync
-hdiutil convert "./dist/tmp.dmg" -format UDZO -imagekey zlib-level=9 -o "./dist/Central_Access_Reader.dmg"
+hdiutil convert "./dist/tmp.dmg" -format UDBZ -o "./dist/Central_Access_Reader.dmg"
 rm -f "./dist/tmp.dmg"
 
 echo "Moving the files to top level..."
