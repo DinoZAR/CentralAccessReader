@@ -35,13 +35,18 @@ class DocumentLoadingThread(QThread):
         
         self._success = False
         
-        if not self._isClipboard:
-            # Check which document goes to this extension
-            ext = os.path.splitext(os.path.basename(self._fileName))[1].lower()
-            if ext == '.docx':
-                self._doc = DocxDocument(self._fileName, self._reportProgress, self._isCanceled)
-        else:
-            self._doc = ClipboardDocument('', self._reportProgress, self._isCanceled)
+        try:
+            if not self._isClipboard:
+                # Check which document goes to this extension
+                ext = os.path.splitext(os.path.basename(self._fileName))[1].lower()
+                if ext == '.docx':
+                    self._doc = DocxDocument(self._fileName, self._reportProgress, self._isCanceled)
+            else:
+                self._doc = ClipboardDocument('', self._reportProgress, self._isCanceled)
+        except Exception as e:
+            print 'Could not read file', self._fileName, ':', e
+            self._success = False
+            return
         
         self._success = not self._isCanceled()
             

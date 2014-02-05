@@ -253,7 +253,8 @@ class JobExportThread(QThread):
         super(JobExportThread, self).__init__()
         self._job = job
         self._success = False
-        self._running = True        
+        self._running = True
+        self._canceled = False
     
     def run(self):
         self._job.progress = 0
@@ -301,6 +302,10 @@ class JobExportThread(QThread):
                     if exportThread.isSuccess:
                         self._success = True
         
+        # Used this so that if my threads are still alive, they can't update it
+        # after I set this to False
+        self._running = False
+        
         if self._success:
             self._job.completed = True
             self._job.status = 'Completed!'
@@ -308,18 +313,23 @@ class JobExportThread(QThread):
             self.update.emit(self._job)
             
         else:
-            self._job.status = 'Canceled'
+            self._job.completed = False
+            if self._canceled:
+                self._job.status = 'Canceled'
+            else:
+                self._job.status = 'Error'
             self._job.progress = 0
             self.update.emit(self._job)
         
     def _updateStatus(self, percentComplete, label):
         # This check is used so that we don't run into race conditions
-        if not self._success:
+        if self._running:
             self._job.progress = percentComplete
             self._job.status = label
             self.update.emit(self._job)
         
     def stop(self):
+        self._canceled = True
         self._running = False
         
 
@@ -405,7 +415,7 @@ class JobQueue(QAbstractTableModel):
         self.endResetModel()
     
     def updateJob(self, job):
-        self.beginResetModel()
+        self.beginResetModel()        
         self._jobs[self._jobs.index(job)] = job
         self.endResetModel()
     

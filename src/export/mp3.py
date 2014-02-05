@@ -31,6 +31,8 @@ class MP3ExportThread(ExportThread):
     def run(self):
         super(MP3ExportThread, self).run()
         
+        self.progress.emit(0, 'Starting up TTS...')
+        
         # Get the progress of the thing from the speech thread
         def myOnProgress(percent):
             self.progress.emit(percent, self._ttsCurrentLabel)

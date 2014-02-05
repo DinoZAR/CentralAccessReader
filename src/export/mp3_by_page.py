@@ -34,6 +34,8 @@ class MP3ByPageExportThread(ExportThread):
     def run(self):
         super(MP3ByPageExportThread, self).run()
         
+        self.progress.emit(0, 'Starting up TTS...')
+        
         # Create my own speech thread
         self._speech = SpeechWorker()
         self._speech.start()
