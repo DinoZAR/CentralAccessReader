@@ -218,11 +218,17 @@ def save_images(docxPath, importPath, cancelHook, progressHook):
                 # Extract it to my import folder
                 savePath = importPath + '/images/' + f.replace('word/media/', '')
                 if os.path.splitext(savePath)[1].lower() in IMAGE_TRANSLATION:
-                    contents = z.read(f)
-                    myFile = StringIO(contents)
-                    convertFile = Image.open(myFile)
-                    outPath = os.path.splitext(savePath)[0] + IMAGE_TRANSLATION[os.path.splitext(savePath)[1].lower()]
-                    convertFile.save(outPath)
+                    try:
+                        contents = z.read(f)
+                        myFile = StringIO(contents)
+                        convertFile = Image.open(myFile)
+                        outPath = os.path.splitext(savePath)[0] + IMAGE_TRANSLATION[os.path.splitext(savePath)[1].lower()]
+                        convertFile.save(outPath)
+                    except IOError as e:
+                        # Don't try to do anything else with it. Just copy the file over
+                        print 'Could not convert image', f, 'to', os.path.basename(savePath)
+                        with open(savePath, 'wb') as imageFile:
+                            imageFile.write(z.read(f))
                 else:
                     with open(savePath, 'wb') as imageFile:
                         imageFile.write(z.read(f))
