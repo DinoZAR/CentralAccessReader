@@ -11,7 +11,7 @@ from PyQt4.QtWebKit import QWebSettings
 from PyQt4.QtCore import Qt, QMutex, pyqtSignal, QTimer
 import sip
 
-from announcements import AnnouncementPullThread
+from announcements import AnnouncementPullThread, ANNOUNCEMENT_RSS_URL
 from document.clipboard_document import ClipboardDocument
 from document.landing_page_document import LandingPageDocument
 from document.update_prompt_document import UpdatePromptDocument
@@ -285,6 +285,7 @@ class MainWindow(QtGui.QMainWindow):
         # Help
         self.ui.actionTutorial.triggered.connect(self.openTutorial)
         self.ui.actionAbout.triggered.connect(self.openAboutDialog)
+        self.ui.actionAnnouncements.triggered.connect(self.showAnnouncementWithoutDoc)
         self.ui.actionReport_a_Bug.triggered.connect(self.openReportBugWindow)
         self.ui.actionTake_A_Survey.triggered.connect(self.openSurveyWindow)
         
@@ -942,7 +943,15 @@ class MainWindow(QtGui.QMainWindow):
         '''
         Shows the announcement, given in the provided document.
         '''
-        self.addDocument(doc, silent=True,)
+        self.addDocument(doc, silent=True)
+            
+    def showAnnouncementWithoutDoc(self):
+        '''
+        Shows the announcements without having the Document prepared. This is
+        for the Announcments menu item.
+        '''
+        doc = RSSDocument('', None, None, rssUrl=ANNOUNCEMENT_RSS_URL, title='Announcements')
+        self.addDocument(doc)
             
     def setSettingsEnableState(self, isEnable):
         '''

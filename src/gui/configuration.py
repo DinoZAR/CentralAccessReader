@@ -180,7 +180,7 @@ def getDate(key, defaultValue=None):
     if defaultValue is not None:
         myDefaultValue = defaultValue.isoformat().split('T')[0]
     
-    return datetime.strptime(getValue(key, myDefaultValue), '%Y-%M-%d')
+    return datetime.strptime(getValue(key, myDefaultValue), '%Y-%m-%d')
 
 def setDate(key, value, defaultValue=None):
     '''

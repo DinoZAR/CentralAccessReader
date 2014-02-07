@@ -48,6 +48,7 @@ class LandingPageDocument(Document):
         <h2>Drag Word Document file into CAR</h2>
         <p><img src="''' + dragHereGif + '''"/></p>
         <h2>Paste from clipboard</h2>
+        <h3>Right-click -> Paste</h3>
         <h3>Windows: Ctrl + V</h3>
         <h3>Mac: Command + V</h3>
         </body>

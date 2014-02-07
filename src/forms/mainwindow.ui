@@ -833,6 +833,7 @@
      <string>Help</string>
     </property>
     <addaction name="actionTutorial"/>
+    <addaction name="actionAnnouncements"/>
     <addaction name="actionAbout"/>
     <addaction name="separator"/>
     <addaction name="actionReport_a_Bug"/>
@@ -1134,6 +1135,11 @@
   <action name="actionBatch">
    <property name="text">
     <string>Batch</string>
+   </property>
+  </action>
+  <action name="actionAnnouncements">
+   <property name="text">
+    <string>Announcements</string>
    </property>
   </action>
  </widget>

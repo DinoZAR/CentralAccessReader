@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace\nifty-prose-articulator\src\forms/mainwindow.ui'
+# Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/mainwindow.ui'
 #
-# Created: Thu Jan 23 09:06:00 2014
+# Created: Fri Feb 07 09:32:37 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -413,6 +413,8 @@ class Ui_MainWindow(object):
         self.actionPaste_From_Clipboard.setObjectName(_fromUtf8("actionPaste_From_Clipboard"))
         self.actionBatch = QtGui.QAction(MainWindow)
         self.actionBatch.setObjectName(_fromUtf8("actionBatch"))
+        self.actionAnnouncements = QtGui.QAction(MainWindow)
+        self.actionAnnouncements.setObjectName(_fromUtf8("actionAnnouncements"))
         self.menuFile.addAction(self.actionOpen_Docx)
         self.menuFile.addAction(self.actionClose_Document)
         self.menuFile.addAction(self.actionPaste_From_Clipboard)
@@ -443,6 +445,7 @@ class Ui_MainWindow(object):
         self.menuMathML.addAction(self.actionOpen_Pattern_Editor)
         self.menuMathML.addAction(self.actionShow_All_MathML)
         self.menuHelp.addAction(self.actionTutorial)
+        self.menuHelp.addAction(self.actionAnnouncements)
         self.menuHelp.addAction(self.actionAbout)
         self.menuHelp.addSeparator()
         self.menuHelp.addAction(self.actionReport_a_Bug)
@@ -540,6 +543,7 @@ class Ui_MainWindow(object):
         self.actionPaste_From_Clipboard.setText(_translate("MainWindow", "Paste From Clipboard", None))
         self.actionPaste_From_Clipboard.setShortcut(_translate("MainWindow", "Ctrl+V", None))
         self.actionBatch.setText(_translate("MainWindow", "Batch", None))
+        self.actionAnnouncements.setText(_translate("MainWindow", "Announcements", None))
 
 from gui.download_progress import DownloadProgressWidget
 import resource_rc

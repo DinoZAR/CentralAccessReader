@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\GraffeS\git\central-access-reader\src\forms/document_widget.ui'
+# Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/document_widget.ui'
 #
-# Created: Thu Jan 30 10:34:19 2014
+# Created: Fri Feb 07 09:32:36 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
