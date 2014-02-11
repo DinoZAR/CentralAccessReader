@@ -245,7 +245,10 @@ space = mi("&#8203;") -> ' '
 space = mo("&#8289;") -> ' '
 
 // Letters
-ScriptJ [variable] = mi<mathvariant="script">("J") -> 'mathematical script cap J'
+scriptH [variable] = mi<mathvariant="script">("H") -> 'mathematical script cap H'
+scriptH [variable] = mi("&#8459;") -> 'mathematical script cap H'
+scriptJ [variable] = mi<mathvariant="script">("J") -> 'mathematical script cap J'
+scriptP [variable] = mi<mathvariant="script">("P") -> 'mathematical script cap P'
 
 a [variable] = mi("a") -> '"a"'
 b [variable] = mi("b") -> ', "b"'
