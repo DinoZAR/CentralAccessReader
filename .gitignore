@@ -1,7 +1,13 @@
 # Ignore all built directories, like bin and dist
 bin/
 dist/
+build/
 
+*.spec
+*.exe
+*.exe.manifest
+*.iss
+*.log
 
 *.pyc
 .pydevproject
