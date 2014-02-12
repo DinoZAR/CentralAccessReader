@@ -197,6 +197,16 @@ def prepare_bug_report(traceback, configuration, detailMessage=None):
     
     return out
 
+def safeprint(s):
+    '''
+    Prints a string out to console (including Unicode)
+    '''
+    try:
+        print s
+    except UnicodeEncodeError:
+        print s.encode('utf8')
+        
+
 class SplitRegex(object):
     '''
     Allows a string to be split by a regex, iterated over by matches, and each
