@@ -105,8 +105,7 @@ standardDev = s point d point -> 'standard deviation'
 backPrimes = mmultiscripts(? ? ? ?) -> '{4} {1}'
 
 // Limits
-limit = munderover(mrow(l i m) mrow(? ? ?) ?) -> 'the limit as {4}, approaches {6}, of'
-limit = munderover(mrow(l i m) mrow(+) ?) -> 'the limit as {4}, of'
+import _JustLimits.txt
 
 // ------------------------------------------------------------------------------
 // Parenthetical Expressions

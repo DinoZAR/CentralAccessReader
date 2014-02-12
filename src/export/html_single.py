@@ -69,7 +69,8 @@ class HTMLSingleExportThread(ExportThread):
             self._removeHighlighter(self._htmlContent)
             self._removeScripts(self._htmlContent)
             self._embedImages(self._htmlContent)
-            self._embedFonts(self._htmlContent)
+            #self._embedFonts(self._htmlContent)
+            self._embedCSS(self._htmlContent)
             self._convertMathEquations(self._htmlContent)
             
             if self._running:
@@ -348,6 +349,28 @@ class HTMLSingleExportThread(ExportThread):
             
             style.text = str(fontSplit)
             
+    
+    def _embedCSS(self, myHtml):
+        '''
+        Embeds the CSS into the HTML.
+        '''
+        cssLinks = myHtml.xpath(r".//head/link[@rel='stylesheet']")
+        head = myHtml.xpath(r".//head")[0]
+        
+        for css in cssLinks:
+            
+            # Download the stylesheet        
+            f = urllib2.urlopen(css.get('href'))
+            contents = f.read()
+             
+            # Create a new element to save the style in
+            newCss = html.Element('style')
+            newCss.set('type', 'text/css')
+            newCss.text = contents
+            head.append(newCss)
+            
+            # Remove the link
+            css.getparent().remove(css)
             
     def _createEmbeddedFontDataURL(self, fontURL):
         '''

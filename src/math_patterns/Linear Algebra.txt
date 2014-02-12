@@ -122,7 +122,6 @@ apostrophe = apostrophe -> 'prime'
 
 import _FunctionsLimits.txt
 
-
 // Syntax Quirks
 doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'
 doubleBarSyn = munder(munder(mrow(+) bar) bar) -> '{1} over double bar'

@@ -9,6 +9,7 @@ import database
 from parser import transform
 from pattern_tree import convertDOMToPatternTree
 import re
+import misc
 
 class MathTTS():
     
@@ -28,6 +29,9 @@ class MathTTS():
         for p in self.parserTree['patterns']:
             pattern = database.convertToPatternTree(p)
             mathTree = transform(mathTree, pattern)
+        
+        print 'Parsed math equation to:'
+        misc.safeprint(mathTree.dump())
     
         myString = ' '.join(mathTree.getOutput())
         

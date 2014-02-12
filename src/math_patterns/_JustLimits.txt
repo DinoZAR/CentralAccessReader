@@ -67,8 +67,13 @@ limitSyn = munder(mrow( munder( mrow( limit ) bar) )  mrow(? diagBotRightArrow ?
 limitSyn = munder(mrow( munder( mrow( limit ) bar) ) mrow(+)) -> 'the inferior limit as {3}, of'
 limitSyn = munder(mrow( munder( mrow( limit ) bar) )) -> 'the inferior limit of'
 
-limitSyn = munderover(mrow(l i m) mrow(+)) -> 'the limit as {4}, of'
-limitSyn = munder(mrow( limit ) mrow(+)) -> 'the limit as {2}, of'
-limitSyn = munderover(mrow(l i m) mrow(?) ?) -> 'the limit as {4}, of'
-limitSyn = munder(mrow( limit ) mrow(?) ?) -> 'the limit as {2}, of'
-limitSyn = munder(mrow( limit ) mrow()) -> 'the limit of'
+limitGeneral = munder(limit mrow(? rightArrow ?)) -> 'the limit as {2} approaches {4}, of'
+limitGeneral = munder(mrow(limit) mrow(? rightArrow ?)) -> 'the limit as {2} approaches {4}, of'
+limitGeneral = munderover(limit mrow(? rightArrow ?) ?) -> 'the limit as {2} approaches {4}, of'
+limitGeneral = munderover(mrow(limit) mrow(? rightArrow ?) ?) -> 'the limit as {2} approaches {4}, of'
+
+limitGeneral = munderover(mrow(l i m) mrow(+)) -> 'the limit as {4}, of'
+limitGeneral = munder(mrow( limit ) mrow(+)) -> 'the limit as {2}, of'
+limitGeneral = munderover(mrow(l i m) mrow(?) ?) -> 'the limit as {4}, of'
+limitGeneral = munder(mrow( limit ) mrow(?) ?) -> 'the limit as {2}, of'
+limitGeneral = munder(mrow( limit ) mrow()) -> 'the limit of'

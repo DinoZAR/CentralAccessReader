@@ -5,6 +5,7 @@ Created on June 14, 2013
 '''
 import re
 import copy
+import misc
 
 class PatternTree(object):
 
@@ -351,7 +352,13 @@ class PatternTree(object):
                 if c.find(r'{') != -1:
                     # Must generate speech from child object number refers to
                     num = int(c.replace('{', '').replace('}', '').strip()) - 1
-                    out += self.children[num].getOutput()
+                    if num >= len(self.children):
+                        print 'POSSIBLE ERROR: Number in expression is larger than number of children'
+                        print 'Ignoring index', num, 'in'
+                        misc.safeprint(self.dump())
+                        print '------------------------------------------'
+                    else:
+                        out += self.children[num].getOutput()
                 else:
                     out += [c]
             

@@ -55,12 +55,10 @@ import _Trig.txt
 
 // Products and Unions
 import _Integrals.txt
+import _FunctionsLimits.txt
 
 //Powers and Primes
 apostrophe = apostrophe -> 'prime'
-
-import _FunctionsLimits.txt
-
 
 // Syntax Quirks
 doubleBarSyn = mover(mover(mrow(+) bar) bar) -> '{1} under double bar'
@@ -90,10 +88,6 @@ overUnderArrowB = munderover(rightHarpoon mrow(+) mrow(+)) -> '{2}, above {1}, s
 // Under-Over, Integrals, Products, and Summations
 // ------------------------------------------------------------------------------
 backPrimes = mmultiscripts(? ? ? ?) -> '{4} {1}'
-
-// Limits
-limit = munderover(mrow(lim) mrow(? ? ?) ?) -> 'the limit as {4}, approaches {6}, of'
-limit = munderover(mrow(lim) mrow(+) ?) -> 'the limit as {4}, of'
 
 // Unders and Overs
 munder = munderover(mrow(+) mrow(+) mrow()) -> '{1} sub {2}'
