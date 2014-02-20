@@ -24,6 +24,7 @@ from gui.bookmarks import BookmarksTreeModel, BookmarkNode
 from gui.document_load_progress import DocumentLoadProgressDialog
 from gui import download_progress
 from gui.export_batch import ExportBatchDialog
+from gui.math_dev_env import MathDevelopmentEnvironment
 from gui.pages import PagesTreeModel
 import misc
 from speech.worker import SpeechWorker
@@ -280,6 +281,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.actionSpeech.triggered.connect(self.showSpeechSettings)
         
         # MathML
+        self.ui.actionOpen_Pattern_Editor.triggered.connect(self.openPatternEditor)
         self.ui.actionShow_All_MathML.triggered.connect(self.showAllMathML)
         
         # Help
@@ -823,7 +825,11 @@ class MainWindow(QtGui.QMainWindow):
     def openSurveyWindow(self):
         import webbrowser
         webbrowser.open_new(misc.SURVEY_URL)
-        
+    
+    def openPatternEditor(self):
+        self.patternEditor = MathDevelopmentEnvironment(self)
+        self.patternEditor.show()
+    
     def showAllMathML(self):
         from gui.mathmlcodes_dialog import MathMLCodesDialog
         self.mathmlDialog = MathMLCodesDialog(self.assigner._maths)

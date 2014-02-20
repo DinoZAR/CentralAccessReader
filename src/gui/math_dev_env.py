@@ -5,7 +5,7 @@ Created on Feb 20, 2014
 '''
 from PyQt4.QtGui import QMainWindow
 
-from forms.math_dev_env import Ui_MathDevEnv
+from forms.math_dev_env_ui import Ui_MathDevEnv
 from gui import configuration
 
 class MathDevelopmentEnvironment(QMainWindow):
