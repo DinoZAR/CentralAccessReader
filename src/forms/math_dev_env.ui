@@ -6,32 +6,38 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>1010</width>
+    <height>666</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Math Pattern Editor</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,1">
     <property name="spacing">
-     <number>9</number>
+     <number>10</number>
     </property>
     <property name="margin">
-     <number>5</number>
+     <number>10</number>
     </property>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
       <item>
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QPushButton" name="runButton">
+        <property name="toolTip">
+         <string>Runs the current pattern (Ctrl + R)</string>
+        </property>
         <property name="text">
          <string>Run</string>
+        </property>
+        <property name="shortcut">
+         <string>Ctrl+R</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="lineEdit"/>
+       <widget class="QLineEdit" name="mathProseOutput"/>
       </item>
      </layout>
     </item>
@@ -40,12 +46,21 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
+      <property name="handleWidth">
+       <number>10</number>
+      </property>
       <widget class="QSplitter" name="splitter">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <widget class="QWidget" name="">
-        <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="handleWidth">
+        <number>10</number>
+       </property>
+       <widget class="QWidget" name="layoutWidget">
+        <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,1">
+         <property name="margin">
+          <number>5</number>
+         </property>
          <item>
           <widget class="QLabel" name="label_3">
            <property name="text">
@@ -54,12 +69,15 @@
           </widget>
          </item>
          <item>
-          <widget class="QPlainTextEdit" name="plainTextEdit"/>
+          <widget class="MathMLEditor" name="mathmlEditor" native="true"/>
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <layout class="QVBoxLayout" name="verticalLayout_2">
+         <property name="margin">
+          <number>5</number>
+         </property>
          <item>
           <widget class="QLabel" name="label_2">
            <property name="text">
@@ -68,7 +86,16 @@
           </widget>
          </item>
          <item>
-          <widget class="QTabWidget" name="tabWidget">
+          <widget class="QTabWidget" name="patternTabs">
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
+           <property name="tabsClosable">
+            <bool>true</bool>
+           </property>
+           <property name="movable">
+            <bool>true</bool>
+           </property>
            <widget class="QWidget" name="tab">
             <attribute name="title">
              <string>Tab 1</string>
@@ -84,8 +111,11 @@
         </layout>
        </widget>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="margin">
+         <number>5</number>
+        </property>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
@@ -96,14 +126,27 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton">
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="expandButton">
             <property name="text">
              <string>Expand</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_3">
+           <widget class="QPushButton" name="collapseButton">
             <property name="text">
              <string>Collapse</string>
             </property>
@@ -112,7 +155,7 @@
          </layout>
         </item>
         <item>
-         <widget class="QTreeWidget" name="treeWidget">
+         <widget class="QTreeWidget" name="stagesTree">
           <attribute name="headerVisible">
            <bool>false</bool>
           </attribute>
@@ -134,7 +177,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>1010</width>
      <height>21</height>
     </rect>
    </property>
@@ -142,23 +185,60 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionOpen"/>
-    <addaction name="actionGet_MathML"/>
+    <addaction name="actionNew_Pattern"/>
+    <addaction name="actionOpen_Pattern"/>
+    <addaction name="actionPaste_MathML"/>
+    <addaction name="separator"/>
+    <addaction name="actionClose_Pattern"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionOpen">
+  <action name="actionOpen_Pattern">
    <property name="text">
     <string>Open Pattern</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="actionGet_MathML">
    <property name="text">
-    <string>Get MathML</string>
+    <string>Get MathML From Document</string>
+   </property>
+  </action>
+  <action name="actionNew_Pattern">
+   <property name="text">
+    <string>New Pattern</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionClose_Pattern">
+   <property name="text">
+    <string>Close Pattern</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
+   </property>
+  </action>
+  <action name="actionPaste_MathML">
+   <property name="text">
+    <string>Paste MathML</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+V</string>
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MathMLEditor</class>
+   <extends>QWidget</extends>
+   <header>gui.mathml_editor</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
