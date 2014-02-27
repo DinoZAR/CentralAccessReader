@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/pattern_editor.ui'
 #
-# Created: Thu Feb 20 13:24:18 2014
+# Created: Thu Feb 20 15:55:19 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -31,9 +31,10 @@ class Ui_PatternEditor(object):
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setMargin(0)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.plainTextEdit = QtGui.QPlainTextEdit(PatternEditor)
-        self.plainTextEdit.setObjectName(_fromUtf8("plainTextEdit"))
-        self.verticalLayout.addWidget(self.plainTextEdit)
+        self.textEditor = QtGui.QPlainTextEdit(PatternEditor)
+        self.textEditor.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
+        self.textEditor.setObjectName(_fromUtf8("textEditor"))
+        self.verticalLayout.addWidget(self.textEditor)
 
         self.retranslateUi(PatternEditor)
         QtCore.QMetaObject.connectSlotsByName(PatternEditor)

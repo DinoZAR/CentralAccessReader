@@ -3,7 +3,7 @@ Created on Feb 20, 2014
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtGui import QWidget
+from PyQt4.QtGui import QWidget, QFont
 
 from forms.pattern_editor_ui import Ui_PatternEditor
 
@@ -19,10 +19,18 @@ class PatternEditor(QWidget):
         self.ui = Ui_PatternEditor()
         self.ui.setupUi(self)
         
+        # Set the font to monospace
+        f = QFont('Monospace');
+        f.setStyleHint(QFont.TypeWriter)
+        self.ui.textEditor.setFont(f)
+        
         self.filePath = ''
         
     def setFile(self, filePath):
         self.filePath = filePath
         
         with open(filePath, 'r') as f:
-            self.ui.plainTextEdit.setPlainText(f.read())
+            self.ui.textEditor.setPlainText(f.read())
+            
+    def getContent(self):
+        return unicode(self.ui.textEditor.toPlainText())

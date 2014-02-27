@@ -4,6 +4,7 @@ Created on Nov 15, 2013
 @author: Spencer Graffe
 '''
 import os
+import traceback
 from PyQt4.QtCore import QThread, pyqtSignal
 from PyQt4.QtWebKit import QWebPage
 from lxml import html
@@ -45,6 +46,7 @@ class DocumentLoadingThread(QThread):
                 self._doc = ClipboardDocument('', self._reportProgress, self._isCanceled)
         except Exception as e:
             print 'Could not read file', self._fileName, ':', e
+            traceback.print_exc()
             self._success = False
             return
         

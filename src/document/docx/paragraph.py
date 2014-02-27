@@ -291,7 +291,7 @@ def _parseOMMLPara(elem, parentData):
 
 def _parseOMML(elem, parentData):
     data = {'type' : 'math'}
-    data['data'] = _convertOMMLToMathML(elem)
+    data['data'] = convertOMMLToMathML(elem)
     parentData['data'].append(data)
 
 def _parseObject(elem, parentData, otherData, importFolder):
@@ -416,7 +416,7 @@ def _parseImage(elem, parentData, otherData):
         # Append this to the parent data
         parentData['image'] = data
 
-def _convertOMMLToMathML(ommlNode):
+def convertOMMLToMathML(ommlNode):
     '''
     Converts an oMath lxml node into a MathML node.
     '''

@@ -13,14 +13,15 @@ import misc
 
 class MathTTS():
     
-    def __init__(self, initialDatabaseFile):
+    def __init__(self, initialDatabaseFile=None):
         
-        # Load and generate the pattern trees
-        databaseFile = open(initialDatabaseFile, 'r')
-        contents = databaseFile.read()
-        databaseFile.close()
-        
-        self.parserTree = database.parse(contents, initialDatabaseFile)
+        if initialDatabaseFile is not None:
+            # Load and generate the pattern trees
+            databaseFile = open(initialDatabaseFile, 'r')
+            contents = databaseFile.read()
+            databaseFile.close()
+            
+            self.parserTree = database.parse(contents, initialDatabaseFile)
         
     def parse(self, mathmlString):
         root = ET.fromstring(mathmlString)

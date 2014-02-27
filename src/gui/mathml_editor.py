@@ -70,6 +70,12 @@ class MathMLEditor(QWidget):
             QWebSettings.clearMemoryCaches()
             
             self.ui.webView.page().mainFrame().setHtml(self.mathDocument.getMainPage(), baseUrl)
+        
+    def getMath(self):
+        '''
+        Returns a Unicode string representing the math equation in the editor.
+        '''
+        return unicode(self.ui.textEditor.toPlainText())
             
             
         

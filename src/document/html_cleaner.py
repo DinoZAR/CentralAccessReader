@@ -39,16 +39,23 @@ def clean(htmlElem, progressHook=None, cancelHook=None):
         if cancelHook():
             return htmlElem
     
-#     if progressHook is not None:
-#         progressHook(60, 'Cleaning up spans...')    
-#     htmlElem = _deleteSpans(htmlElem)
-#     if cancelHook is not None:
-#         if cancelHook():
-#             return htmlElem
+    if progressHook is not None:
+        progressHook(60, 'Cleaning up spans...')    
+    _deleteSpans(htmlElem)
+    if cancelHook is not None:
+        if cancelHook():
+            return htmlElem
     
     if progressHook is not None:
         progressHook(80, 'Cleaning up line breaks...')
     htmlElem = _deleteLineBreaks(htmlElem)
+    if cancelHook is not None:
+        if cancelHook():
+            return htmlElem
+    
+    if progressHook is not None:
+        progressHook(90, 'Removing empty paragraphs...')
+    _deleteEmptyParagraphs(htmlElem)
     if cancelHook is not None:
         if cancelHook():
             return htmlElem
@@ -87,12 +94,29 @@ def _deleteSpans(elem):
     Removes all spans from the element and its children. The content of the
     spans will be preserved, but the span tags themselves will not be.
     '''
-    content = html.tostring(elem)
-    p = re.compile('<span[^>]*>')
-    p.sub('', content)
-    content = content.replace('</span>', '')
-    return html.fromstring(content)
-
+    
+    spans = elem.xpath('.//span')
+    for s in spans:
+        # If it has text, add to tail of previous element or to text of parent
+        if s.text is not None:
+            if s.getprevious() is not None:
+                if s.getprevious().tail is not None:
+                    s.getprevious().tail += s.text
+                else:
+                    s.getprevious().tail = s.text
+            else:
+                if s.getparent().text is not None:
+                    s.getparent().text += s.text
+                else:
+                    s.getparent().text = s.text
+        
+        # Get all child elements out
+        for child in s:
+            s.addprevious(child)
+        
+        # Remove the span
+        s.getparent().remove(s)
+    
 def _deleteLineBreaks(elem):
     '''
     Removes all line break elements, also known as <br> and </br>. The
@@ -101,6 +125,42 @@ def _deleteLineBreaks(elem):
     content = html.tostring(elem)
     content = content.replace('<br>', '').replace('</br>', '')
     return html.fromstring(content)
+
+def _deleteEmptyParagraphs(elem):
+    '''
+    Removes all empty <p>'s
+    '''
+    paras = elem.xpath('.//p')
+    for p in paras:
+        shouldDelete = (len(p) == 0) and (p.text is None)
+        
+        if shouldDelete:
+            
+            # Check for tail and adjust it appropriately
+            if p.tail is not None:
+                if p.getprevious() is not None:
+                    if p.getprevious().tail is not None:
+                        p.getprevious().tail += p.tail
+                    else:
+                        p.getprevious().tail = p.tail
+                else:
+                    if p.getparent().text is not None:
+                        p.getparent().text += p.tail
+                    else:
+                        p.getparent().text = p.tail
+            
+            # Now remove the paragraph
+            p.getparent().remove(p)
+        
+        else:
+            
+            # Might as well do some cleanup, like classes and styles
+            if 'class' in p.attrib:
+                p.attrib.pop('class')
+            
+            if 'style' in p.attrib:
+                p.attrib.pop('style')
+            
 
 def _stripImageAttributes(elem):
     '''

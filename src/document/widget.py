@@ -206,7 +206,7 @@ class DocumentWidget(QWidget):
         self.ui.webView.page().mainFrame().addToJavaScriptWindowObject('AlmightyGod', self);
         self.ui.webView.page().mainFrame().setHtml(self.document.getMainPage(), baseUrl)
         
-        if misc.is_release_environment():
+        if not misc.is_release_environment():
             self.webInspector.setPage(self.ui.webView.page())
         
     def refreshDocument(self):
