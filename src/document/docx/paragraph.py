@@ -4,6 +4,7 @@ Created on Jul 11, 2013
 @author: Spencer Graffe
 '''
 import os
+import sys
 import traceback
 from lxml import etree
 from lxml import html as HTML
@@ -398,10 +399,14 @@ def _parseImage(elem, parentData, otherData):
             if rel.get('Id') == id:
                 filename = os.path.split(rel.get('Target'))[1]
                 
-                # Check to see if this is an image I need to convert later. If 
-                # so, change the file extension to match the converted file
-                if os.path.splitext(filename)[1].lower() in IMAGE_TRANSLATION:
-                    filename = os.path.splitext(filename)[0] + IMAGE_TRANSLATION[os.path.splitext(filename)[1].lower()]
+                # Because Mac doesn't like PIL right now, and that there is
+                # only one translation, which is only relevant for Windows,
+                # I'll be only including this feature for Windows
+                if sys.platform == 'win32':
+                    # Check to see if this is an image I need to convert later. If 
+                    # so, change the file extension to match the converted file
+                    if os.path.splitext(filename)[1].lower() in IMAGE_TRANSLATION:
+                        filename = os.path.splitext(filename)[0] + IMAGE_TRANSLATION[os.path.splitext(filename)[1].lower()]
                     
                 data['filename'] = unicode(filename)
                 break

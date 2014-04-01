@@ -21,72 +21,74 @@ sleep 2
 echo "Building the app..."
 python setup_mac.py py2app
 
-mkdir -p "./dist/Central Access Reader.app/Contents/Resources"
+APP_DIR="./dist/Central Access Reader.app/Contents/Resources";
+
+mkdir -p "$APP_DIR"
 
 echo "Copying application icon file..."
-cp ./icons.icns "./dist/Central Access Reader.app/Contents/Resources"
+cp ./icons.icns "$APP_DIR"
 
 #
 # JavaScript files
 #
 echo "Copying MathJax..."
-mkdir -p "./dist/Central Access Reader.app/Contents/Resources/mathjax"
-cp -R ../mathjax "./dist/Central Access Reader.app/Contents/Resources/"
+mkdir -p "$APP_DIR/mathjax"
+cp -R ../mathjax "$APP_DIR/"
 
 echo "Copying JQuery..."
-cp ../jquery-1.9.1.min.js "./dist/Central Access Reader.app/Contents/Resources/"
+cp ../jquery-1.9.1.min.js "$APP_DIR/"
 
 echo "Copying JQuery UI..."
-mkdir -p "./dist/Central Access Reader.app/Contents/Resources/jquery-ui"
-cp -R ../jquery-ui "./dist/Central Access Reader.app/Contents/Resources/"
+mkdir -p "$APP_DIR/jquery-ui"
+cp -R ../jquery-ui "$APP_DIR/"
 
 echo "Copying JQuery Scroll-to..."
-cp ../jquery.scrollTo-1.4.3.1-min.js "./dist/Central Access Reader.app/Contents/Resources/"
+cp ../jquery.scrollTo-1.4.3.1-min.js "$APP_DIR/"
 
 echo "Copying JQuery Next In DOM..."
-cp ../nextindom.jquery.js "./dist/Central Access Reader.app/Contents/Resources/"
+cp ../nextindom.jquery.js "$APP_DIR/"
 
 echo "Copying JavaScript functions and configurations..."
-mkdir -p "./dist/Central Access Reader.app/Contents/Resources/src/javascript"
-cp -R ./javascript "./dist/Central Access Reader.app/Contents/Resources/src/"
+mkdir -p "$APP_DIR/src/javascript"
+cp -R ./javascript "$APP_DIR/src/"
 
 #
 # GUI forms
 #
 echo "Copying themes..."
-mkdir -p "./dist/Central Access Reader.app/Contents/Resources/src/forms/theme"
-cp -R ./forms/theme "./dist/Central Access Reader.app/Contents/Resources/src/forms/"
+mkdir -p "$APP_DIR/src/forms/theme"
+cp -R ./forms/theme "$APP_DIR/src/forms/"
 
 echo "Copying resource file..."
-cp ./forms/resource_rc.py "./dist/Central Access Reader.app/Contents/Resources/src/forms/"
+cp ./forms/resource_rc.py "$APP_DIR/src/forms/"
 
 #
 # Other files
 #
 echo "Copying files for the headless renderer..."
-mkdir -p "./dist/Central Access Reader.app/Contents/Resources/src/headless"
-cp ./headless/phantomjs_mac "./dist/Central Access Reader.app/Contents/Resources/src/headless/"
-cp ./headless/render.js "./dist/Central Access Reader.app/Contents/Resources/src/headless/"
+mkdir -p "$APP_DIR/src/headless"
+cp ./headless/phantomjs_mac "$APP_DIR/src/headless/"
+cp ./headless/render.js "$APP_DIR/src/headless/"
 
 echo "Make small revision to the Qt image plugins folder..."
-mv "./dist/Central Access Reader.app/Contents/Resources/qt_pluginst4/plugins" "./dist/Central Access Reader.app/Contents/Resources/qt_plugins"
+mv "$APP_DIR/qt_pluginst4/plugins" "$APP_DIR/qt_plugins"
 
 echo "Copying the MathML pattern databases..."
-mkdir -p "./dist/Central Access Reader.app/Contents/Resources/src/math_patterns"
-cp -R ./math_patterns "./dist/Central Access Reader.app/Contents/Resources/src/"
+mkdir -p "$APP_DIR/src/math_patterns"
+cp -R ./math_patterns "$APP_DIR/src/"
 
 echo "Copying LAME MP3 encoder..."
-cp ./lame_mac "./dist/Central Access Reader.app/Contents/Resources/src/"
+cp ./lame_mac "$APP_DIR/src/"
 
 echo "Copying OMML to MathML XSLT..."
-mkdir -p "./dist/Central Access Reader.app/Contents/Resources/src/document/docx"
-cp ./document/docx/OMMLToMathML.xsl "./dist/Central Access Reader.app/Contents/Resources/src/document/docx/"
+mkdir -p "$APP_DIR/src/document/docx"
+cp ./document/docx/OMMLToMathML.xsl "$APP_DIR/src/document/docx/"
 
 echo "Copying tutorial..."
-cp ../Tutorial.docx "./dist/Central Access Reader.app/Contents/Resources/"
+cp ../Tutorial.docx "$APP_DIR/"
 
 echo "Copying version file..."
-cp ../version.txt "./dist/Central Access Reader.app/Contents/Resources/"
+cp ../version.txt "$APP_DIR/"
 
 echo "Copying the DMG background..."
 mkdir -p ./dist/.background

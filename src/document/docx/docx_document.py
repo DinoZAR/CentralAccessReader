@@ -9,6 +9,7 @@ from lxml import html as HTML
 from PIL import Image
 from cStringIO import StringIO
 import os
+import sys
 import urllib
 import re
 from threading import Thread
@@ -213,11 +214,15 @@ def save_images(docxPath, importPath, cancelHook, progressHook):
         if f.find('word/media/') == 0:
             
             # Don't save any MathType equations, which are WMF's. Web browsers
-            # don't even know how to display them
+            # don't know how to display them
             if os.path.splitext(f)[1].lower() != '.wmf':
                 # Extract it to my import folder
                 savePath = importPath + '/images/' + f.replace('word/media/', '')
-                if os.path.splitext(savePath)[1].lower() in IMAGE_TRANSLATION:
+                
+                # Only do the image translation on Windows. PIL doesn't like to
+                # be frozen on Macs
+                # TODO: Make PIL work when frozen on Macs
+                if (os.path.splitext(savePath)[1].lower() in IMAGE_TRANSLATION) and (sys.platform == 'win32'):
                     try:
                         contents = z.read(f)
                         myFile = StringIO(contents)
@@ -225,7 +230,8 @@ def save_images(docxPath, importPath, cancelHook, progressHook):
                         outPath = os.path.splitext(savePath)[0] + IMAGE_TRANSLATION[os.path.splitext(savePath)[1].lower()]
                         convertFile.save(outPath)
                     except IOError as e:
-                        # Don't try to do anything else with it. Just copy the file over
+                        # Don't try to do anything else with it. Just copy the
+                        # file over
                         print 'Could not convert image', f, 'to', os.path.basename(savePath)
                         with open(savePath, 'wb') as imageFile:
                             imageFile.write(z.read(f))

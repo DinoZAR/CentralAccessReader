@@ -27,18 +27,22 @@ def program_path(resourceFile):
     Returns the path to the program installation folder, whether it is in a
     development environment or in an installed environment.
     ''' 
+    myPath = ''
     if getattr(sys, 'frozen', None):
         if getattr(sys, '_MEIPASS', None):
             # This is a PyInstaller-packaged program
             myPath = os.path.join(sys._MEIPASS, resourceFile)
-            return myPath
-        else:
+        elif 'RESOURCEPATH' in os.environ:
             # This is an app-packaged program (for Mac)
             myPath = os.path.join(os.environ['RESOURCEPATH'], resourceFile)
-            return myPath
+        else:
+            # This is a cx-freez-ed program
+            myPath = os.path.join(os.path.dirname(sys.executable), resourceFile)
+            
     else:
         myPath = os.path.normpath(os.path.join(os.path.dirname(os.path.dirname(inspect.getsourcefile(program_path))), resourceFile))
-        return myPath
+    
+    return myPath
     
 def app_data_path(resourceFile):
     '''
