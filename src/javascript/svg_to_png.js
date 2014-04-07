@@ -1,6 +1,9 @@
 /*
  * Functions for converting SVGs to PNGs
  * 
+ * NOTE: THIS DOES NOT WORK WITH QWEBVIEW. THIS IS FOR DOCUMENTATION IN CASE
+ * A DIFFERENT BROWSER IS USED.
+ * 
  * @author Spencer Graffe
  */
 
