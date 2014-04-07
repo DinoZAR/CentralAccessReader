@@ -468,7 +468,7 @@ class SAPI5Driver(object):
                             #print 'driver: Publishing onEndStream callbacks'
                             c[1](stream, self._queue[k][1])
                             
-                        del self._queue[k]
+                        self._queue.pop(k, None)
                         break
                 self.queueLock.release()
         

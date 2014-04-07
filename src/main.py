@@ -18,7 +18,7 @@ def main():
      
     app = QApplication(sys.argv)
      
-    # Create a splash screen
+    # Create a splash screen 
     from forms import resource_rc
     pixmap = QPixmap(':/all/icons/CAR Splash.png')
     splash = QSplashScreen(pixmap)

@@ -66,6 +66,7 @@ class HTMLSingleExportThread(ExportThread):
         
         if self._running:
             self._convertPageNumbersToH6(self._htmlContent)
+            self._removeAltTextIfIgnored(self._htmlContent)
             self._removeHighlighter(self._htmlContent)
             self._removeScripts(self._htmlContent)
             self._embedImages(self._htmlContent)
@@ -106,6 +107,16 @@ class HTMLSingleExportThread(ExportThread):
             p.tag = 'h6'
             p.attrib.pop('class')
     
+    def _removeAltTextIfIgnored(self, myHtml):
+        '''
+        Removes the alt text from images if the settings say to remove it.
+        '''
+        if configuration.getBool('IgnoreAltText', False):
+            imgs = myHtml.xpath('//img')
+            for i in imgs:
+                i.attrib.pop('alt', None)
+                i.attrib.pop('title', None)
+                    
     def _removeHighlighter(self, myHtml):
         '''
         Removes the highlighter from the document, if any.

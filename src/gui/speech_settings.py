@@ -43,6 +43,8 @@ class SpeechSettings(QtGui.QDialog):
         self.ui.imageTagCheckBox.stateChanged.connect(self.imageTagCheckBox_stateChanged)
         self.ui.mathTagCheckBox.stateChanged.connect(self.mathTagCheckBox_stateChanged)
         
+        self.ui.ignoreAltTextCheckBox.stateChanged.connect(self.ignoreAltTextCheckBox_stateChanged)
+        
     def updateSettings(self):
         # Update main window sliders to match
         self.ui.rateSlider.setValue(configuration.getInt('Rate'))
@@ -52,6 +54,7 @@ class SpeechSettings(QtGui.QDialog):
         # Update checkboxes
         self.ui.imageTagCheckBox.setChecked(configuration.getBool('TagImage', False))
         self.ui.mathTagCheckBox.setChecked(configuration.getBool('TagMath', False))
+        self.ui.ignoreAltTextCheckBox.setChecked(configuration.getBool('IgnoreAltText', False))
         
         # Get a list of voices to add to the voice combo box
         voiceList = self.mainWindow.speechThread.getVoiceList()
@@ -139,3 +142,9 @@ class SpeechSettings(QtGui.QDialog):
             configuration.setBool('TagMath', True)
         else:
             configuration.setBool('TagMath', False)
+            
+    def ignoreAltTextCheckBox_stateChanged(self, state):
+        if state == Qt.Checked:
+            configuration.setBool('IgnoreAltText', True);
+        else:
+            configuration.setBool('IgnoreAltText', False)

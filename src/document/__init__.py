@@ -256,19 +256,6 @@ class Document(object):
         '''
         Returns a generator that gets the speech output for the HTML element.
         '''
-#         # Get the index of the first math equation at or after this equation
-#         myIndex = -1
-#         
-#         # Tell the math parser to start from that index. This way, it will
-#         # convert from that point on.
-#         firstMath = self._getNextMath(element)
-#         
-#         if firstMath is not None:
-#             myIndex = self._maths[firstMath.get('id')]['index']
-#         
-#         if myIndex >= 0:
-#             self._mathParserThread.setParseIndex(myIndex)
-        
         return self._generateSpeech(element)
     
     def _getNextMath(self, elem):
@@ -299,12 +286,12 @@ class Document(object):
         '''
         Creates a generator that gets the speech output for the HTML element.
         '''
-        if element.text != None:
-            yield [element.text, 'text']
+        visitChildren = True
         
         if element.tag == 'img':
+            
             altText = element.get('alt')
-            if altText == None:
+            if altText == None or configuration.getBool('IgnoreAltText', False):
                 altText = ' '
             
             if configuration.getBool('TagImage', False):
@@ -318,13 +305,14 @@ class Document(object):
             if element.tail != None:
                 yield [element.tail, 'text']
         
-        for child in element:
-            testTag = child.tag.split('}')[-1]
-            if (testTag == 'span') and (child.get('class') is not None):
-                if 'MathJax' in child.get('class'):
+        elif (element.tag == 'span') and (element.get('class') is not None):
+                if 'MathJax' in element.get('class'):
+                    
+                    visitChildren = False
+                    
                     # See if the MathML already got parsed. Otherwise, generate
                     # the speech on demand and save that.
-                    key = child.get('id')
+                    key = element.get('id')
                     mathOutput = ''
                     if self._maths[key]['parsed'] and self._maths[key]['database'] == configuration.getValue('MathDatabase'):
                         mathOutput = self._maths[key]['prose']
@@ -338,108 +326,98 @@ class Document(object):
                         yield ['Math. ' + mathOutput + '. End math.', 'math']
                     else:
                         yield [mathOutput, 'math']
-                else:
-                    for speech in self._generateSpeech(child):
-                        yield speech
-                        
-            elif testTag == 'img':
-                altText = child.get('alt')
-                if altText == None:
-                    altText = ' '
-                    
-                if configuration.getBool('TagImage', False):
-                    yield ['Image. ' + altText + '. End image.', 'image']
-                else:
-                    if len(altText.strip()) > 0:
-                        yield [altText, 'image']
-                    else:
-                        yield ['Image.', 'image']
-                if child.tail != None:
-                    yield [child.tail, 'text']
-                    
-            elif testTag == 'script':
-                # Don't do anything
-                pass
+        
+        elif element.tag == 'script':
+            # Don't do anything at all
+            visitChildren = False
             
-            else:
+        else:
+            if element.text != None:
+                yield [element.text, 'text']
+        
+        # Get all of the speech from child elements (if allowed to)
+        if visitChildren:
+            for child in element:
                 for speech in self._generateSpeech(child):
                     yield speech
-                
+        
+        # If I have trailing text off of this element, read that too
         if element.tail != None:
             yield [element.tail, 'text']
             
-# NOTE: Not used anymore            
-class MathParserThread(QThread):
-    '''
-    This thread parses math equations given to it and then reports its 
-    corresponding prose.
-    '''
-    
-    # Emitted whenever prose is generated for a math equation
-    # unicode - key for math equation
-    # unicode - prose generated
-    # unicode - math database used for generation
-    mathProseGenerated = pyqtSignal(unicode, unicode, unicode)
-    
-    def __init__(self):
-        super(MathParserThread, self).__init__()
-        self._myMaths = {}
-        self._orderedKeys = []
-        self._running = False
-        self._index = 0
-    
-    def setMaths(self, maths):
-        '''
-        Gives this thread a copy of the math equation dictionary.
-        '''
-        self._myMaths = maths
-        
-        # Create a list of keys ordered by index
-        self._orderedKeys = sorted(self._myMaths, key=lambda x: self._myMaths.get(x)['index'])
-        
-        
-    def setParseIndex(self, newIndex):
-        '''
-        Sets the parser location to a new index. This is useful for when the
-        reader starts reading after a passage well after the start of the
-        document, adjusting this parser to keep up with new demand.
-        '''
-        self._index = newIndex
-        
-    def run(self):
-        self._running = True
-        self.setPriority(QThread.HighPriority)
-        
-        while self._running:
-            QThread.yieldCurrentThread()
-            # Reset the index back to beginning if I approach end
-            if self._index >= len(self._orderedKeys):
-                self._index = 0
             
-            # If I have any math at all
-            if len(self._orderedKeys) > 0:
-                
-                # Only parse if the the prose has not been parsed or if the
-                # math database used wasn't the same
-                d = self._myMaths[self._orderedKeys[self._index]]
-                myDatabase = configuration.getValue('MathDatabase', 'General')
-                shouldParse = not d['parsed']
-                shouldParse = shouldParse or (d['database'] != myDatabase)
-                
-                if shouldParse:
-                    myKey = self._orderedKeys[self._index]
-                    
-                    self._myMaths[myKey]['parsed'] = True
-                    
-                    prose = configuration.getMathDatabase('MathDatabase').parse(d['mathml'])
-                    self._myMaths[myKey]['prose'] = prose
-                    self._myMaths[myKey]['database'] = myDatabase
-                    
-                    self.mathProseGenerated.emit(myKey, prose, myDatabase)
-            
-            self._index += 1
-            
-    def stop(self):
-        self._running = False
-
-        
+# NOTE: Not used anymore. Just kept around for documentation purposes         
+# class MathParserThread(QThread):
+#     '''
+#     This thread parses math equations given to it and then reports its 
+#     corresponding prose.
+#     '''
+#     
+#     # Emitted whenever prose is generated for a math equation
+#     # unicode - key for math equation
+#     # unicode - prose generated
+#     # unicode - math database used for generation
+#     mathProseGenerated = pyqtSignal(unicode, unicode, unicode)
+#     
+#     def __init__(self):
+#         super(MathParserThread, self).__init__()
+#         self._myMaths = {}
+#         self._orderedKeys = []
+#         self._running = False
+#         self._index = 0
+#     
+#     def setMaths(self, maths):
+#         '''
+#         Gives this thread a copy of the math equation dictionary.
+#         '''
+#         self._myMaths = maths
+#         
+#         # Create a list of keys ordered by index
+#         self._orderedKeys = sorted(self._myMaths, key=lambda x: self._myMaths.get(x)['index'])
+#         
+#         
+#     def setParseIndex(self, newIndex):
+#         '''
+#         Sets the parser location to a new index. This is useful for when the
+#         reader starts reading after a passage well after the start of the
+#         document, adjusting this parser to keep up with new demand.
+#         '''
+#         self._index = newIndex
+#         
+#     def run(self):
+#         self._running = True
+#         self.setPriority(QThread.HighPriority)
+#         
+#         while self._running:
+#             QThread.yieldCurrentThread()
+#             # Reset the index back to beginning if I approach end
+#             if self._index >= len(self._orderedKeys):
+#                 self._index = 0
+#             
+#             # If I have any math at all
+#             if len(self._orderedKeys) > 0:
+#                 
+#                 # Only parse if the the prose has not been parsed or if the
+#                 # math database used wasn't the same
+#                 d = self._myMaths[self._orderedKeys[self._index]]
+#                 myDatabase = configuration.getValue('MathDatabase', 'General')
+#                 shouldParse = not d['parsed']
+#                 shouldParse = shouldParse or (d['database'] != myDatabase)
+#                 
+#                 if shouldParse:
+#                     myKey = self._orderedKeys[self._index]
+#                     
+#                     self._myMaths[myKey]['parsed'] = True
+#                     
+#                     prose = configuration.getMathDatabase('MathDatabase').parse(d['mathml'])
+#                     self._myMaths[myKey]['prose'] = prose
+#                     self._myMaths[myKey]['database'] = myDatabase
+#                     
+#                     self.mathProseGenerated.emit(myKey, prose, myDatabase)
+#             
+#             self._index += 1
+#             
+#     def stop(self):
+#         self._running = False
+# 
+#         
