@@ -64,18 +64,20 @@ class NSSpeechSynthesizerDriver(NSObject):
         '''
         Sets the rate of the voice, a value between 0-100
         '''
-        # Transform 0-100 between a specific words-per-minute range
-        # Average rate is 180-220 wpm
-        wpmMin = 50
-        wpmMax = 350
-        myRate = wpmMin + ((wpmMax - wpmMin) * float(rate) / 100.0)
-        self._tts.setRate_(myRate)
+        if self._done:
+            # Transform 0-100 between a specific words-per-minute range
+            # Average rate is 180-220 wpm
+            wpmMin = 50
+            wpmMax = 350
+            myRate = wpmMin + ((wpmMax - wpmMin) * float(rate) / 100.0)
+            self._tts.setRate_(myRate)
 
     def setVolume(self, volume):
         '''
         Sets the volume of the voice, from 0-100
         '''
-        self._tts.setVolume_(float(volume) / 100.0)
+        if self._done:
+            self._tts.setVolume_(float(volume) / 100.0)
         
     def setPauseLength(self, pauseLength):
         '''

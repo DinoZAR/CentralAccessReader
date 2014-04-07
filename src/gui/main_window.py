@@ -987,9 +987,13 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.speechSettingsButton.setEnabled(False)
             self.ui.saveToMP3Button.setEnabled(False)
             
-            # Disable slider bars if TTS is not interactive
+            # Disable certain sliders and actions if TTS is not interactive
             if not self.speechThread.areSettingsInteractive():
                 self.ui.rateSlider.setEnabled(False)
+                self.ui.actionDecrease_Rate.setEnabled(False)
+                self.ui.actionIncrease_Rate.setEnabled(False)
+                self.ui.actionDecrease_Volume.setEnabled(False)
+                self.ui.actionIncrease_Volume.setEnabled(False)
             
             # Actions
             self.ui.actionPlay.setEnabled(False)
