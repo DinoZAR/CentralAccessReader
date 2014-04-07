@@ -255,9 +255,14 @@ class HTMLSingleExportThread(ExportThread):
         # Copy all attributes
         for attr in svg.attrib.keys():
             try:
-                myMath.attrib[attr] = svg.attrib[attr]
-            except:
-                pass
+                if ':' in attr:
+                    myAttr = attr[attr.find(':') + 1:]
+                    myMath.set(myAttr, svg.get(attr))
+                else:
+                    myMath.set(attr, svg.get(attr))
+                    
+            except Exception as ex:
+                print 'Could not copy SVG attribute:', ex
             
         # Copy all elements
         for m in svg:
