@@ -233,8 +233,7 @@ class HTMLSingleExportThread(ExportThread):
                 
                 # Replace the span with an image representing the equation
                 svgElem = equations[i].xpath('.//svg')[0]
-                pngData = self._renderMathSVGToPNG(svgElem, defXMLs)
-                dataString = 'data:image/png;base64,' + base64.b64encode(pngData)
+                dataString = self._convertMathSVGToImage(svgElem, defXMLs)                
                 equations[i].tag = 'img'
                 
                 # Clear out all children and attributes from node
@@ -252,7 +251,7 @@ class HTMLSingleExportThread(ExportThread):
                 print 'Equation', i, 'did not parse correctly!', e
                 traceback.print_exc()
             
-    def _renderMathSVGToPNG(self, svg, defXMLs):
+    def _convertMathSVGToImage(self, svg, defXMLs):
         '''
         Renders the Math SVG (an lxml Element) into a PNG. Returns the
         bytestring containing the PNG data.
@@ -310,14 +309,18 @@ class HTMLSingleExportThread(ExportThread):
             if not ('none' in f.get('fill')):
                 f.set('fill', configuration.getRGBStringFromQColor(configuration.getColor('ContentTextColor')))
         
+        return 'data:image/svg+xml;base64,' + base64.b64encode(etree.tostring(myMath)) 
+        
         # Write to temp file, run CairoSVG through it, then push it out
-        svgTemp = os.path.join(self._tempDirectory, 'tmp.svg')
-        with open(svgTemp, 'wb') as f:
-            f.write(etree.tostring(myMath, pretty_print=True))
+#         svgTemp = os.path.join(self._tempDirectory, 'tmp.svg')
+#         with open(svgTemp, 'wb') as f:
+#             f.write(etree.tostring(myMath, pretty_print=True))
+#         
+#         tmpURL = urlparse.urljoin('file:', urllib.pathname2url(svgTemp))
+#         
+#         return cairosvg.svg2png(url=tmpURL)
         
-        tmpURL = urlparse.urljoin('file:', urllib.pathname2url(svgTemp))
-        
-        return cairosvg.svg2png(url=tmpURL)
+#         dataString = 'data:image/png;base64,' + base64.b64encode(pngData)
         
     def _embedImages(self, myHtml):
         '''
