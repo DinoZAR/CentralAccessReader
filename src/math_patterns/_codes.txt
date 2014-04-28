@@ -365,6 +365,8 @@ X [variable] = mi("X") -> '"cap X"'
 Y [variable] = mi("Y") -> '"cap Y"'
 Z [variable] = mi("Z") -> '"cap Z"'
 
+angstrom [variable] = mi("&#197;") -> 'Angstrom'
+
 // Greek letters
 alpha [variable] = mi("&#945;") -> 'alpha'
 beta [variable] = mi("&#946;") -> 'beta'
