@@ -30,8 +30,8 @@
     <file>icons/add_classic.png</file>
   </qresource>
   <qresource prefix="all">
-    <file>icons/Drag File Here Animation.gif</file>
     <file>icons/CAR_About.png</file>
+    <file>icons/Drag File Here Animation.gif</file>
     <file>icons/CAR Splash.png</file>
     <file>icons/CAR Splashscreen.png</file>
     <file>icons/CAR_Logo.ico</file>

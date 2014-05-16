@@ -8,7 +8,11 @@ import struct
 import StringIO
 import traceback
 from lxml import etree
+
+import OleFileIO_PL as OLE
+
 from records import *
+
 from misc import temp_path, REPORT_BUG_URL
 
 def parseMTEF(mtefString, debug=False):
@@ -63,6 +67,8 @@ def parseWMF(wmfFile, debug=False):
     
     The file should already be opened for binary reading.
     '''
+    if debug: print '!>------------------------------------------------------------------<!'
+    
     try:
         # Keep reading until I find the first instance of the AppsMFCC tag. This is
         # the embedded comment tag that holds my MathType stuff
@@ -99,6 +105,7 @@ def parseWMF(wmfFile, debug=False):
             
             # If the signature is something like "Design Science, Inc.", then it is MTEF
             if signature == 'Design Science, Inc.':
+                if debug: print 'Math size:', commentHeader[2]
                 return parseMTEF(wmfFile.read(commentHeader[2]), debug)
         
         else:
@@ -114,16 +121,38 @@ def parseWMF(wmfFile, debug=False):
             return root
             
     except Exception as ex:
-        # Write the problem file to my temp
-#         savePath = temp_path(os.path.join('mathtype', os.path.basename(wmfFile.name)))
-#         if not os.path.exists(os.path.dirname(savePath)):
-#             os.makedirs(os.path.dirname(savePath))
-#         saveFile = open(savePath, 'wb')
-#         wmfFile.seek(0)
-#         saveFile.write(wmfFile.read())
-#         saveFile.close()
-            
         raise MathTypeParseError('', traceback.format_exc())
+    
+def parseOLE(oleFile, debug=False):
+    '''
+    Parses a MathType object from an OLE compound file. Returns the MathML
+    associated with it.
+    '''
+    
+    OLE_OBJECT_NAME = 'Equation Native'
+    OLE_HEADER_LENGTH = 28
+    
+    ole = OLE.OleFileIO(oleFile)
+    
+    if ole.exists(OLE_OBJECT_NAME):
+        if debug: print 'Math size:', ole.get_size(OLE_OBJECT_NAME)
+        mathStream = ole.openstream(OLE_OBJECT_NAME)
+        mathData = mathStream.read()[OLE_HEADER_LENGTH:]
+        if debug: print 'Math data:', mathData
+        ole.close()
+        return parseMTEF(mathData, debug)
+        
+    else:
+        ole.close()
+        # Make some MathML that says it cannot read this particular math
+        root = etree.Element('a')
+        root.set('href', REPORT_BUG_URL)
+        elem = etree.SubElement(root, 'math', nsmap={None: 'http://www.w3.org/1998/Math/MathML'})
+        elem = etree.SubElement(elem, 'mrow')
+        elem = etree.SubElement(elem, 'mtext')
+        elem.text = '[MathType Error. Click Here to Tell Central Access!]'
+        
+        return root
     
 def _combineNumbers(mathml):
     '''

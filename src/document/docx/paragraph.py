@@ -8,7 +8,7 @@ import sys
 import traceback
 from lxml import etree
 from lxml import html as HTML
-from mathtype.parser import parseWMF, MathTypeParseError
+from mathtype.parser import parseWMF, parseOLE, MathTypeParseError
 from misc import program_path, temp_path, REPORT_BUG_URL
 from cStringIO import StringIO
 import urlparse, urllib
@@ -302,35 +302,28 @@ def _parseObject(elem, parentData, otherData, importFolder):
         data = {'type' : 'math'}
         
         # Get the image data for it
-        query = elem.find('{0}shape/{0}imagedata'.format(v_NS))
+        #query = elem.find('{0}shape/{0}imagedata'.format(v_NS))
         id = query.attrib['{0}id'.format(rel_NS)]
         
         # See which filename it refers to and create a valid one
-        filename = ''
+        filePath = ''
         for rel in otherData['rels']:
             if rel.get('Id') == id:
-                filename = os.path.split(rel.get('Target'))[1]
+                filePath = rel.get('Target')
                 break
         
-        # Stall until the image is available for me to read. I got to trust
-        # that another function is moving the image over there
-        imagePath = os.path.join(importFolder, os.path.normpath('images/' + filename))
-        imageType = os.path.splitext(imagePath)[1].lower()
-#         try:
-#             # Try to get the image already exported
-#             imageFile = open(imagePath, 'r')
-#             stuff = imageFile.read(1)
-#             imageFile.seek(0)
-#             if len(stuff) == 1:
-#                 # Don't bother with that one. Use the other instead
-#                 imageFile = otherData['zip'].open('word/media/' + filename, 'r')
-#         except Exception:
-        with otherData['zip'].open('word/media/' + filename, 'r') as imageFile:
+        # Read file from zip
+        imageType = os.path.splitext(filePath)[1].lower()
+        
+        with otherData['zip'].open('word/' + filePath, 'r') as imageFile:
             imageBuffer = StringIO(imageFile.read())
         
         try:
             if imageType == '.wmf':
-                data['data'] = parseWMF(imageBuffer, debug=False)
+                data['data'] = parseWMF(imageBuffer, debug=True)
+                parentData['math'] = data
+            elif imageType == '.bin':
+                data['data'] = parseOLE(imageBuffer, debug=True)
                 parentData['math'] = data
                 
         except Exception as ex:
@@ -344,7 +337,7 @@ def _parseObject(elem, parentData, otherData, importFolder):
             elem = etree.SubElement(root, 'math', nsmap={None: 'http://www.w3.org/1998/Math/MathML'})
             elem = etree.SubElement(elem, 'mrow')
             elem = etree.SubElement(elem, 'mtext')
-            elem.text = '[MathType Error. Click Here to Tell Central Access!' + str(ex) +']'
+            elem.text = '[MathType Error. Click Here to Tell Central Access!]'
             data['data'] = root
             parentData['math'] = data
             

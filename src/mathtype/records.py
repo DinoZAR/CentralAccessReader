@@ -189,21 +189,18 @@ def convertRecords(i, records, parentStack, debug):
                 valueSet = False
                 
                 # Double-struck
-#                 if records[i].typeface in CharRecord.DOUBLE_STRUCK:
                 if records[i].mtCode in CharRecord.DOUBLE_STRUCK:
                     elem.set('mathvariant', 'double-struck')
                     elem.text = unichr(CharRecord.DOUBLE_STRUCK[records[i].mtCode])
                     valueSet = True
                 
                 # Fraktur
-#                 if records[i].typeface in CharRecord.FRAKTUR:
                 if records[i].mtCode in CharRecord.FRAKTUR:
                     elem.set('mathvariant', 'fraktur')
                     elem.text = unichr(CharRecord.FRAKTUR[records[i].mtCode])
                     valueSet = True
                         
                 # Script
-#                 if records[i].typeface in CharRecord.SCRIPT:
                 if records[i].mtCode in CharRecord.SCRIPT:
                     elem.set('mathvariant', 'script')
                     elem.text = unichr(CharRecord.SCRIPT[records[i].mtCode])
@@ -532,7 +529,8 @@ class CharRecord(Record):
                  61848 : 655,    # small cap Y
                  61849 : 7458,   # small cap Z
                  61850 : 7425,   # small cap ligature ae
-                 61851 : 7838    # small cap sharp s (not small yet)
+                 61851 : 7838,   # small cap sharp s (not small yet)
+                 402 : 102       # lowercase f with hook, now just f
                  }
     
     # This dictionary identifies double-struck characters
