@@ -301,37 +301,11 @@ def _parseObject(elem, parentData, otherData, importFolder):
     if query != None:
         data = {'type' : 'math'}
         
-        # Get the image data for it
-        #query = elem.find('{0}shape/{0}imagedata'.format(v_NS))
-        id = query.attrib['{0}id'.format(rel_NS)]
-        
-        # See which filename it refers to and create a valid one
-        filePath = ''
-        for rel in otherData['rels']:
-            if rel.get('Id') == id:
-                filePath = rel.get('Target')
-                break
-        
-        # Read file from zip
-        imageType = os.path.splitext(filePath)[1].lower()
-        
-        with otherData['zip'].open('word/' + filePath, 'r') as imageFile:
-            imageBuffer = StringIO(imageFile.read())
-        
-        try:
-            if imageType == '.wmf':
-                data['data'] = parseWMF(imageBuffer, debug=True)
-                parentData['math'] = data
-            elif imageType == '.bin':
-                data['data'] = parseOLE(imageBuffer, debug=True)
-                parentData['math'] = data
-                
-        except Exception as ex:
-            # Print out the exception, then create a dummy MathML that says
-            # "Couldn't read MathType"
-            traceback.print_exc()
-            print ex.message
-                
+        if (_parseMathFromOLE(query, data, parentData, otherData)):
+            return
+        elif (_parseMathFromWMF(elem.find('{0}shape/{0}imagedata'.format(v_NS)), data, parentData, otherData)):
+            return
+        else:
             root = etree.Element('a')
             root.set('href', REPORT_BUG_URL)
             elem = etree.SubElement(root, 'math', nsmap={None: 'http://www.w3.org/1998/Math/MathML'})
@@ -342,8 +316,60 @@ def _parseObject(elem, parentData, otherData, importFolder):
             parentData['math'] = data
             
             print 'Encountered error in reading MathType!'
-            
-        imageFile.close()
+        
+def _parseMathFromOLE(elem, data, parentData, otherData):
+    '''
+    Tries to parse MathType information from an OLE object. Returns True if
+    successful.
+    '''
+    id = elem.attrib['{0}id'.format(rel_NS)]
+    
+    # See which filename it refers to and create a valid one
+    filePath = ''
+    for rel in otherData['rels']:
+        if rel.get('Id') == id:
+            filePath = rel.get('Target')
+            break
+    
+    # Read file from zip
+    imageType = os.path.splitext(filePath)[1].lower()
+    
+    with otherData['zip'].open('word/' + filePath, 'r') as imageFile:
+        imageBuffer = StringIO(imageFile.read())
+    
+    try:
+        data['data'] = parseOLE(imageBuffer, debug=False)
+        parentData['math'] = data
+        return True
+    except:
+        return False
+
+def _parseMathFromWMF(elem, data, parentData, otherData):
+    '''
+    Tries to parse MathType information from a WMF file. Returns True if
+    successful.
+    '''
+    id = elem.attrib['{0}id'.format(rel_NS)]
+    
+    # See which filename it refers to and create a valid one
+    filePath = ''
+    for rel in otherData['rels']:
+        if rel.get('Id') == id:
+            filePath = rel.get('Target')
+            break
+    
+    # Read file from zip
+    imageType = os.path.splitext(filePath)[1].lower()
+    
+    with otherData['zip'].open('word/' + filePath, 'r') as imageFile:
+        imageBuffer = StringIO(imageFile.read())
+    
+    try:
+        data['data'] = parseWMF(imageBuffer, debug=False)
+        parentData['math'] = data
+        return True
+    except:
+        return False
 
 def _parseParagraphStyle(elem, parentData, otherData):
     query = elem.find('./{0}pStyle'.format(w_NS))
