@@ -9,6 +9,7 @@ build/
 *.iss
 *.log
 *.DS_Store
-
+*.c
+*.pfx
 *.pyc
 .pydevproject
