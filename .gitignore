@@ -8,6 +8,7 @@ build/
 *.exe.manifest
 *.iss
 *.log
+*.DS_Store
 
 *.pyc
 .pydevproject
