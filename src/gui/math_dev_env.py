@@ -8,10 +8,10 @@ import os
 from PyQt4.QtGui import QMainWindow, QApplication, QFileDialog
 
 try:
-    from mathml_fast.tts import MathTTS
-except ImportError:
-    print 'Importing slower version of MathTTS...'
-    from mathml.tts import MathTTS
+    from math_to_prose_fast.tts import MathTTS
+except ImportError as ex:
+    print 'Importing slower version of MathTTS...', ex
+    from math_to_prose.tts import MathTTS
 
 from forms.math_dev_env_ui import Ui_MathDevEnv
 from gui.pattern_editor import PatternEditor

@@ -8,10 +8,10 @@ from datetime import datetime
 from PyQt4.QtGui import QColor
 from lxml import etree
 try:
-    from mathml_fast.tts import MathTTS
-except ImportError:
-    print 'Loading slower MathTTS...'
-    from mathml.tts import MathTTS
+    from math_to_prose_fast.tts import MathTTS
+except ImportError as ex:
+    print 'Loading slower MathTTS...', ex
+    from math_to_prose.tts import MathTTS
 
 from misc import pattern_databases
     
