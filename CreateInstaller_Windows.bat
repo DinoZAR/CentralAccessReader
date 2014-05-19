@@ -3,6 +3,10 @@
 
 @echo off
 
+:: Get the SDK path in order to sign executables
+setlocal EnableDelayedExpansion
+CALL "C:\Program Files\Microsoft SDKs\Windows\v7.0\Bin\SetEnv.cmd" /x64 /release
+
 :: Add Inno Setup and Python to my path
 set PATH=%PATH%;C:\Program Files (x86)\Inno Setup 5;C:\Python27
 
@@ -17,6 +21,13 @@ python generate_spec.py %1
 :: Creating the executable
 echo Creating executable...
 python ../../pyinstaller-2.0/utils/Build.py "Central Access Reader.spec"
+
+:: Get code signing password (now set as %password%)]
+echo Enter password for PFX:
+set /p "password=>"
+
+:: Sign the executable
+SignTool sign /f CARCert.pfx /p %password% "dist\Central Access Reader\Central Access Reader.exe"
 
 :: Importing my external JavaScript libraries
 
@@ -87,6 +98,9 @@ python generate_inno_setup_script.py 64
 :: Compile Inno Setup script
 echo Compiling Inno Setup script into installer...
 iscc CAR_Setup.iss
+
+:: Sign this executable too
+SignTool sign /f CARCert.pfx /p %password% CAR_Setup_64.exe
 
 :: Copy the setup file to the top of the Central Access Reader directory
 echo Moving setup file to top...
