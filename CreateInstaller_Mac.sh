@@ -105,6 +105,25 @@ end tell
 ' | osascript
 
 #
+# Sign the app bundle
+#
+
+# Frameworks
+for f in dist/Central\ Access\ Reader.app/Contents/Frameworks/*.framework
+do
+    codesign -s "Central Washington University" -v "$f"
+done
+
+# Executables
+for f in dist/Central\ Access\ Reader.app/Contents/MacOS/*
+do
+    codesign -s "Central Washington University" -v "$f"
+done
+
+# App bundle
+codesign -s "Central Washington University" -v "./dist/Central Access Reader.app"
+
+#
 # Package it all up using the created .app
 #
 APP_SIZE=$(du -sk "./dist/Central Access Reader.app" | cut -d'.' -f1 | tr -d ' ')
@@ -162,6 +181,11 @@ end tell
 sync
 hdiutil convert "./dist/tmp.dmg" -format UDBZ -o "./dist/Central_Access_Reader.dmg"
 rm -f "./dist/tmp.dmg"
+
+#
+# Sign the image
+#
+codesign -s "Central Washington University" -v "./dist/Central_Access_Reader.dmg"
 
 echo "Moving the files to top level..."
 mv "./dist/Central_Access_Reader.dmg" "../../../Central_Access_Reader.dmg"
