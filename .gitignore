@@ -8,6 +8,8 @@ build/
 *.exe.manifest
 *.iss
 *.log
+*.c
+*.pfx
 
 *.pyc
 .pydevproject
