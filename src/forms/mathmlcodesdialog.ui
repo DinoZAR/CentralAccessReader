@@ -14,7 +14,7 @@
    <string>MathML Codes</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../resource.qrc">
+   <iconset>
     <normaloff>:/icons/icons/CAR_Logo.ico</normaloff>:/icons/icons/CAR_Logo.ico</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,0">
@@ -74,7 +74,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../../resource.qrc"/>
+  <include location="resource.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -67,7 +67,6 @@ class MathMLItem(QtGui.QWidget):
         mathjaxScript.attrib['type'] = 'text/javascript'
         mathjaxScript.attrib['src'] = 'file:' + urllib.pathname2url(program_path('mathjax/MathJax.js')) + r'?config=TeX-AMS-MML_HTMLorMML.js'
         
-        
         head.append(mathjaxScript)
         
         # Use this div to make the text a whole lot bigger

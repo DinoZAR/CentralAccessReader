@@ -20,7 +20,7 @@ class LandingPageDocument(Document):
 
     def __init__(self, filePath, progressHook, cancelHook):
         Document.__init__(self, filePath, progressHook, cancelHook)
-        self._name = 'Load a Document!'
+        self._name = 'Quick Start'
         self._contentDOM = html.fromstring(self._myContent()) 
         self._mapMathEquations()
         
@@ -37,20 +37,20 @@ class LandingPageDocument(Document):
         Returns the content that will be added to this document, as an HTML
         string.
         '''
-        dragHereGif = self._getImageUri(':/all/icons/Drag File Here Animation.gif')
+        arrowImage = self._getImageUri(':/all/icons/arrow-top-left.png')
         
         s = '''
         <body>
-        <h1>Quick Start</h1>
-        <p>CAR accepts .docx Word Docs and text from your clipboard. You can access text in the following ways:</p>
-        <h2>Click to open</h2>
-        <p><a href="command/openDocument" class="button">Open Document</a></p>
-        <h2>Drag Word Document file into CAR</h2>
-        <p><img src="''' + dragHereGif + '''"/></p>
-        <h2>Paste from clipboard</h2>
-        <h3>Right-click -> Paste</h3>
-        <h3>Windows: Ctrl + V</h3>
-        <h3>Mac: Command + V</h3>
+        <p><img alt="Arrow points to white plus" title="Arrow points to white plus" src="''' + arrowImage + '''"/></p>
+        <p style="font-size:30px">To open a Word Document, press the white plus.</p>
+        <br/>
+        <p style="font-size:30px">Other ways to load content into CAR:</p>
+        <ul>
+        <li><p style="font-size:30px">Drag Word Document into CAR</p></li>
+        <li><p style="font-size:30px">Paste text from clipboard</p></li>
+        </ul>
+        <br/>
+        <p style="font-size:30px"><a class="button" href="command/disableQuickStart">Disable Quick Start</a>
         </body>
         '''
         return s

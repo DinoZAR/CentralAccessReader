@@ -24,7 +24,7 @@ from gui.bookmarks import BookmarksTreeModel, BookmarkNode
 from gui.document_load_progress import DocumentLoadProgressDialog
 from gui import download_progress
 from gui.export_batch import ExportBatchDialog
-from gui.math_dev_env import MathDevelopmentEnvironment
+from gui.math_library_dev import MathLibraryDev
 from gui.pages import PagesTreeModel
 import misc
 from speech.worker import SpeechWorker
@@ -756,6 +756,9 @@ class MainWindow(QtGui.QMainWindow):
         if 'openDocument' == commandString:
             self.showOpenDocumentDialog()
         
+        elif 'disableQuickStart' == commandString:
+            print 'Disabling Quick Start!'
+        
         elif 'updateDownloadYes' == commandString:
             # Show the update download progress widget
             self.ui.updateDownloadProgress.setUrl(SETUP_FILE)
@@ -827,12 +830,12 @@ class MainWindow(QtGui.QMainWindow):
         webbrowser.open_new(misc.SURVEY_URL)
     
     def openPatternEditor(self):
-        self.patternEditor = MathDevelopmentEnvironment(self)
+        self.patternEditor = MathLibraryDev(self)
         self.patternEditor.show()
     
     def showAllMathML(self):
         from gui.mathmlcodes_dialog import MathMLCodesDialog
-        self.mathmlDialog = MathMLCodesDialog(self.assigner._maths)
+        self.mathmlDialog = MathMLCodesDialog(self.currentDocument()._maths)
         self.mathmlDialog.show()
         
     def bookmarksTree_clicked(self, index):
