@@ -18,7 +18,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="resource.qrc">
-    <normaloff>:/all/icons/CAR_Logo.ico</normaloff>:/all/icons/CAR_Logo.ico</iconset>
+    <normaloff>:/all/icons/CAR_About.png</normaloff>:/all/icons/CAR_About.png</iconset>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
