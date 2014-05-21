@@ -72,4 +72,4 @@ class MathLibraryDev(QMainWindow):
         '''
         Saves the current library.
         '''
-        pass
+        self.currentLibraryEditor().save()

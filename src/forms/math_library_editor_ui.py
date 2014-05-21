@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/math_library_editor.ui'
 #
-# Created: Tue May 20 15:23:58 2014
+# Created: Wed May 21 09:45:19 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -32,23 +32,25 @@ class Ui_MathLibraryEditor(object):
         self.label = QtGui.QLabel(MathLibraryEditor)
         self.label.setObjectName(_fromUtf8("label"))
         self.verticalLayout.addWidget(self.label)
-        self.tabWidget = QtGui.QTabWidget(MathLibraryEditor)
-        self.tabWidget.setObjectName(_fromUtf8("tabWidget"))
+        self.patternTabs = QtGui.QTabWidget(MathLibraryEditor)
+        self.patternTabs.setTabsClosable(True)
+        self.patternTabs.setMovable(True)
+        self.patternTabs.setObjectName(_fromUtf8("patternTabs"))
         self.tab = QtGui.QWidget()
         self.tab.setObjectName(_fromUtf8("tab"))
-        self.tabWidget.addTab(self.tab, _fromUtf8(""))
+        self.patternTabs.addTab(self.tab, _fromUtf8(""))
         self.tab_2 = QtGui.QWidget()
         self.tab_2.setObjectName(_fromUtf8("tab_2"))
-        self.tabWidget.addTab(self.tab_2, _fromUtf8(""))
-        self.verticalLayout.addWidget(self.tabWidget)
+        self.patternTabs.addTab(self.tab_2, _fromUtf8(""))
+        self.verticalLayout.addWidget(self.patternTabs)
 
         self.retranslateUi(MathLibraryEditor)
-        self.tabWidget.setCurrentIndex(0)
+        self.patternTabs.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MathLibraryEditor)
 
     def retranslateUi(self, MathLibraryEditor):
         MathLibraryEditor.setWindowTitle(_translate("MathLibraryEditor", "Form", None))
         self.label.setText(_translate("MathLibraryEditor", "Patterns:", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MathLibraryEditor", "Tab 1", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MathLibraryEditor", "Tab 2", None))
+        self.patternTabs.setTabText(self.patternTabs.indexOf(self.tab), _translate("MathLibraryEditor", "Tab 1", None))
+        self.patternTabs.setTabText(self.patternTabs.indexOf(self.tab_2), _translate("MathLibraryEditor", "Tab 2", None))
 

@@ -25,6 +25,7 @@ class MathLibrary(object):
         zipFile = zipfile.ZipFile(f, 'r')
         self._read_manifest(zipFile)
         self._read_patterns(zipFile)
+        zipFile.close()
         
     def write(self, f):
         '''
@@ -33,6 +34,7 @@ class MathLibrary(object):
         zipFile = zipfile.ZipFile(f, 'w')
         self._write_manifest(zipFile)
         self._write_patterns(zipFile)
+        zipFile.close()
     
     def _read_manifest(self, zipFile):
         '''
@@ -58,7 +60,7 @@ class MathLibrary(object):
         elem = etree.SubElement(root, 'author')
         elem.text = self.author
         
-        zipFile.write('manifest.xml', etree.tostring(root, pretty_print=True, encoding='UTF-8', xml_declaration=True))
+        zipFile.writestr('manifest.xml', etree.tostring(root, pretty_print=True, encoding='UTF-8', xml_declaration=True))
     
     def _read_patterns(self, zipFile):
         '''

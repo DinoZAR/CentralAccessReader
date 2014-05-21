@@ -38,6 +38,8 @@
     <file>icons/CAR_Logo.ico</file>
   </qresource>
   <qresource prefix="dark">
+    <file>icons/treeview_icon_collapsed_dark.png</file>
+    <file>icons/treeview_icon_expanded_dark.png</file>
     <file>icons/bell_dark.png</file>
     <file>icons/reload_dark.png</file>
     <file>icons/search_settings_dark.png</file>
@@ -67,6 +69,8 @@
     <file>icons/add_dark.png</file>
   </qresource>
   <qresource prefix="light">
+    <file>icons/treeview_icon_collapsed_light.png</file>
+    <file>icons/treeview_icon_expanded_light.png</file>
     <file>icons/bell_light.png</file>
     <file>icons/reload_light.png</file>
     <file>icons/slider_popup_light.png</file>

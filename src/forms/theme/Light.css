@@ -543,6 +543,32 @@ QTreeView::branch:selected {
 	background-color: #0462A7;
 }
 
+/* Branch closed */
+QTreeView::branch:has-children:!has-siblings:closed,
+QTreeView::branch:closed:has-children:has-siblings {
+	border-image: none;
+	image: url(":/light/icons/treeview_icon_collapsed_light.png");
+}
+
+QTreeView::branch:has-children:!has-siblings:closed:selected,
+QTreeView::branch:closed:has-children:has-siblings:selected {
+	border-image: none;
+	image: url(":/dark/icons/treeview_icon_collapsed_dark.png");
+}
+
+/* Branch opened */
+QTreeView::branch:open:has-children:!has-siblings,
+QTreeView::branch:open:has-children:has-siblings  {
+	border-image: none;
+	image: url(":/light/icons/treeview_icon_expanded_light.png");
+}
+
+QTreeView::branch:open:has-children:!has-siblings:selected,
+QTreeView::branch:open:has-children:has-siblings:selected  {
+	border-image: none;
+	image: url(":/dark/icons/treeview_icon_expanded_dark.png");
+}
+
 /*
 Specific styles for different widgets (mostly for setting button icons)
 */

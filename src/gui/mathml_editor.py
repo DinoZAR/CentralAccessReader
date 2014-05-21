@@ -35,7 +35,6 @@ class MathMLEditor(QWidget):
         '''
         Refreshes the math that gets displayed in the editor.
         '''
-        print 'Refreshing math!'
         myString = unicode(self.ui.textEditor.toPlainText())
         self.setMath(myString)
         
@@ -46,7 +45,6 @@ class MathMLEditor(QWidget):
         from a string on the clipboard. If no MathML is detected, nothing
         happens.
         '''
-        
         # See if I got some math in there
         firstIndex = some_string.find('<math')
         secondIndex = some_string.find('</math>')
