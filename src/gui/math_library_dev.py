@@ -3,7 +3,7 @@ Created on May 20, 2014
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtGui import QMainWindow, QFileDialog, QApplication
+from PyQt4.QtGui import QMainWindow, QApplication
 
 from forms.math_library_dev_ui import Ui_MathLibraryDev
 from gui.math_library_editor import MathLibraryEditor
@@ -29,12 +29,22 @@ class MathLibraryDev(QMainWindow):
         self.connect_signals()
     
     def connect_signals(self):
-        self.ui.actionFrom_Clipboard.triggered.connect(self.importMathFromClipboard)
+        # File menu
         self.ui.actionNew_Library.triggered.connect(self.newMathLibrary)
+        self.ui.actionSave.triggered.connect(self.saveCurrent)
+        
+        # MathML menu
+        self.ui.actionFrom_Clipboard.triggered.connect(self.importMathFromClipboard)
+        
+        # Controls
+        self.ui.libraryTabs.tabCloseRequested.connect(self.closeLibrary)
+        
+    def currentLibraryEditor(self):
+        return self.ui.libraryTabs.currentWidget()
     
     def importMathFromClipboard(self):
         '''
-        Pastes the MathML from the clipboard into the MathML editor, if any
+        Pastes the MathML from the clipboard into the MathML editor, if any.
         '''
         mime = QApplication.clipboard().mimeData()
         
@@ -51,3 +61,15 @@ class MathLibraryDev(QMainWindow):
         '''
         w = MathLibraryEditor()
         self.ui.libraryTabs.addTab(w, w.tabTitle())
+    
+    def closeLibrary(self, tabIndex):
+        '''
+        Closes the library at the tab location.
+        '''
+        self.ui.libraryTabs.removeTab(tabIndex)
+    
+    def saveCurrent(self):
+        '''
+        Saves the current library.
+        '''
+        pass

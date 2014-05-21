@@ -3,6 +3,7 @@ Created on May 19, 2014
 
 @author: Spencer Graffe
 '''
+import os
 import zipfile
 from lxml import etree
 
@@ -12,10 +13,10 @@ class MathLibrary(object):
     the built-in libraries and for custom libraries that one can import.
     '''
 
-    def __init__(self, title):
-        self.title = ''
+    def __init__(self):
+        self.title = 'Untitled'
         self.author = ''
-        self.patterns = []
+        self.patterns = {}
     
     def read(self, f):
         '''
@@ -60,7 +61,19 @@ class MathLibrary(object):
         zipFile.write('manifest.xml', etree.tostring(root, pretty_print=True, encoding='UTF-8', xml_declaration=True))
     
     def _read_patterns(self, zipFile):
-        pass
+        '''
+        Reads in the patterns from the zip file.
+        '''
+        for name in zipFile.namelist():
+            myName = os.path.splitext(os.path.basename(name))[0]
+            ext = os.path.splitext(name)[1]
+            if ext == '.txt':
+                self.patterns[myName] = zipFile.read(name)
     
     def _write_patterns(self, zipFile):
-        pass
+        '''
+        Writes the patterns out to zip file.
+        '''
+        for k in self.patterns.keys():
+            fileName = k + '.txt'
+            zipFile.writestr(fileName, self.patterns[k])
