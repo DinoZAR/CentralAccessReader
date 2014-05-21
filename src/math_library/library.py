@@ -14,7 +14,7 @@ class MathLibrary(object):
     '''
 
     def __init__(self):
-        self.title = 'Untitled'
+        self.name = 'Untitled'
         self.author = ''
         self.patterns = {}
     
@@ -42,8 +42,8 @@ class MathLibrary(object):
         '''
         root = etree.fromstring(zipFile.read('manifest.xml'))
         
-        elem = root.findelem('.//title')
-        self.title = elem.text
+        elem = root.findelem('.//name')
+        self.name = elem.text
         
         elem = root.findelem('.//author')
         self.author = elem.text
@@ -54,8 +54,8 @@ class MathLibrary(object):
         '''
         root = etree.Element('manifest')
         
-        elem = etree.SubElement(root, 'title')
-        elem.text = self.title
+        elem = etree.SubElement(root, 'name')
+        elem.text = self.name
         
         elem = etree.SubElement(root, 'author')
         elem.text = self.author

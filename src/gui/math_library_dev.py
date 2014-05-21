@@ -30,8 +30,10 @@ class MathLibraryDev(QMainWindow):
     
     def connect_signals(self):
         # File menu
-        self.ui.actionNew_Library.triggered.connect(self.newMathLibrary)
+        self.ui.actionNew_Library.triggered.connect(self.newLibrary)
         self.ui.actionSave.triggered.connect(self.saveCurrent)
+        
+        self.ui.actionNew_Pattern.triggered.connect(self.newPattern)
         
         # MathML menu
         self.ui.actionFrom_Clipboard.triggered.connect(self.importMathFromClipboard)
@@ -55,12 +57,29 @@ class MathLibraryDev(QMainWindow):
         elif mime.hasText():
             self.ui.mathmlEditor.setMath(unicode(QApplication.clipboard().text()))
     
-    def newMathLibrary(self):
+    def newLibrary(self):
         '''
         Appends a new math library to the editor.
         '''
         w = MathLibraryEditor()
-        self.ui.libraryTabs.addTab(w, w.tabTitle())
+        w.nameChanged.connect(self._updateLibraryName)
+        self.ui.libraryTabs.addTab(w, w.name)
+        
+    def newPattern(self):
+        '''
+        Appends a new pattern to the current library.
+        '''
+        editor = self.currentLibraryEditor()
+        if editor is not None:
+            editor.newPattern()
+            
+    def openPattern(self):
+        '''
+        Appends a new pattern to the library from file.
+        '''
+        editor = self.currentLibraryEditor()
+        if editor is not None:
+            editor.openPattern()
     
     def closeLibrary(self, tabIndex):
         '''
@@ -73,3 +92,7 @@ class MathLibraryDev(QMainWindow):
         Saves the current library.
         '''
         self.currentLibraryEditor().save()
+    
+    def _updateLibraryName(self, editor, name):
+        i = self.ui.libraryTabs.indexOf(editor)
+        self.ui.libraryTabs.setTabText(i, name)
