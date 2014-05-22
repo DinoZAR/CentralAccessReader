@@ -16,7 +16,7 @@ class MathLibrary(object):
     def __init__(self):
         self.name = 'Untitled'
         self.author = ''
-        self.patterns = {}
+        self.patterns = []
     
     def read(self, f):
         '''
@@ -70,12 +70,21 @@ class MathLibrary(object):
             myName = os.path.splitext(os.path.basename(name))[0]
             ext = os.path.splitext(name)[1]
             if ext == '.txt':
-                self.patterns[myName] = zipFile.read(name)
+                self.patterns.append(MathPattern(myName, zipFile.read(name)))
     
     def _write_patterns(self, zipFile):
         '''
         Writes the patterns out to zip file.
         '''
-        for k in self.patterns.keys():
-            fileName = k + '.txt'
-            zipFile.writestr(fileName, self.patterns[k])
+        for p in self.patterns:
+            fileName = p.name + '.txt'
+            zipFile.writestr(fileName, p.data)
+            
+class MathPattern(object):
+    '''
+    A single pattern in a library.
+    '''
+    
+    def __init__(self, name='Untitled', data=''):
+        self.name = name
+        self.data = data

@@ -6,11 +6,12 @@ Created on May 20, 2014
 import os
 
 from PyQt4.QtCore import pyqtSignal
-from PyQt4.QtGui import QWidget, QFileDialog
+from PyQt4.QtGui import QWidget, QFileDialog, QMenu
 
-from forms.math_library_editor_ui import Ui_MathLibraryEditor
-from gui.math_pattern_editor import MathPatternEditor
-from math_library.library import MathLibrary
+from src.forms.math_library_editor_ui import Ui_MathLibraryEditor
+from src.gui.math_pattern_editor import MathPatternEditor
+from src.gui.general_tree import GeneralTree
+from src.math_library.library import MathLibrary, MathPattern
 
 class MathLibraryEditor(QWidget):
     '''
@@ -30,8 +31,20 @@ class MathLibraryEditor(QWidget):
         
         self.library = MathLibrary()
         
+        # Create the model for the tree and set it
+        self._treeModel = GeneralTree(self.library)
+        self._treeModel.addChildrenRule(0, lambda x: x.patterns)
+        self._treeModel.addDisplayRule(1, lambda x: x.name)
+        self.ui.treeView.setModel(self._treeModel)
+
+        # Add context menu to the tree (like removal)
+        self.ui.treeView.contextMenuEvent = self._treeContextMenuEvent
+
         # Clear out the tabs
         self.ui.patternTabs.clear()
+
+        # Set the splitter so that more of the patterns show rather than tree
+        self.ui.splitter.setSizes([500, 1000])
         
         # The file path of the last saved path
         self.filePath = ''
@@ -67,9 +80,14 @@ class MathLibraryEditor(QWidget):
         '''
         Appends a new pattern to the library.
         '''
-        pattern = MathPatternEditor()
-        pattern.nameChanged.connect(self._patternNameChanged)
-        self.ui.patternTabs.addTab(pattern, pattern.name)
+        newPattern = MathPattern()
+        self.library.patterns.append(newPattern)
+        self._treeModel.update()
+        
+        patternEditor = MathPatternEditor(newPattern)
+        patternEditor.nameChanged.connect(self._patternNameChanged)
+        
+        self.ui.patternTabs.addTab(patternEditor, patternEditor.name)
     
     def openPattern(self):
         '''
@@ -82,6 +100,14 @@ class MathLibraryEditor(QWidget):
         Closes the pattern at the tab index
         '''
         self.ui.patternTabs.removeTab(tabIndex)
+
+    def removeSelectedPattern(self):
+        selected = self.ui.treeView.selectedIndexes()
+
+        for s in selected:
+            pattern = s.internalPointer().data
+            print 'Selected:', pattern
+
     
     @property
     def name(self):
@@ -114,3 +140,9 @@ class MathLibraryEditor(QWidget):
         
     def _setTextForName(self, editor, newName):
         self.ui.nameEdit.setText(newName)
+
+    def _treeContextMenuEvent(self, ev):
+        print 'Context menu!', ev
+        menu = QMenu()
+        menu.addAction('Remove', self.removeSelectedPattern)
+        menu.exec_(ev.globalPos())

@@ -18,7 +18,7 @@ class MathPatternEditor(QWidget):
     
     nameChanged = pyqtSignal(object, unicode)
 
-    def __init__(self, name='', data='', parent=None):
+    def __init__(self, patternData, parent=None):
         super(MathPatternEditor, self).__init__(parent)
         
         self.ui = Ui_MathPatternEditor()
@@ -31,12 +31,7 @@ class MathPatternEditor(QWidget):
         f.setStyleHint(QFont.TypeWriter)
         self.ui.textEdit.setFont(f)
         
-        # Properties
-        self._name = ''
-        self._data = ''
-        
-        self.name = name
-        self.data = data
+        self.pattern = patternData
         
         if len(self.name) == 0:
             self.name = 'Untitled'
@@ -49,7 +44,7 @@ class MathPatternEditor(QWidget):
     
     @property
     def name(self):
-        return self._name
+        return self.pattern.name
     
     @name.setter
     def name(self, n):
@@ -65,17 +60,17 @@ class MathPatternEditor(QWidget):
         # Check to see if I have anything left. If I don't, then don't change
         # the name
         if len(myName) > 0:
-            self._name = myName
+            self.pattern.name = myName
         
-        self.nameChanged.emit(self, self._name)
+        self.nameChanged.emit(self, myName)
     
     @property
     def data(self):
-        return self._data
+        return self.pattern.data
     
     @data.setter
     def data(self, d):
-        self._data = d
+        self.pattern.data = d
     
     def _updateName(self):
         self.name = unicode(self.ui.nameEdit.text())

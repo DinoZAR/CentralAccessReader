@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/math_library_editor.ui'
 #
-# Created: Wed May 21 11:49:01 2014
+# Created: Thu May 22 14:11:31 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -32,22 +32,23 @@ class Ui_MathLibraryEditor(object):
         self.splitter = QtGui.QSplitter(MathLibraryEditor)
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
         self.splitter.setObjectName(_fromUtf8("splitter"))
-        self.widget = QtGui.QWidget(self.splitter)
-        self.widget.setObjectName(_fromUtf8("widget"))
-        self.verticalLayout = QtGui.QVBoxLayout(self.widget)
+        self.layoutWidget = QtGui.QWidget(self.splitter)
+        self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
+        self.verticalLayout = QtGui.QVBoxLayout(self.layoutWidget)
         self.verticalLayout.setMargin(0)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setMargin(5)
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        self.label = QtGui.QLabel(self.widget)
+        self.label = QtGui.QLabel(self.layoutWidget)
         self.label.setObjectName(_fromUtf8("label"))
         self.horizontalLayout.addWidget(self.label)
-        self.nameEdit = QtGui.QLineEdit(self.widget)
+        self.nameEdit = QtGui.QLineEdit(self.layoutWidget)
         self.nameEdit.setObjectName(_fromUtf8("nameEdit"))
         self.horizontalLayout.addWidget(self.nameEdit)
         self.verticalLayout.addLayout(self.horizontalLayout)
-        self.treeView = QtGui.QTreeView(self.widget)
+        self.treeView = QtGui.QTreeView(self.layoutWidget)
+        self.treeView.setHeaderHidden(True)
         self.treeView.setObjectName(_fromUtf8("treeView"))
         self.verticalLayout.addWidget(self.treeView)
         self.patternTabs = QtGui.QTabWidget(self.splitter)
