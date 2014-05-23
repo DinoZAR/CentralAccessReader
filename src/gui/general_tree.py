@@ -117,8 +117,8 @@ class TreeItem(object):
         try:
             for c in iterable:
                 self.addChild(TreeItem(c, childAccessors, level=level + 1))
-        except TypeError as ex:
-            print 'Could not iterate over the children...', ex
+        except TypeError:
+            pass
 
         self.parent = None
 

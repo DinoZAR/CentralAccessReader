@@ -32,16 +32,16 @@ class MathPatternEditor(QWidget):
         self.ui.textEdit.setFont(f)
         
         self.pattern = patternData
-        
+        self.name = self.pattern.name
+
         if len(self.name) == 0:
             self.name = 'Untitled'
         
     def connect_signals(self):
         self.ui.nameEdit.editingFinished.connect(self._updateName)
         self.ui.textEdit.textChanged.connect(self._updateText)
-        
         self.nameChanged.connect(self._setTextInName)
-    
+
     @property
     def name(self):
         return self.pattern.name
@@ -61,8 +61,8 @@ class MathPatternEditor(QWidget):
         # the name
         if len(myName) > 0:
             self.pattern.name = myName
-        
-        self.nameChanged.emit(self, myName)
+
+        self.nameChanged.emit(self, self.pattern.name)
     
     @property
     def data(self):
@@ -78,5 +78,5 @@ class MathPatternEditor(QWidget):
     def _updateText(self):
         self.data = unicode(self.ui.textEdit.toPlainText())
         
-    def _setTextInName(self, editor, newText):
+    def _setTextInName(self, editor,  newText):
         self.ui.nameEdit.setText(newText)

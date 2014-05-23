@@ -30,6 +30,7 @@ class MathLibraryEditor(QWidget):
         self.connect_signals()
         
         self.library = MathLibrary()
+        self.name = self.library.name
         
         # Create the model for the tree and set it
         self._treeModel = GeneralTree(self.library)
@@ -37,11 +38,12 @@ class MathLibraryEditor(QWidget):
         self._treeModel.addDisplayRule(1, lambda x: x.name)
         self.ui.treeView.setModel(self._treeModel)
 
-        # Add context menu to the tree (like removal)
+        # Add context menu to the tree
         self.ui.treeView.contextMenuEvent = self._treeContextMenuEvent
 
-        # Clear out the tabs
+        # Clear out the tabs and set the pattern widget map
         self.ui.patternTabs.clear()
+        self._patternWidgetMap = {}
 
         # Set the splitter so that more of the patterns show rather than tree
         self.ui.splitter.setSizes([500, 1000])
@@ -86,6 +88,8 @@ class MathLibraryEditor(QWidget):
         
         patternEditor = MathPatternEditor(newPattern)
         patternEditor.nameChanged.connect(self._patternNameChanged)
+
+        self._patternWidgetMap[newPattern] = patternEditor
         
         self.ui.patternTabs.addTab(patternEditor, patternEditor.name)
     
@@ -99,6 +103,8 @@ class MathLibraryEditor(QWidget):
         '''
         Closes the pattern at the tab index
         '''
+        pattern = self.ui.patternTabs.widget(tabIndex).pattern
+        del self._patternWidgetMap[pattern]
         self.ui.patternTabs.removeTab(tabIndex)
 
     def removeSelectedPattern(self):
@@ -106,8 +112,14 @@ class MathLibraryEditor(QWidget):
 
         for s in selected:
             pattern = s.internalPointer().data
-            print 'Selected:', pattern
 
+            if pattern in self._patternWidgetMap:
+                i = self.ui.patternTabs.indexOf(self._patternWidgetMap[pattern])
+                self.ui.patternTabs.removeTab(i)
+                del self._patternWidgetMap[pattern]
+
+            self.library.patterns.remove(pattern)
+            self._treeModel.update()
     
     @property
     def name(self):
@@ -142,7 +154,6 @@ class MathLibraryEditor(QWidget):
         self.ui.nameEdit.setText(newName)
 
     def _treeContextMenuEvent(self, ev):
-        print 'Context menu!', ev
         menu = QMenu()
         menu.addAction('Remove', self.removeSelectedPattern)
         menu.exec_(ev.globalPos())
