@@ -5,16 +5,18 @@ Created on May 20, 2014
 '''
 import os
 
-from PyQt4.QtGui import QMainWindow, QApplication, QFileDialog, QMessageBox
+from PyQt4.QtGui import QMainWindow, QApplication, QFileDialog, QMessageBox, qApp
 
 from src.forms.math_library_dev_ui import Ui_MathLibraryDev
 from src.gui.math_library_editor import MathLibraryEditor
+from src.gui import configuration
 from src.math_library.library import MathLibrary
 try:
     from src.math_to_prose_fast.tts import MathTTS
 except ImportError as ex:
     print 'Loading slower MathTTS...', ex
     from src.math_to_prose.tts import MathTTS
+from src.speech import driver
 
 class MathLibraryDev(QMainWindow):
     '''
@@ -32,6 +34,12 @@ class MathLibraryDev(QMainWindow):
         self.ui.splitter.setSizes([1000, 500])
 
         self._mathTTS = MathTTS()
+
+        # Set up the TTS driver (use settings from configuration of before)
+        self._ttsEngine = driver.get_driver()
+        self._ttsEngine.setVolume(configuration.getInt('Volume'))
+        self._ttsEngine.setRate(configuration.getInt('Rate'))
+        self._ttsEngine.setVoice(configuration.getValue('Voice'))
 
         # Clear the tabs
         self.ui.libraryTabs.clear()
@@ -124,7 +132,8 @@ class MathLibraryDev(QMainWindow):
         '''
         Runs the current library with the MathML.
         '''
-        self.ui.proseOutput.setText('')
+        self.ui.proseOutput.setText('Compiling...')
+        qApp.processEvents()
         editor = self.currentLibraryEditor()
         if editor is not None:
             lib = editor.library
@@ -134,6 +143,9 @@ class MathLibraryDev(QMainWindow):
                     self._mathTTS.setMathLibrary(lib, pattern.name)
                     prose = self._mathTTS.parse(self.ui.mathmlEditor.getMath())
                     self.ui.proseOutput.setText(prose)
+                    self._ttsEngine.stop()
+                    self._ttsEngine.setSpeechGenerator([(prose, 'math')])
+                    self._ttsEngine.start()
                 except Exception as ex:
                     self.ui.proseOutput.setText('')
                     QMessageBox.information(self, 'Didn\'t parse correctly', 'Math library did not parse correctly:\n{0}'.format(ex), QMessageBox.Ok)
