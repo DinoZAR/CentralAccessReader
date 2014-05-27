@@ -243,7 +243,41 @@ parser = yacc.yacc(debug=False)
 # User Functions : These are what other programmers should be using
 # ------------------------------------------------------------------------------
 
+def parseMathLibrary(mathLib, patternName):
+    '''
+    Parses a pattern from a math library into a database. Returns the database
+    tree when successful.
+    '''
+    pattern = mathLib.getPattern(patternName)
+
+    lexer.input(pattern.data)
+    tree = parser.parse(pattern.data, lexer=lexer)
+
+    # Get the imports
+    i = 0
+    patterns = tree['patterns']
+    while i < len(patterns):
+        if patterns[i]['type'] == 'import':
+            importedPattern = mathLib.getPattern(patterns[i]['value'])
+
+            lexer.input(importedPattern.data)
+            t = parser.parse(importedPattern.data, lexer=lexer)
+
+            # Replace the import statement with actual contents
+            patterns.pop(i)
+            patterns[i:i] = t['patterns']
+
+        else:
+            i += 1
+
+    tree['imports'] = []
+
+    return tree
+
 def parse(inputString, filePath):
+    '''
+    Parses a string into a database.
+    '''
 
     # Give the lexer some input
     lexer.input(inputString)

@@ -5,22 +5,22 @@ Created on Jan 25, 2013
 '''
 
 import xml.etree.ElementTree as ET
-from math_to_prose_fast import database_parser
-from math_to_prose_fast import database
-from math_to_prose_fast.parser import transform
-from math_to_prose_fast.pattern_tree import convertDOMToPatternTree
+from src.math_to_prose_fast import database_parser
+from src.math_to_prose_fast import database
+from src.math_to_prose_fast.parser import transform
+from src.math_to_prose_fast.pattern_tree import convertDOMToPatternTree
 
 class MathTTS():
     
-    def __init__(self, initialDatabaseFile=None):
+    def __init__(self, mathLibrary=None):
         
-        if initialDatabaseFile is not None:
+        if mathLibrary is not None:
             # Load and generate the pattern trees
-            databaseFile = open(initialDatabaseFile)
+            databaseFile = open(mathLibrary)
             contents = databaseFile.read()
             databaseFile.close()
             
-            self.parserTree = database_parser.parse(contents, initialDatabaseFile)
+            self.parserTree = database_parser.parse(contents, mathLibrary)
         
     def parse(self, mathmlString, stageSink=None):
         root = ET.fromstring(mathmlString)
@@ -36,9 +36,5 @@ class MathTTS():
         
         return myString
     
-    def setPatternDatabase(self, filePath):
-        databaseFile = open(filePath)
-        contents = databaseFile.read()
-        databaseFile.close()
-        
-        self.parserTree = database_parser.parse(contents, filePath)
+    def setMathLibrary(self, mathLib, patternName):
+        self.parserTree = database_parser.parseMathLibrary(mathLib, patternName)

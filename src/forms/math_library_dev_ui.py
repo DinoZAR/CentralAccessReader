@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/math_library_dev.ui'
 #
-# Created: Tue May 27 11:49:39 2014
+# Created: Tue May 27 15:54:46 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,6 +27,9 @@ class Ui_MathLibraryDev(object):
     def setupUi(self, MathLibraryDev):
         MathLibraryDev.setObjectName(_fromUtf8("MathLibraryDev"))
         MathLibraryDev.resize(1030, 710)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/all/icons/CAR_About.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        MathLibraryDev.setWindowIcon(icon)
         self.centralwidget = QtGui.QWidget(MathLibraryDev)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout = QtGui.QVBoxLayout(self.centralwidget)
@@ -36,9 +39,9 @@ class Ui_MathLibraryDev(object):
         self.runButton = QtGui.QPushButton(self.centralwidget)
         self.runButton.setObjectName(_fromUtf8("runButton"))
         self.horizontalLayout.addWidget(self.runButton)
-        self.lineEdit = QtGui.QLineEdit(self.centralwidget)
-        self.lineEdit.setObjectName(_fromUtf8("lineEdit"))
-        self.horizontalLayout.addWidget(self.lineEdit)
+        self.proseOutput = QtGui.QLineEdit(self.centralwidget)
+        self.proseOutput.setObjectName(_fromUtf8("proseOutput"))
+        self.horizontalLayout.addWidget(self.proseOutput)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.splitter = QtGui.QSplitter(self.centralwidget)
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
@@ -130,3 +133,4 @@ class Ui_MathLibraryDev(object):
         self.actionCreate_Copy_From_Default.setText(_translate("MathLibraryDev", "Create Copy From Default", None))
 
 from gui.mathml_editor import MathMLEditor
+import resource_rc

@@ -31,6 +31,7 @@ class MathPatternEditor(QWidget):
         
         self.pattern = patternData
         self.name = self.pattern.name
+        self.ui.textEdit.setPlainText(self.pattern.data)
 
         if len(self.name) == 0:
             self.name = 'Untitled'

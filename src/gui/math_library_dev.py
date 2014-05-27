@@ -5,11 +5,16 @@ Created on May 20, 2014
 '''
 import os
 
-from PyQt4.QtGui import QMainWindow, QApplication, QFileDialog
+from PyQt4.QtGui import QMainWindow, QApplication, QFileDialog, QMessageBox
 
 from src.forms.math_library_dev_ui import Ui_MathLibraryDev
 from src.gui.math_library_editor import MathLibraryEditor
 from src.math_library.library import MathLibrary
+try:
+    from src.math_to_prose_fast.tts import MathTTS
+except ImportError as ex:
+    print 'Loading slower MathTTS...', ex
+    from src.math_to_prose.tts import MathTTS
 
 class MathLibraryDev(QMainWindow):
     '''
@@ -25,7 +30,9 @@ class MathLibraryDev(QMainWindow):
         
         # Adjust some splitter handles
         self.ui.splitter.setSizes([1000, 500])
-        
+
+        self._mathTTS = MathTTS()
+
         # Clear the tabs
         self.ui.libraryTabs.clear()
         
@@ -38,6 +45,7 @@ class MathLibraryDev(QMainWindow):
         self.ui.actionSave.triggered.connect(self.saveCurrent)
         
         self.ui.actionNew_Pattern.triggered.connect(self.newPattern)
+        self.ui.actionOpen_Pattern.triggered.connect(self.openPattern)
         
         # MathML menu
         self.ui.actionFrom_Clipboard.triggered.connect(self.importMathFromClipboard)
@@ -74,11 +82,13 @@ class MathLibraryDev(QMainWindow):
         '''
         Opens a library from file.
         '''
-        filePath = unicode(QFileDialog.getOpenFileName(self, 'Open Math Library', os.path.expanduser('~/Documents'), 'Math Library (*.mathlib)'))
+        filePath = unicode(QFileDialog.getOpenFileName(self, 'Open Math Library',
+                                                       os.path.expanduser('~/Desktop'),
+                                                       'Math Library (*.mathlib)'))
         if len(filePath) > 0:
             lib = MathLibrary()
             lib.read(filePath)
-            w = MathLibraryEditor(library=lib)
+            w = MathLibraryEditor(library=lib, filePath=filePath)
             w.nameChanged.connect(self._updateLibraryName)
             self.ui.libraryTabs.addTab(w, w.name)
 
@@ -114,7 +124,23 @@ class MathLibraryDev(QMainWindow):
         '''
         Runs the current library with the MathML.
         '''
-        pass
+        self.ui.proseOutput.setText('')
+        editor = self.currentLibraryEditor()
+        if editor is not None:
+            lib = editor.library
+            pattern = editor.currentPattern()
+            if pattern is not None:
+                try:
+                    self._mathTTS.setMathLibrary(lib, pattern.name)
+                    prose = self._mathTTS.parse(self.ui.mathmlEditor.getMath())
+                    self.ui.proseOutput.setText(prose)
+                except Exception as ex:
+                    self.ui.proseOutput.setText('')
+                    QMessageBox.information(self, 'Didn\'t parse correctly', 'Math library did not parse correctly:\n{0}'.format(ex), QMessageBox.Ok)
+            else:
+                self.ui.proseOutput.setText('')
+        else:
+            self.ui.proseOutput.setText('')
     
     def _updateLibraryName(self, editor, name):
         i = self.ui.libraryTabs.indexOf(editor)

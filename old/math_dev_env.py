@@ -62,12 +62,12 @@ class MathDevelopmentEnvironment(QMainWindow):
         if curr is not None:
             
             if len(curr.filePath) > 0:
-                self.mathTTS.setPatternDatabase(curr.filePath)
+                self.mathTTS.setMathLibrary(curr.filePath)
             else:
                 temp = misc.temp_path('tmp.txt')
                 with open(temp, 'w') as f:
                     f.write(unicode(curr.toPlainText()))
-                self.mathTTS.setPatternDatabase(temp)
+                self.mathTTS.setMathLibrary(temp)
                 
             # Run the math parser
             mathOutput = self.mathTTS.parse(self.ui.mathmlEditor.getMath())

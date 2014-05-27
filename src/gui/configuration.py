@@ -40,9 +40,7 @@ INDEX_CACHE_VALUE = 3
 INDEX_LAST_CACHED_VALUE = 4
 
 # ------------------------------------------------------------------------------
-#
 # BASE FUNCTIONS
-#
 # ------------------------------------------------------------------------------
 
 def getValue(key, defaultValue=None, isCached=False):

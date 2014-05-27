@@ -20,7 +20,7 @@ class MathLibraryEditor(QWidget):
     
     nameChanged = pyqtSignal(object, unicode)
 
-    def __init__(self, library=None, parent=None):
+    def __init__(self, library=None, filePath=None, parent=None):
         super(MathLibraryEditor, self).__init__(parent)
         
         self.ui = Ui_MathLibraryEditor()
@@ -51,6 +51,8 @@ class MathLibraryEditor(QWidget):
         
         # The file path of the last saved path
         self.filePath = ''
+        if filePath is not None:
+            self.filePath = filePath
         
     def connect_signals(self):
         self.ui.patternTabs.tabCloseRequested.connect(self.closePattern)
@@ -98,10 +100,30 @@ class MathLibraryEditor(QWidget):
     
     def openPattern(self):
         '''
-        Appends a new pattern to the library from file.
+        Appends patterns to the library from files.
         '''
-        pass
-    
+        patternPaths = QFileDialog.getOpenFileNames(self, 'Open Patterns',
+                                                    os.path.expanduser('~/Desktop'),
+                                                    'All files (*.*)')
+        if len(patternPaths) > 0:
+            for patternPath in patternPaths:
+                myPath = unicode(patternPath)
+                name = os.path.splitext(os.path.basename(myPath))[0]
+                with open(myPath, 'r') as f:
+                    data = f.read()
+                newPattern = MathPattern(name, data)
+
+                self.library.patterns.append(newPattern)
+                self._treeModel.update()
+
+                patternEditor = MathPatternEditor(newPattern)
+                patternEditor.nameChanged.connect(self._patternNameChanged)
+
+                self._patternWidgetMap[newPattern] = patternEditor
+
+                self.ui.patternTabs.addTab(patternEditor, patternEditor.name)
+                self.ui.patternTabs.setCurrentWidget(patternEditor)
+
     def closePattern(self, tabIndex):
         '''
         Closes the pattern at the tab index
@@ -123,6 +145,13 @@ class MathLibraryEditor(QWidget):
 
             self.library.patterns.remove(pattern)
             self._treeModel.update()
+
+    def currentPattern(self):
+        editor = self.ui.patternTabs.currentWidget()
+        if editor is not None:
+            return editor.pattern
+        else:
+            return None
     
     @property
     def name(self):

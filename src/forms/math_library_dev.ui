@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Math Library Development Environment</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resource.qrc">
+    <normaloff>:/all/icons/CAR_About.png</normaloff>:/all/icons/CAR_About.png</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1">
     <item>
@@ -25,7 +29,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="lineEdit"/>
+       <widget class="QLineEdit" name="proseOutput"/>
       </item>
      </layout>
     </item>
@@ -179,6 +183,8 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

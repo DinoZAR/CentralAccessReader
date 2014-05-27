@@ -38,6 +38,15 @@ class MathLibrary(object):
         self._write_manifest(zipFile)
         self._write_patterns(zipFile)
         zipFile.close()
+
+    def getPattern(self, name):
+        '''
+        Retrieves a pattern with the given name.
+        '''
+        for p in self.patterns:
+            if name == p.name:
+                return p
+        raise ValueError('Pattern {0} does not exist in library {1}.'.format(name, self.name))
     
     def _read_manifest(self, zipFile):
         '''

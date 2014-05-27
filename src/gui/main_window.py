@@ -464,7 +464,7 @@ class MainWindow(QtGui.QMainWindow):
             self.currentDocumentWidget().saveMP3ByPage()
         
     def showColorSettings(self):
-        from gui.color_settings import ColorSettings
+        from src.gui.color_settings import ColorSettings
         dialog = ColorSettings(self)
         result = dialog.exec_()
         
@@ -498,7 +498,7 @@ class MainWindow(QtGui.QMainWindow):
         self.speechThread.requestMoreSpeech.disconnect(self.sendMoreSpeech)
 
         # Show speech settings dialog
-        from gui.speech_settings import SpeechSettings
+        from src.gui.speech_settings import SpeechSettings
         dialog = SpeechSettings(self)
         self.speechThread.requestMoreSpeech.connect(dialog.requestMoreSpeech)
         self.stopPlayback.emit()
@@ -597,7 +597,7 @@ class MainWindow(QtGui.QMainWindow):
         filePath = str(filePath)
         if len(filePath) > 0:
             
-            from document.loader import DocumentLoadingThread
+            from src.document.loader import DocumentLoadingThread
              
             # Create my importer thread
             self.documentLoadingThread = DocumentLoadingThread(filePath)
@@ -654,7 +654,7 @@ class MainWindow(QtGui.QMainWindow):
         '''
         Adds a document containing the contents of the clipboard.
         '''
-        from document.loader import DocumentLoadingThread
+        from src.document.loader import DocumentLoadingThread
              
         # Create my importer thread
         self.documentLoadingThread = DocumentLoadingThread('', isClipboard=True)
@@ -809,7 +809,7 @@ class MainWindow(QtGui.QMainWindow):
                     i += 1
             
     def openAboutDialog(self):
-        from gui.about import AboutDialog
+        from src.gui.about import AboutDialog
         dialog = AboutDialog()
         dialog.exec_()
         
@@ -822,11 +822,11 @@ class MainWindow(QtGui.QMainWindow):
         webbrowser.open_new(misc.SURVEY_URL)
     
     def openPatternEditor(self):
-        self.patternEditor = MathLibraryDev(self)
+        self.patternEditor = MathLibraryDev()
         self.patternEditor.show()
     
     def showAllMathML(self):
-        from gui.mathmlcodes_dialog import MathMLCodesDialog
+        from src.gui.mathmlcodes_dialog import MathMLCodesDialog
         self.mathmlDialog = MathMLCodesDialog(self.currentDocument()._maths)
         self.mathmlDialog.show()
         
