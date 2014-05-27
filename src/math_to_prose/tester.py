@@ -6,7 +6,6 @@ this is the script for that.
 
 @author: Spencer Graffe
 '''
-from misc import program_path
 
 MATHML_PATH = 'C:\\Users\\GraffeS\\Desktop\\test.xml'
 DATABASE_PATH = 'W:\\Nifty Prose Articulator\\workspace2\\another\\src\\math_patterns\\General.txt'
@@ -15,9 +14,9 @@ print 'Starting!'
 
 from lxml import etree
  
-from math_to_prose.pattern_tree import convertDOMToPatternTree, PatternTree
-from math_to_prose.database import parse, convertToPatternTree
-from math_to_prose.parser import transform, _testMatch
+from src.math_to_prose.pattern_tree import convertDOMToPatternTree
+from src.math_to_prose.database import parse, convertToPatternTree
+from src.math_to_prose.parser import transform
  
 # Test my iterator out completely before I try anything
 mathmlFile = open(MATHML_PATH, 'r')

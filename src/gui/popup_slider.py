@@ -5,7 +5,8 @@ Created on Dec 4, 2013
 '''
 from PyQt4.QtCore import pyqtSignal, Qt, QPoint
 from PyQt4.QtGui import QWidget
-from forms.popup_slider_ui import Ui_PopupSlider
+
+from src.forms.popup_slider_ui import Ui_PopupSlider
 
 class PopupSlider(QWidget):
     '''

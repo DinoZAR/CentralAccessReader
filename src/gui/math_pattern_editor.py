@@ -6,7 +6,7 @@ Created on May 21, 2014
 from PyQt4.QtCore import pyqtSignal
 from PyQt4.QtGui import QWidget, QFont
 
-from forms.math_pattern_editor_ui import Ui_MathPatternEditor
+from src.forms.math_pattern_editor_ui import Ui_MathPatternEditor
 
 class MathPatternEditor(QWidget):
     '''

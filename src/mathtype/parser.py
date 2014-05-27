@@ -3,17 +3,12 @@ Created on Mar 2, 2013
 
 @author: Spencer Graffe
 '''
-import os
-import struct
 import StringIO
 import traceback
-from lxml import etree
 
-import OleFileIO_PL as OLE
-
+from src import OleFileIO_PL as OLE
+from src.misc import REPORT_BUG_URL
 from records import *
-
-from misc import temp_path, REPORT_BUG_URL
 
 def parseMTEF(mtefString, debug=False):
     '''

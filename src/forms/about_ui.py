@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/about.ui'
 #
-# Created: Fri May 16 14:36:12 2014
+# Created: Tue May 27 09:27:23 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -31,7 +31,7 @@ class Ui_AboutDialog(object):
         font.setPointSize(12)
         AboutDialog.setFont(font)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/help_about.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/all/icons/CAR_About.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         AboutDialog.setWindowIcon(icon)
         self.verticalLayout_2 = QtGui.QVBoxLayout(AboutDialog)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))

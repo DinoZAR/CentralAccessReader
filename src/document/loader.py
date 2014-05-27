@@ -5,11 +5,11 @@ Created on Nov 15, 2013
 '''
 import os
 import traceback
+
 from PyQt4.QtCore import QThread, pyqtSignal
-from PyQt4.QtWebKit import QWebPage
-from lxml import html
-from docx.docx_document import DocxDocument
-from clipboard_document import ClipboardDocument
+
+from src.document.docx.docx_document import DocxDocument
+from src.document.clipboard_document import ClipboardDocument
 
 class DocumentLoadingThread(QThread):
     '''
@@ -69,4 +69,3 @@ class DocumentLoadingThread(QThread):
             return self._doc
         else:
             return None
-        

@@ -3,15 +3,12 @@ Created on Apr 25, 2013
 
 @author: Spencer Graffe
 '''
-import copy
-
-from lxml import etree
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
 
-from forms.speech_settings_ui import Ui_SpeechSettings
-from gui import configuration
-from misc import app_data_path, pattern_databases
+from src.forms.speech_settings_ui import Ui_SpeechSettings
+from src.gui import configuration
+from src.misc import app_data_path, pattern_databases
 
 class SpeechSettings(QtGui.QDialog):
     

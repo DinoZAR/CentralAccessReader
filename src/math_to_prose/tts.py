@@ -3,13 +3,14 @@ Created on Jan 25, 2013
 
 @author: Spencer Graffe
 '''
+import re
 
 import xml.etree.ElementTree as ET
+
 import database
 from parser import transform
 from pattern_tree import convertDOMToPatternTree
-import re
-import misc
+from src import misc
 
 class MathTTS():
     

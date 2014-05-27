@@ -12,8 +12,6 @@ import re
 import platform
 import subprocess
 import inspect
-from PyQt4.QtCore import QThread, pyqtSignal
-from PyQt4 import uic
 
 _PROGRAM_ROOT = 'Central Access Reader'
 

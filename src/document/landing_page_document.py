@@ -8,8 +8,8 @@ import base64
 from lxml import html
 from PyQt4.QtCore import QIODevice, QFile
 
-from document import Document
-from forms import resource_rc
+from src.document import Document
+from src.forms import resource_rc  # needed to get image resource
 
 class LandingPageDocument(Document):
     '''

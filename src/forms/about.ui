@@ -19,8 +19,8 @@
    <string>About</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>:/icons/icons/help_about.png</normaloff>:/icons/icons/help_about.png</iconset>
+   <iconset resource="resource.qrc">
+    <normaloff>:/all/icons/CAR_About.png</normaloff>:/all/icons/CAR_About.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>

@@ -4,8 +4,9 @@ Created on Jul 19, 2013
 @author: Spencer Graffe
 '''
 from PyQt4.QtGui import QDialog
-from PyQt4.QtCore import pyqtSignal, Qt
-from forms.document_load_progress_ui import Ui_DocumentLoadProgressDialog
+from PyQt4.QtCore import pyqtSignal
+
+from src.forms.document_load_progress_ui import Ui_DocumentLoadProgressDialog
 
 class DocumentLoadProgressDialog(QDialog):
     '''

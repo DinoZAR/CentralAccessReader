@@ -3,12 +3,14 @@ Created on Apr 18, 2013
 
 @author: Spencer Graffe
 '''
+import webbrowser
+import re
+
 from PyQt4.QtWebKit import QWebView, QWebPage
 from PyQt4.QtCore import Qt, pyqtSignal
 from PyQt4.QtGui import QApplication, QMenu, QAction, QKeySequence
-import webbrowser
-import re
-import misc
+
+from src import misc
 
 class NPAWebView(QWebView):
     '''

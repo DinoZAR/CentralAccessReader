@@ -7,8 +7,8 @@ Contains functions for loading the GUI for different themes and layout styles.
 '''
 import os
 import sys
-from PyQt4 import uic
-from misc import program_path
+
+from src.misc import program_path
 
 # Add the resource_rc to the Python path
 sys.path.append(program_path('src/forms/'))

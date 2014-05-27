@@ -6,7 +6,6 @@ Created on Nov 15, 2013
 from HTMLParser import HTMLParser
 import re
 import os
-import time
 
 from lxml import html
 from lxml.etree import ParserError, XMLSyntaxError
@@ -14,14 +13,13 @@ from PyQt4.QtCore import QUrl, pyqtSignal, QMutex, QTimer, pyqtSlot, QMimeData
 from PyQt4.QtGui import QWidget, QMessageBox, QFileDialog, QApplication
 from PyQt4.QtWebKit import QWebInspector, QWebSettings
 
-from export.html_single import HTMLSingleExportThread
-from export.mp3 import MP3ExportThread
-from export.mp3_by_page import MP3ByPageExportThread
-from forms.document_widget_ui import Ui_DocumentWidget
-from gui import configuration
-from gui.npa_webview import NPAWebView
-from gui.search_settings import SearchSettings
-import misc
+from src.export.html_single import HTMLSingleExportThread
+from src.export.mp3 import MP3ExportThread
+from src.export.mp3_by_page import MP3ByPageExportThread
+from src.forms.document_widget_ui import Ui_DocumentWidget
+from src.gui import configuration
+from src.gui.search_settings import SearchSettings
+from src import misc
 
 class DocumentWidget(QWidget):
     '''

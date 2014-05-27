@@ -14,8 +14,8 @@
    <string>MathML Codes</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>:/icons/icons/CAR_Logo.ico</normaloff>:/icons/icons/CAR_Logo.ico</iconset>
+   <iconset resource="resource.qrc">
+    <normaloff>:/all/icons/CAR_About.png</normaloff>:/all/icons/CAR_About.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,0">
    <item>
@@ -37,11 +37,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QTextEdit" name="mathmlOutput">
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-        </widget>
+        <widget class="QPlainTextEdit" name="mathmlOutput"/>
        </item>
       </layout>
      </widget>

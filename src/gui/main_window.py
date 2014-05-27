@@ -6,29 +6,26 @@ Created on Jan 21, 2013
 import os
 
 from PyQt4 import QtGui
-from PyQt4.QtGui import qApp, QItemSelectionModel
+from PyQt4.QtGui import qApp
 from PyQt4.QtWebKit import QWebSettings
 from PyQt4.QtCore import Qt, QMutex, pyqtSignal, QTimer
-import sip
 
-from announcements import AnnouncementPullThread, ANNOUNCEMENT_RSS_URL
-from document.clipboard_document import ClipboardDocument
-from document.landing_page_document import LandingPageDocument
-from document.update_prompt_document import UpdatePromptDocument
-from document.rss.rss_document import RSSDocument
-from document.widget import DocumentWidget
-from forms.mainwindow_ui import Ui_MainWindow
-from gui import configuration
-from gui import loader
-from gui.bookmarks import BookmarksTreeModel, BookmarkNode
-from gui.document_load_progress import DocumentLoadProgressDialog
-from gui import download_progress
-from gui.export_batch import ExportBatchDialog
-from gui.math_library_dev import MathLibraryDev
-from gui.pages import PagesTreeModel
-import misc
-from speech.worker import SpeechWorker
-from updater import GetUpdateThread, SETUP_FILE, SETUP_TEMP_FILE, run_update_installer, is_update_downloaded, save_server_version_to_temp
+from src.announcements import AnnouncementPullThread, ANNOUNCEMENT_RSS_URL
+from src.document.landing_page_document import LandingPageDocument
+from src.document.update_prompt_document import UpdatePromptDocument
+from src.document.rss.rss_document import RSSDocument
+from src.document.widget import DocumentWidget
+from src.forms.mainwindow_ui import Ui_MainWindow
+from src.gui import configuration
+from src.gui import loader
+from src.gui.bookmarks import BookmarksTreeModel, BookmarkNode
+from src.gui.document_load_progress import DocumentLoadProgressDialog
+from src.gui.export_batch import ExportBatchDialog
+from src.gui.math_library_dev import MathLibraryDev
+from src.gui.pages import PagesTreeModel
+from src import misc
+from src.speech.worker import SpeechWorker
+from src.updater import GetUpdateThread, SETUP_FILE, SETUP_TEMP_FILE, run_update_installer, is_update_downloaded, save_server_version_to_temp
 
 class MainWindow(QtGui.QMainWindow):
     loc = 0
@@ -98,11 +95,6 @@ class MainWindow(QtGui.QMainWindow):
         # This is the tree model used to store our bookmarks
         self.bookmarksModel = BookmarksTreeModel(BookmarkNode(None, 'Something'))
         self.ui.bookmarksTreeView.setModel(self.bookmarksModel)
-        
-        # Hide and disable development tools if we are in a release
-        # environment
-        if misc.is_release_environment():
-            self.ui.menuMathML.menuAction().setVisible(False)
         
         # Set up my speech driver and start it
         self.speechThread = SpeechWorker()

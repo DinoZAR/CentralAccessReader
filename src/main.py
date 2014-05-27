@@ -26,7 +26,7 @@ def main():
     app.processEvents()
       
     # Check to see if my folders in my paths exist. If they don't, make them
-    from misc import program_path, app_data_path, temp_path
+    from src.misc import program_path, app_data_path, temp_path
       
     if not os.path.exists(os.path.dirname(program_path('test.txt'))):
         os.makedirs(os.path.dirname(program_path('test.txt')))
@@ -41,24 +41,23 @@ def main():
             os.remove(os.path.join(path, f))
       
     # Load and set default values for the configuration
-    import misc
-    from gui import configuration
-    configuration.load(misc.app_data_path('configuration.xml'))
+    from src.gui import configuration
+    configuration.load(app_data_path('configuration.xml'))
       
     # Set the default math database. If it has already been set, this caches it.
     configuration.setMathDatabase('MathDatabase', configuration.getValue('MathDatabase', 'General'))
       
     # Write out the CSS that styles all of the documents
-    if not os.path.exists(os.path.dirname(misc.temp_path('import/test.css'))):
-        os.makedirs(os.path.dirname(misc.temp_path('import/test.css')))
-    with open(misc.temp_path('import/defaultStyle.css'), 'w') as f:
+    if not os.path.exists(os.path.dirname(temp_path('import/test.css'))):
+        os.makedirs(os.path.dirname(temp_path('import/test.css')))
+    with open(temp_path('import/defaultStyle.css'), 'w') as f:
         f.write(configuration.getCSS())
       
     # Set the theme for CAR
-    from gui import loader
+    from src.gui import loader
     loader.load_theme(app, configuration.getValue('Theme', 'Crimson'))
       
-    from gui.main_window import MainWindow
+    from src.gui.main_window import MainWindow
       
     window = MainWindow(app)
     window.show()

@@ -4,18 +4,17 @@ Created on Apr 18, 2013
 @author: Spencer Graffe
 '''
 import zipfile
-from lxml import etree
-from lxml import html as HTML
-from PIL import Image
 from cStringIO import StringIO
 import os
 import sys
-import urllib
-import re
 from threading import Thread
-from misc import program_path, temp_path
-from document import Document
-from paragraph import parseParagraph, parseTable, addToBody, IMAGE_TRANSLATION
+
+from lxml import etree
+from PIL import Image
+
+from src.misc import program_path
+from src.document import Document
+from src.document.docx.paragraph import parseParagraph, parseTable, addToBody, IMAGE_TRANSLATION
 
 ROOT_PATH = program_path('src/docx')
 

@@ -4,10 +4,9 @@ Created on Apr 8, 2013
 @author: Spencer Graffe
 '''
 from PyQt4.QtCore import QThread, QMutex, pyqtSignal
-from PyQt4.QtGui import qApp
 
-from speech import driver
-from gui import configuration
+from src.speech import driver
+from src.gui import configuration
 
 class SpeechWorker(QThread):
     

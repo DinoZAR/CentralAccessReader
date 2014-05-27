@@ -9,9 +9,9 @@ from PyQt4.QtWebKit import QWebSettings
 
 from lxml import etree
 
-from document.html_document import HTMLDocument
-from forms.mathml_editor_ui import Ui_MathMLEditor
-import misc
+from src.document.html_document import HTMLDocument
+from src.forms.mathml_editor_ui import Ui_MathMLEditor
+from src import misc
 
 class MathMLEditor(QWidget):
     '''
@@ -74,6 +74,3 @@ class MathMLEditor(QWidget):
         Returns a Unicode string representing the math equation in the editor.
         '''
         return unicode(self.ui.textEditor.toPlainText())
-            
-            
-        

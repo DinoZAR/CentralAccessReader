@@ -3,16 +3,18 @@ Created on Aug 1, 2013
 
 @author: Spencer Graff
 '''
-from Foundation import NSObject, NSString, NSURL
-from AppKit import NSSpeechSynthesizer
-from PyObjCTools import AppHelper
-from PyQt4.QtCore import QMutex
 import thread
 import time
 import subprocess
 import re
 import os
-from misc import program_path, temp_path
+
+from Foundation import NSObject, NSString, NSURL
+from AppKit import NSSpeechSynthesizer
+from PyObjCTools import AppHelper
+from PyQt4.QtCore import QMutex
+
+from src.misc import program_path
 
 class NSSpeechSynthesizerDriver(NSObject):
     '''

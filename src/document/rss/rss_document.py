@@ -6,7 +6,8 @@ Created on Dec 12, 2013
 from lxml import html
 import re
 import feedparser
-from document import Document, html_cleaner
+
+from src.document import Document, html_cleaner
 
 class RSSDocument(Document):
     '''

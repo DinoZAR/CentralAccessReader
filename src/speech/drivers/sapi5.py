@@ -3,19 +3,18 @@ Created on Jul 22, 2013
 
 @author: Spencer Graffe
 '''
-import win32com.client
-import pythoncom
-import win32event
 import thread
 from threading import Lock
-import time
 import platform
 import subprocess
 import re
 import os
-from misc import program_path, temp_path
 
-from speech.drivers.SapiCOM import SpVoice, SpFileStream, constants
+import win32com.client
+import pythoncom
+
+from src.misc import program_path
+from src.speech.drivers.SapiCOM import SpVoice, SpFileStream, constants
 
 class SAPI5Driver(object):
     '''

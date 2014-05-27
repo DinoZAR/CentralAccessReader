@@ -7,8 +7,10 @@ import platform
 import os
 import subprocess
 import traceback
+
 from PyQt4.QtCore import QThread, pyqtSignal
-import misc
+
+from src import misc
 
 class HeadlessRendererThread(QThread):
     '''

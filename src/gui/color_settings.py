@@ -3,16 +3,13 @@ Created on Apr 25, 2013
 
 @author: Spencer Graffe
 '''
-import copy
-
-from lxml import etree
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
 
-from forms.color_settings_ui import Ui_ColorSettings
-from gui import configuration
-from gui import loader
-from misc import app_data_path, temp_path
+from src.forms.color_settings_ui import Ui_ColorSettings
+from src.gui import configuration
+from src.gui import loader
+from src.misc import app_data_path, temp_path
 
 class ColorSettings(QtGui.QDialog):
     

@@ -4,8 +4,10 @@ Created on Jul 10, 2013
 @author: Spencer Graffe
 '''
 import traceback
+
 from PyQt4.QtCore import QThread, pyqtSignal
-from docx.docx_document import DocxDocument
+
+from src.document.docx.docx_document import DocxDocument
 
 class DocxImporterThread(QThread):
     '''

@@ -4,8 +4,9 @@ Created on Dec 18, 2013
 @author: Spencer Graffe
 '''
 import os
-from export import ExportThread
-from speech.worker import SpeechWorker
+
+from src.export import ExportThread
+from src.speech.worker import SpeechWorker
 
 class MP3ExportThread(ExportThread):
     '''

@@ -5,8 +5,9 @@ Created on Dec 16, 2013
 '''
 from PyQt4.QtGui import QApplication
 from lxml import etree, html
-from document import Document, html_cleaner
-from document.docx.paragraph import convertOMMLToMathML
+
+from src.document import Document, html_cleaner
+from src.document.docx.paragraph import convertOMMLToMathML
 
 class ClipboardDocument(Document):
     '''

@@ -5,13 +5,15 @@ Created on Jul 11, 2013
 '''
 import os
 import sys
-import traceback
+from cStringIO import StringIO
+import urlparse
+import urllib
+
 from lxml import etree
 from lxml import html as HTML
-from mathtype.parser import parseWMF, parseOLE, MathTypeParseError
-from misc import program_path, temp_path, REPORT_BUG_URL
-from cStringIO import StringIO
-import urlparse, urllib
+
+from src.mathtype.parser import parseWMF, parseOLE
+from src.misc import program_path, REPORT_BUG_URL
 
 # The path to this particular module
 ROOT_PATH = program_path('src/document/docx')

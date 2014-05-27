@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/mathmlcodesdialog.ui'
 #
-# Created: Tue May 20 14:48:32 2014
+# Created: Tue May 27 09:53:30 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -28,7 +28,7 @@ class Ui_MathMLCodesDialog(object):
         MathMLCodesDialog.setObjectName(_fromUtf8("MathMLCodesDialog"))
         MathMLCodesDialog.resize(626, 524)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/CAR_Logo.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/all/icons/CAR_About.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MathMLCodesDialog.setWindowIcon(icon)
         self.verticalLayout_2 = QtGui.QVBoxLayout(MathMLCodesDialog)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
@@ -46,8 +46,7 @@ class Ui_MathMLCodesDialog(object):
         self.label = QtGui.QLabel(self.layoutWidget)
         self.label.setObjectName(_fromUtf8("label"))
         self.verticalLayout.addWidget(self.label)
-        self.mathmlOutput = QtGui.QTextEdit(self.layoutWidget)
-        self.mathmlOutput.setReadOnly(True)
+        self.mathmlOutput = QtGui.QPlainTextEdit(self.layoutWidget)
         self.mathmlOutput.setObjectName(_fromUtf8("mathmlOutput"))
         self.verticalLayout.addWidget(self.mathmlOutput)
         self.verticalLayout_2.addWidget(self.splitter)

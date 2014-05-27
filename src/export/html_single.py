@@ -13,12 +13,12 @@ import traceback
 from PyQt4.QtCore import QThread
 from lxml import etree
 from lxml import html
-import cairosvg
+from src import cairosvg
 
-from export import ExportThread
-from gui import configuration
-from headless.renderer import HeadlessRendererThread
-import misc
+from src.export import ExportThread
+from src.gui import configuration
+from src.headless.renderer import HeadlessRendererThread
+from src import misc
 
 class HTMLSingleExportThread(ExportThread):
     '''

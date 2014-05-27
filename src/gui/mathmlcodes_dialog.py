@@ -1,15 +1,16 @@
 '''
 Created on Feb 27, 2013
 
-@author: Spen-ZAR
+@author: Spencer Graffe
 '''
-import urllib
-import operator
+
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtWebKit import QWebView
-from lxml import etree, html
-from forms.mathmlcodesdialog_ui import Ui_MathMLCodesDialog
-from misc import temp_path, program_path
+from lxml import etree
+
+from src.document.html_document import HTMLDocument
+from src.forms.mathmlcodesdialog_ui import Ui_MathMLCodesDialog
+from src.misc import temp_path
 
 class MathMLCodesDialog(QtGui.QDialog):
     '''
@@ -36,8 +37,7 @@ class MathMLCodesDialog(QtGui.QDialog):
             self.ui.mathmlCodesList.setItemWidget(item, myItem)
         
         self.connect_signals()
-        
-    
+
     def connect_signals(self):
         self.ui.mathmlCodesList.itemClicked.connect(self.itemClicked)
         self.ui.closeButton.clicked.connect(self.closeClicked)
@@ -45,10 +45,10 @@ class MathMLCodesDialog(QtGui.QDialog):
     def itemClicked(self, item):
         outputText = str(item.data(QtCore.Qt.DisplayRole).toString())
         outputText = etree.tostring(etree.fromstring(outputText), pretty_print=True)
-        self.ui.mathmlOutput.setText(outputText)       
+        self.ui.mathmlOutput.setPlainText(outputText)
         
     def closeClicked(self):
-        self.close()     
+        self.close()
             
 
 class MathMLItem(QtGui.QWidget):
@@ -57,35 +57,17 @@ class MathMLItem(QtGui.QWidget):
         super(MathMLItem, self).__init__()
         
         self.layout = QtGui.QHBoxLayout(self)
-        
-        # Generate the correct HTML code to display the MathML
-        root = etree.Element('html')
-        head = etree.SubElement(root, 'head')
-        body = etree.SubElement(root, 'body')
-        
-        mathjaxScript = etree.Element('script')
-        mathjaxScript.attrib['type'] = 'text/javascript'
-        mathjaxScript.attrib['src'] = 'file:' + urllib.pathname2url(program_path('mathjax/MathJax.js')) + r'?config=TeX-AMS-MML_HTMLorMML.js'
-        
-        head.append(mathjaxScript)
-        
-        # Use this div to make the text a whole lot bigger
-        div = etree.SubElement(body, 'div')
-        div.attrib['style'] = r'font-size: 250%'
-        
-        # Get MathML
-        mathML = etree.fromstring(mathml)
-        div.append(mathML)
+
+        self.mathDocument = HTMLDocument(None, None, None, htmlString=mathml)
         
         url = temp_path('import')
         baseUrl = QtCore.QUrl.fromLocalFile(url)
         
         # Create the web view
         webView = QWebView()
-        webView.setHtml(html.tostring(root), baseUrl)
+        webView.setHtml(self.mathDocument.getMainPage(), baseUrl)
         
         # Create my widgets
         self.layout.addSpacing(50)
         self.layout.addWidget(webView)
         self.layout.setStretch(0, 1)
-        

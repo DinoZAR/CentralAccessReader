@@ -5,8 +5,8 @@ Created on May 20, 2014
 '''
 from PyQt4.QtGui import QMainWindow, QApplication
 
-from forms.math_library_dev_ui import Ui_MathLibraryDev
-from gui.math_library_editor import MathLibraryEditor
+from src.forms.math_library_dev_ui import Ui_MathLibraryDev
+from src.gui.math_library_editor import MathLibraryEditor
 
 class MathLibraryDev(QMainWindow):
     '''

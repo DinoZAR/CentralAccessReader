@@ -6,7 +6,6 @@ Created on Apr 10, 2013
 
 from driver import SAPIDriver
 import time
-import pythoncom
 
 def finished():
     print 'I\'m finished!'

@@ -4,8 +4,8 @@ Created on June 14, 2013
 @author: Spencer Graffe
 '''
 import re
-import copy
-import misc
+
+from src import misc
 
 class PatternTree(object):
 

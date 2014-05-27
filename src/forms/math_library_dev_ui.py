@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/math_library_dev.ui'
 #
-# Created: Tue May 20 15:39:03 2014
+# Created: Tue May 27 09:33:19 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -84,8 +84,11 @@ class Ui_MathLibraryDev(object):
         self.actionQuit.setObjectName(_fromUtf8("actionQuit"))
         self.actionFrom_Clipboard = QtGui.QAction(MathLibraryDev)
         self.actionFrom_Clipboard.setObjectName(_fromUtf8("actionFrom_Clipboard"))
+        self.actionCreate_Copy_From_Default = QtGui.QAction(MathLibraryDev)
+        self.actionCreate_Copy_From_Default.setObjectName(_fromUtf8("actionCreate_Copy_From_Default"))
         self.menuFile.addAction(self.actionNew_Library)
         self.menuFile.addAction(self.actionOpen_Library)
+        self.menuFile.addAction(self.actionCreate_Copy_From_Default)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionNew_Pattern)
         self.menuFile.addAction(self.actionOpen_Pattern)
@@ -124,5 +127,6 @@ class Ui_MathLibraryDev(object):
         self.actionQuit.setText(_translate("MathLibraryDev", "Quit", None))
         self.actionFrom_Clipboard.setText(_translate("MathLibraryDev", "From Clipboard", None))
         self.actionFrom_Clipboard.setShortcut(_translate("MathLibraryDev", "Ctrl+Shift+V", None))
+        self.actionCreate_Copy_From_Default.setText(_translate("MathLibraryDev", "Create Copy From Default", None))
 
 from gui.mathml_editor import MathMLEditor

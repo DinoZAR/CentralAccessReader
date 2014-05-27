@@ -7,13 +7,14 @@ from datetime import datetime
 
 from PyQt4.QtGui import QColor
 from lxml import etree
+
 try:
-    from math_to_prose_fast.tts import MathTTS
+    from src.math_to_prose_fast.tts import MathTTS
 except ImportError as ex:
     print 'Loading slower MathTTS...', ex
-    from math_to_prose.tts import MathTTS
+    from src.math_to_prose.tts import MathTTS
 
-from misc import pattern_databases
+from src.misc import pattern_databases
     
 # Contains the data for the configuration. The format is as follows:
 #

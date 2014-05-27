@@ -9,13 +9,12 @@ from PyQt4.QtCore import QAbstractTableModel, Qt, QVariant, QModelIndex, QThread
 from PyQt4.QtGui import QMainWindow, QStyledItemDelegate, QComboBox, QAbstractItemView, QProgressBar, QPushButton, QFileDialog, QAbstractItemDelegate, QMenu, QAction, qApp
 from lxml import html
 
-from document.loader import DocumentLoadingThread
-from export import formats
-from forms.export_batch_ui import Ui_ExportBatch
-from headless.renderer import HeadlessRendererThread
-from threadpool import ThreadPool
-
-import misc
+from src.document.loader import DocumentLoadingThread
+from src.export import formats
+from src.forms.export_batch_ui import Ui_ExportBatch
+from src.headless.renderer import HeadlessRendererThread
+from src.threadpool import ThreadPool
+from src import misc
 
 class ExportBatchDialog(QMainWindow):
     '''

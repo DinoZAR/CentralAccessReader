@@ -1,4 +1,3 @@
-import copy
 from pattern_tree import PatternTree
 
 def transform(tree, pattern, gotMatchFlag=None):

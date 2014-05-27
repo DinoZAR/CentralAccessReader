@@ -11,7 +11,6 @@ html_cleaner.clean(myHtmlElem)
 @author: Spencer Graffe
 '''
 from lxml import html
-import re
 
 def clean(htmlElem, progressHook=None, cancelHook=None):
     '''

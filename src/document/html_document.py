@@ -5,7 +5,7 @@ Created on Feb 20, 2014
 '''
 from lxml import html
 
-from document import Document
+from src.document import Document
 
 class HTMLDocument(Document):
     '''

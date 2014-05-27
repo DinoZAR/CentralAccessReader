@@ -5,7 +5,9 @@ Created on Mar 2, 2013
 '''
 import struct
 import math
+
 from lxml import etree
+
 import embellishments
 
 MATHML_OPERATORS = ['+', 

@@ -5,9 +5,11 @@ Created on Jul 9, 2013
 '''
 import urllib2
 import socket
+
 from PyQt4.QtGui import QWidget
 from PyQt4.QtCore import pyqtSignal, QThread
-from forms.download_progress_ui import Ui_DownloadProgressWidget
+
+from src.forms.download_progress_ui import Ui_DownloadProgressWidget
 
 class DownloadProgressWidget(QWidget):
     '''

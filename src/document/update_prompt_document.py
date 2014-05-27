@@ -4,7 +4,8 @@ Created on Dec 9, 2013
 @author: Spencer Graffe
 '''
 from lxml import html
-from document import Document
+
+from src.document import Document
 
 class UpdatePromptDocument(Document):
     '''

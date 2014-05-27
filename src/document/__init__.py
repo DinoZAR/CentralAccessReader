@@ -9,11 +9,10 @@ import urllib
 
 from lxml import etree
 from lxml import html as HTML
-from PyQt4.QtCore import pyqtSignal, QThread, QMutex
 
-from gui.bookmarks import BookmarkNode
-from gui import configuration
-import misc
+from src.gui.bookmarks import BookmarkNode
+from src.gui import configuration
+from src import misc
 
 class Document(object):
     '''

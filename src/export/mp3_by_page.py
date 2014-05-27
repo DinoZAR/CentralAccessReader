@@ -5,10 +5,12 @@ Created on Dec 19, 2013
 '''
 import math
 import os
+
 from lxml import html
-from export import ExportThread
-from speech.worker import SpeechWorker
-import misc
+
+from src.export import ExportThread
+from src.speech.worker import SpeechWorker
+from src import misc
 
 class MP3ByPageExportThread(ExportThread):
     '''

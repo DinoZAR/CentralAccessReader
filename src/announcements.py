@@ -9,8 +9,8 @@ import feedparser
 from PyQt4.QtCore import QThread, pyqtSignal
 from time import mktime
 
-from document.rss.rss_document import RSSDocument
-from gui import configuration
+from src.document.rss.rss_document import RSSDocument
+from src.gui import configuration
 
 ANNOUNCEMENT_RSS_URL = 'http://centralaccessreader.blogspot.com/feeds/posts/default'
 

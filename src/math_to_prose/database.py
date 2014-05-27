@@ -6,12 +6,13 @@ structures used in the database.
 
 Author: Spencer Graffe
 '''
+import os
 
 import ply.lex as lex
 import ply.yacc as yacc
-import os
-from pattern_tree import PatternTree
 import HTMLParser
+
+from src.math_to_prose.pattern_tree import PatternTree
 
 htmlParser = HTMLParser.HTMLParser()
 
