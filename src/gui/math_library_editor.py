@@ -18,18 +18,19 @@ class MathLibraryEditor(QWidget):
     Editor widget that edits a math library.
     '''
     
-    BAD_NAME_CHARACTERS = ['<', '>', ':', '"', '/', '\\', '|', '?', '*', '\t', '^']
-    
     nameChanged = pyqtSignal(object, unicode)
 
-    def __init__(self, parent=None):
+    def __init__(self, library=None, parent=None):
         super(MathLibraryEditor, self).__init__(parent)
         
         self.ui = Ui_MathLibraryEditor()
         self.ui.setupUi(self)
         self.connect_signals()
-        
-        self.library = MathLibrary()
+
+        if library is None:
+            self.library = MathLibrary()
+        else:
+            self.library = library
         self.name = self.library.name
         
         # Create the model for the tree and set it
@@ -54,6 +55,7 @@ class MathLibraryEditor(QWidget):
     def connect_signals(self):
         self.ui.patternTabs.tabCloseRequested.connect(self.closePattern)
         self.ui.nameEdit.editingFinished.connect(self._updateName)
+        self.ui.treeView.clicked.connect(self._showPattern)
         self.nameChanged.connect(self._setTextForName)
     
     def save(self):
@@ -92,6 +94,7 @@ class MathLibraryEditor(QWidget):
         self._patternWidgetMap[newPattern] = patternEditor
         
         self.ui.patternTabs.addTab(patternEditor, patternEditor.name)
+        self.ui.patternTabs.setCurrentWidget(patternEditor)
     
     def openPattern(self):
         '''
@@ -127,19 +130,8 @@ class MathLibraryEditor(QWidget):
     
     @name.setter
     def name(self, n):
-        # Clean all of the junk in it
-        myName = n
-        for bad in self.BAD_NAME_CHARACTERS:
-            myName = myName.replace(bad, '')
-        
-        # Truncate it if greater than 255 characters
-        if len(myName) > 255:
-            myName = myName[:254]
-        
-        # Check to see if I have anything left. If I don't, then don't change
-        # the name
-        if len(myName) > 0:
-            self.library.name = myName
+        if len(n) > 0:
+            self.library.name = n
         
         self.nameChanged.emit(self, self.library.name)
     
@@ -157,3 +149,21 @@ class MathLibraryEditor(QWidget):
         menu = QMenu()
         menu.addAction('Remove', self.removeSelectedPattern)
         menu.exec_(ev.globalPos())
+
+    def _showPattern(self, modelIndex):
+        '''
+        Shows a pattern from the tree view using the model index.
+        '''
+        pattern = modelIndex.internalPointer().data
+
+        if not pattern in self._patternWidgetMap:
+            patternEditor = MathPatternEditor(pattern)
+            patternEditor.nameChanged.connect(self._patternNameChanged)
+
+            self._patternWidgetMap[pattern] = patternEditor
+
+            self.ui.patternTabs.addTab(patternEditor, patternEditor.name)
+            self.ui.patternTabs.setCurrentWidget(patternEditor)
+        else:
+            w = self._patternWidgetMap[pattern]
+            self.ui.patternTabs.setCurrentWidget(w)

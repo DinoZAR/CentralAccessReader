@@ -3,10 +3,13 @@ Created on May 20, 2014
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtGui import QMainWindow, QApplication
+import os
+
+from PyQt4.QtGui import QMainWindow, QApplication, QFileDialog
 
 from src.forms.math_library_dev_ui import Ui_MathLibraryDev
 from src.gui.math_library_editor import MathLibraryEditor
+from src.math_library.library import MathLibrary
 
 class MathLibraryDev(QMainWindow):
     '''
@@ -21,7 +24,7 @@ class MathLibraryDev(QMainWindow):
         self.ui.setupUi(self)
         
         # Adjust some splitter handles
-        self.ui.splitter.setSizes([1000,500])
+        self.ui.splitter.setSizes([1000, 500])
         
         # Clear the tabs
         self.ui.libraryTabs.clear()
@@ -31,6 +34,7 @@ class MathLibraryDev(QMainWindow):
     def connect_signals(self):
         # File menu
         self.ui.actionNew_Library.triggered.connect(self.newLibrary)
+        self.ui.actionOpen_Library.triggered.connect(self.openLibrary)
         self.ui.actionSave.triggered.connect(self.saveCurrent)
         
         self.ui.actionNew_Pattern.triggered.connect(self.newPattern)
@@ -40,6 +44,7 @@ class MathLibraryDev(QMainWindow):
         
         # Controls
         self.ui.libraryTabs.tabCloseRequested.connect(self.closeLibrary)
+        self.ui.runButton.clicked.connect(self.runCurrentLibrary)
         
     def currentLibraryEditor(self):
         return self.ui.libraryTabs.currentWidget()
@@ -64,7 +69,19 @@ class MathLibraryDev(QMainWindow):
         w = MathLibraryEditor()
         w.nameChanged.connect(self._updateLibraryName)
         self.ui.libraryTabs.addTab(w, w.name)
-        
+
+    def openLibrary(self):
+        '''
+        Opens a library from file.
+        '''
+        filePath = unicode(QFileDialog.getOpenFileName(self, 'Open Math Library', os.path.expanduser('~/Documents'), 'Math Library (*.mathlib)'))
+        if len(filePath) > 0:
+            lib = MathLibrary()
+            lib.read(filePath)
+            w = MathLibraryEditor(library=lib)
+            w.nameChanged.connect(self._updateLibraryName)
+            self.ui.libraryTabs.addTab(w, w.name)
+
     def newPattern(self):
         '''
         Appends a new pattern to the current library.
@@ -92,6 +109,12 @@ class MathLibraryDev(QMainWindow):
         Saves the current library.
         '''
         self.currentLibraryEditor().save()
+
+    def runCurrentLibrary(self):
+        '''
+        Runs the current library with the MathML.
+        '''
+        pass
     
     def _updateLibraryName(self, editor, name):
         i = self.ui.libraryTabs.indexOf(editor)

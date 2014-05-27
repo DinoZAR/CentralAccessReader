@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/math_library_dev.ui'
 #
-# Created: Tue May 27 09:33:19 2014
+# Created: Tue May 27 11:49:39 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -33,9 +33,9 @@ class Ui_MathLibraryDev(object):
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        self.pushButton = QtGui.QPushButton(self.centralwidget)
-        self.pushButton.setObjectName(_fromUtf8("pushButton"))
-        self.horizontalLayout.addWidget(self.pushButton)
+        self.runButton = QtGui.QPushButton(self.centralwidget)
+        self.runButton.setObjectName(_fromUtf8("runButton"))
+        self.horizontalLayout.addWidget(self.runButton)
         self.lineEdit = QtGui.QLineEdit(self.centralwidget)
         self.lineEdit.setObjectName(_fromUtf8("lineEdit"))
         self.horizontalLayout.addWidget(self.lineEdit)
@@ -107,7 +107,7 @@ class Ui_MathLibraryDev(object):
 
     def retranslateUi(self, MathLibraryDev):
         MathLibraryDev.setWindowTitle(_translate("MathLibraryDev", "Math Library Development Environment", None))
-        self.pushButton.setText(_translate("MathLibraryDev", "Run", None))
+        self.runButton.setText(_translate("MathLibraryDev", "Run", None))
         self.libraryTabs.setTabText(self.libraryTabs.indexOf(self.tab), _translate("MathLibraryDev", "Tab 1", None))
         self.libraryTabs.setTabText(self.libraryTabs.indexOf(self.tab_2), _translate("MathLibraryDev", "Tab 2", None))
         self.menuFile.setTitle(_translate("MathLibraryDev", "File", None))

@@ -14,8 +14,6 @@ class MathPatternEditor(QWidget):
     MathLibraryEditor.
     '''
     
-    BAD_NAME_CHARACTERS = ['<', '>', ':', '"', '/', '\\', '|', '?', '*', '\t', '^']
-    
     nameChanged = pyqtSignal(object, unicode)
 
     def __init__(self, patternData, parent=None):
@@ -27,7 +25,7 @@ class MathPatternEditor(QWidget):
         self.connect_signals()
         
         # Set the font to monospace
-        f = QFont('Monospace');
+        f = QFont('Monospace')
         f.setStyleHint(QFont.TypeWriter)
         self.ui.textEdit.setFont(f)
         
@@ -48,20 +46,8 @@ class MathPatternEditor(QWidget):
     
     @name.setter
     def name(self, n):
-        # Clean all of the junk in it
-        myName = n
-        for bad in self.BAD_NAME_CHARACTERS:
-            myName = myName.replace(bad, '')
-        
-        # Truncate it if greater than 255 characters
-        if len(myName) > 255:
-            myName = myName[:254]
-        
-        # Check to see if I have anything left. If I don't, then don't change
-        # the name
-        if len(myName) > 0:
-            self.pattern.name = myName
-
+        if len(n) > 0:
+            self.pattern.name = n
         self.nameChanged.emit(self, self.pattern.name)
     
     @property

@@ -14,6 +14,8 @@ class MathLibrary(object):
     the built-in libraries and for custom libraries that one can import.
     '''
 
+    PATTERN_FILE_FORMAT = 'pattern{0}.txt'
+
     def __init__(self):
         self.name = 'Untitled'
         self.author = ''
@@ -43,10 +45,10 @@ class MathLibrary(object):
         '''
         root = etree.fromstring(zipFile.read('manifest.xml'))
         
-        elem = root.findelem('.//name')
+        elem = root.find('.//name')
         self.name = elem.text
         
-        elem = root.findelem('.//author')
+        elem = root.find('.//author')
         self.author = elem.text
     
     def _write_manifest(self, zipFile):
@@ -60,26 +62,40 @@ class MathLibrary(object):
         
         elem = etree.SubElement(root, 'author')
         elem.text = self.author
+
+        # Pattern mappings (doing this so that the name is not limited by
+        # file system naming restrictions)
+        patterns = etree.SubElement(root, 'patterns')
+        num = 0
+        for p in self.patterns:
+            elem = etree.SubElement(patterns, 'pattern')
+            elem.set('name', p.name)
+            elem.set('file', self.PATTERN_FILE_FORMAT.format(num))
+            num += 1
         
-        zipFile.writestr('manifest.xml', etree.tostring(root, pretty_print=True, encoding='UTF-8', xml_declaration=True))
+        zipFile.writestr('manifest.xml', etree.tostring(root, pretty_print=True,
+                                                        encoding='UTF-8',
+                                                        xml_declaration=True))
     
     def _read_patterns(self, zipFile):
         '''
         Reads in the patterns from the zip file.
         '''
-        for name in zipFile.namelist():
-            myName = os.path.splitext(os.path.basename(name))[0]
-            ext = os.path.splitext(name)[1]
-            if ext == '.txt':
-                self.patterns.append(MathPattern(myName, zipFile.read(name)))
+        # Get my manifest for the name mappings
+        root = etree.fromstring(zipFile.read('manifest.xml'))
+        patternMaps = root.findall('.//patterns/pattern')
+        for p in patternMaps:
+            self.patterns.append(MathPattern(p.get('name'), zipFile.read(p.get('file'))))
     
     def _write_patterns(self, zipFile):
         '''
         Writes the patterns out to zip file.
         '''
+        num = 0
         for p in self.patterns:
-            fileName = p.name + '.txt'
+            fileName = self.PATTERN_FILE_FORMAT.format(num)
             zipFile.writestr(fileName, p.data)
+            num += 1
             
 class MathPattern(object):
     '''
