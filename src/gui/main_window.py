@@ -140,9 +140,10 @@ class MainWindow(QtGui.QMainWindow):
         
         self.updateSettings()
         
-        # Add the landing page
-        doc = LandingPageDocument('', None, None)
-        self.addDocument(doc, silent=True, icon=None, hasCommands=True)
+        # Add the landing page (if set)
+        if configuration.getBool('ShowQuickStart', True):
+            doc = LandingPageDocument('', None, None)
+            self.addDocument(doc, silent=True, icon=None, hasCommands=True)
         
         # Show the tutorial if the user hasn't seen it yet
         if configuration.getBool('ShowTutorial', True):
@@ -280,6 +281,10 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.actionTutorial.triggered.connect(self.openTutorial)
         self.ui.actionAbout.triggered.connect(self.openAboutDialog)
         self.ui.actionAnnouncements.triggered.connect(self.showAnnouncementWithoutDoc)
+
+        self.ui.actionQuick_Start.setChecked(configuration.getBool('ShowQuickStart', True))
+        self.ui.actionQuick_Start.toggled.connect(self.toggleQuickStart)
+
         self.ui.actionReport_a_Bug.triggered.connect(self.openReportBugWindow)
         self.ui.actionTake_A_Survey.triggered.connect(self.openSurveyWindow)
         
@@ -677,7 +682,7 @@ class MainWindow(QtGui.QMainWindow):
         '''
         self.stopSpeech()
         
-        if not isinstance(self.currentDocument(), LandingPageDocument):   
+        if not isinstance(self.currentDocument(), LandingPageDocument):
             
             # Disconnect all signals associated with this widget
             myWidget = self.ui.documentTabWidget.widget(index)
@@ -686,8 +691,9 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.documentTabWidget.removeTab(index)
             
             if self.ui.documentTabWidget.count() == 0:
-                doc = LandingPageDocument('', None, None)
-                self.addDocument(doc, silent=True, icon=None, hasCommands=True)
+                if configuration.getBool('ShowQuickStart', True):
+                    doc = LandingPageDocument('', None, None)
+                    self.addDocument(doc, silent=True, icon=None, hasCommands=True)
         
     def closeCurrentDocument(self):
         '''
@@ -749,7 +755,12 @@ class MainWindow(QtGui.QMainWindow):
             self.showOpenDocumentDialog()
         
         elif 'disableQuickStart' == commandString:
-            print 'Disabling Quick Start!'
+            configuration.setBool('ShowQuickStart', False)
+            self.ui.actionQuick_Start.blockSignals(True)
+            self.ui.actionQuick_Start.setChecked(False)
+            self.ui.actionQuick_Start.blockSignals(False)
+            if isinstance(self.currentDocument(), LandingPageDocument):
+                self.ui.documentTabWidget.removeTab(self.ui.documentTabWidget.indexOf(self.currentDocumentWidget()))
         
         elif 'updateDownloadYes' == commandString:
             # Show the update download progress widget
@@ -1047,3 +1058,13 @@ class MainWindow(QtGui.QMainWindow):
         Toggles the search bar of the current document.
         '''
         self.currentDocumentWidget().toggleSearchBar()
+
+    def toggleQuickStart(self, isChecked):
+        '''
+        Toggles the visibility of the Quick Start pane.
+        '''
+        configuration.setBool('ShowQuickStart', isChecked, defaultValue=True)
+        if not isChecked:
+            if isinstance(self.currentDocument(), LandingPageDocument):
+                i = self.ui.documentTabWidget.indexOf(self.currentDocumentWidget())
+                self.ui.documentTabWidget.removeTab(i)

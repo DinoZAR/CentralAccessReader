@@ -834,6 +834,7 @@
     </property>
     <addaction name="actionTutorial"/>
     <addaction name="actionAnnouncements"/>
+    <addaction name="actionQuick_Start"/>
     <addaction name="actionAbout"/>
     <addaction name="separator"/>
     <addaction name="actionReport_a_Bug"/>
@@ -1140,6 +1141,14 @@
   <action name="actionAnnouncements">
    <property name="text">
     <string>Announcements</string>
+   </property>
+  </action>
+  <action name="actionQuick_Start">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Quick Start</string>
    </property>
   </action>
  </widget>

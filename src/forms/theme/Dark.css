@@ -142,6 +142,17 @@ QLineEdit:focus {
 	border: 1px solid white;
 }
 
+QListWidget {
+	border: 1px solid #708894;
+	padding: 4px 8px;
+	background: #5A6D77;
+	selection-background-color: #0094ff;
+}
+
+QListWidget:hover {
+	border: 1px solid #C2C2C2;
+}
+
 QMainWindow {
 	background-color: #414F56;
 }

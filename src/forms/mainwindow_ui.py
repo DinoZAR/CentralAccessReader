@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/mainwindow.ui'
 #
-# Created: Wed May 21 10:20:26 2014
+# Created: Tue May 27 16:42:03 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -415,6 +415,9 @@ class Ui_MainWindow(object):
         self.actionBatch.setObjectName(_fromUtf8("actionBatch"))
         self.actionAnnouncements = QtGui.QAction(MainWindow)
         self.actionAnnouncements.setObjectName(_fromUtf8("actionAnnouncements"))
+        self.actionQuick_Start = QtGui.QAction(MainWindow)
+        self.actionQuick_Start.setCheckable(True)
+        self.actionQuick_Start.setObjectName(_fromUtf8("actionQuick_Start"))
         self.menuFile.addAction(self.actionOpen_Docx)
         self.menuFile.addAction(self.actionClose_Document)
         self.menuFile.addAction(self.actionPaste_From_Clipboard)
@@ -446,6 +449,7 @@ class Ui_MainWindow(object):
         self.menuMathML.addAction(self.actionShow_All_MathML)
         self.menuHelp.addAction(self.actionTutorial)
         self.menuHelp.addAction(self.actionAnnouncements)
+        self.menuHelp.addAction(self.actionQuick_Start)
         self.menuHelp.addAction(self.actionAbout)
         self.menuHelp.addSeparator()
         self.menuHelp.addAction(self.actionReport_a_Bug)
@@ -544,6 +548,7 @@ class Ui_MainWindow(object):
         self.actionPaste_From_Clipboard.setShortcut(_translate("MainWindow", "Ctrl+V", None))
         self.actionBatch.setText(_translate("MainWindow", "Batch", None))
         self.actionAnnouncements.setText(_translate("MainWindow", "Announcements", None))
+        self.actionQuick_Start.setText(_translate("MainWindow", "Quick Start", None))
 
 from gui.download_progress import DownloadProgressWidget
 import resource_rc
