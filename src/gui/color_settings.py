@@ -3,7 +3,7 @@ Created on Apr 25, 2013
 
 @author: Spencer Graffe
 '''
-from PyQt4 import QtGui
+from PyQt4.QtGui import QDialog, QColor, QFont, qApp, QColorDialog
 from PyQt4.QtCore import Qt
 
 from src.forms.color_settings_ui import Ui_ColorSettings
@@ -11,13 +11,13 @@ from src.gui import configuration
 from src.gui import loader
 from src.misc import app_data_path, temp_path
 
-class ColorSettings(QtGui.QDialog):
+class ColorSettings(QDialog):
     
     RESULT_NEED_REFRESH = 2
     RESULT_NEED_RESTART = 4
     
     def __init__(self, mainWindow, parent=None):
-        QtGui.QDialog.__init__(self, parent)
+        super(ColorSettings, self).__init__(parent)
         
         self.ui = Ui_ColorSettings()
         self.ui.setupUi(self)
@@ -60,12 +60,12 @@ class ColorSettings(QtGui.QDialog):
     def updateSettings(self):
         
         # Update the color boxes
-        self._setButtonColor(self.ui.contentTextButton, configuration.getColor('ContentTextColor', QtGui.QColor(255, 255, 255)))
-        self._setButtonColor(self.ui.contentBackgroundButton, configuration.getColor('ContentBackgroundColor', QtGui.QColor(0, 0, 0)))
-        self._setButtonColor(self.ui.highlighterTextButton, configuration.getColor('HighlightTextColor', QtGui.QColor(0, 0, 0)))
-        self._setButtonColor(self.ui.highlighterBackgroundButton, configuration.getColor('HighlightBackgroundColor', QtGui.QColor(255, 255, 0)))
-        self._setButtonColor(self.ui.highlighterLineTextButton, configuration.getColor('HighlightLineTextColor', QtGui.QColor(0, 0, 0)))
-        self._setButtonColor(self.ui.highlighterLineBackgroundButton, configuration.getColor('HighlightLineBackgroundColor', QtGui.QColor(0, 255, 0)))
+        self._setButtonColor(self.ui.contentTextButton, configuration.getColor('ContentTextColor', QColor(255, 255, 255)))
+        self._setButtonColor(self.ui.contentBackgroundButton, configuration.getColor('ContentBackgroundColor', QColor(0, 0, 0)))
+        self._setButtonColor(self.ui.highlighterTextButton, configuration.getColor('HighlightTextColor', QColor(0, 0, 0)))
+        self._setButtonColor(self.ui.highlighterBackgroundButton, configuration.getColor('HighlightBackgroundColor', QColor(255, 255, 0)))
+        self._setButtonColor(self.ui.highlighterLineTextButton, configuration.getColor('HighlightLineTextColor', QColor(0, 0, 0)))
+        self._setButtonColor(self.ui.highlighterLineBackgroundButton, configuration.getColor('HighlightLineBackgroundColor', QColor(0, 255, 0)))
         
         # Update the checkboxes
         if configuration.getBool('HighlightTextEnable', True):
@@ -84,7 +84,7 @@ class ColorSettings(QtGui.QDialog):
             self.ui.followInsideParagraphCheckBox.setCheckState(Qt.Unchecked)
             
         # Update the font combobox
-        myFont = QtGui.QFont(configuration.getValue('Font', 'Arial'))
+        myFont = QFont(configuration.getValue('Font', 'Arial'))
         self.ui.fontComboBox.setFont(myFont)
         self.ui.fontComboBox.setCurrentFont(myFont)
         
@@ -128,7 +128,7 @@ class ColorSettings(QtGui.QDialog):
         with open(temp_path('import/defaultStyle.css'), 'w') as f:
             f.write(configuration.getCSS())
         self.mainWindow.refreshDocument()
-        loader.load_theme(QtGui.qApp, configuration.getValue('Theme'))
+        loader.load_theme(qApp, configuration.getValue('Theme'))
         
     def restoreButton_clicked(self):
         configuration.restoreDefaults()
@@ -137,7 +137,7 @@ class ColorSettings(QtGui.QDialog):
         self.updateSettings()
     
     def contentTextButton_clicked(self):
-        dialog = QtGui.QColorDialog()
+        dialog = QColorDialog()
         def myAccept():
             configuration.setColor('ContentTextColor', dialog.currentColor())
             self.updateSettings()
@@ -145,7 +145,7 @@ class ColorSettings(QtGui.QDialog):
         dialog.exec_()
     
     def contentBackgroundButton_clicked(self):
-        dialog = QtGui.QColorDialog()
+        dialog = QColorDialog()
         def myAccept():
             configuration.setColor('ContentBackgroundColor', dialog.currentColor())
             self.updateSettings()
@@ -153,7 +153,7 @@ class ColorSettings(QtGui.QDialog):
         dialog.exec_()
     
     def highlighterTextButton_clicked(self):
-        dialog = QtGui.QColorDialog()
+        dialog = QColorDialog()
         def myAccept():
             configuration.setColor('HighlightTextColor', dialog.currentColor())
             self.updateSettings()
@@ -161,7 +161,7 @@ class ColorSettings(QtGui.QDialog):
         dialog.exec_()
         
     def highlighterBackgroundButton_clicked(self):
-        dialog = QtGui.QColorDialog()
+        dialog = QColorDialog()
         def myAccept():
             configuration.setColor('HighlightBackgroundColor', dialog.currentColor())
             self.updateSettings()
@@ -197,7 +197,7 @@ class ColorSettings(QtGui.QDialog):
         self.updateSettings()
         
     def highlighterLineTextButton_clicked(self):
-        dialog = QtGui.QColorDialog()
+        dialog = QColorDialog()
         def myAccept():
             configuration.setColor('HighlightLineTextColor', dialog.currentColor())
             self.updateSettings()
@@ -205,7 +205,7 @@ class ColorSettings(QtGui.QDialog):
         dialog.exec_()
         
     def highlighterLineBackgroundButton_clicked(self):
-        dialog = QtGui.QColorDialog()
+        dialog = QColorDialog()
         def myAccept():
             configuration.setColor('HighlightLineBackgroundColor', dialog.currentColor())
             self.updateSettings()

@@ -569,6 +569,11 @@ QTreeView::branch:open:has-children:has-siblings:selected  {
 	image: url(":/dark/icons/treeview_icon_expanded_dark.png");
 }
 
+QWidget {
+	background: #f3f3ea;
+	color: black;
+}
+
 /*
 Specific styles for different widgets (mostly for setting button icons)
 */

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/color_settings.ui'
 #
-# Created: Fri Feb 07 09:32:36 2014
+# Created: Wed May 28 14:05:51 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,9 +27,6 @@ class Ui_ColorSettings(object):
     def setupUi(self, ColorSettings):
         ColorSettings.setObjectName(_fromUtf8("ColorSettings"))
         ColorSettings.resize(501, 388)
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        ColorSettings.setFont(font)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/classic/icons/color_settings_classic.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         ColorSettings.setWindowIcon(icon)

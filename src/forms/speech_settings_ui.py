@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/speech_settings.ui'
 #
-# Created: Wed May 28 09:20:04 2014
+# Created: Wed May 28 14:05:52 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,10 +26,7 @@ except AttributeError:
 class Ui_SpeechSettings(object):
     def setupUi(self, SpeechSettings):
         SpeechSettings.setObjectName(_fromUtf8("SpeechSettings"))
-        SpeechSettings.resize(408, 601)
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        SpeechSettings.setFont(font)
+        SpeechSettings.resize(408, 477)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/classic/icons/speech_settings_classic.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         SpeechSettings.setWindowIcon(icon)
@@ -121,43 +118,18 @@ class Ui_SpeechSettings(object):
         self.mathLibraryTree.header().setVisible(False)
         self.formLayout.setWidget(7, QtGui.QFormLayout.FieldRole, self.mathLibraryTree)
         self.verticalLayout.addLayout(self.formLayout)
-        self.horizontalLayout_2 = QtGui.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        self.testSpeechText = QtGui.QPlainTextEdit(SpeechSettings)
-        self.testSpeechText.setObjectName(_fromUtf8("testSpeechText"))
-        self.horizontalLayout_2.addWidget(self.testSpeechText)
-        self.verticalLayout_2 = QtGui.QVBoxLayout()
-        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
-        self.testButton = QtGui.QPushButton(SpeechSettings)
-        self.testButton.setIconSize(QtCore.QSize(50, 50))
-        self.testButton.setObjectName(_fromUtf8("testButton"))
-        self.verticalLayout_2.addWidget(self.testButton)
-        spacerItem4 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_2.addItem(spacerItem4)
-        self.horizontalLayout_2.addLayout(self.verticalLayout_2)
-        self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.restoreButton = QtGui.QPushButton(SpeechSettings)
         self.restoreButton.setObjectName(_fromUtf8("restoreButton"))
         self.horizontalLayout.addWidget(self.restoreButton)
-        spacerItem5 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem5)
-        self.applyButton = QtGui.QPushButton(SpeechSettings)
-        self.applyButton.setIconSize(QtCore.QSize(50, 50))
-        self.applyButton.setObjectName(_fromUtf8("applyButton"))
-        self.horizontalLayout.addWidget(self.applyButton)
         self.verticalLayout.addLayout(self.horizontalLayout)
-        self.verticalLayout.setStretch(1, 1)
 
         self.retranslateUi(SpeechSettings)
         QtCore.QMetaObject.connectSlotsByName(SpeechSettings)
         SpeechSettings.setTabOrder(self.rateSlider, self.volumeSlider)
         SpeechSettings.setTabOrder(self.volumeSlider, self.voiceComboBox)
-        SpeechSettings.setTabOrder(self.voiceComboBox, self.testSpeechText)
-        SpeechSettings.setTabOrder(self.testSpeechText, self.testButton)
-        SpeechSettings.setTabOrder(self.testButton, self.restoreButton)
-        SpeechSettings.setTabOrder(self.restoreButton, self.applyButton)
+        SpeechSettings.setTabOrder(self.voiceComboBox, self.restoreButton)
 
     def retranslateUi(self, SpeechSettings):
         SpeechSettings.setWindowTitle(_translate("SpeechSettings", "General", None))
@@ -173,13 +145,7 @@ class Ui_SpeechSettings(object):
         self.imageTagCheckBox.setText(_translate("SpeechSettings", "Image", None))
         self.mathTagCheckBox.setText(_translate("SpeechSettings", "Math", None))
         self.ignoreAltTextCheckBox.setText(_translate("SpeechSettings", "Ignore Alternate Text", None))
-        self.testSpeechText.setToolTip(_translate("SpeechSettings", "The text entered here is used when the test speech button is pressed", None))
-        self.testSpeechText.setPlainText(_translate("SpeechSettings", "This is a test of the current text to speech settings.", None))
-        self.testButton.setToolTip(_translate("SpeechSettings", "Apply and test current speech settings", None))
-        self.testButton.setText(_translate("SpeechSettings", "Test Speech", None))
         self.restoreButton.setToolTip(_translate("SpeechSettings", "Restores settings to what they were when you opened the window", None))
-        self.restoreButton.setText(_translate("SpeechSettings", "Restore", None))
-        self.applyButton.setToolTip(_translate("SpeechSettings", "Apply new speech settings", None))
-        self.applyButton.setText(_translate("SpeechSettings", "Apply", None))
+        self.restoreButton.setText(_translate("SpeechSettings", "Restore to Default Settings", None))
 
 import resource_rc

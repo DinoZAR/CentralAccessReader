@@ -3,19 +3,18 @@ Created on Apr 25, 2013
 
 @author: Spencer Graffe
 '''
-from PyQt4 import QtGui
+from PyQt4.QtGui import QDialog
 from PyQt4.QtCore import Qt
 
 from src.forms.speech_settings_ui import Ui_SpeechSettings
 from src.gui import configuration
 from src.gui.general_tree import GeneralTree
 from src import math_library
-from src.misc import app_data_path
 
-class SpeechSettings(QtGui.QDialog):
+class SpeechSettings(QDialog):
     
     def __init__(self, mainWindow, parent=None):
-        QtGui.QDialog.__init__(self, parent)
+        super(SpeechSettings, self).__init__(parent)
         
         self.ui = Ui_SpeechSettings()
         self.ui.setupUi(self)
@@ -27,10 +26,7 @@ class SpeechSettings(QtGui.QDialog):
         self.updateSettings()
             
     def connect_signals(self):
-        self.ui.applyButton.clicked.connect(self.applyButton_clicked)
         self.ui.restoreButton.clicked.connect(self.restoreButton_clicked)
-        
-        self.ui.testButton.clicked.connect(self.testButton_clicked)
         
         self.ui.rateSlider.valueChanged.connect(self.rateSlider_valueChanged)
         self.ui.volumeSlider.valueChanged.connect(self.volumeSlider_valueChanged)
@@ -91,10 +87,6 @@ class SpeechSettings(QtGui.QDialog):
         
     def closeEvent(self, ev):
         pass
-            
-    def applyButton_clicked(self):
-        configuration.save(app_data_path('configuration.xml'))
-        self.done(0)
         
     def restoreButton_clicked(self):
         configuration.restoreDefaults()
@@ -115,11 +107,6 @@ class SpeechSettings(QtGui.QDialog):
     def voiceComboBox_currentIndexChanged(self, index):
         configuration.setValue('Voice', unicode(self.ui.voiceComboBox.itemData(index).toString()))
         self.mainWindow.changeVoice.emit(configuration.getValue('Voice'))
-        
-    def testButton_clicked(self):
-        myText = self.ui.testSpeechText.toPlainText()
-        self.mainWindow.setSpeechGenerator.emit([(unicode(myText), 'text')])
-        self.mainWindow.startPlayback.emit()
 
     def requestMoreSpeech(self):
         self.mainWindow.noMoreSpeech.emit()

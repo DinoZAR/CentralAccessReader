@@ -507,10 +507,10 @@ class MainWindow(QtGui.QMainWindow):
         self.speechThread.requestMoreSpeech.connect(dialog.requestMoreSpeech)
         self.stopPlayback.emit()
         self.speechThread.requestMoreSpeech.disconnect(dialog.requestMoreSpeech)
-        dialog.exec_()
+        dialog.show()
         
         # Reload settings
-        #configuration.loadFromFile(misc.app_data_path('configuration.xml')) 
+        #configuration.loadFromFile(misc.app_data_path('configuration.xml'))
         self.updateSettings()
 
         # Reconnect my highlighter signals
