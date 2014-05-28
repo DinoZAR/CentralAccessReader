@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/speech_settings.ui'
 #
-# Created: Mon Apr 07 08:33:59 2014
+# Created: Wed May 28 09:20:04 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_SpeechSettings(object):
     def setupUi(self, SpeechSettings):
         SpeechSettings.setObjectName(_fromUtf8("SpeechSettings"))
-        SpeechSettings.resize(408, 539)
+        SpeechSettings.resize(408, 601)
         font = QtGui.QFont()
         font.setPointSize(12)
         SpeechSettings.setFont(font)
@@ -77,9 +77,6 @@ class Ui_SpeechSettings(object):
         self.label_5 = QtGui.QLabel(SpeechSettings)
         self.label_5.setObjectName(_fromUtf8("label_5"))
         self.formLayout.setWidget(7, QtGui.QFormLayout.LabelRole, self.label_5)
-        self.mathDatabaseComboBox = QtGui.QComboBox(SpeechSettings)
-        self.mathDatabaseComboBox.setObjectName(_fromUtf8("mathDatabaseComboBox"))
-        self.formLayout.setWidget(7, QtGui.QFormLayout.FieldRole, self.mathDatabaseComboBox)
         self.label_4 = QtGui.QLabel(SpeechSettings)
         self.label_4.setObjectName(_fromUtf8("label_4"))
         self.formLayout.setWidget(8, QtGui.QFormLayout.LabelRole, self.label_4)
@@ -116,6 +113,13 @@ class Ui_SpeechSettings(object):
         self.horizontalLayout_4.addItem(spacerItem3)
         self.verticalLayout_3.addLayout(self.horizontalLayout_4)
         self.formLayout.setLayout(8, QtGui.QFormLayout.FieldRole, self.verticalLayout_3)
+        self.mathLibraryTree = QtGui.QTreeView(SpeechSettings)
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.mathLibraryTree.setFont(font)
+        self.mathLibraryTree.setObjectName(_fromUtf8("mathLibraryTree"))
+        self.mathLibraryTree.header().setVisible(False)
+        self.formLayout.setWidget(7, QtGui.QFormLayout.FieldRole, self.mathLibraryTree)
         self.verticalLayout.addLayout(self.formLayout)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))

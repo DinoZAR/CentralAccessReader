@@ -51,6 +51,7 @@ class MathLibraryDev(QMainWindow):
         self.ui.actionNew_Library.triggered.connect(self.newLibrary)
         self.ui.actionOpen_Library.triggered.connect(self.openLibrary)
         self.ui.actionSave.triggered.connect(self.saveCurrent)
+        self.ui.actionSave_As.triggered.connect(self.saveAsCurrent)
         
         self.ui.actionNew_Pattern.triggered.connect(self.newPattern)
         self.ui.actionOpen_Pattern.triggered.connect(self.openPattern)
@@ -127,6 +128,12 @@ class MathLibraryDev(QMainWindow):
         Saves the current library.
         '''
         self.currentLibraryEditor().save()
+
+    def saveAsCurrent(self):
+        '''
+        Saves the current library using Save As.
+        '''
+        self.currentLibraryEditor().saveAs()
 
     def runCurrentLibrary(self):
         '''

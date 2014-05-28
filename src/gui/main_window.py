@@ -408,7 +408,6 @@ class MainWindow(QtGui.QMainWindow):
         '''
         if self.currentDocumentWidget().hasMoreSpeech():
             self.setSpeechGenerator.emit(self.currentDocument().generateSpeech(self.currentDocumentWidget().streamNextElement()))
-            
         else:
             self.noMoreSpeech.emit()
     
@@ -703,10 +702,11 @@ class MainWindow(QtGui.QMainWindow):
         
         if not isinstance(self.currentDocument(), LandingPageDocument):
             self.ui.documentTabWidget.removeTab(self.ui.documentTabWidget.currentIndex())
-            
-            if self.ui.documentTabWidget.count() == 0:
-                doc = LandingPageDocument('', None, None)
-                self.addDocument(doc, silent=True, icon=None, hasCommands=True)
+
+            if configuration.getBool('ShowQuickStart', True):
+                if self.ui.documentTabWidget.count() == 0:
+                    doc = LandingPageDocument('', None, None)
+                    self.addDocument(doc, silent=True, icon=None, hasCommands=True)
         
     def currentDocumentWidget(self):
         '''

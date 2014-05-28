@@ -5,7 +5,7 @@ from PyQt4.QtCore import QAbstractItemModel, QModelIndex, Qt
 class GeneralTree(QAbstractItemModel):
     '''
     Creates a better tree model for a QTreeView. It allows one to set the
-    templating for each of the different levels, or range of levels.
+    templating for each of the different levels.
     '''
 
     def __init__(self, dataSource, parent=None):
@@ -13,6 +13,7 @@ class GeneralTree(QAbstractItemModel):
         self._source = dataSource
         self._childrenAccessors = {}
         self._displayRules = {}
+        self._selectableRules = {}
 
         self._tree = None
 
@@ -36,6 +37,34 @@ class GeneralTree(QAbstractItemModel):
         '''
         self._displayRules[level] = func
 
+    def addSelectableRule(self, level, func):
+        '''
+        Adds a rule determining whether an item is selectable for a certain
+        hierarchy level.
+
+        The function must have the signature func(obj) and return a boolean
+        value indicating whether item is selectable.
+        '''
+        self._selectableRules[level] = func
+
+    def getDataFromPath(self, p, parent):
+        '''
+        Returns the data object given the path. The path is a list of names
+        that correspond to the label given for each item. Do not include the
+        name of the root node.
+
+        Returns None if it cannot find it.
+        '''
+        if len(p) > 0:
+            myLabel = p.pop(0)
+            for c in parent.children:
+                if self._getTreeItemLabel(c) == myLabel:
+                    if len(p) == 0:
+                        return c.data
+                    return self.getDataFromPath(p, c)
+
+        return None
+
     def update(self):
         '''
         Updates the tree.
@@ -43,13 +72,18 @@ class GeneralTree(QAbstractItemModel):
         self._tree = TreeItem(self._source, self._childrenAccessors)
         self.reset()
 
-    def _checkForTree(self):
-        if self._tree is None:
-            self.update()
+    def _getTreeItemLabel(self, item):
+        if item.level in self._displayRules:
+            return self._displayRules[item.level](item.data)
+        return unicode(item.data)
 
     #
     # QAbstractItemModel implementations
     #
+    def _checkForTree(self):
+        if self._tree is None:
+            self.update()
+
     def index(self, row, column, parent=QModelIndex()):
         self._checkForTree()
 
@@ -77,6 +111,19 @@ class GeneralTree(QAbstractItemModel):
                 return self.createIndex(row_number, 0, parentItem)
 
         return QModelIndex()
+
+    def flags(self, index):
+        myFlags = 0
+        myFlags = myFlags | Qt.ItemIsEnabled
+
+        item = index.internalPointer()
+        if item.level in self._selectableRules:
+            if self._selectableRules[item.level](item.data):
+                myFlags = myFlags | Qt.ItemIsSelectable
+        else:
+            myFlags = myFlags | Qt.ItemIsSelectable
+
+        return myFlags
 
     def rowCount(self, parent=QModelIndex()):
         self._checkForTree()

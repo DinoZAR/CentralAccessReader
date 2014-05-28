@@ -20,6 +20,7 @@ class MathLibrary(object):
         self.name = 'Untitled'
         self.author = ''
         self.patterns = []
+        self.builtIn = False
     
     def read(self, f):
         '''

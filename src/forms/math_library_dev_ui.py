@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/math_library_dev.ui'
 #
-# Created: Tue May 27 15:54:46 2014
+# Created: Wed May 28 11:56:24 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -33,6 +33,8 @@ class Ui_MathLibraryDev(object):
         self.centralwidget = QtGui.QWidget(MathLibraryDev)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout = QtGui.QVBoxLayout(self.centralwidget)
+        self.verticalLayout.setSpacing(6)
+        self.verticalLayout.setMargin(0)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))

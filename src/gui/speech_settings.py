@@ -8,7 +8,9 @@ from PyQt4.QtCore import Qt
 
 from src.forms.speech_settings_ui import Ui_SpeechSettings
 from src.gui import configuration
-from src.misc import app_data_path, pattern_databases
+from src.gui.general_tree import GeneralTree
+from src import math_library
+from src.misc import app_data_path
 
 class SpeechSettings(QtGui.QDialog):
     
@@ -34,8 +36,6 @@ class SpeechSettings(QtGui.QDialog):
         self.ui.volumeSlider.valueChanged.connect(self.volumeSlider_valueChanged)
         self.ui.pauseSlider.valueChanged.connect(self.pauseSlider_valueChanged)
         self.ui.voiceComboBox.currentIndexChanged.connect(self.voiceComboBox_currentIndexChanged)
-        
-        self.ui.mathDatabaseComboBox.currentIndexChanged.connect(self.mathDatabaseComboBox_currentIndexChanged)
         
         self.ui.imageTagCheckBox.stateChanged.connect(self.imageTagCheckBox_stateChanged)
         self.ui.mathTagCheckBox.stateChanged.connect(self.mathTagCheckBox_stateChanged)
@@ -69,31 +69,30 @@ class SpeechSettings(QtGui.QDialog):
             self.ui.voiceComboBox.setCurrentIndex(0)
             self.ui.voiceComboBox.blockSignals(False)
         
-        # Get a list of patterns to add to the math database combo box
-        databases = pattern_databases()
-        keys = sorted(databases.keys())
-        self.ui.mathDatabaseComboBox.blockSignals(True)
-        for k in keys:
-            self.ui.mathDatabaseComboBox.addItem(k, userData=k)
-            
-        if len(configuration.getValue('MathDatabase', 'General')) > 0:
-            i = self.ui.mathDatabaseComboBox.findData(configuration.getValue('MathDatabase'))
-            if i < 0:
-                i = self.ui.mathDatabaseComboBox.findData('General')
-            self.ui.mathDatabaseComboBox.setCurrentIndex(i)
-            self.ui.mathDatabaseComboBox.blockSignals(False)
-        else:
-            i = self.ui.mathDatabaseComboBox.findData('General')
-            self.ui.mathDatabaseComboBox.setCurrentIndex(i)
-            self.ui.mathDatabaseComboBox.blockSignals(False)
+        # Get the math libraries
+        libraries = math_library.getLibraries()
+        self._mathTreeModel = GeneralTree(libraries)
+        self._mathTreeModel.addDisplayRule(1, lambda x: x.name)
+        self._mathTreeModel.addChildrenRule(1, self.filterPatterns)
+        self._mathTreeModel.addSelectableRule(1, lambda x: False)
+        self._mathTreeModel.addDisplayRule(2, lambda x: x.name)
+        self.ui.mathLibraryTree.setModel(self._mathTreeModel)
+
+        # Select the right one from settings
+        mathPatternPath = configuration.getValue('MathLibrary', 'CAR/')
+
+    def filterPatterns(self, mathLibrary):
+        '''
+        Gets a filtered list of patterns from the math library.
+        '''
+        for p in mathLibrary.patterns:
+            if p.name[0] != '_':
+                yield p
         
     def closeEvent(self, ev):
         pass
-        #self.beforeConfiguration.saveToFile(app_data_path('configuration.xml'))
             
     def applyButton_clicked(self):
-#         self.beforeConfiguration.setMathDatabase(unicode(self.ui.mathDatabaseComboBox.itemData(self.ui.mathDatabaseComboBox.currentIndex()).toString()))
-#         self.beforeConfiguration = copy.deepcopy(self.configuration)
         configuration.save(app_data_path('configuration.xml'))
         self.done(0)
         
@@ -116,9 +115,6 @@ class SpeechSettings(QtGui.QDialog):
     def voiceComboBox_currentIndexChanged(self, index):
         configuration.setValue('Voice', unicode(self.ui.voiceComboBox.itemData(index).toString()))
         self.mainWindow.changeVoice.emit(configuration.getValue('Voice'))
-        
-    def mathDatabaseComboBox_currentIndexChanged(self, index):
-        configuration.setMathDatabase('MathDatabase', str(self.ui.mathDatabaseComboBox.itemData(index).toString()), 'General')
         
     def testButton_clicked(self):
         myText = self.ui.testSpeechText.toPlainText()
