@@ -5,13 +5,14 @@ Created on May 20, 2014
 '''
 import os
 
-from PyQt4.QtCore import pyqtSignal
+from PyQt4.QtCore import pyqtSignal, Qt
 from PyQt4.QtGui import QWidget, QFileDialog, QMenu
 
 from src.forms.math_library_editor_ui import Ui_MathLibraryEditor
 from src.gui.math_pattern_editor import MathPatternEditor
 from src.gui.general_tree import GeneralTree
 from src.math_library.library import MathLibrary, MathPattern
+from src import languages
 
 class MathLibraryEditor(QWidget):
     '''
@@ -19,6 +20,8 @@ class MathLibraryEditor(QWidget):
     '''
     
     nameChanged = pyqtSignal(object, unicode)
+    authorChanged = pyqtSignal(object, unicode)
+    languageChanged = pyqtSignal(object, unicode)
 
     def __init__(self, library=None, filePath=None, parent=None):
         super(MathLibraryEditor, self).__init__(parent)
@@ -32,12 +35,20 @@ class MathLibraryEditor(QWidget):
         else:
             self.library = library
         self.name = self.library.name
+        self.author = self.library.author
         
         # Create the model for the tree and set it
         self._treeModel = GeneralTree(self.library)
         self._treeModel.addChildrenRule(0, lambda x: x.patterns)
         self._treeModel.addDisplayRule(1, lambda x: x.name)
         self.ui.treeView.setModel(self._treeModel)
+
+        # Set the content for the language combo box
+        self.ui.languageCombo.blockSignals(True)
+        for item in sorted(languages.CODES.items(), key=lambda x: x[1]):
+            self.ui.languageCombo.addItem(languages.CODES[item[0]], item[0])
+        self.ui.languageCombo.blockSignals(False)
+        self.language = self.library.languageCode
 
         # Add context menu to the tree
         self.ui.treeView.contextMenuEvent = self._treeContextMenuEvent
@@ -57,8 +68,13 @@ class MathLibraryEditor(QWidget):
     def connect_signals(self):
         self.ui.patternTabs.tabCloseRequested.connect(self.closePattern)
         self.ui.nameEdit.editingFinished.connect(self._updateName)
+        self.ui.authorEdit.editingFinished.connect(self._updateAuthor)
         self.ui.treeView.clicked.connect(self._showPattern)
+        self.ui.languageCombo.currentIndexChanged.connect(self._updateLanguage)
+
         self.nameChanged.connect(self._setTextForName)
+        self.authorChanged.connect(self._setTextForAuthor)
+        self.languageChanged.connect(self._setLanguageInCombo)
     
     def save(self):
         '''
@@ -163,6 +179,26 @@ class MathLibraryEditor(QWidget):
             self.library.name = n
         
         self.nameChanged.emit(self, self.library.name)
+
+    @property
+    def author(self):
+        return self.library.author
+
+    @author.setter
+    def author(self, a):
+        if len(a) > 0:
+            self.library.author = a
+        self.authorChanged.emit(self, self.library.author)
+
+    @property
+    def language(self):
+        return self.library.languageCode
+
+    @language.setter
+    def language(self, lan):
+        if len(lan) > 0:
+            self.library.languageCode = unicode(lan)
+        self.languageChanged.emit(self, self.library.languageCode)
     
     def _patternNameChanged(self, editor, newName):
         i = self.ui.patternTabs.indexOf(editor)
@@ -173,6 +209,19 @@ class MathLibraryEditor(QWidget):
         
     def _setTextForName(self, editor, newName):
         self.ui.nameEdit.setText(newName)
+
+    def _updateAuthor(self):
+        self.author = unicode(self.ui.authorEdit.text())
+
+    def _setTextForAuthor(self, editor, newAuthor):
+        self.ui.authorEdit.setText(newAuthor)
+
+    def _updateLanguage(self, index):
+        self.language = unicode(self.ui.languageCombo.itemData(index).toString())
+
+    def _setLanguageInCombo(self, editor, language):
+        i = self.ui.languageCombo.findData(language)
+        self.ui.languageCombo.setCurrentIndex(i)
 
     def _treeContextMenuEvent(self, ev):
         menu = QMenu()

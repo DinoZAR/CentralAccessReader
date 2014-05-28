@@ -838,8 +838,9 @@ class MainWindow(QtGui.QMainWindow):
     
     def showAllMathML(self):
         from src.gui.mathmlcodes_dialog import MathMLCodesDialog
-        self.mathmlDialog = MathMLCodesDialog(self.currentDocument()._maths)
-        self.mathmlDialog.show()
+        if self.currentDocument() is not None:
+            self.mathmlDialog = MathMLCodesDialog(self.currentDocument()._maths)
+            self.mathmlDialog.show()
         
     def bookmarksTree_clicked(self, index):
         node = index.internalPointer()

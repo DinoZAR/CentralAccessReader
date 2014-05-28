@@ -3,7 +3,6 @@ Created on May 19, 2014
 
 @author: Spencer Graffe
 '''
-import os
 import zipfile
 
 from lxml import etree
@@ -18,7 +17,9 @@ class MathLibrary(object):
 
     def __init__(self):
         self.name = 'Untitled'
-        self.author = ''
+        self.author = 'Someone'
+        self.languageCode = 'en'
+
         self.patterns = []
         self.builtIn = False
     
@@ -60,6 +61,9 @@ class MathLibrary(object):
         
         elem = root.find('.//author')
         self.author = elem.text
+
+        elem = root.find('.//language')
+        self.languageCode = elem.text
     
     def _write_manifest(self, zipFile):
         '''
@@ -72,6 +76,9 @@ class MathLibrary(object):
         
         elem = etree.SubElement(root, 'author')
         elem.text = self.author
+
+        elem = etree.SubElement(root, 'language')
+        elem.text = self.languageCode
 
         # Pattern mappings (doing this so that the name is not limited by
         # file system naming restrictions)
