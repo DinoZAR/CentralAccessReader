@@ -73,7 +73,16 @@ def setValue(key, value, defaultValue=None):
             _CONFIG_DATA[key] = [value, defaultValue, None, '']
         else:
             _CONFIG_DATA[key] = [value, value, None, '']
-            
+
+def restoreDefault(key):
+    '''
+    Restores the key to its default value.
+    '''
+    if key in _CONFIG_DATA:
+        _CONFIG_DATA[key][INDEX_VALUE] = _CONFIG_DATA[key][INDEX_DEFAULT]
+    else:
+        raise KeyError('Key ' + key + ' does not exist in configuration.')
+
 def restoreDefaults():
     '''
     Restores all keys to their default values.

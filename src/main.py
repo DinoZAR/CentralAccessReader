@@ -45,9 +45,7 @@ def main():
     configuration.load(app_data_path('configuration.xml'))
       
     # Set the default math TTS. If it has already been set, this caches it.
-    print 'Getting the math TTS...'
     configuration.getMathTTS('MathTTS', ['CAR', 'General'])
-    print 'Finished getting the math TTS...'
       
     # Write out the CSS that styles all of the documents
     if not os.path.exists(os.path.dirname(temp_path('import/test.css'))):

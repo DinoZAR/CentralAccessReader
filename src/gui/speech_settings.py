@@ -23,13 +23,11 @@ class SpeechSettings(QDialog):
         
         self.mainWindow = mainWindow
 
+        self._mathTreeModel = None
+
         # Load the languages into the combobox
         for item in sorted(languages.CODES.items(), key=lambda x: x[1]):
             self.ui.mathLanguageCombo.addItem(item[1], item[0])
-
-        # Set the English one as default
-        i = self.ui.mathLanguageCombo.findData('en')
-        self.ui.mathLanguageCombo.setCurrentIndex(i)
 
         # Update the GUI to match the settings currently employed
         self.updateSettings()
@@ -41,11 +39,13 @@ class SpeechSettings(QDialog):
         self.ui.volumeSlider.valueChanged.connect(self.volumeSlider_valueChanged)
         self.ui.pauseSlider.valueChanged.connect(self.pauseSlider_valueChanged)
         self.ui.voiceComboBox.currentIndexChanged.connect(self.voiceComboBox_currentIndexChanged)
+
         self.ui.mathLanguageCombo.currentIndexChanged.connect(self.mathLanguageCombo_currentIndexChanged)
+        self.ui.mathLibraryTree.clicked.connect(self.mathLibraryTree_clicked)
 
         self.ui.imageTagCheckBox.stateChanged.connect(self.imageTagCheckBox_stateChanged)
         self.ui.mathTagCheckBox.stateChanged.connect(self.mathTagCheckBox_stateChanged)
-        self.ui.ignoreAltTextCheckBox.stateChanged.connect(self.ignoreAltTextCheckBox_stateChanged)    
+        self.ui.ignoreAltTextCheckBox.stateChanged.connect(self.ignoreAltTextCheckBox_stateChanged)
         
     def updateSettings(self):
         # Update main window sliders to match
@@ -73,16 +73,28 @@ class SpeechSettings(QDialog):
         else:
             self.ui.voiceComboBox.setCurrentIndex(0)
             self.ui.voiceComboBox.blockSignals(False)
+
+        # Set the language from the math library
+        mathStuff = math_library.getLibraryFromPath(configuration.getMathPatternPath('MathTTS'))
+        if mathStuff is None:
+            configuration.restoreDefault('MathTTS')
+            mathStuff = math_library.getLibraryFromPath(configuration.getMathPatternPath('MathTTS'))
+
+        i = self.ui.mathLanguageCombo.findData(mathStuff[0].languageCode)
+        self.ui.mathLanguageCombo.setCurrentIndex(i)
+
+        # Set the display text for my library
+        self.ui.mathLibraryDisplay.setText('{0} ({1}): {2}'.format(mathStuff[0].name,
+                                                                   languages.CODES[mathStuff[0].languageCode],
+                                                                   mathStuff[1].name))
         
         # Get the math libraries
         libraries = math_library.getLibraries()
 
-        # Filter by language
-        i = self.ui.mathLanguageCombo.currentIndex()
-        code = self.ui.mathLanguageCombo.itemData(i).toString()
-        libraries = [i for i in libraries if i.languageCode == code]
-
         self._mathTreeModel = GeneralTree(libraries)
+
+        # Filter the libraries by the current language
+        self._mathTreeModel.addChildrenRule(0, lambda x: [i for i in x if i.languageCode == self.ui.mathLanguageCombo.itemData(self.ui.mathLanguageCombo.currentIndex()).toString()])
         self._mathTreeModel.addDisplayRule(1, lambda x: x.name)
         self._mathTreeModel.addChildrenRule(1, self.filterPatterns)
         self._mathTreeModel.addSelectableRule(1, lambda x: False)
@@ -90,7 +102,9 @@ class SpeechSettings(QDialog):
         self.ui.mathLibraryTree.setModel(self._mathTreeModel)
 
         # Select the right one from settings
-        mathPatternPath = configuration.getValue('MathLibrary', 'CAR/')
+        mathPath = configuration.getMathPatternPath('MathTTS')
+        index = self._mathTreeModel.getIndexFromPath(mathPath)
+        self.ui.mathLibraryTree.setCurrentIndex(index)
 
     def filterPatterns(self, mathLibrary):
         '''
@@ -124,7 +138,20 @@ class SpeechSettings(QDialog):
         self.mainWindow.changeVoice.emit(configuration.getValue('Voice'))
 
     def mathLanguageCombo_currentIndexChanged(self, index):
-        self.updateSettings()
+        if self._mathTreeModel is not None:
+            self._mathTreeModel.update()
+
+    def mathLibraryTree_clicked(self, index):
+        myPath = self._mathTreeModel.getPathFromIndex(index)
+        if len(myPath) == 2:
+            self.ui.mathLibraryDisplay.setText('{0} ({1}): {2}'.format(myPath[0].name,
+                                                                       languages.CODES[myPath[0].languageCode],
+                                                                       myPath[1].name))
+            myPath = [i.name for i in myPath]
+            configuration.setMathPatternPath('MathTTS', myPath)
+
+            # Cache the TTS engine
+            configuration.getMathTTS('MathTTS')
 
     def requestMoreSpeech(self):
         self.mainWindow.noMoreSpeech.emit()

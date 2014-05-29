@@ -5,7 +5,8 @@ from PyQt4.QtCore import QAbstractItemModel, QModelIndex, Qt
 class GeneralTree(QAbstractItemModel):
     '''
     Creates a better tree model for a QTreeView. It allows one to set the
-    templating for each of the different levels.
+    templating for each of the different levels. It's more expressive this way
+    and it uses Python's pervasive use of iteration to its benefit.
     '''
 
     def __init__(self, dataSource, parent=None):
@@ -47,23 +48,42 @@ class GeneralTree(QAbstractItemModel):
         '''
         self._selectableRules[level] = func
 
-    def getDataFromPath(self, p, parent):
+    def getIndexFromPath(self, p, parent=None):
         '''
-        Returns the data object given the path. The path is a list of names
-        that correspond to the label given for each item. Do not include the
-        name of the root node.
+        Returns a QModelIndex given the path. The path is a list of names that
+        correspond to the labels given for each item. Do not include the name of
+        the root node.
 
-        Returns None if it cannot find it.
+        Returns an invalid index if it can't find it.
         '''
+        if parent is None:
+            parent = self._tree
+
         if len(p) > 0:
             myLabel = p.pop(0)
-            for c in parent.children:
-                if self._getTreeItemLabel(c) == myLabel:
+            for i in range(len(parent.children)):
+                if self._getTreeItemLabel(parent.children[i]) == myLabel:
                     if len(p) == 0:
-                        return c.data
-                    return self.getDataFromPath(p, c)
+                        return self.createIndex(i, 0, parent.children[i])
+                    return self.getIndexFromPath(p, parent.children[i])
 
-        return None
+        return QModelIndex()
+
+    def getPathFromIndex(self, index):
+        '''
+        Returns a path from the QModelIndex. The path is a list of the
+        underlying data of the tree items.
+        '''
+        myList = []
+
+        myItem = index.internalPointer()
+        while myItem is not None:
+            myList.insert(0, myItem.data)
+            myItem = myItem.parent
+
+        # Remove the last one, since that is a duplicate and needs to be
+        # removed
+        return myList[1:]
 
     def update(self):
         '''

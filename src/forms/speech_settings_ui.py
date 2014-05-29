@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/speech_settings.ui'
 #
-# Created: Wed May 28 16:54:34 2014
+# Created: Thu May 29 11:34:49 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -112,6 +112,10 @@ class Ui_SpeechSettings(object):
         self.formLayout.setLayout(8, QtGui.QFormLayout.FieldRole, self.verticalLayout_3)
         self.verticalLayout_2 = QtGui.QVBoxLayout()
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
+        self.mathLibraryDisplay = QtGui.QLineEdit(SpeechSettings)
+        self.mathLibraryDisplay.setReadOnly(True)
+        self.mathLibraryDisplay.setObjectName(_fromUtf8("mathLibraryDisplay"))
+        self.verticalLayout_2.addWidget(self.mathLibraryDisplay)
         self.mathLanguageCombo = QtGui.QComboBox(SpeechSettings)
         self.mathLanguageCombo.setObjectName(_fromUtf8("mathLanguageCombo"))
         self.verticalLayout_2.addWidget(self.mathLanguageCombo)
@@ -151,6 +155,7 @@ class Ui_SpeechSettings(object):
         self.imageTagCheckBox.setText(_translate("SpeechSettings", "Image", None))
         self.mathTagCheckBox.setText(_translate("SpeechSettings", "Math", None))
         self.ignoreAltTextCheckBox.setText(_translate("SpeechSettings", "Ignore Alternate Text", None))
+        self.mathLibraryDisplay.setPlaceholderText(_translate("SpeechSettings", "<current math library>", None))
         self.restoreButton.setToolTip(_translate("SpeechSettings", "Restores settings to what they were when you opened the window", None))
         self.restoreButton.setText(_translate("SpeechSettings", "Restore to Default Settings", None))
 

@@ -247,6 +247,16 @@
      <item row="7" column="1">
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
+        <widget class="QLineEdit" name="mathLibraryDisplay">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+         <property name="placeholderText">
+          <string>&lt;current math library&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QComboBox" name="mathLanguageCombo"/>
        </item>
        <item>
