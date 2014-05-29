@@ -3,7 +3,7 @@ Created on Apr 25, 2013
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtGui import QDialog
+from PyQt4.QtGui import QDialog, qApp
 from PyQt4.QtCore import Qt
 
 from src.forms.speech_settings_ui import Ui_SpeechSettings
@@ -61,6 +61,7 @@ class SpeechSettings(QDialog):
         # Get a list of voices to add to the voice combo box
         voiceList = self.mainWindow.speechThread.getVoiceList()
         self.ui.voiceComboBox.blockSignals(True)
+        self.ui.voiceComboBox.clear()
         for v in voiceList:
             self.ui.voiceComboBox.addItem(v[0], userData=v[1])
         
@@ -118,7 +119,17 @@ class SpeechSettings(QDialog):
         pass
         
     def restoreButton_clicked(self):
-        configuration.restoreDefaults()
+
+        # Restore settings relevant to this dialog
+        configuration.restoreDefault('Rate')
+        configuration.restoreDefault('Volume')
+        configuration.restoreDefault('PauseLength')
+        configuration.restoreDefault('Voice')
+        configuration.restoreDefault('MathTTS')
+        configuration.restoreDefault('TagImage')
+        configuration.restoreDefault('TagMath')
+        configuration.restoreDefault('IgnoreAltText')
+
         self.updateSettings()
         
     def rateSlider_valueChanged(self, value):
@@ -144,14 +155,19 @@ class SpeechSettings(QDialog):
     def mathLibraryTree_clicked(self, index):
         myPath = self._mathTreeModel.getPathFromIndex(index)
         if len(myPath) == 2:
+
+            namePath = [i.name for i in myPath]
+            configuration.setMathPatternPath('MathTTS', namePath)
+
+            # Cache the TTS engine
+            self.ui.mathLibraryDisplay.setText('Loading math library...')
+            qApp.processEvents()
+            configuration.getMathTTS('MathTTS')
+
             self.ui.mathLibraryDisplay.setText('{0} ({1}): {2}'.format(myPath[0].name,
                                                                        languages.CODES[myPath[0].languageCode],
                                                                        myPath[1].name))
-            myPath = [i.name for i in myPath]
-            configuration.setMathPatternPath('MathTTS', myPath)
 
-            # Cache the TTS engine
-            configuration.getMathTTS('MathTTS')
 
     def requestMoreSpeech(self):
         self.mainWindow.noMoreSpeech.emit()

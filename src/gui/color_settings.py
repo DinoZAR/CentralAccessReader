@@ -4,7 +4,7 @@ Created on Apr 25, 2013
 @author: Spencer Graffe
 '''
 from PyQt4.QtGui import QDialog, QColor, QFont, qApp, QColorDialog
-from PyQt4.QtCore import Qt
+from PyQt4.QtCore import Qt, pyqtSignal
 
 from src.forms.color_settings_ui import Ui_ColorSettings
 from src.gui import configuration
@@ -12,9 +12,8 @@ from src.gui import loader
 from src.misc import app_data_path, temp_path
 
 class ColorSettings(QDialog):
-    
-    RESULT_NEED_REFRESH = 2
-    RESULT_NEED_RESTART = 4
+
+    documentRefreshRequested = pyqtSignal()
     
     def __init__(self, mainWindow, parent=None):
         super(ColorSettings, self).__init__(parent)
@@ -53,9 +52,8 @@ class ColorSettings(QDialog):
         self.ui.themeComboBox.currentIndexChanged.connect(self.themeComboBox_currentIndexChanged)
         
         # Bottom dialog buttons
-        self.ui.restoreButton.clicked.connect(self.restoreButton_clicked)
-        self.ui.previewButton.clicked.connect(self.previewButton_clicked)
         self.ui.applyButton.clicked.connect(self.applyButton_clicked)
+        self.ui.restoreButton.clicked.connect(self.restoreButton_clicked)
         
     def updateSettings(self):
         
@@ -115,15 +113,6 @@ class ColorSettings(QDialog):
         self.ui.themeComboBox.blockSignals(False)
 
     def applyButton_clicked(self):
-        
-        r = 0
-        # Check if we need to refresh
-        if self._colorsChanged():
-            r = r | self.RESULT_NEED_REFRESH
-        
-        self.done(r)
-        
-    def previewButton_clicked(self):
         configuration.save(app_data_path('configuration.xml'))
         with open(temp_path('import/defaultStyle.css'), 'w') as f:
             f.write(configuration.getCSS())
@@ -131,10 +120,28 @@ class ColorSettings(QDialog):
         loader.load_theme(qApp, configuration.getValue('Theme'))
         
     def restoreButton_clicked(self):
-        configuration.restoreDefaults()
-        configuration.save(app_data_path('configuration.xml'))
-        self.mainWindow.refreshDocument()
+
+        # Restore settings related to this pane
+        configuration.restoreDefault('HighlightTextEnable')
+        configuration.restoreDefault('HighlightLineEnable')
+        configuration.restoreDefault('FollowInsideParagraph')
+
+        configuration.restoreDefault('ContentTextColor')
+        configuration.restoreDefault('ContentBackgroundColor')
+        configuration.restoreDefault('HighlightTextColor')
+        configuration.restoreDefault('HighlightBackgroundColor')
+        configuration.restoreDefault('HighlightLineTextColor')
+        configuration.restoreDefault('HighlightLineBackgroundColor')
+
+        configuration.restoreDefault('Font')
+        configuration.restoreDefault('Theme')
+
+        # Update presentation
         self.updateSettings()
+        with open(temp_path('import/defaultStyle.css'), 'w') as f:
+            f.write(configuration.getCSS())
+        self.mainWindow.refreshDocument()
+        loader.load_theme(qApp, configuration.getValue('Theme'))
     
     def contentTextButton_clicked(self):
         dialog = QColorDialog()
