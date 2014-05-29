@@ -147,7 +147,7 @@ class MathLibraryDev(QMainWindow):
             pattern = editor.currentPattern()
             if pattern is not None:
                 try:
-                    self._mathTTS.setMathLibrary(lib, pattern.name)
+                    self._mathTTS.setMathLibrary(lib, pattern)
                     prose = self._mathTTS.parse(self.ui.mathmlEditor.getMath())
                     self.ui.proseOutput.setText(prose)
                     self._ttsEngine.stop()

@@ -4,6 +4,7 @@ Created on Apr 12, 2013
 @author: Spencer Graffe
 '''
 from datetime import datetime
+import base64
 
 from PyQt4.QtGui import QColor
 from lxml import etree
@@ -14,7 +15,7 @@ except ImportError as ex:
     print 'Loading slower MathTTS...', ex
     from src.math_to_prose.tts import MathTTS
 
-from src.misc import pattern_databases
+from src.math_library import getLibraryFromPath
     
 # Contains the data for the configuration. The format is as follows:
 #
@@ -22,8 +23,6 @@ from src.misc import pattern_databases
 #
 # value - string representing the value of the key
 # default - string representing the default value of the key
-# isCached - boolean flagging whether this configuration requires to be cached
-#            as an object
 # cacheValue - object representing the value for the key
 # lastCachedValue - string representing the value for when the cache was
 #                   generated.
@@ -35,15 +34,14 @@ _CONFIG_DATA = {}
 
 INDEX_VALUE = 0
 INDEX_DEFAULT = 1
-INDEX_IS_CACHED = 2
-INDEX_CACHE_VALUE = 3
-INDEX_LAST_CACHED_VALUE = 4
+INDEX_CACHE_VALUE = 2
+INDEX_LAST_CACHED_VALUE = 3
 
 # ------------------------------------------------------------------------------
 # BASE FUNCTIONS
 # ------------------------------------------------------------------------------
 
-def getValue(key, defaultValue=None, isCached=False):
+def getValue(key, defaultValue=None):
     '''
     Gets the value for the key. If the key didn't exist before, the key will be 
     set to the default value, and the default value will be returned.
@@ -58,10 +56,10 @@ def getValue(key, defaultValue=None, isCached=False):
             raise KeyError('Key ' + key + ' does not exist in configuration, and no default value was provided.')
         else:
             #print 'Creating key:', key, ',', defaultValue
-            _CONFIG_DATA[key] = [defaultValue, defaultValue, isCached, None, '']
+            _CONFIG_DATA[key] = [defaultValue, defaultValue, None, '']
             return defaultValue
 
-def setValue(key, value, defaultValue=None, isCached=False):
+def setValue(key, value, defaultValue=None):
     '''
     Sets the key to the value. If the key didn't exist before, it will add the
     key as a new entry. In this case, if the defaultValue is NOT used, the
@@ -72,9 +70,9 @@ def setValue(key, value, defaultValue=None, isCached=False):
     else:
         #print 'Creating key:', key, ',', value, ',', defaultValue
         if defaultValue is not None:
-            _CONFIG_DATA[key] = [value, defaultValue, isCached, None, '']
+            _CONFIG_DATA[key] = [value, defaultValue, None, '']
         else:
-            _CONFIG_DATA[key] = [value, value, isCached, None, '']
+            _CONFIG_DATA[key] = [value, value, None, '']
             
 def restoreDefaults():
     '''
@@ -89,41 +87,72 @@ def restoreDefaults():
 #
 # ------------------------------------------------------------------------------
 
-def getMathDatabase(key, defaultValue=None):
+def _convertPathToBase64(path):
+    v = ''
+    for p in path:
+        v += base64.urlsafe_b64encode(p) + '/'
+    if v[-1] == '/':
+        v = v[:-1]
+    return v
+
+def _convertBase64ToPath(b64):
+    path = []
+    for p in b64.split('/'):
+        path.append(base64.urlsafe_b64decode(p.strip()))
+    return path
+
+def getMathPatternPath(key, defaultValue=None):
+    '''
+    Gets the value from the key as a list of strings representing a path to a
+    pattern, e.g., ['CAR, 'General']
+    '''
+
+    myDefaultPath = defaultValue
+    if defaultValue is not None:
+        myDefaultPath = _convertPathToBase64(defaultValue)
+
+    return _convertBase64ToPath(getValue(key, myDefaultPath))
+
+def setMathPatternPath(key, value, defaultValue=None):
+    '''
+    Sets the value to the key. The values are assumed to be a list of strings
+    representing a path to a pattern, e.g., ['CAR, 'General']
+    '''
+    pathValue = _convertPathToBase64(value)
+    pathDefault = defaultValue
+    if defaultValue is not None:
+        pathDefault = _convertPathToBase64(defaultValue)
+
+    setValue(key, pathValue, pathDefault)
+
+def getMathTTS(key, defaultValue=None):
     '''
     Gets the value from the key as a MathTTS object. The MathTTS object is
     cached, so it will only be regenerated if the value changes. Otherwise, 
     same behavior applies as getValue.
     
-    defaultValue is assumed to be a string.
+    defaultValue is assumed to be a path to a pattern in a math library, which
+    is a list of strings with names, e.g., ['CAR, 'General']
     '''
-    myDatabase = getValue(key, defaultValue, isCached=True)
+    myPath = getMathPatternPath(key, defaultValue)
     
     # Check if value is same as cache value. If not, the math database must
     # be regenerated
     if _CONFIG_DATA[key][INDEX_VALUE] != _CONFIG_DATA[key][INDEX_LAST_CACHED_VALUE]:
-        newDatabase = MathTTS(pattern_databases()[myDatabase])
-        _CONFIG_DATA[key][INDEX_CACHE_VALUE] = newDatabase
-        _CONFIG_DATA[key][INDEX_LAST_CACHED_VALUE] = myDatabase
+        stuff = getLibraryFromPath(myPath)
+        newTTS = MathTTS()
+        newTTS.setMathLibrary(stuff[0], stuff[1])
+        _CONFIG_DATA[key][INDEX_CACHE_VALUE] = newTTS
+        _CONFIG_DATA[key][INDEX_LAST_CACHED_VALUE] = _CONFIG_DATA[key][INDEX_VALUE]
         
     return _CONFIG_DATA[key][INDEX_CACHE_VALUE]
 
-def setMathDatabase(key, value, defaultValue=None):
+def setMathTTS(key, value, defaultValue=None):
     '''
-    Sets the value to the key. The value and defaultValue are strings describing
-    the database. If the value has changed from the previous value, the database
-    will be re-cached. Otherwise, same behavior applies as setValue.
+    Sets the value to the key. The values are assumed to be paths represented as
+    lists of strings.
     '''
-    setValue(key, value, defaultValue, isCached=True)
-    myDatabase = getValue(key, value, defaultValue)
-    
-    # If last value is not the same as current value, then cache must be updated
-    if myDatabase != _CONFIG_DATA[key][INDEX_LAST_CACHED_VALUE]:
-        database = MathTTS(pattern_databases()[myDatabase])
-        _CONFIG_DATA[key][INDEX_CACHE_VALUE] = database
-        _CONFIG_DATA[key][INDEX_LAST_CACHED_VALUE] = myDatabase
-        
-    return _CONFIG_DATA[key][INDEX_CACHE_VALUE]
+    setMathPatternPath(key, value, defaultValue)
 
 def getColor(key, defaultValue=None):
     '''

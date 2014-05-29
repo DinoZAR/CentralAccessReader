@@ -5,7 +5,7 @@ Created on May 20, 2014
 '''
 import os
 
-from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtCore import pyqtSignal
 from PyQt4.QtGui import QWidget, QFileDialog, QMenu
 
 from src.forms.math_library_editor_ui import Ui_MathLibraryEditor
@@ -46,7 +46,7 @@ class MathLibraryEditor(QWidget):
         # Set the content for the language combo box
         self.ui.languageCombo.blockSignals(True)
         for item in sorted(languages.CODES.items(), key=lambda x: x[1]):
-            self.ui.languageCombo.addItem(languages.CODES[item[0]], item[0])
+            self.ui.languageCombo.addItem(item[1], item[0])
         self.ui.languageCombo.blockSignals(False)
         self.language = self.library.languageCode
 

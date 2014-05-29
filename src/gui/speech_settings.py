@@ -10,6 +10,7 @@ from src.forms.speech_settings_ui import Ui_SpeechSettings
 from src.gui import configuration
 from src.gui.general_tree import GeneralTree
 from src import math_library
+from src import languages
 
 class SpeechSettings(QDialog):
     
@@ -21,22 +22,30 @@ class SpeechSettings(QDialog):
         self.connect_signals()
         
         self.mainWindow = mainWindow
-        
+
+        # Load the languages into the combobox
+        for item in sorted(languages.CODES.items(), key=lambda x: x[1]):
+            self.ui.mathLanguageCombo.addItem(item[1], item[0])
+
+        # Set the English one as default
+        i = self.ui.mathLanguageCombo.findData('en')
+        self.ui.mathLanguageCombo.setCurrentIndex(i)
+
         # Update the GUI to match the settings currently employed
         self.updateSettings()
             
     def connect_signals(self):
         self.ui.restoreButton.clicked.connect(self.restoreButton_clicked)
-        
+
         self.ui.rateSlider.valueChanged.connect(self.rateSlider_valueChanged)
         self.ui.volumeSlider.valueChanged.connect(self.volumeSlider_valueChanged)
         self.ui.pauseSlider.valueChanged.connect(self.pauseSlider_valueChanged)
         self.ui.voiceComboBox.currentIndexChanged.connect(self.voiceComboBox_currentIndexChanged)
-        
+        self.ui.mathLanguageCombo.currentIndexChanged.connect(self.mathLanguageCombo_currentIndexChanged)
+
         self.ui.imageTagCheckBox.stateChanged.connect(self.imageTagCheckBox_stateChanged)
         self.ui.mathTagCheckBox.stateChanged.connect(self.mathTagCheckBox_stateChanged)
-        
-        self.ui.ignoreAltTextCheckBox.stateChanged.connect(self.ignoreAltTextCheckBox_stateChanged)
+        self.ui.ignoreAltTextCheckBox.stateChanged.connect(self.ignoreAltTextCheckBox_stateChanged)    
         
     def updateSettings(self):
         # Update main window sliders to match
@@ -67,6 +76,12 @@ class SpeechSettings(QDialog):
         
         # Get the math libraries
         libraries = math_library.getLibraries()
+
+        # Filter by language
+        i = self.ui.mathLanguageCombo.currentIndex()
+        code = self.ui.mathLanguageCombo.itemData(i).toString()
+        libraries = [i for i in libraries if i.languageCode == code]
+
         self._mathTreeModel = GeneralTree(libraries)
         self._mathTreeModel.addDisplayRule(1, lambda x: x.name)
         self._mathTreeModel.addChildrenRule(1, self.filterPatterns)
@@ -107,6 +122,9 @@ class SpeechSettings(QDialog):
     def voiceComboBox_currentIndexChanged(self, index):
         configuration.setValue('Voice', unicode(self.ui.voiceComboBox.itemData(index).toString()))
         self.mainWindow.changeVoice.emit(configuration.getValue('Voice'))
+
+    def mathLanguageCombo_currentIndexChanged(self, index):
+        self.updateSettings()
 
     def requestMoreSpeech(self):
         self.mainWindow.noMoreSpeech.emit()

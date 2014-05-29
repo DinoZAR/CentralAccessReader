@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/speech_settings.ui'
 #
-# Created: Wed May 28 14:05:52 2014
+# Created: Wed May 28 16:54:34 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -110,13 +110,19 @@ class Ui_SpeechSettings(object):
         self.horizontalLayout_4.addItem(spacerItem3)
         self.verticalLayout_3.addLayout(self.horizontalLayout_4)
         self.formLayout.setLayout(8, QtGui.QFormLayout.FieldRole, self.verticalLayout_3)
+        self.verticalLayout_2 = QtGui.QVBoxLayout()
+        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
+        self.mathLanguageCombo = QtGui.QComboBox(SpeechSettings)
+        self.mathLanguageCombo.setObjectName(_fromUtf8("mathLanguageCombo"))
+        self.verticalLayout_2.addWidget(self.mathLanguageCombo)
         self.mathLibraryTree = QtGui.QTreeView(SpeechSettings)
         font = QtGui.QFont()
         font.setPointSize(14)
         self.mathLibraryTree.setFont(font)
         self.mathLibraryTree.setObjectName(_fromUtf8("mathLibraryTree"))
         self.mathLibraryTree.header().setVisible(False)
-        self.formLayout.setWidget(7, QtGui.QFormLayout.FieldRole, self.mathLibraryTree)
+        self.verticalLayout_2.addWidget(self.mathLibraryTree)
+        self.formLayout.setLayout(7, QtGui.QFormLayout.FieldRole, self.verticalLayout_2)
         self.verticalLayout.addLayout(self.formLayout)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))

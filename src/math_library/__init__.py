@@ -37,6 +37,32 @@ def getLibraries():
 
     return libraries
 
+def getLibraryFromPath(path):
+    '''
+    Returns a (MathLibrary, MathPattern) tuple with the given path. The path
+    should be a list of strings defining the path to a particular pattern.
+
+    Note: For now, the list should only have 2 items, the first the name of
+    the math library, the second the name of the pattern.
+    '''
+    libs = getLibraries()
+
+    libName = path.pop(0)
+    myLib = None
+    for l in libs:
+        if libName == l.name:
+            myLib = l
+            break
+
+    patternName = path.pop(0)
+    myPattern = None
+    for p in myLib.patterns:
+        if patternName == p.name:
+            myPattern = p
+            break
+
+    return (myLib, myPattern)
+
 def saveCustomLibrary(mathLibFilePath):
     '''
     Saves the custom library to the user's private collection.

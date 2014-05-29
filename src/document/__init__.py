@@ -313,13 +313,13 @@ class Document(object):
                     # the speech on demand and save that.
                     key = element.get('id')
                     mathOutput = ''
-                    if self._maths[key]['parsed'] and self._maths[key]['database'] == configuration.getValue('MathDatabase'):
+                    if self._maths[key]['parsed'] and self._maths[key]['database'] == configuration.getValue('MathTTS'):
                         mathOutput = self._maths[key]['prose']
                     else:
-                        mathOutput = configuration.getMathDatabase('MathDatabase').parse(self._maths[key]['mathml'])
+                        mathOutput = configuration.getMathTTS('MathTTS').parse(self._maths[key]['mathml'])
                         self._maths[key]['prose'] = mathOutput
                         self._maths[key]['parsed'] = True
-                        self._maths[key]['database'] = configuration.getValue('MathDatabase')
+                        self._maths[key]['database'] = configuration.getValue('MathTTS')
                     
                     if configuration.getBool('TagMath', False):
                         yield ['Math. ' + mathOutput + '. End math.', 'math']
@@ -399,7 +399,7 @@ class Document(object):
 #                 # Only parse if the the prose has not been parsed or if the
 #                 # math database used wasn't the same
 #                 d = self._myMaths[self._orderedKeys[self._index]]
-#                 myDatabase = configuration.getValue('MathDatabase', 'General')
+#                 myDatabase = configuration.getValue('MathTTS', 'General')
 #                 shouldParse = not d['parsed']
 #                 shouldParse = shouldParse or (d['database'] != myDatabase)
 #                 
@@ -408,7 +408,7 @@ class Document(object):
 #                     
 #                     self._myMaths[myKey]['parsed'] = True
 #                     
-#                     prose = configuration.getMathDatabase('MathDatabase').parse(d['mathml'])
+#                     prose = configuration.getMathDatabase('MathTTS').parse(d['mathml'])
 #                     self._myMaths[myKey]['prose'] = prose
 #                     self._myMaths[myKey]['database'] = myDatabase
 #                     

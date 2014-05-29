@@ -245,16 +245,23 @@
       </layout>
      </item>
      <item row="7" column="1">
-      <widget class="QTreeView" name="mathLibraryTree">
-       <property name="font">
-        <font>
-         <pointsize>14</pointsize>
-        </font>
-       </property>
-       <attribute name="headerVisible">
-        <bool>false</bool>
-       </attribute>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QComboBox" name="mathLanguageCombo"/>
+       </item>
+       <item>
+        <widget class="QTreeView" name="mathLibraryTree">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <attribute name="headerVisible">
+          <bool>false</bool>
+         </attribute>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>

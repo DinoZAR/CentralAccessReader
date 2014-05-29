@@ -12,15 +12,8 @@ from src.math_to_prose_fast.pattern_tree import convertDOMToPatternTree
 
 class MathTTS():
     
-    def __init__(self, mathLibrary=None):
-        
-        if mathLibrary is not None:
-            # Load and generate the pattern trees
-            databaseFile = open(mathLibrary)
-            contents = databaseFile.read()
-            databaseFile.close()
-            
-            self.parserTree = database_parser.parse(contents, mathLibrary)
+    def __init__(self):
+        self.parserTree = None
         
     def parse(self, mathmlString, stageSink=None):
         root = ET.fromstring(mathmlString)
@@ -36,5 +29,5 @@ class MathTTS():
         
         return myString
     
-    def setMathLibrary(self, mathLib, patternName):
-        self.parserTree = database_parser.parseMathLibrary(mathLib, patternName)
+    def setMathLibrary(self, mathLib, pattern):
+        self.parserTree = database_parser.parseMathLibrary(mathLib, pattern.name)
