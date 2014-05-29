@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/speech_settings.ui'
 #
-# Created: Thu May 29 11:34:49 2014
+# Created: Thu May 29 14:14:36 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_SpeechSettings(object):
     def setupUi(self, SpeechSettings):
         SpeechSettings.setObjectName(_fromUtf8("SpeechSettings"))
-        SpeechSettings.resize(408, 477)
+        SpeechSettings.resize(408, 541)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/classic/icons/speech_settings_classic.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         SpeechSettings.setWindowIcon(icon)
@@ -134,6 +134,8 @@ class Ui_SpeechSettings(object):
         self.restoreButton.setObjectName(_fromUtf8("restoreButton"))
         self.horizontalLayout.addWidget(self.restoreButton)
         self.verticalLayout.addLayout(self.horizontalLayout)
+        spacerItem4 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem4)
 
         self.retranslateUi(SpeechSettings)
         QtCore.QMetaObject.connectSlotsByName(SpeechSettings)

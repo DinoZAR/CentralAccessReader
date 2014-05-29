@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/color_settings.ui'
 #
-# Created: Wed May 28 14:05:51 2014
+# Created: Thu May 29 14:14:36 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -137,15 +137,13 @@ class Ui_ColorSettings(object):
         self.fontComboBox.setObjectName(_fromUtf8("fontComboBox"))
         self.gridLayout_3.addWidget(self.fontComboBox, 2, 2, 1, 1)
         self.verticalLayout_2.addLayout(self.gridLayout_3)
-        spacerItem3 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_2.addItem(spacerItem3)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.restoreButton = QtGui.QPushButton(ColorSettings)
         self.restoreButton.setObjectName(_fromUtf8("restoreButton"))
         self.horizontalLayout.addWidget(self.restoreButton)
-        spacerItem4 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem4)
+        spacerItem3 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem3)
         self.previewButton = QtGui.QPushButton(ColorSettings)
         self.previewButton.setObjectName(_fromUtf8("previewButton"))
         self.horizontalLayout.addWidget(self.previewButton)
@@ -154,6 +152,8 @@ class Ui_ColorSettings(object):
         self.applyButton.setObjectName(_fromUtf8("applyButton"))
         self.horizontalLayout.addWidget(self.applyButton)
         self.verticalLayout_2.addLayout(self.horizontalLayout)
+        spacerItem4 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_2.addItem(spacerItem4)
 
         self.retranslateUi(ColorSettings)
         QtCore.QMetaObject.connectSlotsByName(ColorSettings)

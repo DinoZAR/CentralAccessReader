@@ -452,6 +452,9 @@
                  <height>70</height>
                 </size>
                </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
                <property name="flat">
                 <bool>true</bool>
                </property>
@@ -480,6 +483,9 @@
                  <width>70</width>
                  <height>70</height>
                 </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
                </property>
                <property name="flat">
                 <bool>true</bool>

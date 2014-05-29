@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/mainwindow.ui'
 #
-# Created: Tue May 27 16:42:03 2014
+# Created: Thu May 29 13:53:06 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -189,6 +189,7 @@ class Ui_MainWindow(object):
         icon6.addPixmap(QtGui.QPixmap(_fromUtf8(":/classic/icons/speech_settings_classic.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.speechSettingsButton.setIcon(icon6)
         self.speechSettingsButton.setIconSize(QtCore.QSize(70, 70))
+        self.speechSettingsButton.setCheckable(True)
         self.speechSettingsButton.setFlat(True)
         self.speechSettingsButton.setObjectName(_fromUtf8("speechSettingsButton"))
         self.verticalLayout_7.addWidget(self.speechSettingsButton)
@@ -199,6 +200,7 @@ class Ui_MainWindow(object):
         icon7.addPixmap(QtGui.QPixmap(_fromUtf8(":/classic/icons/color_settings_classic.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.colorSettingsButton.setIcon(icon7)
         self.colorSettingsButton.setIconSize(QtCore.QSize(70, 70))
+        self.colorSettingsButton.setCheckable(True)
         self.colorSettingsButton.setFlat(True)
         self.colorSettingsButton.setObjectName(_fromUtf8("colorSettingsButton"))
         self.verticalLayout_7.addWidget(self.colorSettingsButton)

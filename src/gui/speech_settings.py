@@ -160,7 +160,7 @@ class SpeechSettings(QDialog):
         if state == Qt.Checked:
             configuration.setBool('TagImage', True)
         else:
-            configuration.setBool('TagImage', False)            
+            configuration.setBool('TagImage', False)
         
     def mathTagCheckBox_stateChanged(self, state):
         if state == Qt.Checked:

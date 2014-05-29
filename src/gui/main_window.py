@@ -6,7 +6,7 @@ Created on Jan 21, 2013
 import os
 
 from PyQt4 import QtGui
-from PyQt4.QtGui import qApp
+from PyQt4.QtGui import qApp, QIcon
 from PyQt4.QtWebKit import QWebSettings
 from PyQt4.QtCore import Qt, QMutex, pyqtSignal, QTimer
 
@@ -17,12 +17,12 @@ from src.document.rss.rss_document import RSSDocument
 from src.document.widget import DocumentWidget
 from src.forms.mainwindow_ui import Ui_MainWindow
 from src.gui import configuration
-from src.gui import loader
 from src.gui.bookmarks import BookmarksTreeModel, BookmarkNode
 from src.gui.document_load_progress import DocumentLoadProgressDialog
 from src.gui.export_batch import ExportBatchDialog
 from src.gui.math_library_dev import MathLibraryDev
 from src.gui.pages import PagesTreeModel
+from src.forms import resource_rc  # Need this to import icon resources
 from src import misc
 from src.speech.worker import SpeechWorker
 from src.updater import GetUpdateThread, SETUP_FILE, SETUP_TEMP_FILE, run_update_installer, is_update_downloaded, save_server_version_to_temp
@@ -50,6 +50,10 @@ class MainWindow(QtGui.QMainWindow):
     
     # Mutex so that only one document is added at a time
     documentAddMutex = QMutex()
+
+    # Settings
+    speechSettingsPane = None
+    colorSettingsPane = None
     
     def __init__(self, app, parent=None):
         QtGui.QMainWindow.__init__(self, parent)
@@ -178,9 +182,7 @@ class MainWindow(QtGui.QMainWindow):
             
     def closeEvent(self, event):
         # Save the configuration before close
-        print 'Saving before close...'
         configuration.save(misc.app_data_path('configuration.xml'))
-        
         self.speechThread.quit()
         
     def dragEnterEvent(self, e):
@@ -233,8 +235,10 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.openDocumentButton.clicked.connect(self.showOpenDocumentDialog)
         
         self.ui.playButton.clicked.connect(self.toggleSpeech)
-        self.ui.colorSettingsButton.clicked.connect(self.showColorSettings)
+
         self.ui.speechSettingsButton.clicked.connect(self.showSpeechSettings)
+        self.ui.colorSettingsButton.clicked.connect(self.showColorSettings)
+
         self.ui.zoomInButton.clicked.connect(self.zoomIn)
         self.ui.zoomOutButton.clicked.connect(self.zoomOut)
         self.ui.zoomResetButton.clicked.connect(self.zoomReset)
@@ -469,60 +473,68 @@ class MainWindow(QtGui.QMainWindow):
         
     def showColorSettings(self):
         from src.gui.color_settings import ColorSettings
-        dialog = ColorSettings(self)
-        result = dialog.exec_()
-        
-        # Show a message asking the user to restart the system if they have
-        # changed the layout
-        if (result & ColorSettings.RESULT_NEED_RESTART) > 0:
-            messageBox = QtGui.QMessageBox()
-            messageBox.setText('Your layout changes will take effect after restarting the Central Access Reader.')
-            messageBox.setStandardButtons(QtGui.QMessageBox.Ok)
-            messageBox.setDefaultButton(QtGui.QMessageBox.Ok)
-            messageBox.setWindowTitle('Restart CAR to Apply Layout Changes')
-            messageBox.setIcon(QtGui.QMessageBox.Information)
-            messageBox.exec_()
-        
-        if (result & ColorSettings.RESULT_NEED_REFRESH) > 0:
-            self.refreshDocument()
-        
-        # Set the theme
-        loader.load_theme(qApp, configuration.getValue('Theme'))
-        self.updateSettings()
-        if self.currentDocumentWidget() is not None:
-            self.currentDocumentWidget().setContentFocus()
+
+        if self.colorSettingsPane is None:
+            self.colorSettingsPane = ColorSettings(self)
+            self.ui.navigationTabWidget.addTab(self.colorSettingsPane, QIcon(':/classic/icons/color_settings_classic.png'), 'Color')
+            self.ui.navigationTabWidget.setCurrentWidget(self.colorSettingsPane)
+        else:
+            if self.colorSettingsPane != self.ui.navigationTabWidget.currentWidget():
+                self.ui.navigationTabWidget.setCurrentWidget(self.colorSettingsPane)
+            else:
+                i = self.ui.navigationTabWidget.currentIndex()
+                self.ui.navigationTabWidget.removeTab(i)
+                self.colorSettingsPane = None
+
+        self.ui.colorSettingsButton.setChecked(self.colorSettingsPane is not None)
         
     def showSpeechSettings(self):
 
-        # Disconnect my highlighter signals
-        self.speechThread.onStart.disconnect(self.onStart)
-        self.speechThread.onWord.disconnect(self.onWord)
-        self.speechThread.onEndStream.disconnect(self.onEndStream)
-        self.speechThread.onFinish.disconnect(self.onSpeechFinished)
-        self.speechThread.requestMoreSpeech.disconnect(self.sendMoreSpeech)
-
-        # Show speech settings dialog
         from src.gui.speech_settings import SpeechSettings
-        dialog = SpeechSettings(self)
-        self.speechThread.requestMoreSpeech.connect(dialog.requestMoreSpeech)
-        self.stopPlayback.emit()
-        self.speechThread.requestMoreSpeech.disconnect(dialog.requestMoreSpeech)
-        dialog.show()
-        
-        # Reload settings
-        #configuration.loadFromFile(misc.app_data_path('configuration.xml'))
-        self.updateSettings()
 
-        # Reconnect my highlighter signals
-        self.speechThread.onStart.connect(self.onStart)
-        self.speechThread.onWord.connect(self.onWord)
-        self.speechThread.onEndStream.connect(self.onEndStream)
-        self.speechThread.onFinish.connect(self.onSpeechFinished)
-        self.speechThread.requestMoreSpeech.connect(self.sendMoreSpeech)
-        
-        # Set the keyboard focus to the current document
-        if self.currentDocumentWidget() is not None:
-            self.currentDocumentWidget().setContentFocus()
+        if self.speechSettingsPane is None:
+            self.speechSettingsPane = SpeechSettings(self)
+            self.ui.navigationTabWidget.addTab(self.speechSettingsPane, QIcon(':/classic/icons/speech_settings_classic.png'), 'General')
+            self.ui.navigationTabWidget.setCurrentWidget(self.speechSettingsPane)
+        else:
+            if self.speechSettingsPane != self.ui.navigationTabWidget.currentWidget():
+                self.ui.navigationTabWidget.setCurrentWidget(self.speechSettingsPane)
+            else:
+                i = self.ui.navigationTabWidget.currentIndex()
+                self.ui.navigationTabWidget.removeTab(i)
+                self.speechSettingsPane = None
+
+        self.ui.speechSettingsButton.setChecked(self.speechSettingsPane is not None)
+
+        # # Disconnect my highlighter signals
+        # self.speechThread.onStart.disconnect(self.onStart)
+        # self.speechThread.onWord.disconnect(self.onWord)
+        # self.speechThread.onEndStream.disconnect(self.onEndStream)
+        # self.speechThread.onFinish.disconnect(self.onSpeechFinished)
+        # self.speechThread.requestMoreSpeech.disconnect(self.sendMoreSpeech)
+        #
+        # # Show speech settings dialog
+        # from src.gui.speech_settings import SpeechSettings
+        # dialog = SpeechSettings(self)
+        # self.speechThread.requestMoreSpeech.connect(dialog.requestMoreSpeech)
+        # self.stopPlayback.emit()
+        # self.speechThread.requestMoreSpeech.disconnect(dialog.requestMoreSpeech)
+        # dialog.show()
+        #
+        # # Reload settings
+        # #configuration.loadFromFile(misc.app_data_path('configuration.xml'))
+        # self.updateSettings()
+        #
+        # # Reconnect my highlighter signals
+        # self.speechThread.onStart.connect(self.onStart)
+        # self.speechThread.onWord.connect(self.onWord)
+        # self.speechThread.onEndStream.connect(self.onEndStream)
+        # self.speechThread.onFinish.connect(self.onSpeechFinished)
+        # self.speechThread.requestMoreSpeech.connect(self.sendMoreSpeech)
+        #
+        # # Set the keyboard focus to the current document
+        # if self.currentDocumentWidget() is not None:
+        #     self.currentDocumentWidget().setContentFocus()
                     
     def exportToHTML(self):
         '''
