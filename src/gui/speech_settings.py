@@ -3,7 +3,9 @@ Created on Apr 25, 2013
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtGui import QDialog, qApp
+import os
+
+from PyQt4.QtGui import QDialog, qApp, QMessageBox, QFileDialog
 from PyQt4.QtCore import Qt
 
 from src.forms.speech_settings_ui import Ui_SpeechSettings
@@ -42,6 +44,8 @@ class SpeechSettings(QDialog):
 
         self.ui.mathLanguageCombo.currentIndexChanged.connect(self.mathLanguageCombo_currentIndexChanged)
         self.ui.mathLibraryTree.clicked.connect(self.mathLibraryTree_clicked)
+        self.ui.mathAddButton.clicked.connect(self.mathAddButton_clicked)
+        self.ui.mathRemoveButton.clicked.connect(self.mathRemoveButton_clicked)
 
         self.ui.imageTagCheckBox.stateChanged.connect(self.imageTagCheckBox_stateChanged)
         self.ui.mathTagCheckBox.stateChanged.connect(self.mathTagCheckBox_stateChanged)
@@ -162,12 +166,40 @@ class SpeechSettings(QDialog):
             # Cache the TTS engine
             self.ui.mathLibraryDisplay.setText('Loading math library...')
             qApp.processEvents()
-            configuration.getMathTTS('MathTTS')
 
-            self.ui.mathLibraryDisplay.setText('{0} ({1}): {2}'.format(myPath[0].name,
-                                                                       languages.CODES[myPath[0].languageCode],
-                                                                       myPath[1].name))
+            try:
+                configuration.getMathTTS('MathTTS')
+            except AttributeError as ex:
+                configuration.restoreDefault('MathTTS')
+                configuration.getMathTTS('MathTTS')
 
+            self.updateSettings()
+
+    def mathAddButton_clicked(self):
+        newLib = unicode(QFileDialog.getOpenFileName(self, 'Add Math Library', os.path.expanduser('~/Desktop'), 'Math Library (*.mathlib)'))
+        if len(newLib) > 0:
+            try:
+                badLib = math_library.saveCustomLibrary(newLib)
+                if badLib is not None:
+                    result = QMessageBox.information(self, 'Replace Math Library?', '{0} already exists. Want to replace it?'.format(badLib.name), QMessageBox.Yes | QMessageBox.No)
+                    if result == QMessageBox.Yes:
+                        math_library.saveCustomLibrary(newLib, replace=True)
+            except ValueError as ex:
+                QMessageBox.information(self, 'Can\'t Add Library', ex.message, QMessageBox.Ok)
+            self.updateSettings()
+
+    def mathRemoveButton_clicked(self):
+        myPath = self._mathTreeModel.getPathFromIndex(self.ui.mathLibraryTree.currentIndex())
+        if len(myPath) == 2:
+            myLib = myPath[0]
+            result = QMessageBox.information(self, 'Remove Math Library?', 'Do you want to remove {0}?'.format(myLib.name), QMessageBox.Yes | QMessageBox.No)
+            if result == QMessageBox.Yes:
+                try:
+                    math_library.removeLibrary(myLib.name)
+                    configuration.restoreDefault('MathTTS')
+                except ValueError as ex:
+                    QMessageBox.information(self, 'Can\'t Remove Library', ex.message, QMessageBox.Ok)
+                self.updateSettings()
 
     def requestMoreSpeech(self):
         self.mainWindow.noMoreSpeech.emit()
@@ -186,6 +218,6 @@ class SpeechSettings(QDialog):
             
     def ignoreAltTextCheckBox_stateChanged(self, state):
         if state == Qt.Checked:
-            configuration.setBool('IgnoreAltText', True);
+            configuration.setBool('IgnoreAltText', True)
         else:
             configuration.setBool('IgnoreAltText', False)

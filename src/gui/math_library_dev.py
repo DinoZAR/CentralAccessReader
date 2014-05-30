@@ -95,9 +95,8 @@ class MathLibraryDev(QMainWindow):
                                                        os.path.expanduser('~/Desktop'),
                                                        'Math Library (*.mathlib)'))
         if len(filePath) > 0:
-            lib = MathLibrary()
-            lib.read(filePath)
-            w = MathLibraryEditor(library=lib, filePath=filePath)
+            lib = MathLibrary(filePath)
+            w = MathLibraryEditor(library=lib)
             w.nameChanged.connect(self._updateLibraryName)
             self.ui.libraryTabs.addTab(w, w.name)
 

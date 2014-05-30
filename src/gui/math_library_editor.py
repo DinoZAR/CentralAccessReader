@@ -23,7 +23,7 @@ class MathLibraryEditor(QWidget):
     authorChanged = pyqtSignal(object, unicode)
     languageChanged = pyqtSignal(object, unicode)
 
-    def __init__(self, library=None, filePath=None, parent=None):
+    def __init__(self, library=None, parent=None):
         super(MathLibraryEditor, self).__init__(parent)
         
         self.ui = Ui_MathLibraryEditor()
@@ -60,11 +60,6 @@ class MathLibraryEditor(QWidget):
         # Set the splitter so that more of the patterns show rather than tree
         self.ui.splitter.setSizes([500, 1000])
         
-        # The file path of the last saved path
-        self.filePath = ''
-        if filePath is not None:
-            self.filePath = filePath
-        
     def connect_signals(self):
         self.ui.patternTabs.tabCloseRequested.connect(self.closePattern)
         self.ui.nameEdit.editingFinished.connect(self._updateName)
@@ -81,10 +76,10 @@ class MathLibraryEditor(QWidget):
         Saves the library to file. If it hadn't saved it before, it will ask the
         user where to save it.
         '''
-        if len(self.filePath) == 0:
+        if len(self.library.filePath) == 0:
             self.saveAs()
         else:
-            self.library.write(self.filePath)
+            self.library.write(self.library.filePath)
             
     def saveAs(self):
         '''
@@ -95,7 +90,7 @@ class MathLibraryEditor(QWidget):
                                                      os.path.expanduser('~/Desktop'),
                                                      'Library (*.mathlib)'))
         if len(myPath) > 0:
-            self.filePath = myPath
+            self.library.filePath = myPath
             self.save()
             
     def newPattern(self):

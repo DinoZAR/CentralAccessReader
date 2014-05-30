@@ -15,13 +15,18 @@ class MathLibrary(object):
 
     PATTERN_FILE_FORMAT = 'pattern{0}.txt'
 
-    def __init__(self):
+    def __init__(self, libraryFile=None):
         self.name = 'Untitled'
         self.author = 'Someone'
         self.languageCode = 'en'
 
         self.patterns = []
         self.builtIn = False
+
+        self.filePath = libraryFile
+
+        if libraryFile is not None:
+            self.read(libraryFile)
     
     def read(self, f):
         '''
