@@ -975,74 +975,43 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.playButton.setToolTip('Start')
         else:
             self.ui.playButton.setToolTip('Stop')
-        
-        if not isEnable:
-            
-            # Disable all other document tabs except the current tab
-            for i in range(self.ui.documentTabWidget.count()):
-                if i != self.ui.documentTabWidget.currentIndex():
-                    self.ui.documentTabWidget.setTabEnabled(i, False)
-                    
-            if hasattr(self.ui, 'openDocumentButton'):
-                self.ui.openDocumentButton.setEnabled(False)
 
-            self.ui.saveToMP3Button.setEnabled(False)
-            
-            # Disable certain sliders and actions if TTS is not interactive
-            if not self.speechThread.areSettingsInteractive():
-                self.ui.rateSlider.setEnabled(False)
-                self.ui.actionDecrease_Rate.setEnabled(False)
-                self.ui.actionIncrease_Rate.setEnabled(False)
-                self.ui.actionDecrease_Volume.setEnabled(False)
-                self.ui.actionIncrease_Volume.setEnabled(False)
-            
-            # Actions
-            self.ui.actionPlay.setEnabled(False)
-            self.ui.actionHighlights_Colors_and_Fonts.setEnabled(False)
-            self.ui.actionSpeech.setEnabled(False)
-            self.ui.actionSave_All_to_MP3.setEnabled(False)
-            self.ui.actionSave_Selection_to_MP3.setEnabled(False)
-            self.ui.actionOpen_Docx.setEnabled(False)
-            self.ui.actionTutorial.setEnabled(False)
-            self.ui.actionSearch.setEnabled(False)
-            self.ui.actionEntire_Document.setEnabled(False)
-            self.ui.actionCurrent_Selection.setEnabled(False)
-            self.ui.actionBy_Page.setEnabled(False)
-            self.ui.actionExport_to_HTML.setEnabled(False)
-                
-            # Cursor
-            self.currentDocumentWidget().setKeyboardNavEnabled(False)
-            
-        else:
-            
-            # Enable all tabs
-            for i in range(self.ui.documentTabWidget.count()):
-                self.ui.documentTabWidget.setTabEnabled(i, True)
-                
-            self.ui.openDocumentButton.setEnabled(True)
+        # Tabs
+        for i in range(self.ui.documentTabWidget.count()):
+            if i != self.ui.documentTabWidget.currentIndex():
+                self.ui.documentTabWidget.setTabEnabled(i, isEnable)
 
-            self.ui.saveToMP3Button.setEnabled(True)
-            
-            # Enable slider bars if TTS is not interactive
-            if not self.speechThread.areSettingsInteractive():
-                self.ui.rateSlider.setEnabled(True)
-            
-            # Actions
-            self.ui.actionPlay.setEnabled(True)
-            self.ui.actionHighlights_Colors_and_Fonts.setEnabled(True)
-            self.ui.actionSpeech.setEnabled(True)
-            self.ui.actionSave_All_to_MP3.setEnabled(True)
-            self.ui.actionSave_Selection_to_MP3.setEnabled(True)
-            self.ui.actionOpen_Docx.setEnabled(True)
-            self.ui.actionTutorial.setEnabled(True)
-            self.ui.actionSearch.setEnabled(True)
-            self.ui.actionEntire_Document.setEnabled(True)
-            self.ui.actionCurrent_Selection.setEnabled(True)
-            self.ui.actionBy_Page.setEnabled(True)
-            self.ui.actionExport_to_HTML.setEnabled(True)
-            
-            # Cursor
-            self.currentDocumentWidget().setKeyboardNavEnabled(True)
+        # Buttons
+        self.ui.openDocumentButton.setEnabled(isEnable)
+        self.ui.saveToMP3Button.setEnabled(isEnable)
+
+        # Disable/enable certain sliders and actions if TTS is not interactive
+        if not self.speechThread.areSettingsInteractive():
+            self.ui.actionDecrease_Rate.setEnabled(isEnable)
+            self.ui.actionIncrease_Rate.setEnabled(isEnable)
+            self.ui.actionDecrease_Volume.setEnabled(isEnable)
+            self.ui.actionIncrease_Volume.setEnabled(isEnable)
+
+        # Actions
+        self.ui.actionPlay.setEnabled(isEnable)
+        self.ui.actionHighlights_Colors_and_Fonts.setEnabled(isEnable)
+        self.ui.actionSpeech.setEnabled(isEnable)
+        self.ui.actionSave_All_to_MP3.setEnabled(isEnable)
+        self.ui.actionSave_Selection_to_MP3.setEnabled(isEnable)
+        self.ui.actionOpen_Docx.setEnabled(isEnable)
+        self.ui.actionTutorial.setEnabled(isEnable)
+        self.ui.actionSearch.setEnabled(isEnable)
+        self.ui.actionEntire_Document.setEnabled(isEnable)
+        self.ui.actionCurrent_Selection.setEnabled(isEnable)
+        self.ui.actionBy_Page.setEnabled(isEnable)
+        self.ui.actionExport_to_HTML.setEnabled(isEnable)
+
+        # Cursor
+        self.currentDocumentWidget().setKeyboardNavEnabled(isEnable)
+
+        # Other
+        self.ui.bookmarksTreeView.setEnabled(isEnable)
+        self.ui.pagesTreeView.setEnabled(isEnable)
             
     def toggleSearchBar(self):
         '''
