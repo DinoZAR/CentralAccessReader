@@ -255,41 +255,41 @@ QPushButton:checked {
 }
 
 QRadioButton:hover {
-	background: #535a57;
+	background-color: #CCCCC4;
 }
 
 QRadioButton:pressed {
-	background: #ff7500;
+	background: #0462A7;
 }
 
 QRadioButton::indicator {
-	width: 32px;
-	height: 32px;
-	padding: 5px 10px;
+	width: 24px;
+	height: 24px;
+	padding: 5px 5px;
 }
 
 QRadioButton::indicator::unchecked {
-	image: url("forms/icons/check_empty.png");
+	image: url(":/light/icons/radio_button_unchecked_light.png");
 }
 
 QRadioButton::indicator:unchecked:hover {
-	image: url("forms/icons/check_empty.png");
+	image: url(":/light/icons/radio_button_unchecked_light.png");
 }
 
 QRadioButton::indicator:unchecked:pressed {
-	image: url("forms/icons/check_empty.png");
+	image: url(":/light/icons/radio_button_unchecked_light.png");
 }
 
 QRadioButton::indicator::checked {
-	image: url("forms/icons/check_full.png");
+	image: url(":/light/icons/radio_button_checked_light.png");
 }
 
 QRadioButton::indicator:checked:hover {
-	image: url("forms/icons/check_full.png");
+	image: url(":/light/icons/radio_button_checked_light.png");
 }
 
 QRadioButton::indicator:checked:pressed {
-	image: url("forms/icons/check_full.png");
+	image: url(":/light/icons/radio_button_checked_light.png");
 }
 
 QScrollArea QWidget {
@@ -569,10 +569,10 @@ QTreeView::branch:open:has-children:has-siblings:selected  {
 	image: url(":/dark/icons/treeview_icon_expanded_dark.png");
 }
 
-QWidget {
+/* QWidget {
 	background: #f3f3ea;
 	color: black;
-}
+} */
 
 /*
 Specific styles for different widgets (mostly for setting button icons)

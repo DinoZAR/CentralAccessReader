@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/speech_settings.ui'
 #
-# Created: Fri May 30 10:01:06 2014
+# Created: Fri May 30 11:24:40 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_SpeechSettings(object):
     def setupUi(self, SpeechSettings):
         SpeechSettings.setObjectName(_fromUtf8("SpeechSettings"))
-        SpeechSettings.resize(254, 597)
+        SpeechSettings.resize(254, 745)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/classic/icons/speech_settings_classic.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         SpeechSettings.setWindowIcon(icon)
@@ -39,7 +39,7 @@ class Ui_SpeechSettings(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 235, 637))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 252, 720))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.verticalLayout_9 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_9.setSpacing(40)
@@ -87,6 +87,7 @@ class Ui_SpeechSettings(object):
         self.verticalLayout_5.setSpacing(10)
         self.verticalLayout_5.setObjectName(_fromUtf8("verticalLayout_5"))
         self.label_3 = QtGui.QLabel(self.scrollAreaWidgetContents)
+        self.label_3.setStyleSheet(_fromUtf8("font-size: 16pt;"))
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.verticalLayout_5.addWidget(self.label_3)
         self.voiceComboBox = QtGui.QComboBox(self.scrollAreaWidgetContents)
@@ -101,6 +102,7 @@ class Ui_SpeechSettings(object):
         self.verticalLayout_2 = QtGui.QVBoxLayout()
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.label_5 = QtGui.QLabel(self.scrollAreaWidgetContents)
+        self.label_5.setStyleSheet(_fromUtf8("font-size: 16pt;"))
         self.label_5.setObjectName(_fromUtf8("label_5"))
         self.verticalLayout_2.addWidget(self.label_5)
         self.mathLibraryDisplay = QtGui.QLineEdit(self.scrollAreaWidgetContents)
@@ -135,6 +137,7 @@ class Ui_SpeechSettings(object):
         self.verticalLayout.setSpacing(10)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.label_4 = QtGui.QLabel(self.scrollAreaWidgetContents)
+        self.label_4.setStyleSheet(_fromUtf8("font-size: 16pt;"))
         self.label_4.setObjectName(_fromUtf8("label_4"))
         self.verticalLayout.addWidget(self.label_4)
         self.imageTagCheckBox = QtGui.QCheckBox(self.scrollAreaWidgetContents)

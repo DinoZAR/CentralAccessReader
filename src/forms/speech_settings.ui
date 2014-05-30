@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>254</width>
-    <height>597</height>
+    <height>745</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,8 +37,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>235</width>
-        <height>637</height>
+        <width>252</width>
+        <height>720</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -149,6 +149,9 @@
          </property>
          <item>
           <widget class="QLabel" name="label_3">
+           <property name="styleSheet">
+            <string notr="true">font-size: 16pt;</string>
+           </property>
            <property name="text">
             <string>Voices</string>
            </property>
@@ -178,6 +181,9 @@
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
             <widget class="QLabel" name="label_5">
+             <property name="styleSheet">
+              <string notr="true">font-size: 16pt;</string>
+             </property>
              <property name="text">
               <string>Math</string>
              </property>
@@ -253,6 +259,9 @@
          </property>
          <item>
           <widget class="QLabel" name="label_4">
+           <property name="styleSheet">
+            <string notr="true">font-size: 16pt;</string>
+           </property>
            <property name="text">
             <string>Tag</string>
            </property>

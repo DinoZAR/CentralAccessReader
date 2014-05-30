@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/color_settings.ui'
 #
-# Created: Thu May 29 16:27:46 2014
+# Created: Fri May 30 11:24:34 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -39,7 +39,7 @@ class Ui_ColorSettings(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 256, 594))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, -145, 256, 666))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.verticalLayout_8 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_8.setSpacing(40)
@@ -48,6 +48,7 @@ class Ui_ColorSettings(object):
         self.verticalLayout.setSpacing(10)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.label_8 = QtGui.QLabel(self.scrollAreaWidgetContents)
+        self.label_8.setStyleSheet(_fromUtf8("font-size: 16pt;"))
         self.label_8.setObjectName(_fromUtf8("label_8"))
         self.verticalLayout.addWidget(self.label_8)
         self.enableHTextCheckBox = QtGui.QCheckBox(self.scrollAreaWidgetContents)
@@ -64,6 +65,7 @@ class Ui_ColorSettings(object):
         self.verticalLayout_2.setSpacing(10)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.label_6 = QtGui.QLabel(self.scrollAreaWidgetContents)
+        self.label_6.setStyleSheet(_fromUtf8("font-size: 16pt;"))
         self.label_6.setObjectName(_fromUtf8("label_6"))
         self.verticalLayout_2.addWidget(self.label_6)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
@@ -74,7 +76,7 @@ class Ui_ColorSettings(object):
         self.contentTextButton = QtGui.QPushButton(self.scrollAreaWidgetContents)
         self.contentTextButton.setObjectName(_fromUtf8("contentTextButton"))
         self.horizontalLayout_3.addWidget(self.contentTextButton)
-        spacerItem = QtGui.QSpacerItem(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem = QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem)
         self.verticalLayout_2.addLayout(self.horizontalLayout_3)
         self.verticalLayout_8.addLayout(self.verticalLayout_2)
@@ -82,6 +84,7 @@ class Ui_ColorSettings(object):
         self.verticalLayout_3.setSpacing(10)
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
         self.label_4 = QtGui.QLabel(self.scrollAreaWidgetContents)
+        self.label_4.setStyleSheet(_fromUtf8("font-size: 16pt;"))
         self.label_4.setObjectName(_fromUtf8("label_4"))
         self.verticalLayout_3.addWidget(self.label_4)
         self.horizontalLayout_4 = QtGui.QHBoxLayout()
@@ -92,7 +95,7 @@ class Ui_ColorSettings(object):
         self.highlighterTextButton = QtGui.QPushButton(self.scrollAreaWidgetContents)
         self.highlighterTextButton.setObjectName(_fromUtf8("highlighterTextButton"))
         self.horizontalLayout_4.addWidget(self.highlighterTextButton)
-        spacerItem1 = QtGui.QSpacerItem(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem1 = QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem1)
         self.verticalLayout_3.addLayout(self.horizontalLayout_4)
         self.verticalLayout_8.addLayout(self.verticalLayout_3)
@@ -100,6 +103,7 @@ class Ui_ColorSettings(object):
         self.verticalLayout_4.setSpacing(10)
         self.verticalLayout_4.setObjectName(_fromUtf8("verticalLayout_4"))
         self.label_5 = QtGui.QLabel(self.scrollAreaWidgetContents)
+        self.label_5.setStyleSheet(_fromUtf8("font-size: 16pt;"))
         self.label_5.setObjectName(_fromUtf8("label_5"))
         self.verticalLayout_4.addWidget(self.label_5)
         self.horizontalLayout_5 = QtGui.QHBoxLayout()
@@ -110,7 +114,7 @@ class Ui_ColorSettings(object):
         self.highlighterLineTextButton = QtGui.QPushButton(self.scrollAreaWidgetContents)
         self.highlighterLineTextButton.setObjectName(_fromUtf8("highlighterLineTextButton"))
         self.horizontalLayout_5.addWidget(self.highlighterLineTextButton)
-        spacerItem2 = QtGui.QSpacerItem(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem2 = QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem2)
         self.verticalLayout_4.addLayout(self.horizontalLayout_5)
         self.verticalLayout_8.addLayout(self.verticalLayout_4)
@@ -118,6 +122,7 @@ class Ui_ColorSettings(object):
         self.verticalLayout_5.setSpacing(10)
         self.verticalLayout_5.setObjectName(_fromUtf8("verticalLayout_5"))
         self.label_9 = QtGui.QLabel(self.scrollAreaWidgetContents)
+        self.label_9.setStyleSheet(_fromUtf8("font-size: 16pt;"))
         self.label_9.setObjectName(_fromUtf8("label_9"))
         self.verticalLayout_5.addWidget(self.label_9)
         self.fontComboBox = QtGui.QFontComboBox(self.scrollAreaWidgetContents)
@@ -129,6 +134,7 @@ class Ui_ColorSettings(object):
         self.verticalLayout_6.setSpacing(10)
         self.verticalLayout_6.setObjectName(_fromUtf8("verticalLayout_6"))
         self.label_2 = QtGui.QLabel(self.scrollAreaWidgetContents)
+        self.label_2.setStyleSheet(_fromUtf8("font-size: 16pt;"))
         self.label_2.setObjectName(_fromUtf8("label_2"))
         self.verticalLayout_6.addWidget(self.label_2)
         self.themeComboBox = QtGui.QComboBox(self.scrollAreaWidgetContents)

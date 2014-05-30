@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/math_library_new.ui'
 #
-# Created: Fri May 30 10:15:49 2014
+# Created: Fri May 30 13:27:35 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,6 +27,9 @@ class Ui_NewMathLibraryDialog(object):
     def setupUi(self, NewMathLibraryDialog):
         NewMathLibraryDialog.setObjectName(_fromUtf8("NewMathLibraryDialog"))
         NewMathLibraryDialog.resize(312, 305)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/all/icons/CAR_About.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        NewMathLibraryDialog.setWindowIcon(icon)
         self.verticalLayout_2 = QtGui.QVBoxLayout(NewMathLibraryDialog)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.formLayout = QtGui.QFormLayout()
@@ -57,6 +60,7 @@ class Ui_NewMathLibraryDialog(object):
         self.verticalLayout.addWidget(self.copyFromRadio)
         self.copyFromTree = QtGui.QTreeView(NewMathLibraryDialog)
         self.copyFromTree.setObjectName(_fromUtf8("copyFromTree"))
+        self.copyFromTree.header().setVisible(False)
         self.verticalLayout.addWidget(self.copyFromTree)
         self.formLayout.setLayout(2, QtGui.QFormLayout.FieldRole, self.verticalLayout)
         self.verticalLayout_2.addLayout(self.formLayout)
@@ -64,9 +68,9 @@ class Ui_NewMathLibraryDialog(object):
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
-        self.pushButton = QtGui.QPushButton(NewMathLibraryDialog)
-        self.pushButton.setObjectName(_fromUtf8("pushButton"))
-        self.horizontalLayout.addWidget(self.pushButton)
+        self.createButton = QtGui.QPushButton(NewMathLibraryDialog)
+        self.createButton.setObjectName(_fromUtf8("createButton"))
+        self.horizontalLayout.addWidget(self.createButton)
         self.verticalLayout_2.addLayout(self.horizontalLayout)
 
         self.retranslateUi(NewMathLibraryDialog)
@@ -79,5 +83,6 @@ class Ui_NewMathLibraryDialog(object):
         self.label_3.setText(_translate("NewMathLibraryDialog", "Template:", None))
         self.emptyProjectRadio.setText(_translate("NewMathLibraryDialog", "Empty Project", None))
         self.copyFromRadio.setText(_translate("NewMathLibraryDialog", "Copy From:", None))
-        self.pushButton.setText(_translate("NewMathLibraryDialog", "Create", None))
+        self.createButton.setText(_translate("NewMathLibraryDialog", "Create", None))
 
+import resource_rc

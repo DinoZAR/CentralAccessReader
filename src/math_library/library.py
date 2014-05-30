@@ -16,14 +16,18 @@ class MathLibrary(object):
     PATTERN_FILE_FORMAT = 'pattern{0}.txt'
 
     def __init__(self, libraryFile=None):
+        self._name = ''
         self.name = 'Untitled'
+        self._author = ''
         self.author = 'Someone'
         self.languageCode = 'en'
 
         self.patterns = []
         self.builtIn = False
 
-        self.filePath = libraryFile
+        self.filePath = ''
+        if libraryFile is not None:
+            self.filePath = libraryFile
 
         if libraryFile is not None:
             self.read(libraryFile)
@@ -54,7 +58,29 @@ class MathLibrary(object):
             if name == p.name:
                 return p
         raise ValueError('Pattern {0} does not exist in library {1}.'.format(name, self.name))
-    
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, n):
+        if len(n) > 0:
+            self._name = n
+        else:
+            self._name = 'Untitled'
+
+    @property
+    def author(self):
+        return self._author
+
+    @author.setter
+    def author(self, a):
+        if len(a) > 0:
+            self._author = a
+        else:
+            self._author = 'Someone'
+
     def _read_manifest(self, zipFile):
         '''
         Reads the manifest from the zip file.

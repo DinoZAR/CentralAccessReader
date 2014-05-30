@@ -9,6 +9,7 @@ from PyQt4.QtGui import QMainWindow, QApplication, QFileDialog, QMessageBox, qAp
 
 from src.forms.math_library_dev_ui import Ui_MathLibraryDev
 from src.gui.math_library_editor import MathLibraryEditor
+from src.gui.math_library_new import NewMathLibraryDialog
 from src.gui import configuration
 from src.math_library.library import MathLibrary
 try:
@@ -83,9 +84,13 @@ class MathLibraryDev(QMainWindow):
         '''
         Appends a new math library to the editor.
         '''
-        w = MathLibraryEditor()
-        w.nameChanged.connect(self._updateLibraryName)
-        self.ui.libraryTabs.addTab(w, w.name)
+        dialog = NewMathLibraryDialog()
+        dialog.exec_()
+
+        if dialog.library is not None:
+            w = MathLibraryEditor(dialog.library)
+            w.nameChanged.connect(self._updateLibraryName)
+            self.ui.libraryTabs.addTab(w, w.name)
 
     def openLibrary(self):
         '''
@@ -126,13 +131,15 @@ class MathLibraryDev(QMainWindow):
         '''
         Saves the current library.
         '''
-        self.currentLibraryEditor().save()
+        if self.currentLibraryEditor() is not None:
+            self.currentLibraryEditor().save()
 
     def saveAsCurrent(self):
         '''
         Saves the current library using Save As.
         '''
-        self.currentLibraryEditor().saveAs()
+        if self.currentLibraryEditor() is not None:
+            self.currentLibraryEditor().saveAs()
 
     def runCurrentLibrary(self):
         '''

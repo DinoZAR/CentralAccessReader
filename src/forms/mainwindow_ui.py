@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/mainwindow.ui'
 #
-# Created: Thu May 29 13:53:06 2014
+# Created: Fri May 30 11:48:35 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
