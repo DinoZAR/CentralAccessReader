@@ -43,6 +43,7 @@ class NewMathLibraryDialog(QDialog):
                 myLib = myLib[0]
                 for p in myLib.patterns:
                     self.library.patterns.append(copy.copy(p))
+                self.library.languageCode = myLib.languageCode
 
         self.library.name = unicode(self.ui.nameEdit.text())
         self.library.author = unicode(self.ui.authorEdit.text())

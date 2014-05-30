@@ -163,9 +163,6 @@ class MainWindow(QtGui.QMainWindow):
         # Program updater threads and dialogs
         self.programUpdateFinish.connect(self.finishUpdateDownload)
         
-        # Hide the rate slider
-        self.ui.rateSlider.hide()
-        
         # Run an update check thread
         self.checkUpdateThread = GetUpdateThread()
         self.checkUpdateThread.showUpdate.connect(self.showUpdatePrompt)
@@ -293,9 +290,6 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.actionTake_A_Survey.triggered.connect(self.openSurveyWindow)
         
         # Sliders
-        self.ui.rateSliderButton.toggled.connect(self.showRateSlider)
-        self.ui.rateSlider.valueChanged.connect(self.changeSpeechRate)
-        
         self.ui.actionIncrease_Volume.triggered.connect(self.increaseVolume)
         self.ui.actionDecrease_Volume.triggered.connect(self.decreaseVolume)
         
@@ -309,9 +303,6 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.bookmarkZoomOutButton.clicked.connect(self.bookmarkZoomOutButton_clicked)
         
     def updateSettings(self):
-        
-        # Change the rate on the slider
-        self.ui.rateSlider.setValue(configuration.getInt('Rate', 50))
         
         # Update speech thread with my stuff
         self.changeVolume.emit(configuration.getInt('Volume', 100))
@@ -414,13 +405,7 @@ class MainWindow(QtGui.QMainWindow):
             self.setSpeechGenerator.emit(self.currentDocument().generateSpeech(self.currentDocumentWidget().streamNextElement()))
         else:
             self.noMoreSpeech.emit()
-    
-    def showRateSlider(self, isOn):
-        '''
-        Shows a popup slider for the speech rate.
-        '''
-        self.ui.rateSlider.setVisible(isOn)        
-            
+
     def changeSpeechRate(self, value):
         configuration.setInt('Rate', value)
         self.changeRate.emit(configuration.getInt('Rate'))
@@ -930,7 +915,6 @@ class MainWindow(QtGui.QMainWindow):
             pass
         
     def refreshDocument(self):
-        print 'Trying to refresh the document...'        
         for i in range(self.ui.documentTabWidget.count()):
             self.ui.documentTabWidget.widget(i).refreshDocument()
             
@@ -1001,9 +985,7 @@ class MainWindow(QtGui.QMainWindow):
                     
             if hasattr(self.ui, 'openDocumentButton'):
                 self.ui.openDocumentButton.setEnabled(False)
-                
-            self.ui.colorSettingsButton.setEnabled(False)
-            self.ui.speechSettingsButton.setEnabled(False)
+
             self.ui.saveToMP3Button.setEnabled(False)
             
             # Disable certain sliders and actions if TTS is not interactive
@@ -1038,11 +1020,7 @@ class MainWindow(QtGui.QMainWindow):
                 self.ui.documentTabWidget.setTabEnabled(i, True)
                 
             self.ui.openDocumentButton.setEnabled(True)
-            
-            self.ui.rateSliderButton.setEnabled(True)
-                
-            self.ui.colorSettingsButton.setEnabled(True)
-            self.ui.speechSettingsButton.setEnabled(True)
+
             self.ui.saveToMP3Button.setEnabled(True)
             
             # Enable slider bars if TTS is not interactive

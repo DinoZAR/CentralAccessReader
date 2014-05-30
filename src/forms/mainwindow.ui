@@ -59,88 +59,6 @@
        </spacer>
       </item>
       <item>
-       <widget class="QSlider" name="rateSlider">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>200</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>201</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="maximum">
-         <number>100</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_4">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Fixed</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QPushButton" name="rateSliderButton">
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>38</height>
-         </size>
-        </property>
-        <property name="focusPolicy">
-         <enum>Qt::TabFocus</enum>
-        </property>
-        <property name="toolTip">
-         <string>Set the Rate</string>
-        </property>
-        <property name="text">
-         <string>Rate</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Fixed</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>0</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
        <widget class="QPushButton" name="mainMenuButton">
         <property name="maximumSize">
          <size>
@@ -472,7 +390,7 @@
                 <enum>Qt::TabFocus</enum>
                </property>
                <property name="toolTip">
-                <string>Highlighting, Colors, and Font Settings</string>
+                <string>Color Settings</string>
                </property>
                <property name="icon">
                 <iconset resource="resource.qrc">
@@ -990,7 +908,7 @@
      <normaloff>:/icons/icons/color_settings.png</normaloff>:/icons/icons/color_settings.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Highlights, Colors, and Fonts</string>
+    <string>&amp;Color</string>
    </property>
    <property name="shortcut">
     <string>F2</string>

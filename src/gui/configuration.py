@@ -307,7 +307,7 @@ def load(filePath):
     '''
     Loads the configuration to file.
     '''
-    print 'Loading configuration file...'
+    #print 'Loading configuration file...'
     try:
         with open(filePath, 'r') as f:
             root = etree.fromstring(f.read())
@@ -325,7 +325,7 @@ def save(filePath):
     '''
     Saves the configuration to file.
     '''
-    print 'Saving configuration file...'
+    #print 'Saving configuration file...'
     
     root = etree.Element('Configuration')
     

@@ -52,7 +52,6 @@ class ColorSettings(QDialog):
         self.ui.themeComboBox.currentIndexChanged.connect(self.themeComboBox_currentIndexChanged)
         
         # Bottom dialog buttons
-        self.ui.applyButton.clicked.connect(self.applyButton_clicked)
         self.ui.restoreButton.clicked.connect(self.restoreButton_clicked)
         
     def updateSettings(self):
@@ -111,13 +110,6 @@ class ColorSettings(QDialog):
             i = 0
         self.ui.themeComboBox.setCurrentIndex(i)
         self.ui.themeComboBox.blockSignals(False)
-
-    def applyButton_clicked(self):
-        configuration.save(app_data_path('configuration.xml'))
-        with open(temp_path('import/defaultStyle.css'), 'w') as f:
-            f.write(configuration.getCSS())
-        self.mainWindow.refreshDocument()
-        loader.load_theme(qApp, configuration.getValue('Theme'))
         
     def restoreButton_clicked(self):
 
@@ -148,6 +140,11 @@ class ColorSettings(QDialog):
         def myAccept():
             configuration.setColor('ContentTextColor', dialog.currentColor())
             self.updateSettings()
+            configuration.save(app_data_path('configuration.xml'))
+            with open(temp_path('import/defaultStyle.css'), 'w') as f:
+                f.write(configuration.getCSS())
+            self.mainWindow.refreshDocument()
+        self.mainWindow.refreshDocument()
         dialog.accepted.connect(myAccept)
         dialog.exec_()
     
@@ -156,6 +153,10 @@ class ColorSettings(QDialog):
         def myAccept():
             configuration.setColor('ContentBackgroundColor', dialog.currentColor())
             self.updateSettings()
+            configuration.save(app_data_path('configuration.xml'))
+            with open(temp_path('import/defaultStyle.css'), 'w') as f:
+                f.write(configuration.getCSS())
+            self.mainWindow.refreshDocument()
         dialog.accepted.connect(myAccept)
         dialog.exec_()
     
@@ -164,6 +165,10 @@ class ColorSettings(QDialog):
         def myAccept():
             configuration.setColor('HighlightTextColor', dialog.currentColor())
             self.updateSettings()
+            configuration.save(app_data_path('configuration.xml'))
+            with open(temp_path('import/defaultStyle.css'), 'w') as f:
+                f.write(configuration.getCSS())
+            self.mainWindow.refreshDocument()
         dialog.accepted.connect(myAccept)
         dialog.exec_()
         
@@ -172,6 +177,10 @@ class ColorSettings(QDialog):
         def myAccept():
             configuration.setColor('HighlightBackgroundColor', dialog.currentColor())
             self.updateSettings()
+            configuration.save(app_data_path('configuration.xml'))
+            with open(temp_path('import/defaultStyle.css'), 'w') as f:
+                f.write(configuration.getCSS())
+            self.mainWindow.refreshDocument()
         dialog.accepted.connect(myAccept)
         dialog.exec_()
         
@@ -208,6 +217,10 @@ class ColorSettings(QDialog):
         def myAccept():
             configuration.setColor('HighlightLineTextColor', dialog.currentColor())
             self.updateSettings()
+            configuration.save(app_data_path('configuration.xml'))
+            with open(temp_path('import/defaultStyle.css'), 'w') as f:
+                f.write(configuration.getCSS())
+            self.mainWindow.refreshDocument()
         dialog.accepted.connect(myAccept)
         dialog.exec_()
         
@@ -216,6 +229,10 @@ class ColorSettings(QDialog):
         def myAccept():
             configuration.setColor('HighlightLineBackgroundColor', dialog.currentColor())
             self.updateSettings()
+            configuration.save(app_data_path('configuration.xml'))
+            with open(temp_path('import/defaultStyle.css'), 'w') as f:
+                f.write(configuration.getCSS())
+            self.mainWindow.refreshDocument()
         dialog.accepted.connect(myAccept)
         dialog.exec_()
         
@@ -223,9 +240,14 @@ class ColorSettings(QDialog):
         fontFamily = str(newFont.family())
         configuration.setValue('Font', fontFamily)
         self.updateSettings()
+        configuration.save(app_data_path('configuration.xml'))
+        with open(temp_path('import/defaultStyle.css'), 'w') as f:
+            f.write(configuration.getCSS())
+        self.mainWindow.refreshDocument()
     
     def themeComboBox_currentIndexChanged(self, index):
         configuration.setValue('Theme', unicode(self.ui.themeComboBox.itemData(index).toString()))
+        loader.load_theme(qApp, configuration.getValue('Theme'))
         
     def _setButtonColor(self, button, color):
         '''

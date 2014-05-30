@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/color_settings.ui'
 #
-# Created: Fri May 30 11:24:34 2014
+# Created: Fri May 30 14:46:26 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -39,7 +39,7 @@ class Ui_ColorSettings(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, -145, 256, 666))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 256, 666))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.verticalLayout_8 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_8.setSpacing(40)
@@ -148,10 +148,6 @@ class Ui_ColorSettings(object):
         self.verticalLayout_9.addWidget(self.scrollArea)
         self.verticalLayout_7 = QtGui.QVBoxLayout()
         self.verticalLayout_7.setObjectName(_fromUtf8("verticalLayout_7"))
-        self.applyButton = QtGui.QPushButton(ColorSettings)
-        self.applyButton.setIconSize(QtCore.QSize(50, 50))
-        self.applyButton.setObjectName(_fromUtf8("applyButton"))
-        self.verticalLayout_7.addWidget(self.applyButton)
         self.restoreButton = QtGui.QPushButton(ColorSettings)
         self.restoreButton.setObjectName(_fromUtf8("restoreButton"))
         self.verticalLayout_7.addWidget(self.restoreButton)
@@ -182,8 +178,6 @@ class Ui_ColorSettings(object):
         self.highlighterLineTextButton.setText(_translate("ColorSettings", "Text", None))
         self.label_9.setText(_translate("ColorSettings", "Font", None))
         self.label_2.setText(_translate("ColorSettings", "Theme", None))
-        self.applyButton.setToolTip(_translate("ColorSettings", "Applies new settings", None))
-        self.applyButton.setText(_translate("ColorSettings", "Apply Settings", None))
         self.restoreButton.setToolTip(_translate("ColorSettings", "Restores settings to their default values", None))
         self.restoreButton.setText(_translate("ColorSettings", "Restore to Default Settings", None))
 

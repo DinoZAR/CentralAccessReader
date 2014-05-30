@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/speech_settings.ui'
 #
-# Created: Fri May 30 11:24:40 2014
+# Created: Fri May 30 14:19:20 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_SpeechSettings(object):
     def setupUi(self, SpeechSettings):
         SpeechSettings.setObjectName(_fromUtf8("SpeechSettings"))
-        SpeechSettings.resize(254, 745)
+        SpeechSettings.resize(337, 693)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/classic/icons/speech_settings_classic.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         SpeechSettings.setWindowIcon(icon)
@@ -39,7 +39,7 @@ class Ui_SpeechSettings(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 252, 720))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 318, 741))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.verticalLayout_9 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_9.setSpacing(40)
@@ -106,22 +106,34 @@ class Ui_SpeechSettings(object):
         self.label_5.setObjectName(_fromUtf8("label_5"))
         self.verticalLayout_2.addWidget(self.label_5)
         self.mathLibraryDisplay = QtGui.QLineEdit(self.scrollAreaWidgetContents)
+        self.mathLibraryDisplay.setStyleSheet(_fromUtf8("border-width: 5px;"))
         self.mathLibraryDisplay.setReadOnly(True)
         self.mathLibraryDisplay.setObjectName(_fromUtf8("mathLibraryDisplay"))
         self.verticalLayout_2.addWidget(self.mathLibraryDisplay)
-        self.horizontalLayout = QtGui.QHBoxLayout()
-        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
+        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
+        self.languageLabel = QtGui.QLabel(self.scrollAreaWidgetContents)
+        self.languageLabel.setObjectName(_fromUtf8("languageLabel"))
+        self.horizontalLayout_2.addWidget(self.languageLabel)
         self.mathLanguageCombo = QtGui.QComboBox(self.scrollAreaWidgetContents)
         self.mathLanguageCombo.setSizeAdjustPolicy(QtGui.QComboBox.AdjustToMinimumContentsLength)
         self.mathLanguageCombo.setObjectName(_fromUtf8("mathLanguageCombo"))
-        self.horizontalLayout.addWidget(self.mathLanguageCombo)
+        self.horizontalLayout_2.addWidget(self.mathLanguageCombo)
+        self.horizontalLayout_2.setStretch(1, 1)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_2)
+        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
+        self.libraryLabel = QtGui.QLabel(self.scrollAreaWidgetContents)
+        self.libraryLabel.setObjectName(_fromUtf8("libraryLabel"))
+        self.horizontalLayout.addWidget(self.libraryLabel)
         self.mathAddButton = QtGui.QPushButton(self.scrollAreaWidgetContents)
         self.mathAddButton.setObjectName(_fromUtf8("mathAddButton"))
         self.horizontalLayout.addWidget(self.mathAddButton)
         self.mathRemoveButton = QtGui.QPushButton(self.scrollAreaWidgetContents)
         self.mathRemoveButton.setObjectName(_fromUtf8("mathRemoveButton"))
         self.horizontalLayout.addWidget(self.mathRemoveButton)
-        self.horizontalLayout.setStretch(0, 1)
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem)
         self.verticalLayout_2.addLayout(self.horizontalLayout)
         self.mathLibraryTree = QtGui.QTreeView(self.scrollAreaWidgetContents)
         self.mathLibraryTree.setMinimumSize(QtCore.QSize(0, 200))
@@ -150,6 +162,8 @@ class Ui_SpeechSettings(object):
         self.ignoreAltTextCheckBox.setObjectName(_fromUtf8("ignoreAltTextCheckBox"))
         self.verticalLayout.addWidget(self.ignoreAltTextCheckBox)
         self.verticalLayout_9.addLayout(self.verticalLayout)
+        spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_9.addItem(spacerItem1)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.verticalLayout_3.addWidget(self.scrollArea)
         self.restoreButton = QtGui.QPushButton(SpeechSettings)
@@ -170,6 +184,8 @@ class Ui_SpeechSettings(object):
         self.voiceComboBox.setToolTip(_translate("SpeechSettings", "Drop down box for selecting the voice", None))
         self.label_5.setText(_translate("SpeechSettings", "Math", None))
         self.mathLibraryDisplay.setPlaceholderText(_translate("SpeechSettings", "<current math library>", None))
+        self.languageLabel.setText(_translate("SpeechSettings", "Language:", None))
+        self.libraryLabel.setText(_translate("SpeechSettings", "Library:", None))
         self.mathAddButton.setToolTip(_translate("SpeechSettings", "Adds math library from file.", None))
         self.mathAddButton.setText(_translate("SpeechSettings", "+", None))
         self.mathRemoveButton.setToolTip(_translate("SpeechSettings", "Removes current math library.", None))

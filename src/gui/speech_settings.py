@@ -27,9 +27,8 @@ class SpeechSettings(QDialog):
 
         self._mathTreeModel = None
 
-        # Load the languages into the combobox
-        for item in sorted(languages.CODES.items(), key=lambda x: x[1]):
-            self.ui.mathLanguageCombo.addItem(item[1], item[0])
+        self._mathControlsVisible = False
+        self.setMathControlsVisible()
 
         # Update the GUI to match the settings currently employed
         self.updateSettings()
@@ -46,6 +45,11 @@ class SpeechSettings(QDialog):
         self.ui.mathLibraryTree.clicked.connect(self.mathLibraryTree_clicked)
         self.ui.mathAddButton.clicked.connect(self.mathAddButton_clicked)
         self.ui.mathRemoveButton.clicked.connect(self.mathRemoveButton_clicked)
+
+        self.ui.mathLibraryDisplay.mousePressEvent = self.mathLibraryDisplay_mousePressed
+        self.ui.mathLibraryDisplay.keyPressEvent = self.mathLibraryDisplay_keyPressed
+        self.ui.mathLibraryDisplay.enterEvent = self.mathLibraryDisplay_enter
+        self.ui.mathLibraryDisplay.leaveEvent = self.mathLibraryDisplay_leave
 
         self.ui.imageTagCheckBox.stateChanged.connect(self.imageTagCheckBox_stateChanged)
         self.ui.mathTagCheckBox.stateChanged.connect(self.mathTagCheckBox_stateChanged)
@@ -79,6 +83,15 @@ class SpeechSettings(QDialog):
             self.ui.voiceComboBox.setCurrentIndex(0)
             self.ui.voiceComboBox.blockSignals(False)
 
+        # Load the languages into the combobox, filtered by what's available
+        availLanguages = {}
+        for lib in math_library.getLibraries():
+            availLanguages[lib.languageCode] = languages.CODES[lib.languageCode]
+
+        self.ui.mathLanguageCombo.clear()
+        for item in sorted(availLanguages.items(), key=lambda x: x[1]):
+            self.ui.mathLanguageCombo.addItem(item[1], item[0])
+
         # Set the language from the math library
         mathStuff = math_library.getLibraryFromPath(configuration.getMathPatternPath('MathTTS'))
         if mathStuff is None:
@@ -87,15 +100,9 @@ class SpeechSettings(QDialog):
 
         i = self.ui.mathLanguageCombo.findData(mathStuff[0].languageCode)
         self.ui.mathLanguageCombo.setCurrentIndex(i)
-
-        # Set the display text for my library
-        self.ui.mathLibraryDisplay.setText('{0} ({1}): {2}'.format(mathStuff[0].name,
-                                                                   languages.CODES[mathStuff[0].languageCode],
-                                                                   mathStuff[1].name))
         
         # Get the math libraries
         libraries = math_library.getLibraries()
-
         self._mathTreeModel = GeneralTree(libraries)
 
         # Filter the libraries by the current language
@@ -105,11 +112,30 @@ class SpeechSettings(QDialog):
         self._mathTreeModel.addSelectableRule(1, lambda x: False)
         self._mathTreeModel.addDisplayRule(2, lambda x: x.name)
         self.ui.mathLibraryTree.setModel(self._mathTreeModel)
+        self.ui.mathLibraryTree.expandAll()
 
         # Select the right one from settings
         mathPath = configuration.getMathPatternPath('MathTTS')
         index = self._mathTreeModel.getIndexFromPath(mathPath)
         self.ui.mathLibraryTree.setCurrentIndex(index)
+
+        # Cache the math TTS if I haven't already
+        self.ui.mathLibraryDisplay.setText('Loading math library...')
+        qApp.processEvents()
+        configuration.getMathTTS('MathTTS')
+
+        # Set the display text for my library
+        self.ui.mathLibraryDisplay.setText('{0} ({1}): {2}'.format(mathStuff[0].name,
+                                                                   languages.CODES[mathStuff[0].languageCode],
+                                                                   mathStuff[1].name))
+
+    def setMathControlsVisible(self):
+        self.ui.mathLanguageCombo.setVisible(self._mathControlsVisible)
+        self.ui.mathAddButton.setVisible(self._mathControlsVisible)
+        self.ui.mathRemoveButton.setVisible(self._mathControlsVisible)
+        self.ui.mathLibraryTree.setVisible(self._mathControlsVisible)
+        self.ui.languageLabel.setVisible(self._mathControlsVisible)
+        self.ui.libraryLabel.setVisible(self._mathControlsVisible)
 
     def filterPatterns(self, mathLibrary):
         '''
@@ -155,6 +181,7 @@ class SpeechSettings(QDialog):
     def mathLanguageCombo_currentIndexChanged(self, index):
         if self._mathTreeModel is not None:
             self._mathTreeModel.update()
+            self.ui.mathLibraryTree.expandAll()
 
     def mathLibraryTree_clicked(self, index):
         myPath = self._mathTreeModel.getPathFromIndex(index)
@@ -200,6 +227,25 @@ class SpeechSettings(QDialog):
                 except ValueError as ex:
                     QMessageBox.information(self, 'Can\'t Remove Library', ex.message, QMessageBox.Ok)
                 self.updateSettings()
+
+    def mathLibraryDisplay_mousePressed(self, ev):
+        self._mathControlsVisible = not self._mathControlsVisible
+        self.setMathControlsVisible()
+
+    def mathLibraryDisplay_keyPressed(self, ev):
+        if ev.key() == Qt.Key_Space or ev.key() == Qt.Key_Enter:
+            self._mathControlsVisible = not self._mathControlsVisible
+            self.setMathControlsVisible()
+
+    def mathLibraryDisplay_enter(self, ev):
+        self._previousDisplayValue = self.ui.mathLibraryDisplay.text()
+        if not self._mathControlsVisible:
+            self.ui.mathLibraryDisplay.setText('Click to change!')
+        else:
+            self.ui.mathLibraryDisplay.setText('Click to hide!')
+
+    def mathLibraryDisplay_leave(self, ev):
+        self.ui.mathLibraryDisplay.setText(self._previousDisplayValue)
 
     def requestMoreSpeech(self):
         self.mainWindow.noMoreSpeech.emit()
