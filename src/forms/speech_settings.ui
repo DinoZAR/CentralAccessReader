@@ -37,8 +37,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>318</width>
-        <height>741</height>
+        <width>308</width>
+        <height>755</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -47,11 +47,14 @@
        </property>
        <item>
         <layout class="QFormLayout" name="formLayout">
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::ExpandingFieldsGrow</enum>
+         </property>
          <property name="horizontalSpacing">
           <number>10</number>
          </property>
          <property name="verticalSpacing">
-          <number>2</number>
+          <number>5</number>
          </property>
          <item row="0" column="0">
           <widget class="QLabel" name="label_7">
@@ -62,6 +65,12 @@
          </item>
          <item row="0" column="1">
           <widget class="QSlider" name="rateSlider">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="toolTip">
             <string>Words per minute slider (rate)</string>
            </property>
