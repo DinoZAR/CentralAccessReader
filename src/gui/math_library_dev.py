@@ -91,6 +91,7 @@ class MathLibraryDev(QMainWindow):
             w = MathLibraryEditor(dialog.library)
             w.nameChanged.connect(self._updateLibraryName)
             self.ui.libraryTabs.addTab(w, w.name)
+            self.ui.libraryTabs.setCurrentWidget(w)
 
     def openLibrary(self):
         '''
@@ -104,6 +105,7 @@ class MathLibraryDev(QMainWindow):
             w = MathLibraryEditor(library=lib)
             w.nameChanged.connect(self._updateLibraryName)
             self.ui.libraryTabs.addTab(w, w.name)
+            self.ui.libraryTabs.setCurrentWidget(w)
 
     def newPattern(self):
         '''

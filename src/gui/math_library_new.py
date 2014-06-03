@@ -9,6 +9,7 @@ from src.forms.math_library_new_ui import Ui_NewMathLibraryDialog
 from src.gui.general_tree import GeneralTree
 from src.math_library import getLibraries
 from src.math_library.library import MathLibrary
+from src import languages
 
 class NewMathLibraryDialog(QDialog):
     '''
@@ -26,6 +27,14 @@ class NewMathLibraryDialog(QDialog):
         self._treeModel = GeneralTree(getLibraries())
         self._treeModel.addDisplayRule(1, lambda x: x.name)
         self.ui.copyFromTree.setModel(self._treeModel)
+
+        # Set the language combo box
+        self.ui.languageCombo.blockSignals(True)
+        for item in sorted(languages.CODES.items(), key=lambda x: x[1]):
+            self.ui.languageCombo.addItem(item[1], item[0])
+        i = self.ui.languageCombo.findData('en')
+        self.ui.languageCombo.setCurrentIndex(i)
+        self.ui.languageCombo.blockSignals(False)
 
         self.library = None
 
@@ -47,5 +56,10 @@ class NewMathLibraryDialog(QDialog):
 
         self.library.name = unicode(self.ui.nameEdit.text())
         self.library.author = unicode(self.ui.authorEdit.text())
+
+        i = self.ui.languageCombo.currentIndex()
+        self.library.languageCode = unicode(self.ui.languageCombo.itemData(i).toString())
+
+        print
 
         self.done(0)

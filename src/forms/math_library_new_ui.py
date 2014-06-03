@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/math_library_new.ui'
 #
-# Created: Fri May 30 13:27:35 2014
+# Created: Tue Jun 03 10:29:12 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -48,7 +48,7 @@ class Ui_NewMathLibraryDialog(object):
         self.formLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.authorEdit)
         self.label_3 = QtGui.QLabel(NewMathLibraryDialog)
         self.label_3.setObjectName(_fromUtf8("label_3"))
-        self.formLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.label_3)
+        self.formLayout.setWidget(3, QtGui.QFormLayout.LabelRole, self.label_3)
         self.verticalLayout = QtGui.QVBoxLayout()
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.emptyProjectRadio = QtGui.QRadioButton(NewMathLibraryDialog)
@@ -62,7 +62,13 @@ class Ui_NewMathLibraryDialog(object):
         self.copyFromTree.setObjectName(_fromUtf8("copyFromTree"))
         self.copyFromTree.header().setVisible(False)
         self.verticalLayout.addWidget(self.copyFromTree)
-        self.formLayout.setLayout(2, QtGui.QFormLayout.FieldRole, self.verticalLayout)
+        self.formLayout.setLayout(3, QtGui.QFormLayout.FieldRole, self.verticalLayout)
+        self.label_4 = QtGui.QLabel(NewMathLibraryDialog)
+        self.label_4.setObjectName(_fromUtf8("label_4"))
+        self.formLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.label_4)
+        self.languageCombo = QtGui.QComboBox(NewMathLibraryDialog)
+        self.languageCombo.setObjectName(_fromUtf8("languageCombo"))
+        self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.languageCombo)
         self.verticalLayout_2.addLayout(self.formLayout)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
@@ -83,6 +89,7 @@ class Ui_NewMathLibraryDialog(object):
         self.label_3.setText(_translate("NewMathLibraryDialog", "Template:", None))
         self.emptyProjectRadio.setText(_translate("NewMathLibraryDialog", "Empty Project", None))
         self.copyFromRadio.setText(_translate("NewMathLibraryDialog", "Copy From:", None))
+        self.label_4.setText(_translate("NewMathLibraryDialog", "Language:", None))
         self.createButton.setText(_translate("NewMathLibraryDialog", "Create", None))
 
 import resource_rc
