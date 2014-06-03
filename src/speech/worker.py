@@ -79,12 +79,13 @@ class SpeechWorker(QThread):
         self._ttsCreated = True
         
         while self._running:
-            if self._isChange:
-                self.ttsEngine.setVolume(self._volume)
-                self.ttsEngine.setRate(self._rate)
-                self.ttsEngine.setPauseLength(self._pauseLength)
-                self.ttsEngine.setVoice(self._voice)
-                self._isChange = False
+            if self.ttsEngine.areSettingsInteractive():
+                if self._isChange:
+                    self.ttsEngine.setVolume(self._volume)
+                    self.ttsEngine.setRate(self._rate)
+                    self.ttsEngine.setPauseLength(self._pauseLength)
+                    self.ttsEngine.setVoice(self._voice)
+            self._isChange = False
             QThread.yieldCurrentThread()
         
         # Kill and cleanup the TTS driver
@@ -174,12 +175,6 @@ class SpeechWorker(QThread):
         self.setRate(configuration.getInt('Rate'))
         self.setPauseLength(configuration.getInt('PauseLength'))
         self.setVoice(configuration.getValue('Voice'))
-        
-    def areSettingsInteractive(self):
-        '''
-        Returns true if the TTS settings can be changed interactively.
-        '''
-        return self.ttsEngine.areSettingsInteractive()
         
     def getVoiceList(self):
         # Wait until the TTS is created before attempting what I want to do next

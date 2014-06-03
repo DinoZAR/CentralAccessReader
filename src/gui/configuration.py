@@ -5,6 +5,7 @@ Created on Apr 12, 2013
 '''
 from datetime import datetime
 import base64
+import os
 
 from PyQt4.QtGui import QColor
 from lxml import etree
@@ -335,6 +336,9 @@ def save(filePath):
         value.text = _CONFIG_DATA[k][0]
         defaultValue = etree.SubElement(elem, 'Default')
         defaultValue.text = _CONFIG_DATA[k][1]
+
+    if not os.path.exists(os.path.dirname(filePath)):
+        os.makedirs(os.path.dirname(filePath))
     
     with open(filePath, 'w') as f:
         f.write(etree.tostring(root))

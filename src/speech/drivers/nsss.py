@@ -363,4 +363,3 @@ class NSSpeechSynthesizerDriver(NSObject):
         if self._signalsEnabled:
             for cb in self._delegator['onWord']:
                 cb[1](wordRange.location, wordRange.length, self._currentLabel, self._currentStream, word, self._isFirstSpeech)
-        

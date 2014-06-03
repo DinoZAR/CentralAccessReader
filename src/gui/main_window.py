@@ -985,12 +985,12 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.openDocumentButton.setEnabled(isEnable)
         self.ui.saveToMP3Button.setEnabled(isEnable)
 
-        # Disable/enable certain sliders and actions if TTS is not interactive
-        if not self.speechThread.areSettingsInteractive():
-            self.ui.actionDecrease_Rate.setEnabled(isEnable)
-            self.ui.actionIncrease_Rate.setEnabled(isEnable)
-            self.ui.actionDecrease_Volume.setEnabled(isEnable)
-            self.ui.actionIncrease_Volume.setEnabled(isEnable)
+        # # Disable/enable certain sliders and actions if TTS is not interactive
+        # if not self.speechThread.areSettingsInteractive():
+        #     self.ui.actionDecrease_Rate.setEnabled(isEnable)
+        #     self.ui.actionIncrease_Rate.setEnabled(isEnable)
+        #     self.ui.actionDecrease_Volume.setEnabled(isEnable)
+        #     self.ui.actionIncrease_Volume.setEnabled(isEnable)
 
         # Actions
         self.ui.actionPlay.setEnabled(isEnable)

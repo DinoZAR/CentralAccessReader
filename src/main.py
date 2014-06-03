@@ -12,14 +12,13 @@ def main():
      
     # Append the parent of this file so that my paths are correct when running
     # it from command-line
-    from PyQt4.QtGui import QApplication, QPixmap, QSplashScreen 
-     
+    from PyQt4.QtGui import QApplication, QPixmap, QSplashScreen
     QApplication.setGraphicsSystem('raster')
      
     app = QApplication(sys.argv)
      
     # Create a splash screen
-    from forms import resource_rc
+    from forms import resource_rc  # Needed to load image from resource file
     pixmap = QPixmap(':/all/icons/CAR Splash.png')
     splash = QSplashScreen(pixmap)
     splash.show()
@@ -52,9 +51,11 @@ def main():
         configuration.getMathTTS('MathTTS')
       
     # Write out the CSS that styles all of the documents
-    if not os.path.exists(os.path.dirname(temp_path('import/test.css'))):
-        os.makedirs(os.path.dirname(temp_path('import/test.css')))
-    with open(temp_path('import/defaultStyle.css'), 'w') as f:
+    stylePath = temp_path('import/defaultStyle.css')
+
+    if not os.path.exists(os.path.dirname(stylePath)):
+        os.makedirs(os.path.dirname(stylePath))
+    with open(stylePath, 'w') as f:
         f.write(configuration.getCSS())
       
     # Set the theme for CAR
