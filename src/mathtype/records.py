@@ -162,6 +162,9 @@ def createRecord(type, fileHandle, debug=False):
         return None
     
 def convertRecords(i, records, parentStack, debug):
+    '''
+    Converts a list of records to MathML.
+    '''
     while i < len(records):
         
         if isinstance(records[i], LineRecord):
@@ -179,7 +182,10 @@ def convertRecords(i, records, parentStack, debug):
         elif isinstance(records[i], CharRecord):
             character = unichr(records[i].mtCode)
             elem = None
-            if character in MATHML_OPERATORS:
+            if records[i].typeface == 1:   # Styled as plain-text
+                elem = etree.Element('mtext')
+                elem.text = character
+            elif character in MATHML_OPERATORS:
                 elem = etree.Element('mo')
                 elem.text = character
             elif _isNumber(character):

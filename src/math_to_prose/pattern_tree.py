@@ -519,4 +519,4 @@ def removeGarbageWhitespace(s):
     Removes all of the characters from the string that I consider to be
     garbage, which are spaces, carraige returns, and line feeds.
     '''
-    return s.replace(' ', '').replace('\n', '').replace('\r', '')
+    return s.replace('\n', '').replace('\r', '').strip()

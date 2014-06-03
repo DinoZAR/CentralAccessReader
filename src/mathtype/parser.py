@@ -52,6 +52,7 @@ def parseMTEF(mtefString, debug=False):
     
     # Do some post-processing
     _combineNumbers(mathmlRoot)
+    _combinePlainText(mathmlRoot)
         
     return mathmlRoot
 
@@ -118,7 +119,7 @@ def parseWMF(wmfFile, debug=False):
     except Exception as ex:
         raise MathTypeParseError('', traceback.format_exc())
     
-def parseOLE(oleFile, debug=False):
+def parseOLE(oleFile, debug=True):
     '''
     Parses a MathType object from an OLE compound file. Returns the MathML
     associated with it.
@@ -228,6 +229,41 @@ def _combineNumbers(mathml):
     # Do it for this element's sibling
     if mathml.getnext() != None:
         _combineNumbers(mathml.getnext())
+
+def _combinePlainText(root):
+    '''
+    Combines sibling <mtext> elements into single <mtext> elements. This is a
+    post-processing function.
+    '''
+
+    # Keep combining with next if this is an mtext element
+    if root.tag == 'mtext':
+
+        while root.getnext() is not None:
+            n = root.getnext()
+
+            if n.tag == 'mtext':
+                root.text += n.text
+                root.getparent().remove(n)
+
+            # If there is a number that is inside of a superscript or
+                # subscript that is directly after this, then move this node
+                # under that sibling
+            elif _isSuperscriptOrSubscript(n):
+                if len(n) > 0:
+                    if n[0].tag == 'mtext':
+                        if root.getparent() != None:
+                            root.getparent().remove(root)
+                        n.insert(0, root)
+                        root = n
+            else:
+                break
+
+    if root.getnext() is not None:
+        _combinePlainText(root.getnext())
+
+    for c in root:
+        _combinePlainText(c)
 
 def _isNumber(mathml):
     '''

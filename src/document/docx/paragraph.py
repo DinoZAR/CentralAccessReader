@@ -334,13 +334,11 @@ def _parseMathFromOLE(elem, data, parentData, otherData):
             break
     
     # Read file from zip
-    imageType = os.path.splitext(filePath)[1].lower()
-    
     with otherData['zip'].open('word/' + filePath, 'r') as imageFile:
         imageBuffer = StringIO(imageFile.read())
     
     try:
-        data['data'] = parseOLE(imageBuffer, debug=False)
+        data['data'] = parseOLE(imageBuffer)
         parentData['math'] = data
         return True
     except:
@@ -361,13 +359,11 @@ def _parseMathFromWMF(elem, data, parentData, otherData):
             break
     
     # Read file from zip
-    imageType = os.path.splitext(filePath)[1].lower()
-    
     with otherData['zip'].open('word/' + filePath, 'r') as imageFile:
         imageBuffer = StringIO(imageFile.read())
     
     try:
-        data['data'] = parseWMF(imageBuffer, debug=False)
+        data['data'] = parseWMF(imageBuffer)
         parentData['math'] = data
         return True
     except:

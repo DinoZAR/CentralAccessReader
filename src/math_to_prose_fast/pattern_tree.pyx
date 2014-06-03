@@ -531,4 +531,4 @@ cdef unicode removeGarbageWhitespace(unicode s):
     Removes all of the characters from the string that I consider to be
     garbage, which are spaces, carraige returns, and line feeds.
     '''
-    return s.replace(u' ', u'').replace(u'\n', u'').replace(u'\r', u'')
+    return s.replace(u'\n', u'').replace(u'\r', u'').strip()
