@@ -15,6 +15,7 @@ from PyObjCTools import AppHelper
 from PyQt4.QtCore import QMutex
 
 from src.misc import program_path
+from src.gui import configuration
 
 class NSSpeechSynthesizerDriver(NSObject):
     '''
@@ -23,6 +24,10 @@ class NSSpeechSynthesizerDriver(NSObject):
     generatorLock = QMutex()
 
     CALLBACK_GEN = 0
+
+    NS_IMMEDIATE_BOUNDARY = 0
+    NS_SENTENCE_BOUNDARY = 2
+    NS_WORD_BOUNDARY = 1
     
     def initWithRequestSpeechHook(self, requestSpeechHook=None):
         self = super(NSSpeechSynthesizerDriver, self).init()
@@ -46,12 +51,13 @@ class NSSpeechSynthesizerDriver(NSObject):
             
             self._tts = NSSpeechSynthesizer.alloc().initWithVoice_(None)
             self._tts.setDelegate_(self)
-            
-            self._tts.setVolume_(1.0)
-            self._tts.setRate_(200)
-            self._pauseLength = 0
-            
+
             self._done = True
+
+            self.setRate(configuration.getInt('Rate'))
+            self.setVolume(configuration.getInt('Volume'))
+            self.setPauseLength(configuration.getInt('PauseLength'))
+            self.setVoice(configuration.getValue('Voice'))
         
         return self
     
@@ -66,20 +72,20 @@ class NSSpeechSynthesizerDriver(NSObject):
         '''
         Sets the rate of the voice, a value between 0-100
         '''
-        if self._done:
-            # Transform 0-100 between a specific words-per-minute range
-            # Average rate is 180-220 wpm
-            wpmMin = 50
-            wpmMax = 350
-            myRate = wpmMin + ((wpmMax - wpmMin) * float(rate) / 100.0)
-            self._tts.setRate_(myRate)
+        # Transform 0-100 between a specific words-per-minute range
+        # Average rate is 180-220 wpm
+        wpmMin = 50
+        wpmMax = 350
+        self._myRate = wpmMin + ((wpmMax - wpmMin) * float(rate) / 100.0)
+        self._change = True
+        self._tts.setRate_(self._myRate)
 
     def setVolume(self, volume):
         '''
         Sets the volume of the voice, from 0-100
         '''
-        if self._done:
-            self._tts.setVolume_(float(volume) / 100.0)
+        self._myVolume = float(volume) / 100.0
+        self._change = True
         
     def setPauseLength(self, pauseLength):
         '''
@@ -92,13 +98,8 @@ class NSSpeechSynthesizerDriver(NSObject):
         '''
         Sets the voice using a key provided by getVoiceList()
         '''
-        vol = self._tts.volume()
-        rate = self._tts.rate()
         if len(voiceKey) > 0:
-            self._tts.setVoice_(unicode(voiceKey))
-        
-        self._tts.setVolume_(vol)
-        self._tts.setRate_(rate)
+            self._myVoice = unicode(voiceKey)
         
     def areSettingsInteractive(self):
         return False
@@ -142,11 +143,25 @@ class NSSpeechSynthesizerDriver(NSObject):
         This loop is used to queue my speech onto the TTS engine.
         '''
         self._done = False
-        
+        self._change = True
+
+        # Set my voice in the beginning
+        vol = self._tts.volume()
+        rate = self._tts.rate()
+        self._tts.setVoice_(self._myVoice)
+        self._tts.setVolume_(vol)
+        self._tts.setRate_(rate)
+
         while self._grabbingSpeech and self._running:
             self.generatorLock.lock()
             if self._speechGenerator is not None:
                 for speech in self._speechGenerator:
+
+                    if self._change:
+                        self._tts.setRate_(self._myRate)
+                        self._tts.setVolume_(self._myVolume)
+                        self._change = False
+
                     self._currentLabel = speech[1]
                     self._tts.startSpeakingString_(speech[0])
                     self._currentStream += 1
@@ -179,6 +194,7 @@ class NSSpeechSynthesizerDriver(NSObject):
         
         #print 'driver: done!'
         self._done = True
+        self._change = False
         
         return
 
