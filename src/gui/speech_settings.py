@@ -136,6 +136,7 @@ class SpeechSettings(QDialog):
         self.ui.mathLibraryTree.setVisible(self._mathControlsVisible)
         self.ui.languageLabel.setVisible(self._mathControlsVisible)
         self.ui.libraryLabel.setVisible(self._mathControlsVisible)
+        self.ui.scrollAreaWidgetContents.updateGeometry()
 
     def filterPatterns(self, mathLibrary):
         '''
