@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/mainwindow.ui'
 #
-# Created: Fri May 30 14:27:21 2014
+# Created: Wed Jun 04 11:32:14 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -472,7 +472,7 @@ class Ui_MainWindow(object):
         self.menuHelp.setTitle(_translate("MainWindow", "Help", None))
         self.actionOpen_Docx.setText(_translate("MainWindow", "&Open Word Document", None))
         self.actionOpen_Docx.setShortcut(_translate("MainWindow", "Ctrl+O", None))
-        self.actionOpen_Pattern_Editor.setText(_translate("MainWindow", "&Open Pattern Editor...", None))
+        self.actionOpen_Pattern_Editor.setText(_translate("MainWindow", "&Math Library Development Environment", None))
         self.actionShow_All_MathML.setText(_translate("MainWindow", "&Show All MathML...", None))
         self.actionQuit.setText(_translate("MainWindow", "&Quit", None))
         self.actionQuit.setShortcut(_translate("MainWindow", "Ctrl+Q", None))

@@ -240,7 +240,7 @@
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0">
+          <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0">
            <item>
             <widget class="QLabel" name="libraryLabel">
              <property name="text">
@@ -280,6 +280,13 @@
               </size>
              </property>
             </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="openMLDEButton">
+             <property name="text">
+              <string>Open MLDE</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -336,6 +343,13 @@
           <widget class="QCheckBox" name="ignoreAltTextCheckBox">
            <property name="text">
             <string>Ignore Alternate Text</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="tableOfContentsCheckBox">
+           <property name="text">
+            <string>Add TOC To HTML</string>
            </property>
           </widget>
          </item>

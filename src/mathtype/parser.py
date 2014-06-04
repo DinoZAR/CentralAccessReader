@@ -119,7 +119,7 @@ def parseWMF(wmfFile, debug=False):
     except Exception as ex:
         raise MathTypeParseError('', traceback.format_exc())
     
-def parseOLE(oleFile, debug=True):
+def parseOLE(oleFile, debug=False):
     '''
     Parses a MathType object from an OLE compound file. Returns the MathML
     associated with it.
@@ -133,7 +133,7 @@ def parseOLE(oleFile, debug=True):
     if ole.exists(OLE_OBJECT_NAME):
         if debug: print 'Math size:', ole.get_size(OLE_OBJECT_NAME)
         mathStream = ole.openstream(OLE_OBJECT_NAME)
-        mathData = mathStream.read()[OLE_HEADER_LENGTH:]
+        mathData = mathStream.read()[OLE_HEADER_LENGTH:]  # Data is after the OLE header
         if debug: print 'Math data:', mathData
         ole.close()
         return parseMTEF(mathData, debug)

@@ -781,7 +781,7 @@
   </action>
   <action name="actionOpen_Pattern_Editor">
    <property name="text">
-    <string>&amp;Open Pattern Editor...</string>
+    <string>&amp;Math Library Development Environment</string>
    </property>
   </action>
   <action name="actionShow_All_MathML">

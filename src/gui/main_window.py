@@ -82,6 +82,8 @@ class MainWindow(QtGui.QMainWindow):
         menu.addAction('Save All', self.saveMP3All)
         menu.addAction('Save Selection', self.saveMP3Selection)
         menu.addAction('Save By Page', self.saveMP3ByPage)
+        menu.addSeparator()
+        menu.addAction('Export To HTML', self.exportToHTML)
         self.ui.saveToMP3Button.setMenu(menu)
         
         # Set the path for the web cache to save at temp
@@ -301,6 +303,8 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.pagesTreeView.clicked.connect(self.pagesTree_clicked)
         self.ui.bookmarkZoomInButton.clicked.connect(self.bookmarkZoomInButton_clicked)
         self.ui.bookmarkZoomOutButton.clicked.connect(self.bookmarkZoomOutButton_clicked)
+
+        self.ui.navigationTabWidget.currentChanged.connect(self.currentNavigationItemChanged)
         
     def updateSettings(self):
         
@@ -461,7 +465,8 @@ class MainWindow(QtGui.QMainWindow):
 
         if self.colorSettingsPane is None:
             self.colorSettingsPane = ColorSettings(self)
-            self.ui.navigationTabWidget.addTab(self.colorSettingsPane, QIcon(':/classic/icons/color_settings_classic.png'), 'Color')
+            #self.ui.navigationTabWidget.addTab(self.colorSettingsPane, QIcon(':/classic/icons/color_settings_classic.png'), 'Color')
+            self.ui.navigationTabWidget.addTab(self.colorSettingsPane, 'Color')
             self.ui.navigationTabWidget.setCurrentWidget(self.colorSettingsPane)
         else:
             if self.colorSettingsPane != self.ui.navigationTabWidget.currentWidget():
@@ -479,7 +484,8 @@ class MainWindow(QtGui.QMainWindow):
 
         if self.speechSettingsPane is None:
             self.speechSettingsPane = SpeechSettings(self)
-            self.ui.navigationTabWidget.addTab(self.speechSettingsPane, QIcon(':/classic/icons/speech_settings_classic.png'), 'General')
+            #self.ui.navigationTabWidget.addTab(self.speechSettingsPane, QIcon(':/classic/icons/speech_settings_classic.png'), 'General')
+            self.ui.navigationTabWidget.addTab(self.speechSettingsPane, 'General')
             self.ui.navigationTabWidget.setCurrentWidget(self.speechSettingsPane)
         else:
             if self.speechSettingsPane != self.ui.navigationTabWidget.currentWidget():
@@ -882,6 +888,20 @@ class MainWindow(QtGui.QMainWindow):
         
     def collapseBookmarksButton_clicked(self):
         self.ui.bookmarksTreeView.collapseAll()
+
+    def currentNavigationItemChanged(self, newIndex):
+        w = self.ui.navigationTabWidget.widget(newIndex)
+
+        # Enable/disable the zoom buttons depending on whether the current
+        # widget can be zoomed in/out
+        enable = True
+        from src.gui.speech_settings import SpeechSettings
+        from src.gui.color_settings import ColorSettings
+        if isinstance(w, SpeechSettings) or isinstance(w, ColorSettings):
+            enable = False
+
+        self.ui.bookmarkZoomInButton.setVisible(enable)
+        self.ui.bookmarkZoomOutButton.setVisible(enable)
         
     def toggleNavigationPane(self, isOn):
         

@@ -575,6 +575,18 @@ color: ''' + highlightTextColor + ''';
 display: inline-block;
 z-index: 2;
 }
+
+.table-of-contents
+{
+border: 1px dashed white;
+padding: 1em;
+}
+
+.table-of-contents h1
+{
+text-align: left;
+font-size: 1.5em;
+}
 '''
     # -------------------------------------------
     # END CSS FILE

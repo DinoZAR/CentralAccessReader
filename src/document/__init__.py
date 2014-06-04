@@ -149,6 +149,9 @@ class Document(object):
         self._mathParserThread.stop()
         
     def _prepareHead(self, head, mathOutput):
+        '''
+        Makes the elements that go inside of the <head> element.
+        '''
         mathjaxConfig = HTML.Element('script')
         mathjaxConfig.set('type', 'text/x-mathjax-config')
         mathjaxConfigFile = ''

@@ -95,7 +95,6 @@
     </property>
     <addaction name="actionNew_Library"/>
     <addaction name="actionOpen_Library"/>
-    <addaction name="actionCreate_Copy_From_Default"/>
     <addaction name="separator"/>
     <addaction name="actionNew_Pattern"/>
     <addaction name="actionOpen_Pattern"/>

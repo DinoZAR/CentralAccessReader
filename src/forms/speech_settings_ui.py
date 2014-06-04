@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/speech_settings.ui'
 #
-# Created: Tue Jun 03 09:06:07 2014
+# Created: Wed Jun 04 11:58:02 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -148,6 +148,9 @@ class Ui_SpeechSettings(object):
         self.horizontalLayout.addWidget(self.mathRemoveButton)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
+        self.openMLDEButton = QtGui.QPushButton(self.scrollAreaWidgetContents)
+        self.openMLDEButton.setObjectName(_fromUtf8("openMLDEButton"))
+        self.horizontalLayout.addWidget(self.openMLDEButton)
         self.verticalLayout_2.addLayout(self.horizontalLayout)
         self.mathLibraryTree = QtGui.QTreeView(self.scrollAreaWidgetContents)
         self.mathLibraryTree.setMinimumSize(QtCore.QSize(0, 200))
@@ -174,6 +177,9 @@ class Ui_SpeechSettings(object):
         self.ignoreAltTextCheckBox = QtGui.QCheckBox(self.scrollAreaWidgetContents)
         self.ignoreAltTextCheckBox.setObjectName(_fromUtf8("ignoreAltTextCheckBox"))
         self.verticalLayout.addWidget(self.ignoreAltTextCheckBox)
+        self.tableOfContentsCheckBox = QtGui.QCheckBox(self.scrollAreaWidgetContents)
+        self.tableOfContentsCheckBox.setObjectName(_fromUtf8("tableOfContentsCheckBox"))
+        self.verticalLayout.addWidget(self.tableOfContentsCheckBox)
         self.verticalLayout_9.addLayout(self.verticalLayout)
         spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_9.addItem(spacerItem1)
@@ -204,10 +210,12 @@ class Ui_SpeechSettings(object):
         self.mathAddButton.setText(_translate("SpeechSettings", "+", None))
         self.mathRemoveButton.setToolTip(_translate("SpeechSettings", "Removes current math library.", None))
         self.mathRemoveButton.setText(_translate("SpeechSettings", "-", None))
+        self.openMLDEButton.setText(_translate("SpeechSettings", "Open MLDE", None))
         self.label_4.setText(_translate("SpeechSettings", "Tag", None))
         self.imageTagCheckBox.setText(_translate("SpeechSettings", "Image", None))
         self.mathTagCheckBox.setText(_translate("SpeechSettings", "Math", None))
         self.ignoreAltTextCheckBox.setText(_translate("SpeechSettings", "Ignore Alternate Text", None))
+        self.tableOfContentsCheckBox.setText(_translate("SpeechSettings", "Add TOC To HTML", None))
         self.restoreButton.setToolTip(_translate("SpeechSettings", "Restores settings to default values", None))
         self.restoreButton.setText(_translate("SpeechSettings", "Restore to Default Settings", None))
 

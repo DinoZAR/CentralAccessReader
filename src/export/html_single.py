@@ -51,10 +51,14 @@ class HTMLSingleExportThread(ExportThread):
         
     def run(self):
         super(HTMLSingleExportThread, self).run()
+
+        mainHtml = html.fromstring(self._document.getMainPage(mathOutput='svg'))
+
+        self._createTableOfContents(mainHtml)
         
         # Regenerate the content to use SVGs. They render better and more
         # consistently.
-        headlessRender = HeadlessRendererThread(self._document.getMainPage(mathOutput='svg'))
+        headlessRender = HeadlessRendererThread(html.tostring(mainHtml))
         headlessRender.progress.connect(self._myOnProgress)
         headlessRender.start()
         while headlessRender.isRunning():
@@ -91,6 +95,77 @@ class HTMLSingleExportThread(ExportThread):
         if (myPercent != self._lastProgress) or alwaysUpdate:
             self._lastProgress = myPercent
             self.progress.emit(myPercent, label)
+
+    def _createTableOfContents(self, myHtml):
+        '''
+        Create a table of contents.
+        '''
+        # Generate a table of contents from the headings
+        headingMap = {'h1': 1,
+                      'h2': 2,
+                      'h3': 3,
+                      'h4': 4,
+                      'h5': 5}
+        headings = []
+        leastHeadingLevel = 500000
+        for ev, elem in etree.iterwalk(myHtml, events=('end',)):
+            if elem.tag in headingMap:
+                headings.append((headingMap[elem.tag], self._getTextInsideElement(elem), elem))
+                if headingMap[elem.tag] < leastHeadingLevel:
+                    leastHeadingLevel = headingMap[elem.tag]
+
+        navRoot = html.Element('nav')
+        navRoot.set('role', 'navigation')
+        navRoot.set('class', 'table-of-contents')
+
+        # Check if need warning about page number conversion
+        query = myHtml.find(".//p[@class='pageNumber']")
+        if query is not None:
+            elem = html.Element('p')
+            elem.text = 'NOTE: Page numbers have been converted to heading 6'
+            navRoot.append(elem)
+
+        elem = html.Element('h1')
+        elem.text = 'Contents:'
+        navRoot.append(elem)
+
+        elem = html.Element('ul')
+        navRoot.append(elem)
+
+        currentLevel = 1
+        headingId = 0
+        parent = elem
+        for h in headings:
+
+            # Indent/deindent to right level
+            while h[0] != currentLevel:
+                if currentLevel < h[0]:
+                    elem = html.Element('ul')
+                    parent.append(elem)
+                    parent = elem
+                    currentLevel += 1
+
+                if currentLevel > h[0]:
+                    parent = parent.getparent()
+                    currentLevel -= 1
+
+
+            # Make element for the thing
+            elem = html.Element('li')
+            link = html.Element('a')
+            link.set('href', '#heading' + str(headingId))
+            elem.append(link)
+            link.text = h[1]
+
+            # Set the link
+            link.set('href', '#heading' + str(headingId))
+            h[2].set('id', 'heading' + str(headingId))
+            headingId += 1
+
+            parent.append(elem)
+
+        # Insert TOC into document
+        myHtml.insert(0, navRoot)
     
     def _convertPageNumbersToH6(self, myHtml):
         '''
@@ -370,10 +445,11 @@ class HTMLSingleExportThread(ExportThread):
         '''
         Embeds the CSS into the HTML.
         '''
-        cssLinks = myHtml.xpath(r".//head/link[@rel='stylesheet']")
-        head = myHtml.xpath(r".//head")[0]
+        cssLinks = myHtml.findall(".//link[@rel='stylesheet']")
+        head = myHtml.find(".//head")
         
         for css in cssLinks:
+            print
             
             # Download the stylesheet        
             f = urllib2.urlopen(css.get('href'))
@@ -417,3 +493,15 @@ class HTMLSingleExportThread(ExportThread):
         dataString += contents
         
         return dataString
+
+    def _getTextInsideElement(self, elem):
+        myText = ''
+        if elem.text is not None:
+            myText += elem.text
+
+        for c in elem:
+            myText += self._getTextInsideElement(c)
+            if c.tail is not None:
+                myText += c.tail
+
+        return myText

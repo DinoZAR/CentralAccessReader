@@ -27,6 +27,7 @@ class NewMathLibraryDialog(QDialog):
         self._treeModel = GeneralTree(getLibraries())
         self._treeModel.addDisplayRule(1, lambda x: x.name)
         self.ui.copyFromTree.setModel(self._treeModel)
+        self.ui.copyFromTree.setVisible(False)
 
         # Set the language combo box
         self.ui.languageCombo.blockSignals(True)
@@ -39,7 +40,11 @@ class NewMathLibraryDialog(QDialog):
         self.library = None
 
     def connect_signals(self):
+        self.ui.copyFromRadio.toggled.connect(self.setCopyFromTreeVisibility)
         self.ui.createButton.clicked.connect(self.finish)
+
+    def setCopyFromTreeVisibility(self, isPressed):
+        self.ui.copyFromTree.setVisible(isPressed)
 
     def finish(self):
 

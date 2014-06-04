@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/math_library_dev.ui'
 #
-# Created: Wed May 28 11:56:24 2014
+# Created: Wed Jun 04 11:40:23 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -93,7 +93,6 @@ class Ui_MathLibraryDev(object):
         self.actionCreate_Copy_From_Default.setObjectName(_fromUtf8("actionCreate_Copy_From_Default"))
         self.menuFile.addAction(self.actionNew_Library)
         self.menuFile.addAction(self.actionOpen_Library)
-        self.menuFile.addAction(self.actionCreate_Copy_From_Default)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionNew_Pattern)
         self.menuFile.addAction(self.actionOpen_Pattern)
