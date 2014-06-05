@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/math_library_dev.ui'
 #
-# Created: Wed Jun 04 11:40:23 2014
+# Created: Thu Jun 05 16:19:45 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -70,6 +70,8 @@ class Ui_MathLibraryDev(object):
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))
+        self.menuInstalled_Libraries = QtGui.QMenu(self.menuFile)
+        self.menuInstalled_Libraries.setObjectName(_fromUtf8("menuInstalled_Libraries"))
         self.menuMathML = QtGui.QMenu(self.menubar)
         self.menuMathML.setObjectName(_fromUtf8("menuMathML"))
         MathLibraryDev.setMenuBar(self.menubar)
@@ -89,18 +91,23 @@ class Ui_MathLibraryDev(object):
         self.actionQuit.setObjectName(_fromUtf8("actionQuit"))
         self.actionFrom_Clipboard = QtGui.QAction(MathLibraryDev)
         self.actionFrom_Clipboard.setObjectName(_fromUtf8("actionFrom_Clipboard"))
-        self.actionCreate_Copy_From_Default = QtGui.QAction(MathLibraryDev)
-        self.actionCreate_Copy_From_Default.setObjectName(_fromUtf8("actionCreate_Copy_From_Default"))
+        self.actionInstall_Library_Into_CAR = QtGui.QAction(MathLibraryDev)
+        self.actionInstall_Library_Into_CAR.setObjectName(_fromUtf8("actionInstall_Library_Into_CAR"))
+        self.actionThings = QtGui.QAction(MathLibraryDev)
+        self.actionThings.setObjectName(_fromUtf8("actionThings"))
+        self.actionExport = QtGui.QAction(MathLibraryDev)
+        self.actionExport.setObjectName(_fromUtf8("actionExport"))
+        self.menuInstalled_Libraries.addAction(self.actionThings)
         self.menuFile.addAction(self.actionNew_Library)
+        self.menuFile.addSeparator()
+        self.menuFile.addAction(self.menuInstalled_Libraries.menuAction())
         self.menuFile.addAction(self.actionOpen_Library)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionNew_Pattern)
         self.menuFile.addAction(self.actionOpen_Pattern)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionSave)
-        self.menuFile.addAction(self.actionSave_As)
-        self.menuFile.addSeparator()
-        self.menuFile.addAction(self.actionQuit)
+        self.menuFile.addAction(self.actionExport)
         self.menuMathML.addAction(self.actionFrom_Clipboard)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuMathML.menuAction())
@@ -115,10 +122,11 @@ class Ui_MathLibraryDev(object):
         self.libraryTabs.setTabText(self.libraryTabs.indexOf(self.tab), _translate("MathLibraryDev", "Tab 1", None))
         self.libraryTabs.setTabText(self.libraryTabs.indexOf(self.tab_2), _translate("MathLibraryDev", "Tab 2", None))
         self.menuFile.setTitle(_translate("MathLibraryDev", "File", None))
+        self.menuInstalled_Libraries.setTitle(_translate("MathLibraryDev", "Open Installed Library", None))
         self.menuMathML.setTitle(_translate("MathLibraryDev", "MathML", None))
         self.actionNew_Library.setText(_translate("MathLibraryDev", "New Library", None))
         self.actionNew_Library.setShortcut(_translate("MathLibraryDev", "Ctrl+Shift+N", None))
-        self.actionOpen_Library.setText(_translate("MathLibraryDev", "Open Library", None))
+        self.actionOpen_Library.setText(_translate("MathLibraryDev", "Open Library From File", None))
         self.actionOpen_Library.setShortcut(_translate("MathLibraryDev", "Ctrl+Shift+O", None))
         self.actionNew_Pattern.setText(_translate("MathLibraryDev", "New Pattern", None))
         self.actionNew_Pattern.setShortcut(_translate("MathLibraryDev", "Ctrl+N", None))
@@ -131,7 +139,9 @@ class Ui_MathLibraryDev(object):
         self.actionQuit.setText(_translate("MathLibraryDev", "Quit", None))
         self.actionFrom_Clipboard.setText(_translate("MathLibraryDev", "From Clipboard", None))
         self.actionFrom_Clipboard.setShortcut(_translate("MathLibraryDev", "Ctrl+Shift+V", None))
-        self.actionCreate_Copy_From_Default.setText(_translate("MathLibraryDev", "Create Copy From Default", None))
+        self.actionInstall_Library_Into_CAR.setText(_translate("MathLibraryDev", "Install Library Into CAR", None))
+        self.actionThings.setText(_translate("MathLibraryDev", "Things", None))
+        self.actionExport.setText(_translate("MathLibraryDev", "Export...", None))
 
 from gui.mathml_editor import MathMLEditor
 import resource_rc

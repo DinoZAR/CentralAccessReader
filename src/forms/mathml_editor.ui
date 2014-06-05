@@ -22,7 +22,7 @@
      <property name="handleWidth">
       <number>10</number>
      </property>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QLabel" name="label">
@@ -37,7 +37,14 @@
       </layout>
      </widget>
      <widget class="QWidget" name="layoutWidget">
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1,0">
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Display:</string>
+         </property>
+        </widget>
+       </item>
        <item>
         <widget class="QWebView" name="webView">
          <property name="url">

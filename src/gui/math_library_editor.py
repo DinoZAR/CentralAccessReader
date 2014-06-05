@@ -81,12 +81,12 @@ class MathLibraryEditor(QWidget):
         else:
             self.library.write(self.library.filePath)
             
-    def saveAs(self):
+    def export(self):
         '''
         Saves the library to file. It asks the user where they want to save
         the library.
         '''
-        myPath = unicode(QFileDialog.getSaveFileName(self, 'Save Math Library',
+        myPath = unicode(QFileDialog.getSaveFileName(self, 'Export Math Library',
                                                      os.path.expanduser('~/Desktop'),
                                                      'Library (*.mathlib)'))
         if len(myPath) > 0:

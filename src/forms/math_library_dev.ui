@@ -93,16 +93,22 @@
     <property name="title">
      <string>File</string>
     </property>
+    <widget class="QMenu" name="menuInstalled_Libraries">
+     <property name="title">
+      <string>Open Installed Library</string>
+     </property>
+     <addaction name="actionThings"/>
+    </widget>
     <addaction name="actionNew_Library"/>
+    <addaction name="separator"/>
+    <addaction name="menuInstalled_Libraries"/>
     <addaction name="actionOpen_Library"/>
     <addaction name="separator"/>
     <addaction name="actionNew_Pattern"/>
     <addaction name="actionOpen_Pattern"/>
     <addaction name="separator"/>
     <addaction name="actionSave"/>
-    <addaction name="actionSave_As"/>
-    <addaction name="separator"/>
-    <addaction name="actionQuit"/>
+    <addaction name="actionExport"/>
    </widget>
    <widget class="QMenu" name="menuMathML">
     <property name="title">
@@ -123,7 +129,7 @@
   </action>
   <action name="actionOpen_Library">
    <property name="text">
-    <string>Open Library</string>
+    <string>Open Library From File</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+O</string>
@@ -174,9 +180,19 @@
     <string>Ctrl+Shift+V</string>
    </property>
   </action>
-  <action name="actionCreate_Copy_From_Default">
+  <action name="actionInstall_Library_Into_CAR">
    <property name="text">
-    <string>Create Copy From Default</string>
+    <string>Install Library Into CAR</string>
+   </property>
+  </action>
+  <action name="actionThings">
+   <property name="text">
+    <string>Things</string>
+   </property>
+  </action>
+  <action name="actionExport">
+   <property name="text">
+    <string>Export...</string>
    </property>
   </action>
  </widget>

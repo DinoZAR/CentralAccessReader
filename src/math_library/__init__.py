@@ -2,6 +2,7 @@
 @author: Spencer Graffe
 '''
 import os
+import base64
 
 from src.math_library.library import MathLibrary
 from src.misc import program_path, app_data_path
@@ -61,7 +62,7 @@ def getLibraryFromPath(path):
 
     return (myLib, myPattern)
 
-def saveCustomLibrary(mathLibFilePath, replace=False):
+def saveCustomLibrary(mathLib, replace=False):
     '''
     Saves the custom library to the user's private collection. If the name of
     the library exists in the collection, it will return the offending
@@ -70,25 +71,20 @@ def saveCustomLibrary(mathLibFilePath, replace=False):
     Returns None if replace was successful.
     '''
 
-    fileName = os.path.basename(mathLibFilePath)
-
     if not os.path.exists(CUSTOM_DIR):
         os.makedirs(CUSTOM_DIR)
 
     # Check to see if the library with the same name already exists
-    myLib = MathLibrary(mathLibFilePath)
     for lib in getLibraries():
-        if myLib.name == lib.name:
+        if mathLib.name == lib.name:
             if lib.builtIn:
                 raise ValueError('{0} is the name of a built-in library, which cannot be replaced.'.format(lib.name))
             if not replace:
                 return lib
-            else:
-                os.remove(lib.filePath)
 
-    with open(mathLibFilePath, 'rb') as f1:
-        with open(os.path.join(CUSTOM_DIR, fileName), 'wb') as f2:
-            f2.write(f1.read())
+    # File name is Base64 encoded so that the name is always path-safe
+    filePath = os.path.join(CUSTOM_DIR, base64.urlsafe_b64encode(mathLib.name) + '.mathlib')
+    mathLib.write(filePath)
 
     return None
 

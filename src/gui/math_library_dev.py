@@ -5,12 +5,14 @@ Created on May 20, 2014
 '''
 import os
 
-from PyQt4.QtGui import QMainWindow, QApplication, QFileDialog, QMessageBox, qApp
+from PyQt4.QtCore import QObject
+from PyQt4.QtGui import QMainWindow, QApplication, QFileDialog, QMessageBox, qApp, QAction
 
 from src.forms.math_library_dev_ui import Ui_MathLibraryDev
 from src.gui.math_library_editor import MathLibraryEditor
 from src.gui.math_library_new import NewMathLibraryDialog
 from src.gui import configuration
+from src import math_library
 from src.math_library.library import MathLibrary
 try:
     from src.math_to_prose_fast.tts import MathTTS
@@ -62,6 +64,9 @@ class MathLibraryDev(QMainWindow):
 
         # Clear the tabs
         self.ui.libraryTabs.clear()
+
+        # Update my list of installed libraries into the menu
+        self.updateInstalledLibraryList()
         
         self.connect_signals()
     
@@ -69,11 +74,12 @@ class MathLibraryDev(QMainWindow):
         # File menu
         self.ui.actionNew_Library.triggered.connect(self.newLibrary)
         self.ui.actionOpen_Library.triggered.connect(self.openLibrary)
-        self.ui.actionSave.triggered.connect(self.saveCurrent)
-        self.ui.actionSave_As.triggered.connect(self.saveAsCurrent)
         
         self.ui.actionNew_Pattern.triggered.connect(self.newPattern)
         self.ui.actionOpen_Pattern.triggered.connect(self.openPattern)
+
+        self.ui.actionSave.triggered.connect(self.saveCurrent)
+        self.ui.actionExport.triggered.connect(self.exportCurrent)
         
         # MathML menu
         self.ui.actionFrom_Clipboard.triggered.connect(self.importMathFromClipboard)
@@ -152,14 +158,31 @@ class MathLibraryDev(QMainWindow):
         Saves the current library.
         '''
         if self.currentLibraryEditor() is not None:
-            self.currentLibraryEditor().save()
+            result = QMessageBox.question(self, 'Install Math Library', 'Want to install {0} into CAR?'.format(self.currentLibraryEditor().library.name), QMessageBox.Yes | QMessageBox.No)
 
-    def saveAsCurrent(self):
+            if result == QMessageBox.Yes:
+                try:
+                    myLib = self.currentLibraryEditor().library
+                    badLib = math_library.saveCustomLibrary(myLib)
+                    if badLib is not None:
+                        result = QMessageBox.question(self, 'Replace Math Library?', '{0} already exists. Want to replace it?'.format(badLib.name), QMessageBox.Yes | QMessageBox.No)
+                        if result == QMessageBox.Yes:
+                            math_library.saveCustomLibrary(myLib, replace=True)
+                            QMessageBox.information(self, 'Math Library Installed', '{0} was installed successfully.'.format(self.currentLibraryEditor().library.name), QMessageBox.Ok)
+                    else:
+                        QMessageBox.information(self, 'Math Library Installed', '{0} was installed successfully.'.format(self.currentLibraryEditor().library.name), QMessageBox.Ok)
+
+                except ValueError as ex:
+                    QMessageBox.information(self, 'Can\'t Add Library', ex.message, QMessageBox.Ok)
+
+            self.updateInstalledLibraryList()
+
+    def exportCurrent(self):
         '''
-        Saves the current library using Save As.
+        Exports the current library to file
         '''
         if self.currentLibraryEditor() is not None:
-            self.currentLibraryEditor().saveAs()
+            self.currentLibraryEditor().export()
 
     def runCurrentLibrary(self):
         '''
@@ -186,6 +209,28 @@ class MathLibraryDev(QMainWindow):
                 self.ui.proseOutput.setText('')
         else:
             self.ui.proseOutput.setText('')
+
+    def updateInstalledLibraryList(self):
+        '''
+        Updates the installed library list for the menu item.
+        '''
+        self.ui.menuInstalled_Libraries.clear()
+        for lib in math_library.getLibraries():
+            myAction = QAction(self)
+            if lib.builtIn:
+                myAction.setText(lib.name + ' (default)')
+            else:
+                myAction.setText(lib.name)
+            myAction.setData(lib)
+            myAction.triggered.connect(self.openInstalledLibrary)
+            self.ui.menuInstalled_Libraries.addAction(myAction)
+
+    def openInstalledLibrary(self):
+        myLib = self.sender().data().toPyObject()
+        w = MathLibraryEditor(library=myLib)
+        w.nameChanged.connect(self._updateLibraryName)
+        self.ui.libraryTabs.addTab(w, w.name)
+        self.ui.libraryTabs.setCurrentWidget(w)
     
     def _updateLibraryName(self, editor, name):
         i = self.ui.libraryTabs.indexOf(editor)

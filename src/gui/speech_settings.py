@@ -13,6 +13,7 @@ from src.gui import configuration
 from src.gui.general_tree import GeneralTree
 from src.gui.math_library_dev import MathLibraryDev
 from src import math_library
+from src.math_library.library import MathLibrary
 from src import languages
 
 class SpeechSettings(QDialog):
@@ -213,11 +214,12 @@ class SpeechSettings(QDialog):
         newLib = unicode(QFileDialog.getOpenFileName(self, 'Add Math Library', os.path.expanduser('~/Desktop'), 'Math Library (*.mathlib)'))
         if len(newLib) > 0:
             try:
-                badLib = math_library.saveCustomLibrary(newLib)
+                myLib = MathLibrary(newLib)
+                badLib = math_library.saveCustomLibrary(myLib)
                 if badLib is not None:
-                    result = QMessageBox.information(self, 'Replace Math Library?', '{0} already exists. Want to replace it?'.format(badLib.name), QMessageBox.Yes | QMessageBox.No)
+                    result = QMessageBox.question(self, 'Replace Math Library?', '{0} already exists. Want to replace it?'.format(badLib.name), QMessageBox.Yes | QMessageBox.No)
                     if result == QMessageBox.Yes:
-                        math_library.saveCustomLibrary(newLib, replace=True)
+                        math_library.saveCustomLibrary(myLib, replace=True)
             except ValueError as ex:
                 QMessageBox.information(self, 'Can\'t Add Library', ex.message, QMessageBox.Ok)
             self.updateSettings()
@@ -226,7 +228,7 @@ class SpeechSettings(QDialog):
         myPath = self._mathTreeModel.getPathFromIndex(self.ui.mathLibraryTree.currentIndex())
         if len(myPath) == 2:
             myLib = myPath[0]
-            result = QMessageBox.information(self, 'Remove Math Library?', 'Do you want to remove {0}?'.format(myLib.name), QMessageBox.Yes | QMessageBox.No)
+            result = QMessageBox.question(self, 'Remove Math Library?', 'Do you want to remove {0}?'.format(myLib.name), QMessageBox.Yes | QMessageBox.No)
             if result == QMessageBox.Yes:
                 try:
                     math_library.removeLibrary(myLib.name)
