@@ -58,7 +58,7 @@ echo Copying the headless renderer...
 XCOPY src\headless\phantomjs.exe "dist\Central Access Reader\src\headless\" /D /Y /Q
 XCOPY src\headless\render.js "dist\Central Access Reader\src\headless\" /D /Y /Q
 
-:: Copy the math libraries
+:: Copy the built-in math library
 echo Copying the built-in math library...
 XCOPY src\math_library\CAR.mathlib "dist\Central Access Reader\src\math_library\" /D /Y /Q
 

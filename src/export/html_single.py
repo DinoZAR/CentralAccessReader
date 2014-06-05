@@ -54,7 +54,8 @@ class HTMLSingleExportThread(ExportThread):
 
         mainHtml = html.fromstring(self._document.getMainPage(mathOutput='svg'))
 
-        self._createTableOfContents(mainHtml)
+        if configuration.getBool('AddTOC', True):
+            self._createTableOfContents(mainHtml)
         
         # Regenerate the content to use SVGs. They render better and more
         # consistently.

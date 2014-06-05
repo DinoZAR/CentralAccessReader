@@ -4,6 +4,7 @@ Created on Apr 12, 2013
 @author: Spencer Graffe
 '''
 from datetime import datetime
+from threading import Lock
 import base64
 import os
 
@@ -20,16 +21,13 @@ from src.math_library import getLibraryFromPath
     
 # Contains the data for the configuration. The format is as follows:
 #
-# {key : [value, default, isCached, cacheValue, lastCachedValue]}
+# {key : [value, default, cacheValue, lastCachedValue]}
 #
 # value - string representing the value of the key
 # default - string representing the default value of the key
 # cacheValue - object representing the value for the key
 # lastCachedValue - string representing the value for when the cache was
 #                   generated.
-#
-# NOTE: The cache is not created on load. The underlying function must manage
-# the cache.
 
 _CONFIG_DATA = {}
 
@@ -144,8 +142,9 @@ def getMathTTS(key, defaultValue=None):
     defaultValue is assumed to be a path to a pattern in a math library, which
     is a list of strings with names, e.g., ['CAR, 'General']
     '''
+
     myPath = getMathPatternPath(key, defaultValue)
-    
+
     # Check if value is same as cache value. If not, the math database must
     # be regenerated
     if _CONFIG_DATA[key][INDEX_VALUE] != _CONFIG_DATA[key][INDEX_LAST_CACHED_VALUE]:

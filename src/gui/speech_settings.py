@@ -11,6 +11,7 @@ from PyQt4.QtCore import Qt
 from src.forms.speech_settings_ui import Ui_SpeechSettings
 from src.gui import configuration
 from src.gui.general_tree import GeneralTree
+from src.gui.math_library_dev import MathLibraryDev
 from src import math_library
 from src import languages
 
@@ -30,6 +31,8 @@ class SpeechSettings(QDialog):
         self._mathControlsVisible = False
         self.setMathControlsVisible()
 
+        self.mldeWindow = None
+
         # Update the GUI to match the settings currently employed
         self.updateSettings()
             
@@ -45,6 +48,7 @@ class SpeechSettings(QDialog):
         self.ui.mathLibraryTree.clicked.connect(self.mathLibraryTree_clicked)
         self.ui.mathAddButton.clicked.connect(self.mathAddButton_clicked)
         self.ui.mathRemoveButton.clicked.connect(self.mathRemoveButton_clicked)
+        self.ui.openMLDEButton.clicked.connect(self.openMLDEButton_clicked)
 
         self.ui.mathLibraryDisplay.mousePressEvent = self.mathLibraryDisplay_mousePressed
         self.ui.mathLibraryDisplay.keyPressEvent = self.mathLibraryDisplay_keyPressed
@@ -54,6 +58,7 @@ class SpeechSettings(QDialog):
         self.ui.imageTagCheckBox.stateChanged.connect(self.imageTagCheckBox_stateChanged)
         self.ui.mathTagCheckBox.stateChanged.connect(self.mathTagCheckBox_stateChanged)
         self.ui.ignoreAltTextCheckBox.stateChanged.connect(self.ignoreAltTextCheckBox_stateChanged)
+        self.ui.tableOfContentsCheckBox.stateChanged.connect(self.tableOfContentsCheckBox_stateChanged)
         
     def updateSettings(self):
         # Update main window sliders to match
@@ -65,6 +70,7 @@ class SpeechSettings(QDialog):
         self.ui.imageTagCheckBox.setChecked(configuration.getBool('TagImage', False))
         self.ui.mathTagCheckBox.setChecked(configuration.getBool('TagMath', False))
         self.ui.ignoreAltTextCheckBox.setChecked(configuration.getBool('IgnoreAltText', False))
+        self.ui.tableOfContentsCheckBox.setChecked(configuration.getBool('AddTOC', True))
         
         # Get a list of voices to add to the voice combo box
         voiceList = self.mainWindow.speechThread.getVoiceList()
@@ -121,6 +127,7 @@ class SpeechSettings(QDialog):
 
         # Cache the math TTS if I haven't already
         self.ui.mathLibraryDisplay.setText('Loading math library...')
+
         qApp.processEvents()
         configuration.getMathTTS('MathTTS')
 
@@ -133,6 +140,7 @@ class SpeechSettings(QDialog):
         self.ui.mathLanguageCombo.setVisible(self._mathControlsVisible)
         self.ui.mathAddButton.setVisible(self._mathControlsVisible)
         self.ui.mathRemoveButton.setVisible(self._mathControlsVisible)
+        self.ui.openMLDEButton.setVisible(self._mathControlsVisible)
         self.ui.mathLibraryTree.setVisible(self._mathControlsVisible)
         self.ui.languageLabel.setVisible(self._mathControlsVisible)
         self.ui.libraryLabel.setVisible(self._mathControlsVisible)
@@ -241,12 +249,23 @@ class SpeechSettings(QDialog):
     def mathLibraryDisplay_enter(self, ev):
         self._previousDisplayValue = self.ui.mathLibraryDisplay.text()
         if not self._mathControlsVisible:
-            self.ui.mathLibraryDisplay.setText('Click to change!')
+            self.ui.mathLibraryDisplay.setText('+ ' + self._previousDisplayValue)
         else:
-            self.ui.mathLibraryDisplay.setText('Click to hide!')
+            self.ui.mathLibraryDisplay.setText('- ' + self._previousDisplayValue)
 
     def mathLibraryDisplay_leave(self, ev):
         self.ui.mathLibraryDisplay.setText(self._previousDisplayValue)
+
+    def openMLDEButton_clicked(self):
+        if self.mldeWindow is None:
+            self.mldeWindow = MathLibraryDev()
+            self.mldeWindow.show()
+        elif not self.mldeWindow.isVisible():
+            self.mldeWindow = MathLibraryDev()
+            self.mldeWindow.show()
+        else:
+            self.mldeWindow.raise_()
+            self.mldeWindow.activateWindow()
 
     def requestMoreSpeech(self):
         self.mainWindow.noMoreSpeech.emit()
@@ -268,3 +287,9 @@ class SpeechSettings(QDialog):
             configuration.setBool('IgnoreAltText', True)
         else:
             configuration.setBool('IgnoreAltText', False)
+
+    def tableOfContentsCheckBox_stateChanged(self, state):
+        if state == Qt.Checked:
+            configuration.setBool('AddTOC', True, defaultValue=True)
+        else:
+            configuration.setBool('AddTOC', False, defaultValue=True)
