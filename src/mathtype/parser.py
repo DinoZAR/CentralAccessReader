@@ -208,7 +208,6 @@ def _combineNumbers(mathml):
         # Mutate the node to turn it into a <mn>
         if '}' in mathml.tag:
             namespace = mathml.tag.rsplit('}')[0] + '}'
-            print 'Setting MathML tag to:', namespace + 'mn'
             mathml.tag = namespace + 'mn'
         else:
             mathml.tag = 'mn'
