@@ -25,6 +25,24 @@ class MathLibraryDev(QMainWindow):
     create and modify their own.
     '''
 
+    _myInstance = None
+
+    @staticmethod
+    def getInstance():
+        '''
+        Get a MathLibraryDev instance. It will create a new one if it was made
+        invisible. This makes sure that there is only one of them.
+        '''
+        if MathLibraryDev._myInstance is None:
+            MathLibraryDev._myInstance = MathLibraryDev()
+        elif not MathLibraryDev._myInstance.isVisible():
+            MathLibraryDev._myInstance = MathLibraryDev()
+        else:
+            MathLibraryDev._myInstance.raise_()
+            MathLibraryDev._myInstance.activateWindow()
+
+        return MathLibraryDev._myInstance
+
     def __init__(self, parent=None):
         super(MathLibraryDev, self).__init__(parent)
         

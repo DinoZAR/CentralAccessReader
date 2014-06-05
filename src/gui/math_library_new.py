@@ -25,7 +25,12 @@ class NewMathLibraryDialog(QDialog):
 
         # Set the tree that displays the possible patterns
         self._treeModel = GeneralTree(getLibraries())
-        self._treeModel.addDisplayRule(1, lambda x: x.name)
+        def displayName(mathLib):
+            name = mathLib.name
+            if mathLib.builtIn:
+                name += ' (default)'
+            return name
+        self._treeModel.addDisplayRule(1, displayName)
         self.ui.copyFromTree.setModel(self._treeModel)
         self.ui.copyFromTree.setVisible(False)
 

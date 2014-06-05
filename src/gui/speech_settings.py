@@ -31,8 +31,6 @@ class SpeechSettings(QDialog):
         self._mathControlsVisible = False
         self.setMathControlsVisible()
 
-        self.mldeWindow = None
-
         # Update the GUI to match the settings currently employed
         self.updateSettings()
             
@@ -257,15 +255,7 @@ class SpeechSettings(QDialog):
         self.ui.mathLibraryDisplay.setText(self._previousDisplayValue)
 
     def openMLDEButton_clicked(self):
-        if self.mldeWindow is None:
-            self.mldeWindow = MathLibraryDev()
-            self.mldeWindow.show()
-        elif not self.mldeWindow.isVisible():
-            self.mldeWindow = MathLibraryDev()
-            self.mldeWindow.show()
-        else:
-            self.mldeWindow.raise_()
-            self.mldeWindow.activateWindow()
+        MathLibraryDev.getInstance().show()
 
     def requestMoreSpeech(self):
         self.mainWindow.noMoreSpeech.emit()

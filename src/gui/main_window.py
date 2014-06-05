@@ -836,8 +836,7 @@ class MainWindow(QtGui.QMainWindow):
         webbrowser.open_new(misc.SURVEY_URL)
     
     def openPatternEditor(self):
-        self.patternEditor = MathLibraryDev()
-        self.patternEditor.show()
+        MathLibraryDev.getInstance().show()
     
     def showAllMathML(self):
         from src.gui.mathmlcodes_dialog import MathMLCodesDialog
