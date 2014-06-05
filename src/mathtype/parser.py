@@ -117,6 +117,7 @@ def parseWMF(wmfFile, debug=False):
             return root
             
     except Exception as ex:
+        print 'MathType parse error:', traceback.format_exc()
         raise MathTypeParseError('', traceback.format_exc())
     
 def parseOLE(oleFile, debug=False):
@@ -124,31 +125,36 @@ def parseOLE(oleFile, debug=False):
     Parses a MathType object from an OLE compound file. Returns the MathML
     associated with it.
     '''
-    
-    OLE_OBJECT_NAME = 'Equation Native'
-    OLE_HEADER_LENGTH = 28
-    
-    ole = OLE.OleFileIO(oleFile)
-    
-    if ole.exists(OLE_OBJECT_NAME):
-        if debug: print 'Math size:', ole.get_size(OLE_OBJECT_NAME)
-        mathStream = ole.openstream(OLE_OBJECT_NAME)
-        mathData = mathStream.read()[OLE_HEADER_LENGTH:]  # Data is after the OLE header
-        if debug: print 'Math data:', mathData
-        ole.close()
-        return parseMTEF(mathData, debug)
-        
-    else:
-        ole.close()
-        # Make some MathML that says it cannot read this particular math
-        root = etree.Element('a')
-        root.set('href', REPORT_BUG_URL)
-        elem = etree.SubElement(root, 'math', nsmap={None: 'http://www.w3.org/1998/Math/MathML'})
-        elem = etree.SubElement(elem, 'mrow')
-        elem = etree.SubElement(elem, 'mtext')
-        elem.text = '[MathType Error. Click Here to Tell Central Access!]'
-        
-        return root
+
+    try:
+        OLE_OBJECT_NAME = 'Equation Native'
+        OLE_HEADER_LENGTH = 28
+
+        ole = OLE.OleFileIO(oleFile)
+
+        if ole.exists(OLE_OBJECT_NAME):
+            if debug: print 'Math size:', ole.get_size(OLE_OBJECT_NAME)
+            mathStream = ole.openstream(OLE_OBJECT_NAME)
+            mathData = mathStream.read()[OLE_HEADER_LENGTH:]  # Data is after the OLE header
+            if debug: print 'Math data:', mathData
+            ole.close()
+            return parseMTEF(mathData, debug)
+
+        else:
+            ole.close()
+            # Make some MathML that says it cannot read this particular math
+            root = etree.Element('a')
+            root.set('href', REPORT_BUG_URL)
+            elem = etree.SubElement(root, 'math', nsmap={None: 'http://www.w3.org/1998/Math/MathML'})
+            elem = etree.SubElement(elem, 'mrow')
+            elem = etree.SubElement(elem, 'mtext')
+            elem.text = '[MathType Error. Click Here to Tell Central Access!]'
+
+            return root
+    except Exception as ex:
+        print 'MathType parse error:', traceback.format_exc()
+        raise MathTypeParseError('', traceback.format_exc())
+
     
 def _combineNumbers(mathml):
     '''
@@ -247,23 +253,24 @@ def _combinePlainText(root):
                 root.getparent().remove(n)
 
             # If there is a number that is inside of a superscript or
-                # subscript that is directly after this, then move this node
-                # under that sibling
+            # subscript that is directly after this, then move this node
+            # under that sibling
             elif _isSuperscriptOrSubscript(n):
                 if len(n) > 0:
                     if n[0].tag == 'mtext':
-                        if root.getparent() != None:
+                        n[0].text = root.text + n[0].text
+                        if root.getparent() is not None:
                             root.getparent().remove(root)
-                        n.insert(0, root)
                         root = n
+                        break
             else:
                 break
 
     if root.getnext() is not None:
         _combinePlainText(root.getnext())
 
-    for c in root:
-        _combinePlainText(c)
+    if len(root) > 0:
+        _combinePlainText(root[0])
 
 def _isNumber(mathml):
     '''

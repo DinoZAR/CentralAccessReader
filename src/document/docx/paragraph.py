@@ -341,7 +341,7 @@ def _parseMathFromOLE(elem, data, parentData, otherData):
         data['data'] = parseOLE(imageBuffer)
         parentData['math'] = data
         return True
-    except:
+    except Exception as ex:
         return False
 
 def _parseMathFromWMF(elem, data, parentData, otherData):
@@ -366,7 +366,7 @@ def _parseMathFromWMF(elem, data, parentData, otherData):
         data['data'] = parseWMF(imageBuffer)
         parentData['math'] = data
         return True
-    except:
+    except Exception as ex:
         return False
 
 def _parseParagraphStyle(elem, parentData, otherData):
