@@ -4,7 +4,8 @@ Created on Feb 27, 2013
 @author: Spencer Graffe
 '''
 
-from PyQt4 import QtGui, QtCore
+from PyQt4.QtCore import QSize, QUrl, QEvent
+from PyQt4.QtGui import QListWidgetItem, QDialog, QHBoxLayout, QWidget
 from PyQt4.QtWebKit import QWebView
 from lxml import etree
 
@@ -12,14 +13,14 @@ from src.document.html_document import HTMLDocument
 from src.forms.mathmlcodesdialog_ui import Ui_MathMLCodesDialog
 from src.misc import temp_path
 
-class MathMLCodesDialog(QtGui.QDialog):
+class MathMLCodesDialog(QDialog):
     '''
     A dialog showing a list of all the MathML codes in the document. Very useful
     in debugging which MathML works and which doesn't.
     '''
 
     def __init__(self, mathmlCodes, parent=None):
-        QtGui.QDialog.__init__(self, parent)
+        super(MathMLCodesDialog, self).__init__(parent)
         
         self.ui = Ui_MathMLCodesDialog()
         
@@ -31,8 +32,9 @@ class MathMLCodesDialog(QtGui.QDialog):
         sortedData = sorted(self.mathmlCodes.items(), key=lambda x: x[1]['index'])
         for data in sortedData:
             myItem = MathMLItem(data[1]['mathml'])
-            item = QtGui.QListWidgetItem(data[1]['mathml'])
-            item.setSizeHint(QtCore.QSize(0, 100))
+            #item = QListWidgetItem(data[1]['mathml'])
+            item = QListWidgetItem()
+            item.setSizeHint(QSize(0, 100))
             self.ui.mathmlCodesList.addItem(item)
             self.ui.mathmlCodesList.setItemWidget(item, myItem)
         
@@ -43,7 +45,10 @@ class MathMLCodesDialog(QtGui.QDialog):
         self.ui.closeButton.clicked.connect(self.closeClicked)
         
     def itemClicked(self, item):
-        outputText = str(item.data(QtCore.Qt.DisplayRole).toString())
+
+        widget = self.ui.mathmlCodesList.itemWidget(item)
+
+        outputText = widget.mathml
         outputText = etree.tostring(etree.fromstring(outputText), pretty_print=True)
         self.ui.mathmlOutput.setPlainText(outputText)
         
@@ -51,17 +56,19 @@ class MathMLCodesDialog(QtGui.QDialog):
         self.close()
             
 
-class MathMLItem(QtGui.QWidget):
+class MathMLItem(QWidget):
     
     def __init__(self, mathml):
         super(MathMLItem, self).__init__()
         
-        self.layout = QtGui.QHBoxLayout(self)
+        self.layout = QHBoxLayout(self)
 
-        self.mathDocument = HTMLDocument(None, None, None, htmlString=mathml)
+        self.mathml = mathml
+
+        self.mathDocument = HTMLDocument(None, None, None, htmlString=self.mathml)
         
         url = temp_path('import')
-        baseUrl = QtCore.QUrl.fromLocalFile(url)
+        baseUrl = QUrl.fromLocalFile(url)
         
         # Create the web view
         webView = QWebView()

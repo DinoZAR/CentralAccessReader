@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/mathmlcodesdialog.ui'
 #
-# Created: Tue May 27 09:53:30 2014
+# Created: Thu Jun 05 13:07:40 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -64,8 +64,8 @@ class Ui_MathMLCodesDialog(object):
         QtCore.QMetaObject.connectSlotsByName(MathMLCodesDialog)
 
     def retranslateUi(self, MathMLCodesDialog):
-        MathMLCodesDialog.setWindowTitle(_translate("MathMLCodesDialog", "MathML Codes", None))
-        self.label.setText(_translate("MathMLCodesDialog", "MathML Code:", None))
+        MathMLCodesDialog.setWindowTitle(_translate("MathMLCodesDialog", "MathML In Document", None))
+        self.label.setText(_translate("MathMLCodesDialog", "MathML:", None))
         self.closeButton.setText(_translate("MathMLCodesDialog", "Close", None))
 
 import resource_rc
