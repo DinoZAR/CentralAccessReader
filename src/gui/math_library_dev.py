@@ -5,7 +5,6 @@ Created on May 20, 2014
 '''
 import os
 
-from PyQt4.QtCore import QObject
 from PyQt4.QtGui import QMainWindow, QApplication, QFileDialog, QMessageBox, qApp, QAction
 
 from src.forms.math_library_dev_ui import Ui_MathLibraryDev
@@ -84,6 +83,9 @@ class MathLibraryDev(QMainWindow):
         
         # MathML menu
         self.ui.actionFrom_Clipboard.triggered.connect(self.importMathFromClipboard)
+
+        # Help menu
+        self.ui.actionContents.triggered.connect(self.showHelpContents)
         
         # Controls
         self.ui.libraryTabs.tabCloseRequested.connect(self.closeLibrary)
@@ -282,3 +284,6 @@ class MathLibraryDev(QMainWindow):
             elif result == MathSaveDialog.EXPORT:
                 editor = self.ui.libraryTabs.widget(i)
                 editor.export()
+
+    def showHelpContents(self):
+        print 'Marf!'

@@ -116,8 +116,15 @@
     </property>
     <addaction name="actionFrom_Clipboard"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionContents"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuMathML"/>
+   <addaction name="menuHelp"/>
   </widget>
   <action name="actionNew_Library">
    <property name="text">
@@ -188,6 +195,11 @@
   <action name="actionExport">
    <property name="text">
     <string>Export...</string>
+   </property>
+  </action>
+  <action name="actionContents">
+   <property name="text">
+    <string>Contents</string>
    </property>
   </action>
  </widget>

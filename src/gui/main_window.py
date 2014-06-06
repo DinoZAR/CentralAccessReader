@@ -53,7 +53,10 @@ class MainWindow(QtGui.QMainWindow):
 
     # Settings
     speechSettingsPane = None
+    speechSettingsMutex = QMutex()
+
     colorSettingsPane = None
+    colorSettingsMutex = QMutex()
     
     def __init__(self, app, parent=None):
         QtGui.QMainWindow.__init__(self, parent)
@@ -461,41 +464,45 @@ class MainWindow(QtGui.QMainWindow):
             self.currentDocumentWidget().saveMP3ByPage()
         
     def showColorSettings(self):
-        from src.gui.color_settings import ColorSettings
+        if self.colorSettingsMutex.tryLock():
+            from src.gui.color_settings import ColorSettings
 
-        if self.colorSettingsPane is None:
-            self.colorSettingsPane = ColorSettings(self)
-            #self.ui.navigationTabWidget.addTab(self.colorSettingsPane, QIcon(':/classic/icons/color_settings_classic.png'), 'Color')
-            self.ui.navigationTabWidget.addTab(self.colorSettingsPane, 'Color')
-            self.ui.navigationTabWidget.setCurrentWidget(self.colorSettingsPane)
-        else:
-            if self.colorSettingsPane != self.ui.navigationTabWidget.currentWidget():
+            if self.colorSettingsPane is None:
+                self.colorSettingsPane = ColorSettings(self)
+                #self.ui.navigationTabWidget.addTab(self.colorSettingsPane, QIcon(':/classic/icons/color_settings_classic.png'), 'Color')
+                self.ui.navigationTabWidget.addTab(self.colorSettingsPane, 'Color')
                 self.ui.navigationTabWidget.setCurrentWidget(self.colorSettingsPane)
             else:
-                i = self.ui.navigationTabWidget.currentIndex()
-                self.ui.navigationTabWidget.removeTab(i)
-                self.colorSettingsPane = None
+                if self.colorSettingsPane != self.ui.navigationTabWidget.currentWidget():
+                    self.ui.navigationTabWidget.setCurrentWidget(self.colorSettingsPane)
+                else:
+                    i = self.ui.navigationTabWidget.currentIndex()
+                    self.ui.navigationTabWidget.removeTab(i)
+                    self.colorSettingsPane = None
 
-        self.ui.colorSettingsButton.setChecked(self.colorSettingsPane is not None)
+            self.ui.colorSettingsButton.setChecked(self.colorSettingsPane is not None)
+            self.colorSettingsMutex.unlock()
         
     def showSpeechSettings(self):
+        if self.speechSettingsMutex.tryLock():
+            from src.gui.speech_settings import SpeechSettings
 
-        from src.gui.speech_settings import SpeechSettings
+            if self.speechSettingsPane is None:
 
-        if self.speechSettingsPane is None:
-            self.speechSettingsPane = SpeechSettings(self)
-            #self.ui.navigationTabWidget.addTab(self.speechSettingsPane, QIcon(':/classic/icons/speech_settings_classic.png'), 'General')
-            self.ui.navigationTabWidget.addTab(self.speechSettingsPane, 'General')
-            self.ui.navigationTabWidget.setCurrentWidget(self.speechSettingsPane)
-        else:
-            if self.speechSettingsPane != self.ui.navigationTabWidget.currentWidget():
+                self.speechSettingsPane = SpeechSettings(self)
+                #self.ui.navigationTabWidget.addTab(self.speechSettingsPane, QIcon(':/classic/icons/speech_settings_classic.png'), 'General')
+                self.ui.navigationTabWidget.addTab(self.speechSettingsPane, 'General')
                 self.ui.navigationTabWidget.setCurrentWidget(self.speechSettingsPane)
             else:
-                i = self.ui.navigationTabWidget.currentIndex()
-                self.ui.navigationTabWidget.removeTab(i)
-                self.speechSettingsPane = None
+                if self.speechSettingsPane != self.ui.navigationTabWidget.currentWidget():
+                    self.ui.navigationTabWidget.setCurrentWidget(self.speechSettingsPane)
+                else:
+                    i = self.ui.navigationTabWidget.currentIndex()
+                    self.ui.navigationTabWidget.removeTab(i)
+                    self.speechSettingsPane = None
 
-        self.ui.speechSettingsButton.setChecked(self.speechSettingsPane is not None)
+            self.ui.speechSettingsButton.setChecked(self.speechSettingsPane is not None)
+            self.speechSettingsMutex.unlock()
 
         # # Disconnect my highlighter signals
         # self.speechThread.onStart.disconnect(self.onStart)

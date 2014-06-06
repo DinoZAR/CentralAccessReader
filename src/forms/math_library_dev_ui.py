@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/math_library_dev.ui'
 #
-# Created: Fri Jun 06 08:41:24 2014
+# Created: Fri Jun 06 15:34:51 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -74,6 +74,8 @@ class Ui_MathLibraryDev(object):
         self.menuInstalled_Libraries.setObjectName(_fromUtf8("menuInstalled_Libraries"))
         self.menuMathML = QtGui.QMenu(self.menubar)
         self.menuMathML.setObjectName(_fromUtf8("menuMathML"))
+        self.menuHelp = QtGui.QMenu(self.menubar)
+        self.menuHelp.setObjectName(_fromUtf8("menuHelp"))
         MathLibraryDev.setMenuBar(self.menubar)
         self.actionNew_Library = QtGui.QAction(MathLibraryDev)
         self.actionNew_Library.setObjectName(_fromUtf8("actionNew_Library"))
@@ -95,6 +97,8 @@ class Ui_MathLibraryDev(object):
         self.actionThings.setObjectName(_fromUtf8("actionThings"))
         self.actionExport = QtGui.QAction(MathLibraryDev)
         self.actionExport.setObjectName(_fromUtf8("actionExport"))
+        self.actionContents = QtGui.QAction(MathLibraryDev)
+        self.actionContents.setObjectName(_fromUtf8("actionContents"))
         self.menuInstalled_Libraries.addAction(self.actionThings)
         self.menuFile.addAction(self.actionNew_Library)
         self.menuFile.addSeparator()
@@ -107,8 +111,10 @@ class Ui_MathLibraryDev(object):
         self.menuFile.addAction(self.actionSave)
         self.menuFile.addAction(self.actionExport)
         self.menuMathML.addAction(self.actionFrom_Clipboard)
+        self.menuHelp.addAction(self.actionContents)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuMathML.menuAction())
+        self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(MathLibraryDev)
         self.libraryTabs.setCurrentIndex(0)
@@ -122,6 +128,7 @@ class Ui_MathLibraryDev(object):
         self.menuFile.setTitle(_translate("MathLibraryDev", "File", None))
         self.menuInstalled_Libraries.setTitle(_translate("MathLibraryDev", "Open Library", None))
         self.menuMathML.setTitle(_translate("MathLibraryDev", "MathML", None))
+        self.menuHelp.setTitle(_translate("MathLibraryDev", "Help", None))
         self.actionNew_Library.setText(_translate("MathLibraryDev", "New Library", None))
         self.actionNew_Library.setShortcut(_translate("MathLibraryDev", "Ctrl+Shift+N", None))
         self.actionOpen_Library.setText(_translate("MathLibraryDev", "Open Library From File", None))
@@ -139,6 +146,7 @@ class Ui_MathLibraryDev(object):
         self.actionFrom_Clipboard.setShortcut(_translate("MathLibraryDev", "Ctrl+Shift+V", None))
         self.actionThings.setText(_translate("MathLibraryDev", "Things", None))
         self.actionExport.setText(_translate("MathLibraryDev", "Export...", None))
+        self.actionContents.setText(_translate("MathLibraryDev", "Contents", None))
 
 from gui.mathml_editor import MathMLEditor
 import resource_rc

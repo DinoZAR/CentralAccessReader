@@ -49,10 +49,15 @@ def parseMTEF(mtefString, debug=False):
     parentStack = []
     parentStack.append(mathmlRoot)
     convertRecords(i, records, parentStack, debug)
-    
+
     # Do some post-processing
+    if debug: print 'Combining numbers...'
     _combineNumbers(mathmlRoot)
+
+    if debug: print 'Combining plain text...'
     _combinePlainText(mathmlRoot)
+
+    if debug: print 'End Math -----------------------------------'
         
     return mathmlRoot
 
@@ -261,15 +266,15 @@ def _combinePlainText(root):
                         if root.getparent() is not None:
                             root.getparent().remove(root)
                         root = n
-                        break
+                break
             else:
                 break
 
-    if root.getnext() is not None:
-        _combinePlainText(root.getnext())
-
     if len(root) > 0:
         _combinePlainText(root[0])
+
+    if root.getnext() is not None:
+        _combinePlainText(root.getnext())
 
 def _isNumber(mathml):
     '''
