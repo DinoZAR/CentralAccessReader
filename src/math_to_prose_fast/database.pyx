@@ -8,7 +8,7 @@ Author: Spencer Graffe
 '''
 
 import os
-from math_to_prose_fast cimport pattern_tree
+from src.math_to_prose_fast cimport pattern_tree
 import HTMLParser
 
 WILDCARD_TOKENS = ['?', '+', '#']

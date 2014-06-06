@@ -62,7 +62,7 @@ extensions= [makeExtension(t) for t in extTuples]
  
 setup(
       name = 'Math to Prose Engine',
-      packages=['math_to_prose_fast'],
+      packages=['src.math_to_prose_fast'],
       cmdclass = {'build_ext' : build_ext},
       include_dirs = [np.get_include()],
       ext_modules = extensions

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/math_save_dialog.ui'
 #
-# Created: Fri Jun 06 09:26:39 2014
+# Created: Fri Jun 06 10:51:47 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -50,7 +50,6 @@ class Ui_MathSaveDialog(object):
         self.cancelButton.setObjectName(_fromUtf8("cancelButton"))
         self.horizontalLayout.addWidget(self.cancelButton)
         self.verticalLayout.addLayout(self.horizontalLayout)
-        self.verticalLayout.setStretch(0, 1)
 
         self.retranslateUi(MathSaveDialog)
         QtCore.QMetaObject.connectSlotsByName(MathSaveDialog)
