@@ -503,36 +503,6 @@ class MainWindow(QtGui.QMainWindow):
 
             self.ui.speechSettingsButton.setChecked(self.speechSettingsPane is not None)
             self.speechSettingsMutex.unlock()
-
-        # # Disconnect my highlighter signals
-        # self.speechThread.onStart.disconnect(self.onStart)
-        # self.speechThread.onWord.disconnect(self.onWord)
-        # self.speechThread.onEndStream.disconnect(self.onEndStream)
-        # self.speechThread.onFinish.disconnect(self.onSpeechFinished)
-        # self.speechThread.requestMoreSpeech.disconnect(self.sendMoreSpeech)
-        #
-        # # Show speech settings dialog
-        # from src.gui.speech_settings import SpeechSettings
-        # dialog = SpeechSettings(self)
-        # self.speechThread.requestMoreSpeech.connect(dialog.requestMoreSpeech)
-        # self.stopPlayback.emit()
-        # self.speechThread.requestMoreSpeech.disconnect(dialog.requestMoreSpeech)
-        # dialog.show()
-        #
-        # # Reload settings
-        # #configuration.loadFromFile(misc.app_data_path('configuration.xml'))
-        # self.updateSettings()
-        #
-        # # Reconnect my highlighter signals
-        # self.speechThread.onStart.connect(self.onStart)
-        # self.speechThread.onWord.connect(self.onWord)
-        # self.speechThread.onEndStream.connect(self.onEndStream)
-        # self.speechThread.onFinish.connect(self.onSpeechFinished)
-        # self.speechThread.requestMoreSpeech.connect(self.sendMoreSpeech)
-        #
-        # # Set the keyboard focus to the current document
-        # if self.currentDocumentWidget() is not None:
-        #     self.currentDocumentWidget().setContentFocus()
                     
     def exportToHTML(self):
         '''
