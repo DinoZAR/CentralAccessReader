@@ -95,7 +95,7 @@
     </property>
     <widget class="QMenu" name="menuInstalled_Libraries">
      <property name="title">
-      <string>Open Installed Library</string>
+      <string>Open Library</string>
      </property>
      <addaction name="actionThings"/>
     </widget>
@@ -178,11 +178,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+V</string>
-   </property>
-  </action>
-  <action name="actionInstall_Library_Into_CAR">
-   <property name="text">
-    <string>Install Library Into CAR</string>
    </property>
   </action>
   <action name="actionThings">

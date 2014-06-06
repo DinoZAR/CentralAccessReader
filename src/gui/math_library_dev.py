@@ -11,6 +11,7 @@ from PyQt4.QtGui import QMainWindow, QApplication, QFileDialog, QMessageBox, qAp
 from src.forms.math_library_dev_ui import Ui_MathLibraryDev
 from src.gui.math_library_editor import MathLibraryEditor
 from src.gui.math_library_new import NewMathLibraryDialog
+from src.gui.math_save_dialog import MathSaveDialog
 from src.gui import configuration
 from src import math_library
 from src.math_library.library import MathLibrary
@@ -138,7 +139,7 @@ class MathLibraryDev(QMainWindow):
         editor = self.currentLibraryEditor()
         if editor is not None:
             editor.newPattern()
-            
+
     def openPattern(self):
         '''
         Appends a new pattern to the library from file.
@@ -146,36 +147,66 @@ class MathLibraryDev(QMainWindow):
         editor = self.currentLibraryEditor()
         if editor is not None:
             editor.openPattern()
-    
+
     def closeLibrary(self, tabIndex):
         '''
         Closes the library at the tab location.
         '''
-        self.ui.libraryTabs.removeTab(tabIndex)
+
+        lib = self.ui.libraryTabs.widget(tabIndex).library
+
+        dialog = MathSaveDialog('Want to save or export {0} before closing?'.format(lib.name), self)
+        result = dialog.exec_()
+        # result = QMessageBox.question(self, 'Save or Export?', 'Want to save or export {0} before closing?'.format(lib.name), 'Save', 'Export', 'Do Nothing', QMessageBox.Save | QMessageBox.Cancel)
+
+        # Save
+        if result == MathSaveDialog.SAVE:
+            result = self.saveLibrary(lib, askFirstConfirmation=False)
+            if result == QMessageBox.Yes:
+                self.ui.libraryTabs.removeTab(tabIndex)
+
+        # Export
+        elif result == MathSaveDialog.EXPORT:
+            editor = self.ui.libraryTabs.widget(tabIndex)
+            if editor.export():
+                self.ui.libraryTabs.removeTab(tabIndex)
+
+        # Do Nothing
+        elif result == MathSaveDialog.DO_NOTHING:
+            self.ui.libraryTabs.removeTab(tabIndex)
     
     def saveCurrent(self):
         '''
         Saves the current library.
         '''
         if self.currentLibraryEditor() is not None:
-            result = QMessageBox.question(self, 'Install Math Library', 'Want to install {0} into CAR?'.format(self.currentLibraryEditor().library.name), QMessageBox.Yes | QMessageBox.No)
+            self.saveLibrary(self.currentLibraryEditor().library)
 
-            if result == QMessageBox.Yes:
-                try:
-                    myLib = self.currentLibraryEditor().library
-                    badLib = math_library.saveCustomLibrary(myLib)
-                    if badLib is not None:
-                        result = QMessageBox.question(self, 'Replace Math Library?', '{0} already exists. Want to replace it?'.format(badLib.name), QMessageBox.Yes | QMessageBox.No)
-                        if result == QMessageBox.Yes:
-                            math_library.saveCustomLibrary(myLib, replace=True)
-                            QMessageBox.information(self, 'Math Library Installed', '{0} was installed successfully.'.format(self.currentLibraryEditor().library.name), QMessageBox.Ok)
-                    else:
-                        QMessageBox.information(self, 'Math Library Installed', '{0} was installed successfully.'.format(self.currentLibraryEditor().library.name), QMessageBox.Ok)
+    def saveLibrary(self, mathLib, askFirstConfirmation=True):
 
-                except ValueError as ex:
-                    QMessageBox.information(self, 'Can\'t Add Library', ex.message, QMessageBox.Ok)
+        if askFirstConfirmation:
+            result = QMessageBox.question(self, 'Save Math Library', 'Want to save {0} into CAR?'.format(mathLib.name), QMessageBox.Yes | QMessageBox.No)
+        else:
+            result = QMessageBox.Yes
 
-            self.updateInstalledLibraryList()
+        if result == QMessageBox.Yes:
+            try:
+                badLib = math_library.saveCustomLibrary(mathLib)
+                if badLib is not None:
+                    result = QMessageBox.question(self, 'Replace Math Library?', '{0} already exists. Want to replace it?'.format(badLib.name), QMessageBox.Yes | QMessageBox.No)
+                    if result == QMessageBox.Yes:
+                        math_library.saveCustomLibrary(mathLib, replace=True)
+                        QMessageBox.information(self, 'Math Library Saved', '{0} was saved successfully.'.format(mathLib.name), QMessageBox.Ok)
+                else:
+                    QMessageBox.information(self, 'Math Library Saved', '{0} was saved successfully.'.format(mathLib.name), QMessageBox.Ok)
+
+            except ValueError as ex:
+                QMessageBox.information(self, 'Can\'t Save Library', ex.message, QMessageBox.Ok)
+                return QMessageBox.No
+
+        self.updateInstalledLibraryList()
+
+        return result
 
     def exportCurrent(self):
         '''
