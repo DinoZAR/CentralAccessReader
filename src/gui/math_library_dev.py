@@ -266,3 +266,19 @@ class MathLibraryDev(QMainWindow):
     def _updateLibraryName(self, editor, name):
         i = self.ui.libraryTabs.indexOf(editor)
         self.ui.libraryTabs.setTabText(i, name)
+
+    def closeEvent(self, ev):
+
+        for i in range(self.ui.libraryTabs.count()):
+            lib = self.ui.libraryTabs.widget(i).library
+            dialog = MathSaveDialog('Want to save or export {0} before closing?'.format(lib.name))
+            result = dialog.exec_()
+
+            # Save
+            if result == MathSaveDialog.SAVE:
+                result = self.saveLibrary(lib, askFirstConfirmation=False)
+
+            # Export
+            elif result == MathSaveDialog.EXPORT:
+                editor = self.ui.libraryTabs.widget(i)
+                editor.export()
