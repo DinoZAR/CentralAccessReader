@@ -166,23 +166,23 @@ class Document(object):
          
         mathjaxScript = HTML.Element('script')
         mathjaxScript.set('type', 'text/javascript')
-        mathjaxScript.set('car', 'file:' + urllib.pathname2url(misc.program_path('mathjax/MathJax.js')))
+        mathjaxScript.set('src', 'file:' + urllib.pathname2url(misc.program_path('mathjax/MathJax.js')))
          
         jqueryScript = HTML.Element('script')
         jqueryScript.set('type', 'text/javascript')
-        jqueryScript.set('car', 'file:' + urllib.pathname2url(misc.program_path('jquery-1.9.1.min.js')))
+        jqueryScript.set('src', 'file:' + urllib.pathname2url(misc.program_path('jquery-1.9.1.min.js')))
              
         jqueryUIScript = HTML.Element('script')
         jqueryUIScript.set('type', 'text/javascript')
-        jqueryUIScript.set('car', 'file:' + urllib.pathname2url(misc.program_path('jquery-ui/js/jquery-ui-1.9.2.custom.js')))
+        jqueryUIScript.set('src', 'file:' + urllib.pathname2url(misc.program_path('jquery-ui/js/jquery-ui-1.9.2.custom.js')))
          
         jqueryScrollTo = HTML.Element('script')
         jqueryScrollTo.set('type', 'text/javascript')
-        jqueryScrollTo.set('car', 'file:' + urllib.pathname2url(misc.program_path('jquery.scrollTo-1.4.3.1-min.js')))
+        jqueryScrollTo.set('src', 'file:' + urllib.pathname2url(misc.program_path('jquery.scrollTo-1.4.3.1-min.js')))
         
         jqueryNextInDom = HTML.Element('script')
         jqueryNextInDom.set('type', 'text/javascript')
-        jqueryNextInDom.set('car', 'file:' + urllib.pathname2url(misc.program_path('nextindom.jquery.js')))
+        jqueryNextInDom.set('src', 'file:' + urllib.pathname2url(misc.program_path('nextindom.jquery.js')))
         
         # Get all of my own JavaScripts into the document
         javascriptFiles = [f for f in os.listdir(misc.program_path('car/javascript/'))

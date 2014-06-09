@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\car\forms/mainwindow.ui'
 #
-# Created: Wed Jun 04 11:32:14 2014
+# Created: Mon Jun 09 10:05:52 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -528,5 +528,5 @@ class Ui_MainWindow(object):
         self.actionAnnouncements.setText(_translate("MainWindow", "Announcements", None))
         self.actionQuick_Start.setText(_translate("MainWindow", "Quick Start", None))
 
-from gui.download_progress import DownloadProgressWidget
+from car.gui.download_progress import DownloadProgressWidget
 import resource_rc

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\car\forms/document_widget.ui'
 #
-# Created: Fri Feb 07 09:32:36 2014
+# Created: Mon Jun 09 10:04:47 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -111,5 +111,5 @@ class Ui_DocumentWidget(object):
         self.progressLabel.setText(_translate("DocumentWidget", "Exporting page 179 of 210...", None))
         self.showFilesButton.setText(_translate("DocumentWidget", "Show Files", None))
 
-from gui.npa_webview import NPAWebView
+from car.gui.npa_webview import NPAWebView
 import resource_rc

@@ -207,7 +207,7 @@
   <customwidget>
    <class>MathMLEditor</class>
    <extends>QWidget</extends>
-   <header>gui.mathml_editor</header>
+   <header>car/gui/mathml_editor</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

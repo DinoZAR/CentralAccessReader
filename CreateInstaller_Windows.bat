@@ -55,29 +55,29 @@ XCOPY nextindom.jquery.js "dist\Central Access Reader\" /D /Y /Q
 
 :: Grabbing the headless renderer
 echo Copying the headless renderer...
-XCOPY src\headless\phantomjs.exe "dist\Central Access Reader\src\headless\" /D /Y /Q
-XCOPY src\headless\render.js "dist\Central Access Reader\src\headless\" /D /Y /Q
+XCOPY car\headless\phantomjs.exe "dist\Central Access Reader\car\headless\" /D /Y /Q
+XCOPY car\headless\render.js "dist\Central Access Reader\car\headless\" /D /Y /Q
 
 :: Copy the built-in math library
 echo Copying the built-in math library...
-XCOPY src\math_library\CAR.mathlib "dist\Central Access Reader\src\math_library\" /D /Y /Q
+XCOPY car\math_library\CAR.mathlib "dist\Central Access Reader\car\math_library\" /D /Y /Q
 
 :: Grabbing the LAME encoder executable
 echo Copying LAME MP3 encoder...
-XCOPY src\lame_64.exe "dist\Central Access Reader\src\" /D /Y /Q
+XCOPY car\lame_64.exe "dist\Central Access Reader\car\" /D /Y /Q
 
 :: Grabbing JavaScript functions
 echo Copying JavaScript functions and configurations...
-XCOPY src\javascript "dist\Central Access Reader\src\javascript\" /D /Y /Q
+XCOPY car\javascript "dist\Central Access Reader\car\javascript\" /D /Y /Q
 
 :: Get the OMML to MathML XSLT
 echo Copying OMML to MathML XSLT...
-XCOPY src\document\docx\OMMLToMathML.xsl "dist\Central Access Reader\src\document\docx\" /D /Y /Qe
+XCOPY car\document\docx\OMMLToMathML.xsl "dist\Central Access Reader\car\document\docx\" /D /Y /Q
 
 :: Get all of the layout and themes for my GUI
 echo Copying theming files...
-XCOPY src\forms\theme "dist\Central Access Reader\src\forms\theme\" /S /D /Y /I /Q
-XCOPY src\forms\resource_rc.py "dist\Central Access Reader\src\forms\" /D /Y /Q
+XCOPY car\forms\theme "dist\Central Access Reader\car\forms\theme\" /S /D /Y /I /Q
+XCOPY car\forms\resource_rc.py "dist\Central Access Reader\car\forms\" /D /Y /Q
 
 :: Also getting Tutorial
 echo Copying tutorial...

@@ -1,5 +1,3 @@
-cd src
-
 #
 # Setting up the environment
 #
@@ -33,66 +31,66 @@ cp ./icons.icns "$APP_DIR"
 #
 echo "Copying MathJax..."
 mkdir -p "$APP_DIR/mathjax"
-cp -R ../mathjax "$APP_DIR/"
+cp -R ./mathjax "$APP_DIR/"
 
 echo "Copying JQuery..."
-cp ../jquery-1.9.1.min.js "$APP_DIR/"
+cp ./jquery-1.9.1.min.js "$APP_DIR/"
 
 echo "Copying JQuery UI..."
 mkdir -p "$APP_DIR/jquery-ui"
-cp -R ../jquery-ui "$APP_DIR/"
+cp -R ./jquery-ui "$APP_DIR/"
 
 echo "Copying JQuery Scroll-to..."
-cp ../jquery.scrollTo-1.4.3.1-min.js "$APP_DIR/"
+cp ./jquery.scrollTo-1.4.3.1-min.js "$APP_DIR/"
 
 echo "Copying JQuery Next In DOM..."
-cp ../nextindom.jquery.js "$APP_DIR/"
+cp ./nextindom.jquery.js "$APP_DIR/"
 
 echo "Copying JavaScript functions and configurations..."
-mkdir -p "$APP_DIR/src/javascript"
-cp -R ./javascript "$APP_DIR/src/"
+mkdir -p "$APP_DIR/car/javascript"
+cp -R ./car/javascript "$APP_DIR/car/"
 
 #
 # GUI forms
 #
 echo "Copying themes..."
-mkdir -p "$APP_DIR/src/forms/theme"
-cp -R ./forms/theme "$APP_DIR/src/forms/"
+mkdir -p "$APP_DIR/car/forms/theme"
+cp -R ./car/forms/theme "$APP_DIR/car/forms/"
 
 echo "Copying resource file..."
-cp ./forms/resource_rc.py "$APP_DIR/src/forms/"
+cp ./car/forms/resource_rc.py "$APP_DIR/car/forms/"
 
 #
 # Other files
 #
 echo "Copying files for the headless renderer..."
-mkdir -p "$APP_DIR/src/headless"
-cp ./headless/phantomjs_mac "$APP_DIR/src/headless/"
-cp ./headless/render.js "$APP_DIR/src/headless/"
+mkdir -p "$APP_DIR/car/headless"
+cp ./car/headless/phantomjs_mac "$APP_DIR/car/headless/"
+cp ./car/headless/render.js "$APP_DIR/car/headless/"
 
 echo "Make small revision to the Qt image plugins folder..."
 mv "$APP_DIR/qt_pluginst4/plugins" "$APP_DIR/qt_plugins"
 
-echo "Copying the MathML pattern databases..."
-mkdir -p "$APP_DIR/src/math_patterns"
-cp -R ./math_patterns "$APP_DIR/src/"
+echo "Copying the MathML built-in libraries..."
+mkdir -p "$APP_DIR/car/math_library"
+cp -R ./car/math_library "$APP_DIR/car/"
 
 echo "Copying LAME MP3 encoder..."
-cp ./lame_mac "$APP_DIR/src/"
+cp ./car/lame_mac "$APP_DIR/car/"
 
 echo "Copying OMML to MathML XSLT..."
-mkdir -p "$APP_DIR/src/document/docx"
-cp ./document/docx/OMMLToMathML.xsl "$APP_DIR/src/document/docx/"
+mkdir -p "$APP_DIR/car/document/docx"
+cp ./car/document/docx/OMMLToMathML.xsl "$APP_DIR/car/document/docx/"
 
 echo "Copying tutorial..."
-cp ../Tutorial.docx "$APP_DIR/"
+cp ./Tutorial.docx "$APP_DIR/"
 
 echo "Copying version file..."
-cp ../version.txt "$APP_DIR/"
+cp ./version.txt "$APP_DIR/"
 
 echo "Copying the DMG background..."
 mkdir -p ./dist/.background
-cp ./CAR_DMG_Background.png ./dist/.background
+cp ./car/CAR_DMG_Background.png ./dist/.background
 
 echo "Creating Application folder alias..."
 ABS_DIR=`cd "$1"; pwd`
@@ -188,10 +186,8 @@ rm -f "./dist/tmp.dmg"
 codesign -s "Central Washington University" -v "./dist/Central_Access_Reader.dmg"
 
 echo "Moving the files to top level..."
-mv "./dist/Central_Access_Reader.dmg" "../../../Central_Access_Reader.dmg"
-cp ../version.txt ../../../version.txt
-
-cd ..
+mv "./dist/Central_Access_Reader.dmg" "../../Central_Access_Reader.dmg"
+cp ./version.txt ../../version.txt
 
 echo "----------------------------------"
 echo "Done!"

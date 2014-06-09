@@ -5,8 +5,6 @@ Use this script to profile things
 
 @author: Spencer Graffe
 '''
-from car.docx.importer import DocxDocument
-from car import Sandbox
 import cProfile
 import pstats
 

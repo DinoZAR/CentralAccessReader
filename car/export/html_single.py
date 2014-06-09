@@ -320,7 +320,7 @@ class HTMLSingleExportThread(ExportThread):
                     c.getparent().remove(c)
                     
                 # Set the image attributes
-                equations[i].set('car', dataString)
+                equations[i].set('src', dataString)
                 equations[i].set('alt', prose)
                 equations[i].set('title', prose)
                 
@@ -413,8 +413,8 @@ class HTMLSingleExportThread(ExportThread):
             self._reportProgress(myProgress, myLabel)
             
             try:
-                p = images[i].get('car')
-                images[i].set('car', self._createEmbeddedImageDataURL(p))
+                p = images[i].get('src')
+                images[i].set('src', self._createEmbeddedImageDataURL(p))
             except urllib2.URLError as e:
                 # The URL may already be embedded, so don't do it twice.
                 pass

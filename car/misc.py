@@ -39,7 +39,7 @@ def program_path(resourceFile):
             
     else:
         myPath = os.path.normpath(os.path.join(os.path.dirname(os.path.dirname(inspect.getsourcefile(program_path))), resourceFile))
-    
+
     return myPath
     
 def app_data_path(resourceFile):

@@ -13,3 +13,4 @@ build/
 *.pfx
 *.pyc
 .pydevproject
+parsetab.py

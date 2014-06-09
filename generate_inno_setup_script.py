@@ -135,7 +135,7 @@ Filename: "{app}\RunCARFromUpdate.bat"; Description: "{cm:LaunchProgram,{#String
 
     outString += r'''
 [UninstallDelete]
-Type: files; Name: "{app}\src\math_patterns\*"
+Type: files; Name: "{app}\car\math_library\*"
 
 [Code]
 

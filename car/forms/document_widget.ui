@@ -170,7 +170,7 @@
   <customwidget>
    <class>NPAWebView</class>
    <extends>QWidget</extends>
-   <header>gui/npa_webview</header>
+   <header>car/gui/npa_webview</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

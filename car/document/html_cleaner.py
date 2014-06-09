@@ -167,5 +167,5 @@ def _stripImageAttributes(elem):
     '''
     for img in elem.xpath('//img'):
         for k in img.attrib.keys():
-            if k.lower() != 'car':
+            if k.lower() != 'src':
                 img.attrib.pop(k)

@@ -4,7 +4,7 @@ Created on Jul 17, 2013
 @author: Spencer Graffe
 '''
 import copy
-from src.math_to_prose_fast cimport pattern_tree
+from car.math_to_prose_fast cimport pattern_tree
 
 def transform(tree, pattern, gotMatchFlag=None):
     '''

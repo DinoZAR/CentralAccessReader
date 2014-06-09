@@ -1080,7 +1080,7 @@
   <customwidget>
    <class>DownloadProgressWidget</class>
    <extends>QWidget</extends>
-   <header>gui/download_progress</header>
+   <header>car/gui/download_progress</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

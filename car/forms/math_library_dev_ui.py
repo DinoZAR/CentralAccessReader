@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\car\forms/math_library_dev.ui'
 #
-# Created: Mon Jun 09 08:47:30 2014
+# Created: Mon Jun 09 10:07:03 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -148,5 +148,5 @@ class Ui_MathLibraryDev(object):
         self.actionExport.setText(_translate("MathLibraryDev", "Export...", None))
         self.actionContents.setText(_translate("MathLibraryDev", "Guide", None))
 
-from gui.mathml_editor import MathMLEditor
+from car.gui.mathml_editor import MathMLEditor
 import resource_rc

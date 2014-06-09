@@ -15,7 +15,7 @@ if __name__ == '__main__':
     outString = r'''
 # -*- mode: python -*-
 
-a = Analysis(['car/main.py'],
+a = Analysis(['main.py'],
              pathex=[''' + '\'' + PATH_EXTENSION.replace('\\', '\\\\') + '\'' + '''],
              hiddenimports=[],
              hookspath=None)

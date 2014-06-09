@@ -495,7 +495,7 @@ def _generateParagraphHTMLNode(p, importFolder):
                 p = os.path.join(importFolder, os.path.normpath('images/' + image['filename']))
                 p = urlparse.urljoin('file:', urllib.pathname2url(p))
                 
-                imageTag.set('car', p)
+                imageTag.set('src', p)
                 if 'altText' in image:
                     imageTag.set('alt', image['altText'])
                     imageTag.set('title', image['altText'])
