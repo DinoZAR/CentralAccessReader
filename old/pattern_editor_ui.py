@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/pattern_editor.ui'
+# Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\car\forms/pattern_editor.ui'
 #
 # Created: Thu Feb 20 15:55:19 2014
 #      by: PyQt4 UI code generator 4.10

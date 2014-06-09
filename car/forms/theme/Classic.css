@@ -1,0 +1,104 @@
+/* Application-wide properties*/
+* {
+	font-size: 12pt;
+}
+
+QTabWidget::tab {
+	subcontrol-position: right;
+}
+
+/*
+Specific styles for different widgets (mostly for setting button icons)
+*/
+
+/* Buttons in MainWindow*/
+QPushButton#playButton {
+	qproperty-icon: url(":/classic/icons/play_classic.png");
+}
+
+QPushButton#playButton[isPlaying="true"] {
+	qproperty-icon: url(":/classic/icons/stop_classic.png");
+}
+
+QPushButton#speechSettingsButton {
+	qproperty-icon: url(":/classic/icons/speech_settings_classic.png");
+}
+
+QPushButton#colorSettingsButton {
+	qproperty-icon: url(":/classic/icons/color_settings_classic.png");
+}
+
+QPushButton#saveToMP3Button {
+	qproperty-icon: url(":/classic/icons/export_mp3_classic.png");
+}
+
+QPushButton#zoomInButton {
+	qproperty-icon: url(":/classic/icons/magnify_add_classic.png");
+}
+
+QPushButton#zoomOutButton {
+	qproperty-icon: url(":/classic/icons/magnify_minus_classic.png");
+}
+
+QPushButton#zoomResetButton {
+	qproperty-icon: url(":/classic/icons/magnify_reset_classic.png");
+}
+
+QPushButton#splitterButton {
+	qproperty-icon: url(":/classic/icons/sidebar_classic.png");
+}
+
+QPushButton#openDocumentButton {
+	qproperty-icon: url(":/classic/icons/add_classic.png");
+}
+
+QPushButton#mainMenuButton {
+	qproperty-icon: url(":/classic/icons/menu_classic.png");
+}
+
+QPushButton#bookmarkZoomInButton {
+	qproperty-icon: url(":/classic/icons/magnify_add_classic.png");
+}
+
+QPushButton#bookmarkZoomOutButton {
+	qproperty-icon: url(":/classic/icons/magnify_minus_classic.png");
+}
+
+QPushButton#notificationsButton {
+	qproperty-icon: url(":/classic/icons/bell_classic.png");
+}
+
+/* Popup slider */
+QLabel#popupSliderBackground {
+	qproperty-pixmap: url(":/classic/icons/slider_popup_classic.png");
+}
+
+/* Document widget */
+QPushButton#searchPrevious {
+	qproperty-icon: url(":/classic/icons/up_classic.png");	
+}
+
+QPushButton#searchNext {
+	qproperty-icon: url(":/classic/icons/down_classic.png");	
+}
+
+QPushButton#searchSettingsButton {
+	qproperty-icon: url(":/classic/icons/search_settings_classic.png");	
+}
+
+QPushButton#searchCloseButton {
+	qproperty-icon: url(":/classic/icons/close_classic.png");	
+}
+
+QPushButton#cancelButton {
+	qproperty-icon: url(":/classic/icons/cancel_classic.png");
+}
+
+/* Download Progress Widget */
+QPushButton#downloadRetryButton {
+	qproperty-icon: url(":/classic/icons/reload_classic.png");
+}
+
+QPushButton#downloadCancelButton {
+	qproperty-icon: url(":/classic/icons/close_with_circle_classic.png");
+}

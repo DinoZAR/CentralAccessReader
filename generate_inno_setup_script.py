@@ -127,7 +127,7 @@ Filename: "{app}\RunCARFromUpdate.bat"; Description: "{cm:LaunchProgram,{#String
 '''
 
     # Directories, add the following
-    # Name: "{app}\src"
+    # Name: "{app}\car"
     print 'Adding directories...'
     for d in directories:
         outString += 'Name: "' + d.replace(DIST_DIRECTORY, '{app}\\') + '"'

@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ColorSettings</class>
+ <widget class="QDialog" name="ColorSettings">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>275</width>
+    <height>565</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Highlighting, Colors, and Fonts</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="resource.qrc">
+    <normaloff>:/classic/icons/color_settings_classic.png</normaloff>:/classic/icons/color_settings_classic.png</iconset>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_9">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="widgetResizable">
+      <bool>true</bool>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>256</width>
+        <height>666</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_8">
+       <property name="spacing">
+        <number>40</number>
+       </property>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <property name="spacing">
+          <number>10</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_8">
+           <property name="styleSheet">
+            <string notr="true">font-size: 16pt;</string>
+           </property>
+           <property name="text">
+            <string>Highlighting</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="enableHTextCheckBox">
+           <property name="text">
+            <string>Word</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="enableHLineCheckBox">
+           <property name="text">
+            <string>Sentence</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="followInsideParagraphCheckBox">
+           <property name="text">
+            <string>Follow Inside Paragraph</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <property name="spacing">
+          <number>10</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_6">
+           <property name="styleSheet">
+            <string notr="true">font-size: 16pt;</string>
+           </property>
+           <property name="text">
+            <string>Content</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="QPushButton" name="contentBackgroundButton">
+             <property name="text">
+              <string>Background</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="contentTextButton">
+             <property name="text">
+              <string>Text</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <property name="spacing">
+          <number>10</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_4">
+           <property name="styleSheet">
+            <string notr="true">font-size: 16pt;</string>
+           </property>
+           <property name="text">
+            <string>Highlighter Word</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="QPushButton" name="highlighterBackgroundButton">
+             <property name="text">
+              <string>Background</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="highlighterTextButton">
+             <property name="text">
+              <string>Text</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <property name="spacing">
+          <number>10</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_5">
+           <property name="styleSheet">
+            <string notr="true">font-size: 16pt;</string>
+           </property>
+           <property name="text">
+            <string>Highlighter Sentence</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QPushButton" name="highlighterLineBackgroundButton">
+             <property name="text">
+              <string>Background</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="highlighterLineTextButton">
+             <property name="text">
+              <string>Text</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_4">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_5">
+         <property name="spacing">
+          <number>10</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_9">
+           <property name="styleSheet">
+            <string notr="true">font-size: 16pt;</string>
+           </property>
+           <property name="text">
+            <string>Font</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QFontComboBox" name="fontComboBox">
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToMinimumContentsLength</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_6">
+         <property name="spacing">
+          <number>10</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="styleSheet">
+            <string notr="true">font-size: 16pt;</string>
+           </property>
+           <property name="text">
+            <string>Theme</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="themeComboBox">
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToMinimumContentsLength</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout_7">
+     <item>
+      <widget class="QPushButton" name="restoreButton">
+       <property name="toolTip">
+        <string>Restores settings to their default values</string>
+       </property>
+       <property name="text">
+        <string>Restore to Default Settings</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>contentBackgroundButton</tabstop>
+  <tabstop>contentTextButton</tabstop>
+  <tabstop>highlighterBackgroundButton</tabstop>
+  <tabstop>highlighterTextButton</tabstop>
+  <tabstop>highlighterLineBackgroundButton</tabstop>
+  <tabstop>highlighterLineTextButton</tabstop>
+ </tabstops>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
+ <connections/>
+</ui>

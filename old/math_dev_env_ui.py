@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/math_dev_env.ui'
+# Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\car\forms/math_dev_env.ui'
 #
 # Created: Thu Feb 20 16:14:33 2014
 #      by: PyQt4 UI code generator 4.10

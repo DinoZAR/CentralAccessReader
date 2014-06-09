@@ -99,7 +99,7 @@ class MathDevelopmentEnvironment(QMainWindow):
         the math database folder for convenience.
         '''
         print 'Opening a math pattern!'
-        filePath = unicode(QFileDialog.getOpenFileName(self, 'Open pattern database...', misc.program_path('src/math_patterns'),'(*.txt)'))
+        filePath = unicode(QFileDialog.getOpenFileName(self, 'Open pattern database...', misc.program_path('car/math_patterns'),'(*.txt)'))
         if len(filePath) > 0:
             newPattern = PatternEditor()
             newPattern.setFile(filePath)
@@ -127,7 +127,7 @@ class MathDevelopmentEnvironment(QMainWindow):
         print 'Save As!'
         curr = self.currentPatternEditor()
         
-        newPath = unicode(QFileDialog.getSaveFileName(self, 'Save pattern database...', misc.program_path('src/math_patterns'), '(*.txt)'))
+        newPath = unicode(QFileDialog.getSaveFileName(self, 'Save pattern database...', misc.program_path('car/math_patterns'), '(*.txt)'))
         if len(newPath) > 0:
             curr.filePath = newPath
             with open(curr.filePath, 'w') as f:

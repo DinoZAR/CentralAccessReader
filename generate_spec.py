@@ -15,7 +15,7 @@ if __name__ == '__main__':
     outString = r'''
 # -*- mode: python -*-
 
-a = Analysis(['src/main.py'],
+a = Analysis(['car/main.py'],
              pathex=[''' + '\'' + PATH_EXTENSION.replace('\\', '\\\\') + '\'' + '''],
              hiddenimports=[],
              hookspath=None)
@@ -36,9 +36,9 @@ exe = EXE(pyz,
     outString+= r'''
           strip=None,
           upx=False,
-          icon=os.path.normpath('src/forms/icons/CAR_Logo.ico') )
+          icon=os.path.normpath('car/forms/icons/CAR_Logo.ico') )
 coll = COLLECT(exe,
-			   Tree(os.path.abspath('src/forms/icons')),
+			   Tree(os.path.abspath('car/forms/icons')),
                a.binaries,
                a.zipfiles,
                a.datas,
