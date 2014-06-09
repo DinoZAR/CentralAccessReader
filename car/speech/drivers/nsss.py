@@ -278,7 +278,7 @@ class NSSpeechSynthesizerDriver(NSObject):
                 
                 lameCommand = lameExe + ' -h "' + aiffPath + '" "' + mp3Path + '"'
                 ps = subprocess.Popen(lameCommand, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-                 
+
                 while ps.poll() == None:
                     if checkStopFunction():
                         ps.terminate()

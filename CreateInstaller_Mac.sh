@@ -65,6 +65,7 @@ cp ./car/forms/resource_rc.py "$APP_DIR/car/forms/"
 #
 echo "Copying files for the headless renderer..."
 mkdir -p "$APP_DIR/car/headless"
+chmod +x ./car/headless/phantomjs_mac
 cp ./car/headless/phantomjs_mac "$APP_DIR/car/headless/"
 cp ./car/headless/render.js "$APP_DIR/car/headless/"
 
@@ -76,6 +77,7 @@ mkdir -p "$APP_DIR/car/math_library"
 cp -R ./car/math_library "$APP_DIR/car/"
 
 echo "Copying LAME MP3 encoder..."
+chmod +x ./car/lame_mac
 cp ./car/lame_mac "$APP_DIR/car/"
 
 echo "Copying OMML to MathML XSLT..."
