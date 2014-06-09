@@ -77,7 +77,7 @@ class MathLibraryEditor(QWidget):
         user where to save it.
         '''
         if len(self.library.filePath) == 0:
-            self.saveAs()
+            self.export()
         else:
             self.library.write(self.library.filePath)
             
@@ -105,7 +105,7 @@ class MathLibraryEditor(QWidget):
         newPattern = MathPattern()
         self.library.patterns.append(newPattern)
         self._treeModel.update()
-        
+
         patternEditor = MathPatternEditor(newPattern)
         patternEditor.nameChanged.connect(self._patternNameChanged)
 

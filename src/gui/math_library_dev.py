@@ -4,13 +4,14 @@ Created on May 20, 2014
 @author: Spencer Graffe
 '''
 import os
+import webbrowser
 
+from PyQt4.QtCore import pyqtSignal
 from PyQt4.QtGui import QMainWindow, QApplication, QFileDialog, QMessageBox, qApp, QAction
 
 from src.forms.math_library_dev_ui import Ui_MathLibraryDev
 from src.gui.math_library_editor import MathLibraryEditor
 from src.gui.math_library_new import NewMathLibraryDialog
-from src.gui.math_save_dialog import MathSaveDialog
 from src.gui import configuration
 from src import math_library
 from src.math_library.library import MathLibrary
@@ -26,6 +27,8 @@ class MathLibraryDev(QMainWindow):
     Provides a development environment for the math libraries, allowing users to
     create and modify their own.
     '''
+
+    updateLibraryList = pyqtSignal()
 
     _myInstance = None
 
@@ -156,25 +159,14 @@ class MathLibraryDev(QMainWindow):
         '''
 
         lib = self.ui.libraryTabs.widget(tabIndex).library
+        result = QMessageBox.question(self, 'Save or Export?', 'Want to save {0} before closing?'.format(lib.name), QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
 
-        dialog = MathSaveDialog('Want to save or export {0} before closing?'.format(lib.name), self)
-        result = dialog.exec_()
-        # result = QMessageBox.question(self, 'Save or Export?', 'Want to save or export {0} before closing?'.format(lib.name), 'Save', 'Export', 'Do Nothing', QMessageBox.Save | QMessageBox.Cancel)
-
-        # Save
-        if result == MathSaveDialog.SAVE:
+        if result == QMessageBox.Yes:
             result = self.saveLibrary(lib, askFirstConfirmation=False)
             if result == QMessageBox.Yes:
                 self.ui.libraryTabs.removeTab(tabIndex)
 
-        # Export
-        elif result == MathSaveDialog.EXPORT:
-            editor = self.ui.libraryTabs.widget(tabIndex)
-            if editor.export():
-                self.ui.libraryTabs.removeTab(tabIndex)
-
-        # Do Nothing
-        elif result == MathSaveDialog.DO_NOTHING:
+        elif result == QMessageBox.No:
             self.ui.libraryTabs.removeTab(tabIndex)
     
     def saveCurrent(self):
@@ -270,20 +262,12 @@ class MathLibraryDev(QMainWindow):
         self.ui.libraryTabs.setTabText(i, name)
 
     def closeEvent(self, ev):
-
         for i in range(self.ui.libraryTabs.count()):
             lib = self.ui.libraryTabs.widget(i).library
-            dialog = MathSaveDialog('Want to save or export {0} before closing?'.format(lib.name))
-            result = dialog.exec_()
+            result = QMessageBox.question(self, 'Save or Export?', 'Want to save {0} before closing?'.format(lib.name), QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
 
-            # Save
-            if result == MathSaveDialog.SAVE:
-                result = self.saveLibrary(lib, askFirstConfirmation=False)
-
-            # Export
-            elif result == MathSaveDialog.EXPORT:
-                editor = self.ui.libraryTabs.widget(i)
-                editor.export()
+            if result == QMessageBox.Yes:
+                self.saveLibrary(lib, askFirstConfirmation=False)
 
     def showHelpContents(self):
-        print 'Marf!'
+        webbrowser.open_new_tab('http://www.cwu.edu/~atrc/centralaccessreader/mlde/MLDE_Guide.html')

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\src\forms/math_library_new.ui'
 #
-# Created: Tue Jun 03 10:29:12 2014
+# Created: Mon Jun 09 08:51:49 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_NewMathLibraryDialog(object):
     def setupUi(self, NewMathLibraryDialog):
         NewMathLibraryDialog.setObjectName(_fromUtf8("NewMathLibraryDialog"))
-        NewMathLibraryDialog.resize(312, 305)
+        NewMathLibraryDialog.resize(312, 396)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/all/icons/CAR_About.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         NewMathLibraryDialog.setWindowIcon(icon)
@@ -70,14 +70,21 @@ class Ui_NewMathLibraryDialog(object):
         self.languageCombo.setObjectName(_fromUtf8("languageCombo"))
         self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.languageCombo)
         self.verticalLayout_2.addLayout(self.formLayout)
+        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_2.addItem(spacerItem)
+        self.label_5 = QtGui.QLabel(NewMathLibraryDialog)
+        self.label_5.setWordWrap(True)
+        self.label_5.setObjectName(_fromUtf8("label_5"))
+        self.verticalLayout_2.addWidget(self.label_5)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem)
+        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem1)
         self.createButton = QtGui.QPushButton(NewMathLibraryDialog)
         self.createButton.setObjectName(_fromUtf8("createButton"))
         self.horizontalLayout.addWidget(self.createButton)
         self.verticalLayout_2.addLayout(self.horizontalLayout)
+        self.verticalLayout_2.setStretch(1, 1)
 
         self.retranslateUi(NewMathLibraryDialog)
         QtCore.QMetaObject.connectSlotsByName(NewMathLibraryDialog)
@@ -90,6 +97,7 @@ class Ui_NewMathLibraryDialog(object):
         self.emptyProjectRadio.setText(_translate("NewMathLibraryDialog", "Empty Project", None))
         self.copyFromRadio.setText(_translate("NewMathLibraryDialog", "Copy From:", None))
         self.label_4.setText(_translate("NewMathLibraryDialog", "Language:", None))
+        self.label_5.setText(_translate("NewMathLibraryDialog", "NOTE: CAR must be restarted in order for the new library to appear.", None))
         self.createButton.setText(_translate("NewMathLibraryDialog", "Create", None))
 
 import resource_rc
