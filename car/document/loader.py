@@ -6,7 +6,10 @@ Created on Nov 15, 2013
 import os
 import traceback
 
-from PyQt4.QtCore import QThread, pyqtSignal
+try:
+    from PyQt4.QtCore import QThread, pyqtSignal
+except ImportError:
+    from PyQt5.QtCore import QThread, pyqtSignal
 
 from car.document.docx.docx_document import DocxDocument
 from car.document.clipboard_document import ClipboardDocument
@@ -48,6 +51,7 @@ class DocumentLoadingThread(QThread):
             print 'Could not read file', self._fileName, ':', e
             traceback.print_exc()
             self._success = False
+            self.error.emit(e)
             return
         
         self._success = not self._isCanceled()

@@ -3,7 +3,10 @@ Created on Dec 18, 2013
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtCore import QThread, pyqtSignal
+try:
+    from PyQt4.QtCore import QThread, pyqtSignal
+except ImportError:
+    from PyQt5.QtCore import QThread, pyqtSignal
 
 class ExportThread(QThread):
     '''

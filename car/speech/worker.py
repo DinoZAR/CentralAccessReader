@@ -3,7 +3,10 @@ Created on Apr 8, 2013
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtCore import QThread, QMutex, pyqtSignal
+try:
+    from PyQt4.QtCore import QThread, QMutex, pyqtSignal
+except ImportError:
+    from PyQt5.QtCore import QThread, QMutex, pyqtSignal
 
 from car.speech import driver
 from car.gui import configuration

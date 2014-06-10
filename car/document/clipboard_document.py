@@ -3,7 +3,10 @@ Created on Dec 16, 2013
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtGui import QApplication
+try:
+    from PyQt4.QtGui import QApplication
+except ImportError:
+    from PyQt5.QtWidgets import QApplication
 from lxml import etree, html
 
 from car.document import Document, html_cleaner

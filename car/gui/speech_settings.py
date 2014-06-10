@@ -172,15 +172,15 @@ class SpeechSettings(QDialog):
         
     def rateSlider_valueChanged(self, value):
         configuration.setInt('Rate', value)
-        self.mainWindow.changeRate.emit(configuration.getInt('Rate'))
+        self.mainWindow.setRate.emit(configuration.getInt('Rate'))
 
     def volumeSlider_valueChanged(self, value):
         configuration.setInt('Volume', value)
-        self.mainWindow.changeVolume.emit(configuration.getInt('Volume'))
+        self.mainWindow.setVolume.emit(configuration.getInt('Volume'))
         
     def pauseSlider_valueChanged(self, value):
         configuration.setInt('PauseLength', value)
-        self.mainWindow.changePauseLength.emit(configuration.getInt('PauseLength'))
+        self.mainWindow.setPauseLength.emit(configuration.getInt('PauseLength'))
         
     def voiceComboBox_currentIndexChanged(self, index):
         configuration.setValue('Voice', unicode(self.ui.voiceComboBox.itemData(index).toString()))

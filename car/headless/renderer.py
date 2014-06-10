@@ -8,7 +8,10 @@ import os
 import subprocess
 import traceback
 
-from PyQt4.QtCore import QThread, pyqtSignal
+try:
+    from PyQt4.QtCore import QThread, pyqtSignal
+except ImportError:
+    from PyQt5.QtCore import QThread, pyqtSignal
 
 from car import misc
 
