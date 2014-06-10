@@ -66,12 +66,5 @@ def main():
 
     print 'Done!'
 
-    # from car.gui.main_window import MainWindow
-    #
-    # window = MainWindow(app)
-    # window.show()
-    # splash.finish(window)
-    # sys.exit(app.exec_())
-
 if __name__ == '__main__':
     main()
