@@ -14,6 +14,7 @@ cdef class PatternTree:
     cdef public unicode output
     
     # Functions
+    cpdef PatternTree copy(self)
     cpdef int isExpressions(self)
     cpdef MatchResult isMatch(self, PatternTree other)
     cpdef GatherResult gather(self, PatternTree other)
@@ -27,7 +28,7 @@ cdef class PatternTree:
     cpdef list getOutput(self)
     cpdef object disconnect(self)
     cpdef object copyData(self, PatternTree other)
-    cdef unicode _getTypeString(self)
+    cpdef unicode getTypeString(self)
     cdef unicode _createIndent(self, int num)
     cpdef unicode dump(self, int indent=*)
     

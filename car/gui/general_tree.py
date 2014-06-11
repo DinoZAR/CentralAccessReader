@@ -12,8 +12,13 @@ class GeneralTree(QAbstractItemModel):
     def __init__(self, dataSource, parent=None):
         super(GeneralTree, self).__init__(parent)
         self._source = dataSource
+
         self._childrenAccessors = {}
+        self._defaultChildrenAccessor = None
+
         self._displayRules = {}
+        self._defaultDisplayRule = None
+
         self._selectableRules = {}
 
         self._tree = None
@@ -30,6 +35,15 @@ class GeneralTree(QAbstractItemModel):
         '''
         self._childrenAccessors[level] = func
 
+    def setDefaultChildrenRule(self, func):
+        '''
+        Sets the default rule for getting children.
+
+        The function must have the signature func(obj), and it must return an
+        iterable of the children of obj.
+        '''
+        self._defaultChildrenAccessor = func
+
     def addDisplayRule(self, level, func):
         '''
         Adds a rule on how to display a certain level of the hierachy.
@@ -37,6 +51,14 @@ class GeneralTree(QAbstractItemModel):
         The function must have the signature func(obj) and returns a string.
         '''
         self._displayRules[level] = func
+
+    def setDefaultDisplayRule(self, func):
+        '''
+        Sets the default display rule for all levels.
+
+        The function must have the signature func(obj) and returns a string.
+        '''
+        self._defaultDisplayRule = func
 
     def addSelectableRule(self, level, func):
         '''
@@ -89,12 +111,14 @@ class GeneralTree(QAbstractItemModel):
         '''
         Updates the tree.
         '''
-        self._tree = TreeItem(self._source, self._childrenAccessors)
+        self._tree = TreeItem(self._source, self._childrenAccessors, self._defaultChildrenAccessor)
         self.reset()
 
     def _getTreeItemLabel(self, item):
         if item.level in self._displayRules:
             return self._displayRules[item.level](item.data)
+        elif self._defaultDisplayRule is not None:
+            return self._defaultDisplayRule(item.data)
         return unicode(item.data)
 
     #
@@ -161,9 +185,7 @@ class GeneralTree(QAbstractItemModel):
         if index.isValid():
             if role == Qt.DisplayRole:
                 item = index.internalPointer()
-                if item.level in self._displayRules:
-                    return self._displayRules[item.level](item.data)
-                return unicode(index.internalPointer().data)
+                return self._getTreeItemLabel(item)
             else:
                 return None
         else:
@@ -171,7 +193,7 @@ class GeneralTree(QAbstractItemModel):
 
 class TreeItem(object):
 
-    def __init__(self, data, childAccessors, level=0):
+    def __init__(self, data, childAccessors, defaultChildrenAccessor,  level=0):
         self.data = data
         self.level = level
 
@@ -180,10 +202,12 @@ class TreeItem(object):
         iterable = data
         if level in childAccessors:
             iterable = childAccessors[level](data)
+        elif defaultChildrenAccessor is not None:
+            iterable = defaultChildrenAccessor(data)
 
         try:
             for c in iterable:
-                self.addChild(TreeItem(c, childAccessors, level=level + 1))
+                self.addChild(TreeItem(c, childAccessors, defaultChildrenAccessor, level=level + 1))
         except TypeError:
             pass
 

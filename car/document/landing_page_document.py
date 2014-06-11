@@ -41,16 +41,16 @@ class LandingPageDocument(Document):
         
         s = '''
         <body>
-        <p><img alt="Arrow points to white plus" title="Arrow points to white plus" car="''' + arrowImage + '''"/></p>
-        <p style="font-size:30px">To open a Word Document, press the white plus.</p>
+        <p><img alt="Arrow points to white plus" title="Arrow points to white plus" src="''' + arrowImage + '''" width="75" height="75"/></p>
+        <p>To open a Word Document, press the white plus.</p>
         <br/>
-        <p style="font-size:30px">Other ways to load content into CAR:</p>
+        <p>Other ways to load content into CAR:</p>
         <ul>
-        <li><p style="font-size:30px">Drag Word Document into CAR</p></li>
-        <li><p style="font-size:30px">Paste text from clipboard</p></li>
+        <li><p>Drag Word Document into CAR</p></li>
+        <li><p>Paste text from clipboard</p></li>
         </ul>
         <br/>
-        <p style="font-size:30px"><a class="button" href="command/disableQuickStart">Disable Quick Start</a>
+        <p><a class="button" href="command/disableQuickStart">Disable Quick Start</a>
         </body>
         '''
         return s

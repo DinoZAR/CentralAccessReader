@@ -12,14 +12,12 @@ from PyQt4.QtGui import QMainWindow, QApplication, QFileDialog, QMessageBox, qAp
 from car.forms.math_library_dev_ui import Ui_MathLibraryDev
 from car.gui.math_library_editor import MathLibraryEditor
 from car.gui.math_library_new import NewMathLibraryDialog
+from car.gui.general_tree import GeneralTree
 from car.gui import configuration
 from car import math_library
 from car.math_library.library import MathLibrary
-try:
-    from car.math_to_prose_fast.tts import MathTTS
-except ImportError as ex:
-    print 'Loading slower MathTTS...', ex
-    from car.math_to_prose.tts import MathTTS
+from car.math_to_prose_fast.tts import MathTTS
+from car.math_to_prose_fast import pattern_tree
 from car.speech import driver
 
 class MathLibraryDev(QMainWindow):
@@ -68,10 +66,21 @@ class MathLibraryDev(QMainWindow):
         # Clear the tabs
         self.ui.libraryTabs.clear()
 
+        # Tree model for the stages tree view
+        self.stagesTreeModel = None
+
         # Update my list of installed libraries into the menu
         self.updateInstalledLibraryList()
         
         self.connect_signals()
+
+    def closeEvent(self, ev):
+        for i in range(self.ui.libraryTabs.count()):
+            lib = self.ui.libraryTabs.widget(i).library
+            result = QMessageBox.question(self, 'Save or Export?', 'Want to save {0} before closing?'.format(lib.name), QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
+
+            if result == QMessageBox.Yes:
+                self.saveLibrary(lib, askFirstConfirmation=False)
     
     def connect_signals(self):
         # File menu
@@ -93,6 +102,9 @@ class MathLibraryDev(QMainWindow):
         # Controls
         self.ui.libraryTabs.tabCloseRequested.connect(self.closeLibrary)
         self.ui.runButton.clicked.connect(self.runCurrentLibrary)
+
+        self.ui.collapseStagesButton.clicked.connect(self.collapseStages)
+        self.ui.expandStagesButton.clicked.connect(self.expandStages)
         
     def currentLibraryEditor(self):
         return self.ui.libraryTabs.currentWidget()
@@ -222,8 +234,23 @@ class MathLibraryDev(QMainWindow):
             if pattern is not None:
                 try:
                     self._mathTTS.setMathLibrary(lib, pattern)
-                    prose = self._mathTTS.parse(self.ui.mathmlEditor.getMath())
+
+                    # Convert the math to prose
+                    stages = []
+                    prose = self._mathTTS.parse(self.ui.mathmlEditor.getMath(), stageSink=stages)
+
+                    # Set the text of the prose generated
                     self.ui.proseOutput.setText(prose)
+
+                    # Create the stages diagram of the parse
+                    self.stagesTreeModel = GeneralTree(stages)
+                    self.stagesTreeModel.addChildrenRule(0, lambda x: x)
+                    self.stagesTreeModel.addChildrenRule(1, self._getTreeFromStage)
+                    self.stagesTreeModel.addDisplayRule(1, self._getLabelForStage)
+                    self.stagesTreeModel.setDefaultChildrenRule(self._getChildrenForTree)
+                    self.stagesTreeModel.setDefaultDisplayRule(self._getLabelForTree)
+                    self.ui.stagesView.setModel(self.stagesTreeModel)
+
                     self._ttsEngine.stop()
                     self._ttsEngine.setSpeechGenerator([(prose, 'math')])
                     self._ttsEngine.start()
@@ -234,6 +261,43 @@ class MathLibraryDev(QMainWindow):
                 self.ui.proseOutput.setText('')
         else:
             self.ui.proseOutput.setText('')
+
+    def _getTreeFromStage(self, stage):
+        return [stage[1]]
+
+    def _getLabelForStage(self, stage):
+        pattern = stage[0]
+        if pattern is None:
+            return 'Start'
+        return pattern.name
+
+    def _getLabelForTree(self, tree):
+        label = u''
+
+        # Variable
+        if tree.type == pattern_tree.VARIABLE_TYPE:
+            label = u'{0} -> {1}'.format(tree.name, tree.output)
+
+        # Text
+        elif tree.type == pattern_tree.TEXT_TYPE:
+            label = u'"{0}"'.format(tree.name)
+
+        # Category
+        elif tree.type == pattern_tree.CATEGORY_TYPE:
+            label = u'[{0}]'.format(tree.name)
+
+        # Wildcard
+        elif tree.type == pattern_tree.WILDCARD_TYPE:
+            label = u'{0}'.format(tree.name)
+
+        # Xml
+        elif tree.type == pattern_tree.XML_TYPE:
+            label = u'<{0}>'.format(tree.name)
+
+        return label
+
+    def _getChildrenForTree(self, tree):
+        return tree.children
 
     def updateInstalledLibraryList(self):
         '''
@@ -261,13 +325,11 @@ class MathLibraryDev(QMainWindow):
         i = self.ui.libraryTabs.indexOf(editor)
         self.ui.libraryTabs.setTabText(i, name)
 
-    def closeEvent(self, ev):
-        for i in range(self.ui.libraryTabs.count()):
-            lib = self.ui.libraryTabs.widget(i).library
-            result = QMessageBox.question(self, 'Save or Export?', 'Want to save {0} before closing?'.format(lib.name), QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
-
-            if result == QMessageBox.Yes:
-                self.saveLibrary(lib, askFirstConfirmation=False)
-
     def showHelpContents(self):
         webbrowser.open_new_tab('http://www.cwu.edu/~atrc/centralaccessreader/mlde/MLDE_Guide.html')
+
+    def collapseStages(self):
+        self.ui.stagesView.collapseAll()
+
+    def expandStages(self):
+        self.ui.stagesView.expandAll()
