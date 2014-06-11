@@ -18,10 +18,7 @@
     <normaloff>:/all/icons/CAR_About.png</normaloff>:/all/icons/CAR_About.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1">
-    <property name="spacing">
-     <number>6</number>
-    </property>
+   <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,1">
     <property name="margin">
      <number>0</number>
     </property>
@@ -44,12 +41,9 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <property name="handleWidth">
-       <number>10</number>
-      </property>
       <widget class="QTabWidget" name="libraryTabs">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="tabsClosable">
         <bool>true</bool>
@@ -68,13 +62,36 @@
         </attribute>
        </widget>
       </widget>
-      <widget class="MathMLEditor" name="mathmlEditor" native="true">
-       <property name="minimumSize">
-        <size>
-         <width>200</width>
-         <height>200</height>
-        </size>
+      <widget class="QSplitter" name="splitter2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
        </property>
+       <widget class="MathMLEditor" name="mathmlEditor" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>200</width>
+          <height>200</height>
+         </size>
+        </property>
+       </widget>
+       <widget class="QWidget" name="">
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Stages:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QTreeView" name="stagesView">
+           <attribute name="headerVisible">
+            <bool>false</bool>
+           </attribute>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </widget>
     </item>

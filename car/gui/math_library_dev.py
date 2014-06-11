@@ -12,6 +12,7 @@ from PyQt4.QtGui import QMainWindow, QApplication, QFileDialog, QMessageBox, qAp
 from car.forms.math_library_dev_ui import Ui_MathLibraryDev
 from car.gui.math_library_editor import MathLibraryEditor
 from car.gui.math_library_new import NewMathLibraryDialog
+from car.gui.general_tree import GeneralTree
 from car.gui import configuration
 from car import math_library
 from car.math_library.library import MathLibrary
@@ -67,6 +68,9 @@ class MathLibraryDev(QMainWindow):
 
         # Clear the tabs
         self.ui.libraryTabs.clear()
+
+        # Tree model for the stages tree view
+        self.stagesTreeModel = None
 
         # Update my list of installed libraries into the menu
         self.updateInstalledLibraryList()
@@ -222,8 +226,23 @@ class MathLibraryDev(QMainWindow):
             if pattern is not None:
                 try:
                     self._mathTTS.setMathLibrary(lib, pattern)
-                    prose = self._mathTTS.parse(self.ui.mathmlEditor.getMath())
+
+                    # Convert the math to prose
+                    stages = []
+                    prose = self._mathTTS.parse(self.ui.mathmlEditor.getMath(), stageSink=stages)
+
+                    # Set the text of the prose generated
                     self.ui.proseOutput.setText(prose)
+
+                    # Create the stages diagram of the parse
+                    self.stagesTreeModel = GeneralTree(stages)
+                    self.stagesTreeModel.addChildrenRule(0, lambda x: x)
+                    self.stagesTreeModel.addChildrenRule(1, self._getTreeFromStage)
+                    self.stagesTreeModel.addDisplayRule(1, self._getLabelForStage)
+                    self.stagesTreeModel.setDefaultChildrenRule(self._getChildrenForTree)
+                    self.stagesTreeModel.setDefaultDisplayRule(self._getLabelForTree)
+                    self.ui.stagesView.setModel(self.stagesTreeModel)
+
                     self._ttsEngine.stop()
                     self._ttsEngine.setSpeechGenerator([(prose, 'math')])
                     self._ttsEngine.start()
@@ -234,6 +253,25 @@ class MathLibraryDev(QMainWindow):
                 self.ui.proseOutput.setText('')
         else:
             self.ui.proseOutput.setText('')
+
+    def _getTreeFromStage(self, stage):
+        patternTree = stage[1]
+        #print 'My pattern tree:', [unicode(patternTree)]
+        return patternTree
+
+    def _getLabelForStage(self, stage):
+        pattern = stage[0]
+        patternTree = stage[1]
+        if pattern is None:
+            return 'Start'
+
+        return pattern.name
+
+    def _getLabelForTree(self, tree):
+        tree.name
+
+    def _getChildrenForTree(self, tree):
+        return tree.children
 
     def updateInstalledLibraryList(self):
         '''

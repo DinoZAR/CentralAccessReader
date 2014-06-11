@@ -492,9 +492,6 @@ cdef class PatternTree:
     
     def __unicode__(self):
         return self.dump()
-    
-    def __repr__(self):
-        return str(id(self)) + ': ' + self.dump()
 
 def convertDOMToPatternTree(elem, parent=None):
     cdef unicode name

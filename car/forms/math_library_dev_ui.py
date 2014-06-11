@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\car\forms/math_library_dev.ui'
 #
-# Created: Mon Jun 09 10:07:03 2014
-#      by: PyQt4 UI code generator 4.10
+# Created: Tue Jun 10 16:34:54 2014
+#      by: PyQt4 UI code generator 4.11
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -32,10 +32,9 @@ class Ui_MathLibraryDev(object):
         MathLibraryDev.setWindowIcon(icon)
         self.centralwidget = QtGui.QWidget(MathLibraryDev)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
-        self.verticalLayout = QtGui.QVBoxLayout(self.centralwidget)
-        self.verticalLayout.setSpacing(6)
-        self.verticalLayout.setMargin(0)
-        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.verticalLayout_3 = QtGui.QVBoxLayout(self.centralwidget)
+        self.verticalLayout_3.setMargin(0)
+        self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.runButton = QtGui.QPushButton(self.centralwidget)
@@ -44,10 +43,9 @@ class Ui_MathLibraryDev(object):
         self.proseOutput = QtGui.QLineEdit(self.centralwidget)
         self.proseOutput.setObjectName(_fromUtf8("proseOutput"))
         self.horizontalLayout.addWidget(self.proseOutput)
-        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.verticalLayout_3.addLayout(self.horizontalLayout)
         self.splitter = QtGui.QSplitter(self.centralwidget)
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
-        self.splitter.setHandleWidth(10)
         self.splitter.setObjectName(_fromUtf8("splitter"))
         self.libraryTabs = QtGui.QTabWidget(self.splitter)
         self.libraryTabs.setTabsClosable(True)
@@ -59,11 +57,26 @@ class Ui_MathLibraryDev(object):
         self.tab_2 = QtGui.QWidget()
         self.tab_2.setObjectName(_fromUtf8("tab_2"))
         self.libraryTabs.addTab(self.tab_2, _fromUtf8(""))
-        self.mathmlEditor = MathMLEditor(self.splitter)
+        self.splitter2 = QtGui.QSplitter(self.splitter)
+        self.splitter2.setOrientation(QtCore.Qt.Vertical)
+        self.splitter2.setObjectName(_fromUtf8("splitter2"))
+        self.mathmlEditor = MathMLEditor(self.splitter2)
         self.mathmlEditor.setMinimumSize(QtCore.QSize(200, 200))
         self.mathmlEditor.setObjectName(_fromUtf8("mathmlEditor"))
-        self.verticalLayout.addWidget(self.splitter)
-        self.verticalLayout.setStretch(1, 1)
+        self.widget = QtGui.QWidget(self.splitter2)
+        self.widget.setObjectName(_fromUtf8("widget"))
+        self.verticalLayout = QtGui.QVBoxLayout(self.widget)
+        self.verticalLayout.setMargin(0)
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.label_2 = QtGui.QLabel(self.widget)
+        self.label_2.setObjectName(_fromUtf8("label_2"))
+        self.verticalLayout.addWidget(self.label_2)
+        self.stagesView = QtGui.QTreeView(self.widget)
+        self.stagesView.setObjectName(_fromUtf8("stagesView"))
+        self.stagesView.header().setVisible(False)
+        self.verticalLayout.addWidget(self.stagesView)
+        self.verticalLayout_3.addWidget(self.splitter)
+        self.verticalLayout_3.setStretch(1, 1)
         MathLibraryDev.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MathLibraryDev)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1030, 21))
@@ -117,7 +130,7 @@ class Ui_MathLibraryDev(object):
         self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(MathLibraryDev)
-        self.libraryTabs.setCurrentIndex(0)
+        self.libraryTabs.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MathLibraryDev)
 
     def retranslateUi(self, MathLibraryDev):
@@ -125,6 +138,7 @@ class Ui_MathLibraryDev(object):
         self.runButton.setText(_translate("MathLibraryDev", "Run", None))
         self.libraryTabs.setTabText(self.libraryTabs.indexOf(self.tab), _translate("MathLibraryDev", "Tab 1", None))
         self.libraryTabs.setTabText(self.libraryTabs.indexOf(self.tab_2), _translate("MathLibraryDev", "Tab 2", None))
+        self.label_2.setText(_translate("MathLibraryDev", "Stages:", None))
         self.menuFile.setTitle(_translate("MathLibraryDev", "File", None))
         self.menuInstalled_Libraries.setTitle(_translate("MathLibraryDev", "Open Library", None))
         self.menuMathML.setTitle(_translate("MathLibraryDev", "MathML", None))
