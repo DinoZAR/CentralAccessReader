@@ -3,7 +3,7 @@ Created on Jun 21, 2013
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtCore import QThread, pyqtSignal
+from PyQt5.QtCore import QThread, pyqtSignal
 import platform
 import re
 import urllib2

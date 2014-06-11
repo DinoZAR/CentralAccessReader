@@ -4,7 +4,7 @@ Created on Jan 7, 2014
 @author: Spencer Graffe
 '''
 import time
-from PyQt4.QtCore import QThread, QMutex, QSignalMapper, pyqtSignal
+from PyQt5.QtCore import QThread, QMutex, QSignalMapper, pyqtSignal
 
 class ThreadPool(QThread):
     '''

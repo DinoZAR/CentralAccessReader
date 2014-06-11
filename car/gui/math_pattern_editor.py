@@ -3,8 +3,9 @@ Created on May 21, 2014
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtCore import pyqtSignal
-from PyQt4.QtGui import QWidget, QFont
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QWidget
+from PyQt5.QtGui import QFont
 
 from car.forms.math_pattern_editor_ui import Ui_MathPatternEditor
 

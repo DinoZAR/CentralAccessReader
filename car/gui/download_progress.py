@@ -6,8 +6,8 @@ Created on Jul 9, 2013
 import urllib2
 import socket
 
-from PyQt4.QtGui import QWidget
-from PyQt4.QtCore import pyqtSignal, QThread
+from PyQt5.QtWidgets import QWidget
+from PyQt5.QtCore import pyqtSignal, QThread
 
 from car.forms.download_progress_ui import Ui_DownloadProgressWidget
 

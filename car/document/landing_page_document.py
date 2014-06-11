@@ -6,7 +6,7 @@ Created on Dec 13, 2013
 import base64
 
 from lxml import html
-from PyQt4.QtCore import QIODevice, QFile
+from PyQt5.QtCore import QIODevice, QFile
 
 from car.document import Document
 from car.forms import resource_rc  # needed to get image resource

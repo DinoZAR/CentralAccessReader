@@ -10,10 +10,11 @@ def main():
     import sys
     import os
 
-    from PyQt4.QtGui import QApplication, QPixmap, QSplashScreen
+    from PyQt5.QtGui import QPixmap
+    from PyQt5.QtWidgets import QApplication, QSplashScreen
 
     # Necessary to make drawing fast enough on Macs
-    QApplication.setGraphicsSystem('raster')
+    #QApplication.setGraphicsSystem('raster')
      
     app = QApplication(sys.argv)
      

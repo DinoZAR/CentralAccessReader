@@ -12,7 +12,7 @@ import os
 from Foundation import NSObject, NSString, NSURL
 from AppKit import NSSpeechSynthesizer
 from PyObjCTools import AppHelper
-from PyQt4.QtCore import QMutex
+from PyQt5.QtCore import QMutex
 
 from car.misc import program_path
 from car.gui import configuration

@@ -6,7 +6,7 @@ Created on Dec 12, 2013
 import datetime
 
 import feedparser
-from PyQt4.QtCore import QThread, pyqtSignal
+from PyQt5.QtCore import QThread, pyqtSignal
 from time import mktime
 
 from car.document.rss.rss_document import RSSDocument

@@ -3,7 +3,7 @@ Created on May 6, 2013
 
 @author: GraffeS
 '''
-from PyQt4.QtGui import QDialog
+from PyQt5.QtWidgets import QDialog
 
 from car.forms.about_ui import Ui_AboutDialog
 from car.misc import program_path

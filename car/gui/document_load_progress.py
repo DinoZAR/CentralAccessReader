@@ -3,8 +3,8 @@ Created on Jul 19, 2013
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtGui import QDialog
-from PyQt4.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QDialog
+from PyQt5.QtCore import pyqtSignal
 
 from car.forms.document_load_progress_ui import Ui_DocumentLoadProgressDialog
 

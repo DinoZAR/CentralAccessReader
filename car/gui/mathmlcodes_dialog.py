@@ -4,9 +4,9 @@ Created on Feb 27, 2013
 @author: Spencer Graffe
 '''
 
-from PyQt4.QtCore import QSize, QUrl, QEvent
-from PyQt4.QtGui import QListWidgetItem, QDialog, QHBoxLayout, QWidget
-from PyQt4.QtWebKit import QWebView
+from PyQt5.QtCore import QSize, QUrl, QEvent
+from PyQt5.QtWidgets import QListWidgetItem, QDialog, QHBoxLayout, QWidget
+from PyQt5.QtWebKit import QWebView
 from lxml import etree
 
 from car.document.html_document import HTMLDocument

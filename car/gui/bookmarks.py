@@ -3,10 +3,7 @@ Created on Mar 5, 2013
 
 @author: Spencer Graffe
 '''
-try:
-    from PyQt4.QtCore import Qt, QAbstractItemModel, QModelIndex
-except ImportError:
-    from PyQt5.QtCore import Qt, QAbstractItemModel, QModelIndex
+from PyQt5.QtCore import Qt, QAbstractItemModel, QModelIndex
 
 class BookmarkNode(object):
     '''

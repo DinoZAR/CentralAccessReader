@@ -2,7 +2,7 @@
 @author: Spencer Graffe
 '''
 
-from PyQt4.QtGui import QDialog
+from PyQt5.QtWidgets import QDialog
 
 from car.forms.math_save_dialog_ui import Ui_MathSaveDialog
 

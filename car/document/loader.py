@@ -6,10 +6,7 @@ Created on Nov 15, 2013
 import os
 import traceback
 
-try:
-    from PyQt4.QtCore import QThread, pyqtSignal
-except ImportError:
-    from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtCore import QThread, pyqtSignal
 
 from car.document.docx.docx_document import DocxDocument
 from car.document.clipboard_document import ClipboardDocument

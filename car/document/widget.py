@@ -9,9 +9,10 @@ import os
 
 from lxml import html
 from lxml.etree import ParserError, XMLSyntaxError
-from PyQt4.QtCore import QUrl, pyqtSignal, QMutex, QTimer, pyqtSlot, QMimeData
-from PyQt4.QtGui import QWidget, QMessageBox, QFileDialog, QApplication
-from PyQt4.QtWebKit import QWebInspector, QWebSettings
+from PyQt5.QtCore import QUrl, pyqtSignal, QMutex, QTimer, pyqtSlot, QMimeData
+from PyQt5.QtWidgets import QWidget, QMessageBox, QFileDialog, QApplication
+from PyQt5.QtWebKit import QWebSettings
+from PyQt5.QtWebKitWidgets import QWebInspector
 
 from car.export.html_single import HTMLSingleExportThread
 from car.export.mp3 import MP3ExportThread
@@ -274,7 +275,7 @@ class DocumentWidget(QWidget):
         Sets up the highlighter for streaming. Returns the first chunk of
         content to be read as an lxml element.
         '''
-        contents = unicode(self._runJavaScript('StartHighlighting', []).toString())
+        contents = unicode(self._runJavaScript('StartHighlighting', []))
         
         # Convert the HTML to DOM
         root = None
@@ -289,13 +290,13 @@ class DocumentWidget(QWidget):
         '''
         Returns whether there is more speech to deliver.
         '''
-        return self._runJavaScript('HasMoreElements', []).toBool()
+        return self._runJavaScript('HasMoreElements', [])
     
     def streamNextElement(self):
         '''
         Returns the next element to stream. The element is an lxml element.
         '''
-        nextContent = unicode(self._runJavaScript('StreamNextElement', []).toString())
+        nextContent = unicode(self._runJavaScript('StreamNextElement', []))
         
         # Create the HTML DOM from content
         elem = None
@@ -339,7 +340,7 @@ class DocumentWidget(QWidget):
         '''
         Returns an lxml element representing the currently selected HTML.
         '''
-        selectedHTML = unicode(self._runJavaScript('GetSelectionHTML', []).toString())
+        selectedHTML = unicode(self._runJavaScript('GetSelectionHTML', []))
         return html.fromstring(selectedHTML)
     
     def getBodyHTML(self):
@@ -347,7 +348,7 @@ class DocumentWidget(QWidget):
         Gets the body portion of the HTML currently in the content view. Returns
         an lxml element representing it.
         '''
-        htmlString = unicode(self._runJavaScript('GetBodyHTML', []).toString())
+        htmlString = unicode(self._runJavaScript('GetBodyHTML', []))
         return html.fromstring(htmlString)
     
     def getEntireHTML(self):
@@ -609,8 +610,8 @@ class DocumentWidget(QWidget):
         Reports whether the math is finished typesetting or the progress if it
         hasn't yet. Uses signals so that the main GUI thread remains responsive.
         '''
-        if not self._runJavaScript('IsMathTypeset', []).toBool():
-            percent = int(self._runJavaScript('GetMathTypesetProgress', []).toInt()[0])
+        if not self._runJavaScript('IsMathTypeset', []):
+            percent = int(self._runJavaScript('GetMathTypesetProgress', []))
             self.loadProgress.emit(percent, 'Typesetting math equations...')
             QTimer.singleShot(100, self._reportMathTypeset)
         else:
@@ -631,7 +632,7 @@ class DocumentWidget(QWidget):
         Gets the current heading and page IDs that the highlight is at and emits
         the signal to tell everyone about it.
         '''
-        newHeading = unicode(self._runJavaScript('GetCurrentHeading', []).toString())
-        newPage = unicode(self._runJavaScript('GetCurrentPage', []).toString())
+        newHeading = unicode(self._runJavaScript('GetCurrentHeading', []))
+        newPage = unicode(self._runJavaScript('GetCurrentPage', []))
         
         self.requestUpdateNavigation.emit(newHeading, newPage)

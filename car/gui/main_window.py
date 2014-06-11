@@ -5,10 +5,10 @@ Created on Jan 21, 2013
 '''
 import os
 
-from PyQt4 import QtGui
-from PyQt4.QtGui import qApp, QIcon
-from PyQt4.QtWebKit import QWebSettings
-from PyQt4.QtCore import Qt, QMutex, pyqtSignal, QTimer
+from PyQt5.QtWidgets import QMainWindow, qApp, QMenu, QProgressDialog, QFileDialog, QMessageBox
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWebKit import QWebSettings
+from PyQt5.QtCore import Qt, QMutex, pyqtSignal, QTimer
 
 from car.announcements import AnnouncementPullThread, ANNOUNCEMENT_RSS_URL
 from car.document.landing_page_document import LandingPageDocument
@@ -27,7 +27,7 @@ from car import misc
 from car.speech.worker import SpeechWorker
 from car.updater import GetUpdateThread, SETUP_FILE, SETUP_TEMP_FILE, run_update_installer, is_update_downloaded, save_server_version_to_temp
 
-class MainWindow(QtGui.QMainWindow):
+class MainWindow(QMainWindow):
     loc = 0
     len = 0
     jumped = False
@@ -59,7 +59,7 @@ class MainWindow(QtGui.QMainWindow):
     colorSettingsMutex = QMutex()
     
     def __init__(self, app, parent=None):
-        QtGui.QMainWindow.__init__(self, parent)
+        super(MainWindow, self).__init__(parent)
         
         self.app = app
         
@@ -71,7 +71,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # If the mainMenuButton exists, I have to hide the main menu bar and
         # shove all of its actions onto the mainMenuButton
-        menu = QtGui.QMenu()
+        menu = QMenu()
         menu.addActions(self.menuBar().actions())
         self.ui.mainMenuButton.setMenu(menu)
         self.menuBar().hide()
@@ -81,7 +81,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.playButton.setProperty('isPlaying', False)
         
         # Add the MP3 menu items to the MP3 button
-        menu = QtGui.QMenu()
+        menu = QMenu()
         menu.addAction('Save All', self.saveMP3All)
         menu.addAction('Save Selection', self.saveMP3Selection)
         menu.addAction('Save By Page', self.saveMP3ByPage)
@@ -126,7 +126,7 @@ class MainWindow(QtGui.QMainWindow):
         self.speechThread.start()
                 
         # Create the general-purpose progress dialog
-        self.progressDialog = QtGui.QProgressDialog('Stuff', 'Cancel', 0, 100, self)
+        self.progressDialog = QProgressDialog('Stuff', 'Cancel', 0, 100, self)
         
         # Check to see if I have a voice. If I don't, grab the first one from
         # the TTS driver
@@ -623,11 +623,11 @@ class MainWindow(QtGui.QMainWindow):
             del self.progressDialog
         
     def showOpenDocumentDialog(self):
-        filePath = QtGui.QFileDialog.getOpenFileName(self, 'Open Document...',os.path.join(os.path.expanduser('~'), 'Documents'),'(*.docx)')
+        filePath = QFileDialog.getOpenFileName(self, 'Open Document...', os.path.join(os.path.expanduser('~'), 'Documents'), '(*.docx)')[0]
         self.openDocument(filePath)
         
     def showDocNotSupported(self):
-        result = QtGui.QMessageBox.information(self, 'CAR does not support 1997-2003 Word document', 
+        result = QMessageBox.information(self, 'CAR does not support 1997-2003 Word document',
                                                'Sorry, this is a 1997-2003 Word document that CAR doesn\'t support. Open it in Microsoft Word 2007 or later and save it as "Word Document" (.docx)' 
                                                )
         
@@ -919,7 +919,7 @@ class MainWindow(QtGui.QMainWindow):
         Shows the update prompt when there is one as a new tab.
         '''
         doc = UpdatePromptDocument('', None, None, hasDownloaded=is_update_downloaded())
-        self.addDocument(doc, silent=True, icon=QtGui.QIcon(':/classic/icons/update_classic.png'), hasCommands=True)
+        self.addDocument(doc, silent=True, icon=QIcon(':/classic/icons/update_classic.png'), hasCommands=True)
             
     def finishUpdateDownload(self, success):
         '''

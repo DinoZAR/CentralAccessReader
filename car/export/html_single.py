@@ -10,10 +10,7 @@ import urllib2
 import urlparse
 import traceback
 
-try:
-    from PyQt4.QtCore import QThread
-except ImportError:
-    from PyQt5.QtCore import QThread
+from PyQt5.QtCore import QThread
 from lxml import etree
 from lxml import html
 from car import cairosvg

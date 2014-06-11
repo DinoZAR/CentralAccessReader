@@ -3,8 +3,8 @@ Created on Dec 4, 2013
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtCore import pyqtSignal, Qt, QPoint
-from PyQt4.QtGui import QWidget
+from PyQt5.QtCore import pyqtSignal, Qt, QPoint
+from PyQt5.QtWidgets import QWidget
 
 from car.forms.popup_slider_ui import Ui_PopupSlider
 

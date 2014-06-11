@@ -3,7 +3,7 @@ Created on May 21, 2013
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtCore import Qt, QAbstractItemModel, QModelIndex
+from PyQt5.QtCore import Qt, QAbstractItemModel, QModelIndex
 
 class PageNode(object):
     '''

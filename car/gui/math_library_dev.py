@@ -6,8 +6,8 @@ Created on May 20, 2014
 import os
 import webbrowser
 
-from PyQt4.QtCore import pyqtSignal
-from PyQt4.QtGui import QMainWindow, QApplication, QFileDialog, QMessageBox, qApp, QAction
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, qApp, QAction
 
 from car.forms.math_library_dev_ui import Ui_MathLibraryDev
 from car.gui.math_library_editor import MathLibraryEditor

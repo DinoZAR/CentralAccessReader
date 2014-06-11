@@ -5,8 +5,8 @@ Created on Apr 25, 2013
 '''
 import os
 
-from PyQt4.QtGui import QDialog, qApp, QMessageBox, QFileDialog
-from PyQt4.QtCore import Qt
+from PyQt5.QtWidgets import QDialog, qApp, QMessageBox, QFileDialog
+from PyQt5.QtCore import Qt
 
 from car.forms.speech_settings_ui import Ui_SpeechSettings
 from car.gui import configuration
@@ -111,7 +111,7 @@ class SpeechSettings(QDialog):
         self._mathTreeModel = GeneralTree(libraries)
 
         # Filter the libraries by the current language
-        self._mathTreeModel.addChildrenRule(0, lambda x: [i for i in x if i.languageCode == self.ui.mathLanguageCombo.itemData(self.ui.mathLanguageCombo.currentIndex()).toString()])
+        self._mathTreeModel.addChildrenRule(0, lambda x: [i for i in x if i.languageCode == self.ui.mathLanguageCombo.itemData(self.ui.mathLanguageCombo.currentIndex())])
         self._mathTreeModel.addDisplayRule(1, lambda x: x.name)
         self._mathTreeModel.addChildrenRule(1, self.filterPatterns)
         self._mathTreeModel.addSelectableRule(1, lambda x: False)
@@ -183,7 +183,7 @@ class SpeechSettings(QDialog):
         self.mainWindow.changePauseLength.emit(configuration.getInt('PauseLength'))
         
     def voiceComboBox_currentIndexChanged(self, index):
-        configuration.setValue('Voice', unicode(self.ui.voiceComboBox.itemData(index).toString()))
+        configuration.setValue('Voice', unicode(self.ui.voiceComboBox.itemData(index)))
         self.mainWindow.changeVoice.emit(configuration.getValue('Voice'))
 
     def mathLanguageCombo_currentIndexChanged(self, index):

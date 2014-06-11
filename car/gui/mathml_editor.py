@@ -3,9 +3,9 @@ Created on Feb 20, 2014
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtCore import QUrl
-from PyQt4.QtGui import QWidget
-from PyQt4.QtWebKit import QWebSettings
+from PyQt5.QtCore import QUrl
+from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWebKit import QWebSettings
 
 from lxml import etree
 

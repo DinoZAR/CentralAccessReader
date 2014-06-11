@@ -3,7 +3,7 @@
 '''
 import copy
 
-from PyQt4.QtGui import QDialog
+from PyQt5.QtWidgets import QDialog
 
 from car.forms.math_library_new_ui import Ui_NewMathLibraryDialog
 from car.gui.general_tree import GeneralTree
@@ -68,7 +68,7 @@ class NewMathLibraryDialog(QDialog):
         self.library.author = unicode(self.ui.authorEdit.text())
 
         i = self.ui.languageCombo.currentIndex()
-        self.library.languageCode = unicode(self.ui.languageCombo.itemData(i).toString())
+        self.library.languageCode = unicode(self.ui.languageCombo.itemData(i))
 
         print
 

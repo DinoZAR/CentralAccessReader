@@ -3,8 +3,8 @@ Created on Jun 4, 2013
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QDialog
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QDialog
 
 from car.forms.search_settings_ui import Ui_SearchSettings
 

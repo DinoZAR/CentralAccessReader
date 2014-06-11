@@ -8,10 +8,7 @@ from threading import Lock
 import base64
 import os
 
-try:
-    from PyQt4.QtGui import QColor
-except ImportError:
-    from PyQt5.QtGui import QColor
+from PyQt5.QtGui import QColor
 from lxml import etree
 
 try:

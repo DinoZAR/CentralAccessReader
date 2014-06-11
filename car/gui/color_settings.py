@@ -3,8 +3,9 @@ Created on Apr 25, 2013
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtGui import QDialog, QColor, QFont, qApp, QColorDialog
-from PyQt4.QtCore import Qt, pyqtSignal
+from PyQt5.QtWidgets import QDialog, qApp, QColorDialog
+from PyQt5.QtGui import QColor, QFont
+from PyQt5.QtCore import Qt, pyqtSignal
 
 from car.forms.color_settings_ui import Ui_ColorSettings
 from car.gui import configuration
@@ -246,7 +247,7 @@ class ColorSettings(QDialog):
         self.mainWindow.refreshDocument()
     
     def themeComboBox_currentIndexChanged(self, index):
-        configuration.setValue('Theme', unicode(self.ui.themeComboBox.itemData(index).toString()))
+        configuration.setValue('Theme', unicode(self.ui.themeComboBox.itemData(index)))
         loader.load_theme(qApp, configuration.getValue('Theme'))
         
     def _setButtonColor(self, button, color):

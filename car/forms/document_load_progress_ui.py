@@ -1,54 +1,40 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'W:\Nifty Prose Articulator\workspace\nifty-prose-articulator\car\forms/document_load_progress.ui'
+# Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\car/forms/document_load_progress.ui'
 #
-# Created: Tue Jan 07 09:32:02 2014
-#      by: PyQt4 UI code generator 4.10.3
+# Created: Wed Jun 11 15:37:24 2014
+#      by: PyQt5 UI code generator 5.3
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt4 import QtCore, QtGui
-
-try:
-    _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-    def _fromUtf8(s):
-        return s
-
-try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_DocumentLoadProgressDialog(object):
     def setupUi(self, DocumentLoadProgressDialog):
-        DocumentLoadProgressDialog.setObjectName(_fromUtf8("DocumentLoadProgressDialog"))
+        DocumentLoadProgressDialog.setObjectName("DocumentLoadProgressDialog")
         DocumentLoadProgressDialog.resize(455, 100)
         font = QtGui.QFont()
         font.setPointSize(12)
         DocumentLoadProgressDialog.setFont(font)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/classic/icons/add_document_classic.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/classic/icons/add_document_classic.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         DocumentLoadProgressDialog.setWindowIcon(icon)
         DocumentLoadProgressDialog.setModal(True)
-        self.verticalLayout = QtGui.QVBoxLayout(DocumentLoadProgressDialog)
-        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.label = QtGui.QLabel(DocumentLoadProgressDialog)
-        self.label.setObjectName(_fromUtf8("label"))
+        self.verticalLayout = QtWidgets.QVBoxLayout(DocumentLoadProgressDialog)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.label = QtWidgets.QLabel(DocumentLoadProgressDialog)
+        self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
-        self.horizontalLayout = QtGui.QHBoxLayout()
-        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        self.progressBar = QtGui.QProgressBar(DocumentLoadProgressDialog)
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.progressBar = QtWidgets.QProgressBar(DocumentLoadProgressDialog)
         self.progressBar.setProperty("value", 0)
         self.progressBar.setTextVisible(False)
-        self.progressBar.setObjectName(_fromUtf8("progressBar"))
+        self.progressBar.setObjectName("progressBar")
         self.horizontalLayout.addWidget(self.progressBar)
-        self.cancelButton = QtGui.QPushButton(DocumentLoadProgressDialog)
+        self.cancelButton = QtWidgets.QPushButton(DocumentLoadProgressDialog)
         self.cancelButton.setMinimumSize(QtCore.QSize(0, 32))
-        self.cancelButton.setObjectName(_fromUtf8("cancelButton"))
+        self.cancelButton.setObjectName("cancelButton")
         self.horizontalLayout.addWidget(self.cancelButton)
         self.horizontalLayout.setStretch(0, 1)
         self.verticalLayout.addLayout(self.horizontalLayout)
@@ -57,8 +43,9 @@ class Ui_DocumentLoadProgressDialog(object):
         QtCore.QMetaObject.connectSlotsByName(DocumentLoadProgressDialog)
 
     def retranslateUi(self, DocumentLoadProgressDialog):
-        DocumentLoadProgressDialog.setWindowTitle(_translate("DocumentLoadProgressDialog", "Loading Document...", None))
-        self.label.setText(_translate("DocumentLoadProgressDialog", "Something...", None))
-        self.cancelButton.setText(_translate("DocumentLoadProgressDialog", "Cancel", None))
+        _translate = QtCore.QCoreApplication.translate
+        DocumentLoadProgressDialog.setWindowTitle(_translate("DocumentLoadProgressDialog", "Loading Document..."))
+        self.label.setText(_translate("DocumentLoadProgressDialog", "Something..."))
+        self.cancelButton.setText(_translate("DocumentLoadProgressDialog", "Cancel"))
 
 import resource_rc

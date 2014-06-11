@@ -5,8 +5,8 @@ Created on May 20, 2014
 '''
 import os
 
-from PyQt4.QtCore import pyqtSignal
-from PyQt4.QtGui import QWidget, QFileDialog, QMenu
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QWidget, QFileDialog, QMenu
 
 from car.forms.math_library_editor_ui import Ui_MathLibraryEditor
 from car.gui.math_pattern_editor import MathPatternEditor
@@ -217,7 +217,7 @@ class MathLibraryEditor(QWidget):
         self.ui.authorEdit.setText(newAuthor)
 
     def _updateLanguage(self, index):
-        self.language = unicode(self.ui.languageCombo.itemData(index).toString())
+        self.language = unicode(self.ui.languageCombo.itemData(index))
 
     def _setLanguageInCombo(self, editor, language):
         i = self.ui.languageCombo.findData(language)

@@ -3,7 +3,7 @@ Created on Jun 28, 2013
 
 @author: Spencer Graffe
 '''
-from PyQt4.QtCore import QThread, QMutex, pyqtSignal
+from PyQt5.QtCore import QThread, QMutex, pyqtSignal
 
 class MathParserThread(QThread):
     '''

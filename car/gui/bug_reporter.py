@@ -5,12 +5,12 @@ Created on May 20, 2013
 '''
 import webbrowser
 
-from PyQt4 import QtGui
+from PyQt5.QtWidgets import QDialog
 
 from car.forms.bug_report_ui import Ui_BugReporter
 from car import misc
 
-class BugReporter(QtGui.QDialog):
+class BugReporter(QDialog):
     '''
     classdocs
     '''

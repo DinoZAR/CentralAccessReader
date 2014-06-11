@@ -5,8 +5,8 @@ Created on Dec 17, 2013
 '''
 import os
 
-from PyQt4.QtCore import QAbstractTableModel, Qt, QVariant, QModelIndex, QThread, pyqtSignal
-from PyQt4.QtGui import QMainWindow, QStyledItemDelegate, QComboBox, QAbstractItemView, QProgressBar, QPushButton, QFileDialog, QAbstractItemDelegate, QMenu, QAction, qApp
+from PyQt5.QtCore import QAbstractTableModel, Qt, QVariant, QModelIndex, QThread, pyqtSignal
+from PyQt5.QtWidgets import QMainWindow, QStyledItemDelegate, QComboBox, QAbstractItemView, QProgressBar, QPushButton, QFileDialog, QAbstractItemDelegate, QMenu, QAction, qApp
 from lxml import html
 
 from car.document.loader import DocumentLoadingThread

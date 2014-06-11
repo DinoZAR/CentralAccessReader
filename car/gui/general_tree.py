@@ -1,6 +1,6 @@
 __author__ = 'Spencer Graffe'
 
-from PyQt4.QtCore import QAbstractItemModel, QModelIndex, Qt
+from PyQt5.QtCore import QAbstractItemModel, QModelIndex, Qt
 
 class GeneralTree(QAbstractItemModel):
     '''
@@ -111,8 +111,9 @@ class GeneralTree(QAbstractItemModel):
         '''
         Updates the tree.
         '''
+        self.beginResetModel()
         self._tree = TreeItem(self._source, self._childrenAccessors, self._defaultChildrenAccessor)
-        self.reset()
+        self.endResetModel()
 
     def _getTreeItemLabel(self, item):
         if item.level in self._displayRules:

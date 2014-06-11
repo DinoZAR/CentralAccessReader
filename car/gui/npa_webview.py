@@ -6,9 +6,10 @@ Created on Apr 18, 2013
 import webbrowser
 import re
 
-from PyQt4.QtWebKit import QWebView, QWebPage
-from PyQt4.QtCore import Qt, pyqtSignal
-from PyQt4.QtGui import QApplication, QMenu, QAction, QKeySequence
+from PyQt5.QtWebKitWidgets import QWebView, QWebPage
+from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtGui import QKeySequence
+from PyQt5.QtWidgets import QApplication, QMenu, QAction
 
 from car import misc
 
@@ -85,7 +86,8 @@ class NPAWebView(QWebView):
                 self.update()
         else:
             # Otherwise, just scroll it
-            self.page().mainFrame().scroll(0, -event.delta())
+            print 'Wheel event:', event.pixelDelta().x(), event.pixelDelta().y()
+            self.page().mainFrame().scroll(0, -event.pixelDelta().y())
         
         event.ignore()
         
@@ -220,7 +222,7 @@ class NPAWebView(QWebView):
             self.contentCommand.emit(command)
             
         else:
-            webbrowser.open_new(str(url.toString()))
+            webbrowser.open_new(str(url))
     
     def setKeyboardNavEnabled(self, isEnabled):
         '''
