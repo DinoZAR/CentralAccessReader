@@ -6,8 +6,17 @@ Same PatternTree structure and everything as before, but faster.
 @author: Spencer Graffe
 '''
 import re
+import copy
 
 WILDCARD_TOKENS = ['?', '+', '#']
+
+# Types to reveal to Python
+from car.math_to_prose_fast cimport pattern_tree
+VARIABLE_TYPE = pattern_tree.VARIABLE
+CATEGORY_TYPE = pattern_tree.CATEGORY
+XML_TYPE = pattern_tree.XML
+TEXT_TYPE = pattern_tree.TEXT
+WILDCARD_TYPE = pattern_tree.WILDCARD
     
 cdef class MatchResult:
     def __init__(self, isMatch, nextNode):
@@ -22,7 +31,6 @@ cdef class GatherResult:
 
 cdef class PatternTree:
     def __init__(self, name, parent=None, nodeType=XML):
-        
         self.previous = None
         self.next = None
         self.parent = parent
@@ -37,7 +45,27 @@ cdef class PatternTree:
         self.attributes = {}
         self.categories = []
         self.output = u''
-        
+
+    cpdef PatternTree copy(self):
+        '''
+        Returns a copy of this tree. This will also generate a copy of all its
+        children. Since this is meant to be called on the root of the tree, it
+        will not copy its siblings, even if they do exist.
+        '''
+        cdef PatternTree myCopy
+        cdef PatternTree childCopy
+
+        myCopy = PatternTree(self.name, nodeType=self.type)
+        myCopy.attributes = copy.deepcopy(self.attributes)
+        myCopy.categories = copy.deepcopy(self.categories)
+        myCopy.output = self.output
+
+        for c in self.children:
+            childCopy = c.copy()
+            myCopy.addChild(childCopy)
+
+        return myCopy
+
     cpdef int isExpressions(self):
         if self.type == VARIABLE:
             return True
@@ -429,7 +457,7 @@ cdef class PatternTree:
         
         return None
         
-    cdef unicode _getTypeString(self):
+    cpdef unicode getTypeString(self):
         if self.type == VARIABLE:
             return u'Variable'
         elif self.type == CATEGORY:

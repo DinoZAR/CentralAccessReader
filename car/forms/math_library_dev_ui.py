@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\car\forms/math_library_dev.ui'
 #
-# Created: Tue Jun 10 16:34:54 2014
+# Created: Wed Jun 11 09:32:21 2014
 #      by: PyQt4 UI code generator 4.11
 #
 # WARNING! All changes made in this file will be lost!
@@ -63,15 +63,26 @@ class Ui_MathLibraryDev(object):
         self.mathmlEditor = MathMLEditor(self.splitter2)
         self.mathmlEditor.setMinimumSize(QtCore.QSize(200, 200))
         self.mathmlEditor.setObjectName(_fromUtf8("mathmlEditor"))
-        self.widget = QtGui.QWidget(self.splitter2)
-        self.widget.setObjectName(_fromUtf8("widget"))
-        self.verticalLayout = QtGui.QVBoxLayout(self.widget)
+        self.layoutWidget = QtGui.QWidget(self.splitter2)
+        self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
+        self.verticalLayout = QtGui.QVBoxLayout(self.layoutWidget)
         self.verticalLayout.setMargin(0)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.label_2 = QtGui.QLabel(self.widget)
+        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2.setMargin(5)
+        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
+        self.label_2 = QtGui.QLabel(self.layoutWidget)
         self.label_2.setObjectName(_fromUtf8("label_2"))
-        self.verticalLayout.addWidget(self.label_2)
-        self.stagesView = QtGui.QTreeView(self.widget)
+        self.horizontalLayout_2.addWidget(self.label_2)
+        self.expandStagesButton = QtGui.QPushButton(self.layoutWidget)
+        self.expandStagesButton.setObjectName(_fromUtf8("expandStagesButton"))
+        self.horizontalLayout_2.addWidget(self.expandStagesButton)
+        self.collapseStagesButton = QtGui.QPushButton(self.layoutWidget)
+        self.collapseStagesButton.setObjectName(_fromUtf8("collapseStagesButton"))
+        self.horizontalLayout_2.addWidget(self.collapseStagesButton)
+        self.horizontalLayout_2.setStretch(0, 1)
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
+        self.stagesView = QtGui.QTreeView(self.layoutWidget)
         self.stagesView.setObjectName(_fromUtf8("stagesView"))
         self.stagesView.header().setVisible(False)
         self.verticalLayout.addWidget(self.stagesView)
@@ -139,6 +150,8 @@ class Ui_MathLibraryDev(object):
         self.libraryTabs.setTabText(self.libraryTabs.indexOf(self.tab), _translate("MathLibraryDev", "Tab 1", None))
         self.libraryTabs.setTabText(self.libraryTabs.indexOf(self.tab_2), _translate("MathLibraryDev", "Tab 2", None))
         self.label_2.setText(_translate("MathLibraryDev", "Stages:", None))
+        self.expandStagesButton.setText(_translate("MathLibraryDev", "Expand", None))
+        self.collapseStagesButton.setText(_translate("MathLibraryDev", "Collapse", None))
         self.menuFile.setTitle(_translate("MathLibraryDev", "File", None))
         self.menuInstalled_Libraries.setTitle(_translate("MathLibraryDev", "Open Library", None))
         self.menuMathML.setTitle(_translate("MathLibraryDev", "MathML", None))

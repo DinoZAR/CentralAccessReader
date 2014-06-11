@@ -33,8 +33,8 @@ class MathTTS():
         mathTree = convertDOMToPatternTree(root)
 
         if stageSink is not None:
-            stageSink.append([None, mathTree])
-                
+            stageSink.append([None, mathTree.copy()])
+
         i = 0
         for p in self.parserTree['patterns']:
             i += 1
@@ -44,7 +44,7 @@ class MathTTS():
 
             if stageSink is not None:
                 if gotMatch[0]:
-                    stageSink.append([pattern, deepcopy(mathTree)])
+                    stageSink.append([pattern, mathTree.copy()])
         
         myString = ' '.join(mathTree.getOutput())
         

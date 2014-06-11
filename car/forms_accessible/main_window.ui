@@ -222,6 +222,9 @@
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <widget class="QCheckBox" name="tagImageCheckbox">
+          <property name="accessibleDescription">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Announce when images appear. MP3 only.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
           <property name="text">
            <string>Tag Image</string>
           </property>
@@ -229,6 +232,9 @@
         </item>
         <item>
          <widget class="QCheckBox" name="tagMathCheckbox">
+          <property name="accessibleDescription">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Announce when math equation appears. MP3 only.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
           <property name="text">
            <string>Tag Math</string>
           </property>

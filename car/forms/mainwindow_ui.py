@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\car\forms/mainwindow.ui'
 #
-# Created: Mon Jun 09 10:05:52 2014
-#      by: PyQt4 UI code generator 4.10
+# Created: Wed Jun 11 09:25:30 2014
+#      by: PyQt4 UI code generator 4.11
 #
 # WARNING! All changes made in this file will be lost!
 

@@ -74,14 +74,35 @@
          </size>
         </property>
        </widget>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>Stages:</string>
+          <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,0,0">
+           <property name="margin">
+            <number>5</number>
            </property>
-          </widget>
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>Stages:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="expandStagesButton">
+             <property name="text">
+              <string>Expand</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="collapseStagesButton">
+             <property name="text">
+              <string>Collapse</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
          <item>
           <widget class="QTreeView" name="stagesView">
