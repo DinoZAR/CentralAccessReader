@@ -20,7 +20,7 @@ python generate_spec.py %1
 
 :: Creating the executable
 echo Creating executable...
-python ../../pyinstaller-2.0/utils/Build.py "Central Access Reader.spec"
+python ../../pyinstaller-2.1/utils/Build.py "Central Access Reader.spec"
 
 :: Get code signing password (now set as %password%)]
 echo Enter password for PFX:
