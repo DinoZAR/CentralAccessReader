@@ -86,8 +86,7 @@ class NPAWebView(QWebView):
                 self.update()
         else:
             # Otherwise, just scroll it
-            print 'Wheel event:', event.pixelDelta().x(), event.pixelDelta().y()
-            self.page().mainFrame().scroll(0, -event.pixelDelta().y())
+            self.page().mainFrame().scroll(0, -event.angleDelta().y())
         
         event.ignore()
         

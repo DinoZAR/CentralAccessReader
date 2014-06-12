@@ -159,10 +159,10 @@ class ExportBatchDialog(QMainWindow):
                 self.threadPool.addJob(myThread)
     
     def addFiles(self):
-        inFiles = QFileDialog.getOpenFileNames(self, caption='Select Files to Convert', directory='', filter='*.docx')
+        inFiles = QFileDialog.getOpenFileNames(self, caption='Select Files to Convert', directory='', filter='Word Documents (*.docx)')[0]
         if len(inFiles) > 0:
             for f in inFiles:
-                self.jobs.addJob(Job(unicode(f), formats.get()[0]))
+                self.jobs.addJob(Job(f, formats.get()[0]))
     
     def removeFiles(self):
         '''
@@ -563,7 +563,7 @@ class ComboBoxDelegate(QStyledItemDelegate):
         editor.setCurrentIndex(i)
     
     def setModelData(self, editor, model, index):
-        model._jobs[index.row()].setExportClass(editor.itemData(editor.currentIndex()).toPyObject())
+        model._jobs[index.row()].setExportClass(editor.itemData(editor.currentIndex()))
         
 class ProgressBarDelegate(QStyledItemDelegate):
     '''

@@ -40,7 +40,7 @@ class ThreadPool(QThread):
                         job = self._queue.pop(0)
                         self._mapper.setMapping(job, self._threadId)
                         job.finished.connect(self._mapper.map)
-                        job.terminated.connect(self._mapper.map)
+                        #job.terminated.connect(self._mapper.map)
                         self._pool.append((job, self._threadId))
                         self._threadId += 1
                         job.start()
