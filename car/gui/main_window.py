@@ -419,7 +419,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def increaseRate(self):
         myRate = configuration.getInt('Rate')
-        myRate += 10
+        myRate += 1
         if myRate > 100:
             myRate = 100
         configuration.setInt('Rate', myRate)
@@ -427,7 +427,7 @@ class MainWindow(QtGui.QMainWindow):
     
     def decreaseRate(self):
         myRate = configuration.getInt('Rate')
-        myRate -= 10
+        myRate -= 1
         if myRate < 0:
             myRate = 0
         configuration.setInt('Rate', myRate)

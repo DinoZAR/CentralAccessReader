@@ -23,7 +23,7 @@ def main():
     splash = QSplashScreen(pixmap)
     splash.show()
     app.processEvents()
-      
+
     # Check to see if my folders in my paths exist. If they don't, make them
     from car.misc import program_path, app_data_path, temp_path
       
