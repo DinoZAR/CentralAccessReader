@@ -18,6 +18,8 @@ class SpeechWorker(QThread):
     onWord = pyqtSignal(int, int, str, int, str, bool)
     onEndStream = pyqtSignal(int, str)
     onFinish = pyqtSignal()
+    rateChanged = pyqtSignal(int)
+    volumeChanged = pyqtSignal(int)
     
     # MP3 Creation
     onProgress = pyqtSignal(int)
@@ -152,10 +154,14 @@ class SpeechWorker(QThread):
         self.ttsEngine.enableSignals()
     
     def setVolume(self, v):
+        if v != self._volume:
+            self.volumeChanged.emit(v)
         self._volume = v
         self._isChange = True
     
     def setRate(self, r):
+        if r != self._rate:
+            self.rateChanged.emit(r)
         self._rate = r
         self._isChange = True
     

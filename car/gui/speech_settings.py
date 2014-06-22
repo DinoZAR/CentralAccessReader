@@ -20,12 +20,12 @@ class SpeechSettings(QDialog):
     
     def __init__(self, mainWindow, parent=None):
         super(SpeechSettings, self).__init__(parent)
+
+        self.mainWindow = mainWindow
         
         self.ui = Ui_SpeechSettings()
         self.ui.setupUi(self)
         self.connect_signals()
-        
-        self.mainWindow = mainWindow
 
         self._mathTreeModel = None
 
@@ -42,6 +42,10 @@ class SpeechSettings(QDialog):
         self.ui.volumeSlider.valueChanged.connect(self.volumeSlider_valueChanged)
         self.ui.pauseSlider.valueChanged.connect(self.pauseSlider_valueChanged)
         self.ui.voiceComboBox.currentIndexChanged.connect(self.voiceComboBox_currentIndexChanged)
+
+        # If the TTS voice changes a property, my sliders should know about it
+        self.mainWindow.speechThread.volumeChanged.connect(self.myVolumeChanged)
+        self.mainWindow.speechThread.rateChanged.connect(self.myRateChanged)
 
         self.ui.mathLanguageCombo.currentIndexChanged.connect(self.mathLanguageCombo_currentIndexChanged)
         self.ui.mathLibraryTree.clicked.connect(self.mathLibraryTree_clicked)
@@ -185,6 +189,15 @@ class SpeechSettings(QDialog):
     def voiceComboBox_currentIndexChanged(self, index):
         configuration.setValue('Voice', unicode(self.ui.voiceComboBox.itemData(index).toString()))
         self.mainWindow.changeVoice.emit(configuration.getValue('Voice'))
+
+    # self.mainWindow.speechThread.volumeChanged.connect(self.myVolumeChanged)
+    # self.mainWindow.speechThread.rateChanged.connect(self.myRateChanged)
+
+    def myVolumeChanged(self, newVolume):
+        self.ui.volumeSlider.setValue(newVolume)
+
+    def myRateChanged(self, newRate):
+        self.ui.rateSlider.setValue(newRate)
 
     def mathLanguageCombo_currentIndexChanged(self, index):
         if self._mathTreeModel is not None:
