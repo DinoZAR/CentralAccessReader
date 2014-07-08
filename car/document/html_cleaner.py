@@ -15,63 +15,50 @@ from lxml import html
 def clean(htmlElem, progressHook=None, cancelHook=None):
     '''
     Receives an HTML element and cleans it up, returning the cleaned HTML
-    element in return
+    element in return.
     '''
-    if progressHook is not None:
-        progressHook(0, 'Cleaning up styling...')
-    _deleteStyles(htmlElem)
-    if cancelHook is not None:
-        if cancelHook():
-            return htmlElem
-        
-    if progressHook is not None:
-        progressHook(20, 'Cleaning up empty images...')
-    _delete1x1Images(htmlElem)
-    if cancelHook is not None:
-        if cancelHook():
-            return htmlElem
+
+    # Do some preprocessing first
+    myHtml = _removeLineEndingsInsideText(htmlElem)
+
+    tasks = [
+        (_deleteStyles, 'Cleaning up styling...'),
+        (_delete1x1Images, 'Deleting empty images...'),
+        (_deleteInputControls, 'Deleting buttons and text fields...'),
+        (_deleteSpans, 'Deleting spans...'),
+        (_deleteLineBreaks, 'Deleting line breaks...'),
+        (_deleteEmptyParagraphs, 'Deleting empty paragraphs...'),
+        (_stripImageAttributes, 'Cleaning up image attributes...'),
+        (_stripAnchorAttributes, 'Cleaning up anchor attributes...')]
+
+    for i in range(len(tasks)):
+        if cancelHook is not None:
+            if cancelHook():
+                break
+        if progressHook is not None:
+            progressHook(int(float(i) / len(tasks) * 100), tasks[i][1])
+        tasks[i][0](myHtml)
     
-    if progressHook is not None:
-        progressHook(40, 'Cleaning up buttons and text fields...')    
-    _deleteInputControls(htmlElem)
-    if cancelHook is not None:
-        if cancelHook():
-            return htmlElem
-    
-    if progressHook is not None:
-        progressHook(60, 'Cleaning up spans...')    
-    _deleteSpans(htmlElem)
-    if cancelHook is not None:
-        if cancelHook():
-            return htmlElem
-    
-    if progressHook is not None:
-        progressHook(80, 'Cleaning up line breaks...')
-    htmlElem = _deleteLineBreaks(htmlElem)
-    if cancelHook is not None:
-        if cancelHook():
-            return htmlElem
-    
-    if progressHook is not None:
-        progressHook(90, 'Removing empty paragraphs...')
-    _deleteEmptyParagraphs(htmlElem)
-    if cancelHook is not None:
-        if cancelHook():
-            return htmlElem
-    
-    if progressHook is not None:
-        progressHook(95, 'Cleaning up image attributes...')    
-    _stripImageAttributes(htmlElem)
-    
-    return htmlElem
+    return myHtml
+
+def _removeLineEndingsInsideText(htmlElem):
+    '''
+    Deletes line endings inside of the text elements in HTML. These characters
+    have no purpose in layout and display while hampering the TTS engine's
+    ability to read it correctly.
+    '''
+    htmlString = html.tostring(htmlElem, pretty_print=False)
+    htmlString = htmlString.replace('\r', '')
+    htmlString = htmlString.replace('\n', ' ')
+    return html.fromstring(htmlString)
 
 def _deleteStyles(elem):
-        '''
-        Deletes all of the style information in this element and all elements
-        underneath it.
-        '''
-        for bad in elem.xpath("//*[@style]"):
-            bad.attrib.pop('style')
+    '''
+    Deletes all of the style information in this element and all elements
+    underneath it.
+    '''
+    for bad in elem.xpath("//*[@style]"):
+        bad.attrib.pop('style')
             
 def _delete1x1Images(elem):
     '''
@@ -112,6 +99,21 @@ def _deleteSpans(elem):
         # Get all child elements out
         for child in s:
             s.addprevious(child)
+
+        # Make sure that I get the tail too!
+        previousElem = s.getprevious()
+        if s.tail is not None:
+            if previousElem is not None:
+                if child.tail is not None:
+                    child.tail += s.tail
+                else:
+                    child.tail = s.tail
+            else:
+                if s.getparent() is not None:
+                    if s.getparent().text is not None:
+                        s.getparent().text += s.tail
+                    else:
+                        s.getparent().text = s.tail
         
         # Remove the span
         s.getparent().remove(s)
@@ -165,7 +167,21 @@ def _stripImageAttributes(elem):
     '''
     For all of the images, strip all of its attributes besides its car.
     '''
+    VALID_ATTRIBUTES = ['src', 'alt', 'title']
+
     for img in elem.xpath('//img'):
         for k in img.attrib.keys():
-            if k.lower() != 'src':
+            if k not in VALID_ATTRIBUTES:
                 img.attrib.pop(k)
+
+def _stripAnchorAttributes(elem):
+    '''
+    Strips attributes from a <a> tag that are not directly related to its
+    purpose.
+    '''
+    VALID_ATTRIBUTES = ['href', 'download', 'media', 'name', 'rel', 'target', 'type']
+
+    for anchor in elem.xpath('//a'):
+        for k in anchor.attrib.keys():
+            if k not in VALID_ATTRIBUTES:
+                anchor.attrib.pop(k)

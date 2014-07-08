@@ -4,7 +4,6 @@ Created on Apr 12, 2013
 @author: Spencer Graffe
 '''
 from datetime import datetime
-from threading import Lock
 import base64
 import os
 
@@ -322,29 +321,30 @@ def load(filePath):
             setValue(key, value, defaultValue)
             
     except Exception as e:
-        print 'Problem reading configuration from file:', e
+        print 'ERROR: Problem reading configuration from file:', e
 
 def save(filePath):
     '''
     Saves the configuration to file.
     '''
     #print 'Saving configuration file...'
-    
-    root = etree.Element('Configuration')
-    
-    for k in _CONFIG_DATA.keys():
-        elem = etree.SubElement(root, k)
-        value = etree.SubElement(elem, 'Value')
-        value.text = _CONFIG_DATA[k][0]
-        defaultValue = etree.SubElement(elem, 'Default')
-        defaultValue.text = _CONFIG_DATA[k][1]
+    try:
+        root = etree.Element('Configuration')
 
-    if not os.path.exists(os.path.dirname(filePath)):
-        os.makedirs(os.path.dirname(filePath))
-    
-    with open(filePath, 'w') as f:
-        f.write(etree.tostring(root))
-        
+        for k in _CONFIG_DATA.keys():
+            elem = etree.SubElement(root, k)
+            value = etree.SubElement(elem, 'Value')
+            value.text = _CONFIG_DATA[k][0]
+            defaultValue = etree.SubElement(elem, 'Default')
+            defaultValue.text = _CONFIG_DATA[k][1]
+
+        if not os.path.exists(os.path.dirname(filePath)):
+            os.makedirs(os.path.dirname(filePath))
+
+        with open(filePath, 'w') as f:
+            f.write(etree.tostring(root))
+    except Exception as e:
+        print 'ERROR: Problem saving configuration to file:', e
 # ------------------------------------------------------------------------------
 #
 # USEFUL UTILITIES
