@@ -22,8 +22,14 @@ def main():
     print 'Done!'
 
 def profiledFunction():
+
+    # First one
     mathStuff = math_library.getLibraryFromPath(['CAR', 'General'])
     myMath = MathTTS()
+    myMath.setMathLibrary(mathStuff[0], mathStuff[1])
+
+    # Second one
+    mathStuff = math_library.getLibraryFromPath(['CAR', 'Calculus'])
     myMath.setMathLibrary(mathStuff[0], mathStuff[1])
 
 # Just to protect this module when using a process pool

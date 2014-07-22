@@ -47,6 +47,12 @@ def app_data_path(resourceFile):
     Returns the path to the resource file stored in the app data. This path will
     be different on different operating systems.
     '''
+
+    # Remove the beginning slash, if present
+    if len(resourceFile) > 0:
+        if resourceFile[0] == '/' or resourceFile[0] == '\\':
+            resourceFile = resourceFile[1:]
+
     newPath = ''
     if sys.platform == 'win32':
         newPath = os.path.join(os.environ['APPDATA'], _PROGRAM_ROOT, resourceFile)
@@ -60,6 +66,12 @@ def temp_path(resourceFile):
     Returns the path to the resource file relative to the temporary directory.
     This directory will be different depending on the operating system.
     '''
+
+    # Remove the beginning slash, if present
+    if len(resourceFile) > 0:
+        if resourceFile[0] == '/' or resourceFile[0] == '\\':
+            resourceFile = resourceFile[1:]
+
     newPath = ''
     if sys.platform == 'win32':
         newPath = os.path.join(os.environ['TEMP'], _PROGRAM_ROOT, resourceFile)

@@ -17,7 +17,7 @@ def main():
     
     print 'Finding forms and resources to compile...'
     
-    mydir = os.path.join(os.getcwd(), 'forms/')
+    mydir = os.path.join(os.getcwd(), 'car/forms/')
     
     for file in os.listdir(mydir):
         file = os.path.join(mydir, file)

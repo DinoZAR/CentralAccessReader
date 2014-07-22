@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\GraffeS.PC93667W7\git\central-access-reader\car\forms/speech_settings.ui'
+# Form implementation generated from reading ui file 'C:\Users\Spencer\PycharmProjects\central-access-reader\car/forms/speech_settings.ui'
 #
-# Created: Wed Jun 04 11:58:02 2014
-#      by: PyQt4 UI code generator 4.10
+# Created: Tue Jul 22 14:37:56 2014
+#      by: PyQt4 UI code generator 4.11
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_SpeechSettings(object):
     def setupUi(self, SpeechSettings):
         SpeechSettings.setObjectName(_fromUtf8("SpeechSettings"))
-        SpeechSettings.resize(337, 841)
+        SpeechSettings.resize(345, 841)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/classic/icons/speech_settings_classic.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         SpeechSettings.setWindowIcon(icon)
@@ -39,7 +39,7 @@ class Ui_SpeechSettings(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 335, 816))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 343, 816))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.verticalLayout_9 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_9.setSpacing(40)
@@ -135,6 +135,10 @@ class Ui_SpeechSettings(object):
         self.horizontalLayout_2.addWidget(self.mathLanguageCombo)
         self.horizontalLayout_2.setStretch(1, 1)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
+        self.horizontalLayout_3 = QtGui.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
+        self.verticalLayout_4 = QtGui.QVBoxLayout()
+        self.verticalLayout_4.setObjectName(_fromUtf8("verticalLayout_4"))
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.libraryLabel = QtGui.QLabel(self.scrollAreaWidgetContents)
@@ -148,18 +152,30 @@ class Ui_SpeechSettings(object):
         self.horizontalLayout.addWidget(self.mathRemoveButton)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
+        self.verticalLayout_4.addLayout(self.horizontalLayout)
+        self.libraryList = QtGui.QTreeView(self.scrollAreaWidgetContents)
+        self.libraryList.setHeaderHidden(True)
+        self.libraryList.setObjectName(_fromUtf8("libraryList"))
+        self.verticalLayout_4.addWidget(self.libraryList)
+        self.horizontalLayout_3.addLayout(self.verticalLayout_4)
+        self.verticalLayout_6 = QtGui.QVBoxLayout()
+        self.verticalLayout_6.setObjectName(_fromUtf8("verticalLayout_6"))
+        self.horizontalLayout_4 = QtGui.QHBoxLayout()
+        self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
+        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_4.addItem(spacerItem1)
         self.openMLDEButton = QtGui.QPushButton(self.scrollAreaWidgetContents)
         self.openMLDEButton.setObjectName(_fromUtf8("openMLDEButton"))
-        self.horizontalLayout.addWidget(self.openMLDEButton)
-        self.verticalLayout_2.addLayout(self.horizontalLayout)
-        self.mathLibraryTree = QtGui.QTreeView(self.scrollAreaWidgetContents)
-        self.mathLibraryTree.setMinimumSize(QtCore.QSize(0, 200))
-        font = QtGui.QFont()
-        font.setPointSize(14)
-        self.mathLibraryTree.setFont(font)
-        self.mathLibraryTree.setObjectName(_fromUtf8("mathLibraryTree"))
-        self.mathLibraryTree.header().setVisible(False)
-        self.verticalLayout_2.addWidget(self.mathLibraryTree)
+        self.horizontalLayout_4.addWidget(self.openMLDEButton)
+        self.verticalLayout_6.addLayout(self.horizontalLayout_4)
+        self.disciplineList = QtGui.QTreeView(self.scrollAreaWidgetContents)
+        self.disciplineList.setHeaderHidden(True)
+        self.disciplineList.setObjectName(_fromUtf8("disciplineList"))
+        self.verticalLayout_6.addWidget(self.disciplineList)
+        self.horizontalLayout_3.addLayout(self.verticalLayout_6)
+        self.horizontalLayout_3.setStretch(0, 1)
+        self.horizontalLayout_3.setStretch(1, 1)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_3)
         self.verticalLayout_9.addLayout(self.verticalLayout_2)
         self.verticalLayout = QtGui.QVBoxLayout()
         self.verticalLayout.setSpacing(10)
@@ -181,8 +197,8 @@ class Ui_SpeechSettings(object):
         self.tableOfContentsCheckBox.setObjectName(_fromUtf8("tableOfContentsCheckBox"))
         self.verticalLayout.addWidget(self.tableOfContentsCheckBox)
         self.verticalLayout_9.addLayout(self.verticalLayout)
-        spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_9.addItem(spacerItem1)
+        spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_9.addItem(spacerItem2)
         self.verticalLayout_9.setStretch(4, 1)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.verticalLayout_3.addWidget(self.scrollArea)
