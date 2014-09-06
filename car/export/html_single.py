@@ -306,7 +306,7 @@ class HTMLSingleExportThread(ExportThread):
                 
                 # Remove all of the quotes from the math equation. JAWS reads
                 # all of the quotes aloud, so it can get annoying
-                punctuationToRemove = ['"', '.', ',', ';', ':', "'"]
+                punctuationToRemove = ['"', ',', ';', ':', "'"]
                 for p in punctuationToRemove:
                     prose = prose.replace(p, '')
                 
