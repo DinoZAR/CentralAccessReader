@@ -27,7 +27,7 @@ class SpeechSettings(QDialog):
         self.ui.setupUi(self)
         self.connect_signals()
 
-        self._libraryListModel = None
+        self._mathTreeModel = None
 
         self._mathControlsVisible = False
         self.setMathControlsVisible()
@@ -48,7 +48,7 @@ class SpeechSettings(QDialog):
         self.mainWindow.speechThread.rateChanged.connect(self.myRateChanged)
 
         self.ui.mathLanguageCombo.currentIndexChanged.connect(self.mathLanguageCombo_currentIndexChanged)
-        #self.ui.mathLibraryTree.clicked.connect(self.mathLibraryTree_clicked)
+        self.ui.mathLibraryTree.clicked.connect(self.mathLibraryTree_clicked)
         self.ui.mathAddButton.clicked.connect(self.mathAddButton_clicked)
         self.ui.mathRemoveButton.clicked.connect(self.mathRemoveButton_clicked)
         self.ui.openMLDEButton.clicked.connect(self.openMLDEButton_clicked)
@@ -110,26 +110,23 @@ class SpeechSettings(QDialog):
         i = self.ui.mathLanguageCombo.findData(mathStuff[0].languageCode)
         self.ui.mathLanguageCombo.setCurrentIndex(i)
         
-        # Get the math libraries for display in lists
+        # Get the math libraries
         libraries = math_library.getLibraries()
-        self._libraryListModel = GeneralTree(libraries)
+        self._mathTreeModel = GeneralTree(libraries)
 
         # Filter the libraries by the current language
-        self._libraryListModel.addChildrenRule(0, lambda x: [lib for lib in x if lib.languageCode == self.ui.mathLanguageCombo.itemData(self.ui.mathLanguageCombo.currentIndex()).toString()])
-        self._libraryListModel.addDisplayRule(1, lambda x: x.name)
-        self.ui.libraryList.setModel(self._libraryListModel)
-
-        # Display the disciplines for the library
-        self._disciplineListModel = GeneralTree(mathStuff[0])
-        self._disciplineListModel.addChildrenRule(0, lambda x: self.filterPatterns(mathStuff[0]))
-        self._disciplineListModel.addDisplayRule(1, lambda x: x.name)
-        self.ui.disciplineList.setModel(self._disciplineListModel)
-
+        self._mathTreeModel.addChildrenRule(0, lambda x: [i for i in x if i.languageCode == self.ui.mathLanguageCombo.itemData(self.ui.mathLanguageCombo.currentIndex()).toString()])
+        self._mathTreeModel.addDisplayRule(1, lambda x: x.name)
+        self._mathTreeModel.addChildrenRule(1, self.filterPatterns)
+        self._mathTreeModel.addSelectableRule(1, lambda x: False)
+        self._mathTreeModel.addDisplayRule(2, lambda x: x.name)
+        self.ui.mathLibraryTree.setModel(self._mathTreeModel)
+        self.ui.mathLibraryTree.expandAll()
 
         # Select the right one from settings
-        # mathPath = configuration.getMathPatternPath('MathTTS')
-        # index = self._libraryListModel.getIndexFromPath(mathPath)
-        # self.ui.mathLibraryTree.setCurrentIndex(index)
+        mathPath = configuration.getMathPatternPath('MathTTS')
+        index = self._mathTreeModel.getIndexFromPath(mathPath)
+        self.ui.mathLibraryTree.setCurrentIndex(index)
 
         # Cache the math TTS if I haven't already
         self.ui.mathLibraryDisplay.setText('Loading math library...')
@@ -147,7 +144,7 @@ class SpeechSettings(QDialog):
         self.ui.mathAddButton.setVisible(self._mathControlsVisible)
         self.ui.mathRemoveButton.setVisible(self._mathControlsVisible)
         self.ui.openMLDEButton.setVisible(self._mathControlsVisible)
-        #self.ui.mathLibraryTree.setVisible(self._mathControlsVisible)
+        self.ui.mathLibraryTree.setVisible(self._mathControlsVisible)
         self.ui.languageLabel.setVisible(self._mathControlsVisible)
         self.ui.libraryLabel.setVisible(self._mathControlsVisible)
         self.ui.scrollAreaWidgetContents.updateGeometry()
@@ -203,12 +200,11 @@ class SpeechSettings(QDialog):
         self.ui.rateSlider.setValue(newRate)
 
     def mathLanguageCombo_currentIndexChanged(self, index):
-        if self._libraryListModel is not None:
-            self._libraryListModel.update()
-            self.ui.mathLibraryTree.expandAll()
+        if self._mathTreeModel is not None:
+            self._mathTreeModel.update()
 
     def mathLibraryTree_clicked(self, index):
-        myPath = self._libraryListModel.getPathFromIndex(index)
+        myPath = self._mathTreeModel.getPathFromIndex(index)
         if len(myPath) == 2:
 
             namePath = [i.name for i in myPath]
@@ -241,7 +237,7 @@ class SpeechSettings(QDialog):
             self.updateSettings()
 
     def mathRemoveButton_clicked(self):
-        myPath = self._libraryListModel.getPathFromIndex(self.ui.mathLibraryTree.currentIndex())
+        myPath = self._mathTreeModel.getPathFromIndex(self.ui.mathLibraryTree.currentIndex())
         if len(myPath) == 2:
             myLib = myPath[0]
             result = QMessageBox.question(self, 'Remove Math Library?', 'Do you want to remove {0}?'.format(myLib.name), QMessageBox.Yes | QMessageBox.No)
