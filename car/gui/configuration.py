@@ -507,8 +507,8 @@ border: solid 1px
 
 img
 {
-max-width: 300px;
-max-height: 300px
+max-width: 1024px;
+max-height: 900px
 }
 
 table, th, td
