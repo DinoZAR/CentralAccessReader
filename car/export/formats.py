@@ -7,7 +7,9 @@ to can be maintained in one place.
 @author: Spencer Graffe
 '''
 
-from car.export.html_single import HTMLSingleExportThread
+from car.export.html_single import AppleHTMLSingleExportThread
+from car.export.html_single import PNGHTMLSingleExportThread
+from car.export.html_single import MathJaxHTMLSingleExportThread
 from car.export.mp3 import MP3ExportThread
 from car.export.mp3_by_page import MP3ByPageExportThread
 
@@ -20,6 +22,8 @@ def get():
     
     myList.append(MP3ExportThread)
     myList.append(MP3ByPageExportThread)
-    myList.append(HTMLSingleExportThread)
-    
+    myList.append(AppleHTMLSingleExportThread)
+    myList.append(MathJaxHTMLSingleExportThread)
+    myList.append(PNGHTMLSingleExportThread)
+
     return myList

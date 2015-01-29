@@ -14,7 +14,9 @@ from lxml import html
 from car.document.loader import DocumentLoadingThread
 from car.export.mp3 import MP3ExportThread
 from car.export.mp3_by_page import MP3ByPageExportThread
-from car.export.html_single import HTMLSingleExportThread
+from car.export.html_single import AppleHTMLSingleExportThread
+from car.export.html_single import MathJaxHTMLSingleExportThread
+from car.export.html_single import PNGHTMLSingleExportThread
 from car.forms_accessible.main_window_ui import Ui_MainWindow
 from car.gui import configuration
 from car.misc import app_data_path, temp_path
@@ -191,7 +193,7 @@ class MainWindow(QMainWindow):
             elif self.convertTo == ConvertTo.MP3PyPage:
                 myExporterClass = MP3ByPageExportThread
             else:
-                myExporterClass = HTMLSingleExportThread
+                myExporterClass = AppleHTMLSingleExportThread
 
             self.exportThread = ExportThread(filePath, myExporterClass)
             self.exportThread.progress.connect(self._documentLoadProgress)

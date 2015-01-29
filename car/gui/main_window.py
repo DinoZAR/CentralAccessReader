@@ -86,7 +86,9 @@ class MainWindow(QtGui.QMainWindow):
         menu.addAction('Save Selection', self.saveMP3Selection)
         menu.addAction('Save By Page', self.saveMP3ByPage)
         menu.addSeparator()
-        menu.addAction('Export To HTML', self.exportToHTML)
+        menu.addAction('[HTML] MathML: Voiceover (iOS/Mac)', self.exportToHTML)
+        menu.addAction('[HTML] MathJax: JAWS 16', self.exportToMathJaxHTML)
+        menu.addAction('[HTML] PNG: JAWS 15/NVDA/Windows Eyes', self.exportToPNGHTML)
         self.ui.saveToMP3Button.setMenu(menu)
         
         # Set the path for the web cache to save at temp
@@ -259,6 +261,8 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.actionClose_Document.triggered.connect(self.closeCurrentDocument)
         self.ui.actionPaste_From_Clipboard.triggered.connect(self.pasteFromClipboard)
         self.ui.actionExport_to_HTML.triggered.connect(self.exportToHTML)
+        self.ui.actionExport_to_MathJaxHTML.triggered.connect(self.exportToMathJaxHTML)
+        self.ui.actionExport_to_PNGHTML.triggered.connect(self.exportToPNGHTML)
         self.ui.actionBatch.triggered.connect(self.showBatch)
         self.ui.actionQuit.triggered.connect(self.quit)
         
@@ -511,6 +515,22 @@ class MainWindow(QtGui.QMainWindow):
         '''
         if self.currentDocumentWidget() is not None:
             self.currentDocumentWidget().saveToHTML()
+
+    def exportToMathJaxHTML(self):
+        '''
+        Exports the current document to a MathPage-like web document that can
+        be opened in the web browser.
+        '''
+        if self.currentDocumentWidget() is not None:
+            self.currentDocumentWidget().saveToMathJaxHTML()
+
+    def exportToPNGHTML(self):
+        '''
+        Exports the current document to a MathPage-like web document that can
+        be opened in the web browser.
+        '''
+        if self.currentDocumentWidget() is not None:
+            self.currentDocumentWidget().saveToPNGHTML()
     
     def showBatch(self):
         '''
@@ -962,6 +982,7 @@ class MainWindow(QtGui.QMainWindow):
         '''
         Disables or enables the other widgets that shouldn't be active during
         TTS playback.
+        :type self: object
         '''
         # Set the icon for the play button by changing a property and resetting
         # its style
@@ -1001,6 +1022,8 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.actionCurrent_Selection.setEnabled(isEnable)
         self.ui.actionBy_Page.setEnabled(isEnable)
         self.ui.actionExport_to_HTML.setEnabled(isEnable)
+        self.ui.actionExport_to_MathJaxHTML.setEnabled(isEnable)
+        self.ui.actionExport_to_PNGHTML.setEnabled(isEnable)
 
         # Cursor
         self.currentDocumentWidget().setKeyboardNavEnabled(isEnable)

@@ -13,7 +13,9 @@ from PyQt4.QtCore import QUrl, pyqtSignal, QMutex, QTimer, pyqtSlot, QMimeData
 from PyQt4.QtGui import QWidget, QMessageBox, QFileDialog, QApplication
 from PyQt4.QtWebKit import QWebInspector, QWebSettings
 
-from car.export.html_single import HTMLSingleExportThread
+from car.export.html_single import AppleHTMLSingleExportThread
+from car.export.html_single import MathJaxHTMLSingleExportThread
+from car.export.html_single import PNGHTMLSingleExportThread
 from car.export.mp3 import MP3ExportThread
 from car.export.mp3_by_page import MP3ByPageExportThread
 from car.forms.document_widget_ui import Ui_DocumentWidget
@@ -411,11 +413,43 @@ class DocumentWidget(QWidget):
             
             content = self.getEntireHTML()
             
-            self.exportThread = HTMLSingleExportThread(self.document, content, self.document._tempFolder) 
+            self.exportThread = AppleHTMLSingleExportThread(self.document, content, self.document._tempFolder)
             
             defaultFileName = self.exportThread.getDefaultPath(self.document.getFilePath())
             fileName = unicode(QFileDialog.getSaveFileName(self, 'Export HTML...', defaultFileName, '(*.html)'))
              
+            if len(fileName) > 0:
+                self._startExportThread(fileName)
+
+    def saveToMathJaxHTML(self):
+        '''
+        Saves the document to HTML.
+        '''
+        if self._checkExportThreadRunning():
+
+            content = self.getEntireHTML()
+
+            self.exportThread = MathJaxHTMLSingleExportThread(self.document, content, self.document._tempFolder)
+
+            defaultFileName = self.exportThread.getDefaultPath(self.document.getFilePath())
+            fileName = unicode(QFileDialog.getSaveFileName(self, 'Export HTML...', defaultFileName, '(*.html)'))
+
+            if len(fileName) > 0:
+                self._startExportThread(fileName)
+
+    def saveToPNGHTML(self):
+        '''
+        Saves the document to HTML.
+        '''
+        if self._checkExportThreadRunning():
+
+            content = self.getEntireHTML()
+
+            self.exportThread = PNGHTMLSingleExportThread(self.document, content, self.document._tempFolder)
+
+            defaultFileName = self.exportThread.getDefaultPath(self.document.getFilePath())
+            fileName = unicode(QFileDialog.getSaveFileName(self, 'Export HTML...', defaultFileName, '(*.html)'))
+
             if len(fileName) > 0:
                 self._startExportThread(fileName)
         
