@@ -5,7 +5,7 @@
 
 :: Get the SDK path in order to sign executables
 setlocal EnableDelayedExpansion
-CALL "C:\Program Files\Microsoft SDKs\Windows\v7.0\Bin\SetEnv.cmd" /x64 /release
+CALL "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64 /release
 
 :: Add Inno Setup and Python to my path
 set PATH=%PATH%;C:\Program Files (x86)\Inno Setup 5;C:\Python27
