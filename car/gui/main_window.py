@@ -87,7 +87,7 @@ class MainWindow(QtGui.QMainWindow):
         menu.addAction('Save By Page', self.saveMP3ByPage)
         menu.addSeparator()
         menu.addAction('[HTML] MathML: Voiceover (iOS/Mac)', self.exportToHTML)
-       # menu.addAction('[HTML] MathJax: JAWS 16', self.exportToMathJaxHTML)
+        menu.addAction('[HTML] MathJax: JAWS 16', self.exportToMathJaxHTML)
         menu.addAction('[HTML] PNG: JAWS 15/NVDA/Windows Eyes', self.exportToPNGHTML)
         self.ui.saveToMP3Button.setMenu(menu)
         
