@@ -407,7 +407,7 @@ class Ui_MainWindow(object):
         self.menuFile.addAction(self.actionPaste_From_Clipboard)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionExport_to_HTML)
-        #self.menuFile.addAction(self.actionExport_to_MathJaxHTML)
+        self.menuFile.addAction(self.actionExport_to_MathJaxHTML)
         self.menuFile.addAction(self.actionExport_to_PNGHTML)
         self.menuFile.addAction(self.actionBatch)
         self.menuFile.addSeparator()
