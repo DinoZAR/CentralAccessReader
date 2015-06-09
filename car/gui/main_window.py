@@ -86,9 +86,11 @@ class MainWindow(QtGui.QMainWindow):
         menu.addAction('Save Selection', self.saveMP3Selection)
         menu.addAction('Save By Page', self.saveMP3ByPage)
         menu.addSeparator()
-        menu.addAction('[HTML] MathML: Voiceover (iOS/Mac)', self.exportToHTML)
-        menu.addAction('[HTML] MathJax: JAWS 16', self.exportToMathJaxHTML)
+        #menu.addAction('[HTML] MathML: Voiceover (iOS/Mac)', self.exportToHTML)
+        #menu.addAction('[HTML] MathJax: JAWS 16', self.exportToMathJaxHTML)
         menu.addAction('[HTML] PNG: JAWS 15/NVDA/Windows Eyes', self.exportToPNGHTML)
+        menu.addAction('[HTML] Flex', self.exportToFlexHTML)
+        menu.addAction('[HTML] MathPlayer 4.0', self.exportToMathPlayerHTML)
         self.ui.saveToMP3Button.setMenu(menu)
         
         # Set the path for the web cache to save at temp
@@ -261,6 +263,8 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.actionClose_Document.triggered.connect(self.closeCurrentDocument)
         self.ui.actionPaste_From_Clipboard.triggered.connect(self.pasteFromClipboard)
         self.ui.actionExport_to_HTML.triggered.connect(self.exportToHTML)
+        self.ui.actionExport_to_FlexHTML.triggered.connect(self.exportToFlexHTML)
+        self.ui.actionExport_to_MathPlayerHTML.triggered.connect(self.exportToMathPlayerHTML)
         self.ui.actionExport_to_MathJaxHTML.triggered.connect(self.exportToMathJaxHTML)
         self.ui.actionExport_to_PNGHTML.triggered.connect(self.exportToPNGHTML)
         self.ui.actionBatch.triggered.connect(self.showBatch)
@@ -515,6 +519,19 @@ class MainWindow(QtGui.QMainWindow):
         '''
         if self.currentDocumentWidget() is not None:
             self.currentDocumentWidget().saveToHTML()
+
+    def exportToFlexHTML(self):
+        '''
+        Exports the current document to a MathPage-like web document that can
+        be opened in the web browser.
+        '''
+        if self.currentDocumentWidget() is not None:
+            self.currentDocumentWidget().saveToFlexHTML()
+
+
+    def exportToMathPlayerHTML(self):
+        if self.currentDocumentWidget() is not None:
+            self.currentDocumentWidget().saveToMathPlayerHTML()
 
     def exportToMathJaxHTML(self):
         '''
@@ -1022,6 +1039,8 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.actionCurrent_Selection.setEnabled(isEnable)
         self.ui.actionBy_Page.setEnabled(isEnable)
         self.ui.actionExport_to_HTML.setEnabled(isEnable)
+        self.ui.actionExport_to_FlexHTML.setEnabled(isEnable)
+        self.ui.actionExport_to_MathPlayerHTML.setEnabled(isEnable)
         self.ui.actionExport_to_MathJaxHTML.setEnabled(isEnable)
         self.ui.actionExport_to_PNGHTML.setEnabled(isEnable)
 

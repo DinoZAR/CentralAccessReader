@@ -16,6 +16,8 @@ from PyQt4.QtWebKit import QWebInspector, QWebSettings
 from car.export.html_single import AppleHTMLSingleExportThread
 from car.export.html_single import MathJaxHTMLSingleExportThread
 from car.export.html_single import PNGHTMLSingleExportThread
+from car.export.html_single import FlexHTMLSingleExportThread
+from car.export.html_single import MathPlayerHTMLSingleExportThread
 from car.export.mp3 import MP3ExportThread
 from car.export.mp3_by_page import MP3ByPageExportThread
 from car.forms.document_widget_ui import Ui_DocumentWidget
@@ -418,6 +420,38 @@ class DocumentWidget(QWidget):
             defaultFileName = self.exportThread.getDefaultPath(self.document.getFilePath())
             fileName = unicode(QFileDialog.getSaveFileName(self, 'Export HTML...', defaultFileName, '(*.html)'))
              
+            if len(fileName) > 0:
+                self._startExportThread(fileName)
+
+    def saveToFlexHTML(self):
+        '''
+        Saves the document to HTML.
+        '''
+        if self._checkExportThreadRunning():
+
+            content = self.getEntireHTML()
+
+            self.exportThread = FlexHTMLSingleExportThread(self.document, content, self.document._tempFolder)
+
+            defaultFileName = self.exportThread.getDefaultPath(self.document.getFilePath())
+            fileName = unicode(QFileDialog.getSaveFileName(self, 'Export HTML...', defaultFileName, '(*.html)'))
+
+            if len(fileName) > 0:
+                self._startExportThread(fileName)
+
+    def saveToMathPlayerHTML(self):
+        '''
+        Saves the document to HTML.
+        '''
+        if self._checkExportThreadRunning():
+
+            content = self.getEntireHTML()
+
+            self.exportThread = MathPlayerHTMLSingleExportThread(self.document, content, self.document._tempFolder)
+
+            defaultFileName = self.exportThread.getDefaultPath(self.document.getFilePath())
+            fileName = unicode(QFileDialog.getSaveFileName(self, 'Export HTML...', defaultFileName, '(*.html)'))
+
             if len(fileName) > 0:
                 self._startExportThread(fileName)
 
