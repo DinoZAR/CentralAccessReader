@@ -75,6 +75,18 @@ def setValue(key, value, defaultValue=None):
         else:
             _CONFIG_DATA[key] = [value, value, None, '']
 
+def changeHighlight(key):
+    '''
+    Changes the highlight state
+    '''
+    if key in _CONFIG_DATA:
+        if _CONFIG_DATA[key][INDEX_VALUE] == '1':
+            _CONFIG_DATA[key][INDEX_VALUE] = '0'
+        else:
+            _CONFIG_DATA[key][INDEX_VALUE] = '1'
+    else:
+        raise KeyError('Key ' + key + ' does not exist in configuration.')
+
 def restoreDefault(key):
     '''
     Restores the key to its default value.
@@ -390,9 +402,9 @@ def getCSS():
         myHighlightBackground = 'rgb(' + getValue('HighlightBackgroundColor', '255,255,0') + ')'
     else:
         if getBool('HighlightLineEnable', True):
-            myHighlightText = 'rgb(' + getValue('ContentTextColor', '255,255,255') + ')'
-        else:
             myHighlightText = 'rgb(' + getValue('HighlightLineTextColor', '0,0,0') + ')'
+        else:
+            myHighlightText = 'rgb(' + getValue('ContentTextColor', '255,255,255') + ')'
         myHighlightBackground = 'transparent'
         
     # BEGIN CSS FILE

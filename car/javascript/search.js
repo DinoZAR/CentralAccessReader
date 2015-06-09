@@ -96,7 +96,7 @@ function SearchTextBackward(myText, wholeWord, matchCase, alreadyWrapped) {
 				startFromSearch = true;
 				range.setStart(currentNode, lastIndex);
 				range.setEnd(currentNode, lastIndex + myText.length);
-				SetHighlight(false, range, true);
+				SetHighlight(false, range, true, false);
 				ScrollToHighlight(true);
 				return true;
 			}
@@ -158,7 +158,7 @@ function SearchTextForward(myText, wholeWord, matchCase, alreadyWrapped) {
 				startFromSearch = true;
 				range.setStart(currentNode, index);
 				range.setEnd(currentNode, index + myText.length);
-				SetHighlight(false, range, true);
+				SetHighlight(false, range, true, false);
 				ScrollToHighlight(true);
 				return true;
 			}

@@ -13,6 +13,7 @@ except ImportError:
 
 from car.document.docx.docx_document import DocxDocument
 from car.document.clipboard_document import ClipboardDocument
+from PyQt4.QtGui import QMessageBox
 
 class DocumentLoadingThread(QThread):
     '''
@@ -49,6 +50,7 @@ class DocumentLoadingThread(QThread):
                 self._doc = ClipboardDocument('', self._reportProgress, self._isCanceled)
         except Exception as e:
             print 'Could not read file', self._fileName, ':', e
+            #QMessageBox.about(self, "File Import Error", "The document you are trying to import is corrupt.")
             traceback.print_exc()
             self._success = False
             self.error.emit(e)
