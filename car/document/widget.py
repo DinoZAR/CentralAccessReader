@@ -13,8 +13,8 @@ from PyQt4.QtCore import QUrl, pyqtSignal, QMutex, QTimer, pyqtSlot, QMimeData
 from PyQt4.QtGui import QWidget, QMessageBox, QFileDialog, QApplication
 from PyQt4.QtWebKit import QWebInspector, QWebSettings
 
-from car.export.html_single import AppleHTMLSingleExportThread
-from car.export.html_single import MathJaxHTMLSingleExportThread
+# from car.export.html_single import AppleHTMLSingleExportThread
+# from car.export.html_single import MathJaxHTMLSingleExportThread
 from car.export.html_single import PNGHTMLSingleExportThread
 from car.export.html_single import FlexHTMLSingleExportThread
 from car.export.html_single import MathPlayerHTMLSingleExportThread
