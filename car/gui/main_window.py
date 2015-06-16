@@ -293,6 +293,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # Help
         self.ui.actionTutorial.triggered.connect(self.openTutorial)
+        self.ui.keyboardshortcuts.triggered.connect(self.showkeyboardshorts)
         self.ui.actionAbout.triggered.connect(self.openAboutDialog)
         self.ui.actionAnnouncements.triggered.connect(self.showAnnouncementWithoutDoc)
 
@@ -670,6 +671,9 @@ class MainWindow(QtGui.QMainWindow):
         
     def openTutorial(self):
         self.openDocument(misc.program_path('Tutorial.docx'))
+
+    def showkeyboardshorts(self):
+        self.openDocument(misc.program_path('keyboardshortcuts.docx'))
     
     def pasteFromClipboard(self):
         '''
@@ -1034,6 +1038,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.actionSave_Selection_to_MP3.setEnabled(isEnable)
         self.ui.actionOpen_Docx.setEnabled(isEnable)
         self.ui.actionTutorial.setEnabled(isEnable)
+        self.ui.keyboardshortcuts.setEnabled(isEnable)
         self.ui.actionSearch.setEnabled(isEnable)
         self.ui.actionEntire_Document.setEnabled(isEnable)
         self.ui.actionCurrent_Selection.setEnabled(isEnable)
@@ -1041,7 +1046,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.actionExport_to_HTML.setEnabled(isEnable)
         self.ui.actionExport_to_FlexHTML.setEnabled(isEnable)
         self.ui.actionExport_to_MathPlayerHTML.setEnabled(isEnable)
-        self.ui.actionExport_to_MathJaxHTML.setEnabled(isEnable)
+        #self.ui.actionExport_to_MathJaxHTML.setEnabled(isEnable)
         self.ui.actionExport_to_PNGHTML.setEnabled(isEnable)
 
         # Cursor

@@ -41,9 +41,6 @@ class LandingPageDocument(Document):
         
         s = '''
         <body>
-        <h1>CAR 2.20 BETA 3</h1>
-        <p><b>For testing purposes only.<b></p>
-        <p></p>
         <p><img alt="Arrow points to white plus" title="Arrow points to white plus" src="''' + arrowImage + '''" width="75" height="75"/></p>
         <p>To open a Word Document, press the white plus.</p>
         <br/>
