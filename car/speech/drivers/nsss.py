@@ -164,6 +164,9 @@ class NSSpeechSynthesizerDriver(NSObject):
                         self._tts.setVolume_(self._myVolume)
                         self._change = False
 
+                    while NSSpeechSynthesizer.isAnyApplicationSpeaking():
+                        pass
+
                     self._currentLabel = speech[1]
                     self._tts.startSpeakingString_(speech[0])
                     self._currentStream += 1
@@ -185,7 +188,7 @@ class NSSpeechSynthesizerDriver(NSObject):
             self.generatorLock.unlock()
             
             # Request to get some more speech, if I didn't already
-            if not self._alreadyRequestedSpeech and self._running:
+            if not self._alreadyRequestedSpeech and self._running and not NSSpeechSynthesizer.isAnyApplicationSpeaking():
                 self._alreadyRequestedSpeech = True
                 if self._requestSpeechHook is not None:
                     self._requestSpeechHook()
@@ -260,9 +263,11 @@ class NSSpeechSynthesizerDriver(NSObject):
             labelCallback('Speaking into AIFF...')
             
             # Create my URL object
-            url = NSURL.alloc()
-            url.initFileURLWithPath_(aiffPath)
-            
+            #Old implementation - does not work on OSX 10.10
+            #url = NSURL.alloc()
+            #url.initFileURLWithPath_(aiffPath)
+            url = NSURL.alloc().initFileURLWithPath_(aiffPath)
+
             # Speak string into TTS 
             success = self._tts.startSpeakingString_toURL_(myString, url)
             

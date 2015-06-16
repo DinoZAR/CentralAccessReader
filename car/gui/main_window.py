@@ -4,11 +4,14 @@ Created on Jan 21, 2013
 @author: Spencer Graffe
 '''
 import os
+import platform
 
-from PyQt4 import QtGui
-from PyQt4.QtGui import qApp, QIcon
+from PyQt4 import QtGui, QtCore
+from PyQt4.QtGui import qApp, QIcon, QMessageBox
 from PyQt4.QtWebKit import QWebSettings
 from PyQt4.QtCore import Qt, QMutex, pyqtSignal, QTimer
+if platform.system() == 'Mac':
+    from Foundation import NSURL, NSString, NSObject
 
 from car.announcements import AnnouncementPullThread, ANNOUNCEMENT_RSS_URL
 from car.document.landing_page_document import LandingPageDocument
@@ -194,26 +197,44 @@ class MainWindow(QtGui.QMainWindow):
     def dragEnterEvent(self, e):
         if e.mimeData().hasUrls:
             if len(e.mimeData().urls()) > 0:
-                url = unicode(e.mimeData().urls()[0].toLocalFile())
-                ext = os.path.splitext(url)[1]
-                if ext == '.docx' or ext == '.doc':
-                    e.setDropAction(Qt.CopyAction)
-                    e.accept()
+                if platform.system() == 'Windows':
+                    url = unicode(e.mimeData().urls()[0].toLocalFile())
+                    ext = os.path.splitext(url)[1]
+                    if ext == '.docx' or ext == '.doc':
+                        e.setDropAction(Qt.CopyAction)
+                        e.accept()
+                    else:
+                        e.ignore()
                 else:
-                    e.ignore()
+                    newURL = str(NSURL.URLWithString_(str(e.mimeData().urls()[0].toString())).filePathURL().path())
+                    ext = os.path.splitext(newURL)[1]
+                    if ext == '.docx' or ext == '.doc':
+                        e.setDropAction(Qt.CopyAction)
+                        e.accept()
+                    else:
+                        e.ignore()
         else:
             e.ignore()
             
     def dragMoveEvent(self, e):
         if e.mimeData().hasUrls:
             if len(e.mimeData().urls()) > 0:
-                url = unicode(e.mimeData().urls()[0].toLocalFile())
-                ext = os.path.splitext(url)[1]
-                if ext == '.docx' or ext == '.doc':
-                    e.setDropAction(Qt.CopyAction)
-                    e.accept()
+                if platform.system() == 'Windows':
+                    url = unicode(e.mimeData().urls()[0].toLocalFile())
+                    ext = os.path.splitext(url)[1]
+                    if ext == '.docx' or ext == '.doc':
+                        e.setDropAction(Qt.CopyAction)
+                        e.accept()
+                    else:
+                        e.ignore()
                 else:
-                    e.ignore()
+                    newURL = str(NSURL.URLWithString_(str(e.mimeData().urls()[0].toString())).filePathURL().path())
+                    ext = os.path.splitext(newURL)[1]
+                    if ext == '.docx' or ext == '.doc':
+                        e.setDropAction(Qt.CopyAction)
+                        e.accept()
+                    else:
+                        e.ignore()
         else:
             e.ignore()
             
@@ -222,13 +243,22 @@ class MainWindow(QtGui.QMainWindow):
             if len(e.mimeData().urls()) > 0:
                 e.setDropAction(Qt.CopyAction)
                 e.accept()
-                url = unicode(e.mimeData().urls()[0].toLocalFile())
-                if os.path.splitext(url)[1] == '.docx':
-                    self.activateWindow()
-                    self.raise_()
-                    self.openDocument(url)
-                elif os.path.splitext(url)[1] == '.doc':
-                    self.showDocNotSupported()
+                if platform.system() == 'Windows':
+                    url = unicode(e.mimeData().urls()[0].toLocalFile())
+                    if os.path.splitext(url)[1] == '.docx':
+                        self.activateWindow()
+                        self.raise_()
+                        self.openDocument(url)
+                    elif os.path.splitext(url)[1] == '.doc':
+                        self.showDocNotSupported()
+                else:
+                    newURL = str(NSURL.URLWithString_(str(e.mimeData().urls()[0].toString())).filePathURL().path())
+                    if os.path.splitext(newURL)[1] == '.docx':
+                        self.activateWindow()
+                        self.raise_()
+                        self.openDocument(newURL)
+                    elif os.path.splitext(newURL)[1] == '.doc':
+                        self.showDocNotSupported()
         
     def quit(self):
         self.close()
@@ -383,7 +413,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # Wait for the TTS to stop
         while self.speechThread.isPlaying():
-            pass
+            self.speechThread.stopPlayback()
         
         self.setSettingsEnableState(True)
         if self.currentDocumentWidget() is not None:
@@ -633,8 +663,9 @@ class MainWindow(QtGui.QMainWindow):
             self.progressDialog.setProgress(0)
             self.progressDialog.canceled.connect(self.documentLoadingThread.stop)
             self.progressDialog.show()
-           
+
             self.documentLoadingThread.start()
+
         
     def reportDocumentProgress(self, percent, text):
         self.progressDialog.setProgress(percent - 1)
@@ -658,6 +689,7 @@ class MainWindow(QtGui.QMainWindow):
         
         else:
             self.progressDialog.close()
+            QMessageBox.about(self, "Document Import Error", "The file you are trying to import is corrupt")
             del self.progressDialog
         
     def showOpenDocumentDialog(self):

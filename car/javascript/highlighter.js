@@ -81,7 +81,7 @@ function StopHighlighting() {
 				}
 			}
 			
-			SetHighlight(false, range, true);
+			SetHighlight(false, range, true, false);
 		}
 		
 		ClearLineHighlight();
@@ -130,7 +130,7 @@ function StopHighlighting() {
 		    	myRange.selectNode(startElem);
 		    }
 		    
-		    SetHighlight(false, myRange, true);
+		    SetHighlight(false, myRange, true, false);
 		    //ScrollToHighlight(true);
 		}
 	}
@@ -145,9 +145,10 @@ function StopHighlighting() {
  * @param wordOffset
  * @param wordLength
  */
-function HighlightNextWord(doLine, word, wordOffset, wordLength, shouldFollow) {
+function HighlightNextWord(doLine, word, wordOffset, wordLength, shouldFollow, doWord) {
 	
 	shouldFollow = typeof shouldFollow !== 'undefined' ? shouldFollow : false;
+	doWord = typeof doWord !== 'undefined' ? doWord : true;
 	
 	if (isHighlighting) {
 		//console.debug('HighlightNextWord()');
@@ -190,7 +191,7 @@ function HighlightNextWord(doLine, word, wordOffset, wordLength, shouldFollow) {
 			var r = document.createRange();
 			r.setStart(elem, wordOffset + highlightBeginOffset);
 			r.setEnd(elem, wordOffset + wordLength + highlightBeginOffset);
-			SetHighlight(doLine, r);
+			SetHighlight(doLine, r, true, doWord);
 		}
 		
 		// Clear the user selection
@@ -220,7 +221,9 @@ function HighlightNextWord(doLine, word, wordOffset, wordLength, shouldFollow) {
  * @param doLine
  * @param lastElementType
  */
-function HighlightNextImage(doLine) {
+function HighlightNextImage(doLine, doWord) {
+    doWord = typeof doWord !== 'undefined' ? doWord : true;
+
 	if (isHighlighting) {
 		//console.debug('HighlightNextImage()');
 		var reference = GetReferencePoint();
@@ -251,7 +254,7 @@ function HighlightNextImage(doLine) {
 			var r = document.createRange();
 			r.selectNode(elem);
 			
-			SetHighlight(doLine, r);
+			SetHighlight(doLine, r, true, doWord);
 		}
 		
 		// Clear the user selection
@@ -271,7 +274,9 @@ function HighlightNextImage(doLine) {
  * @param doLine
  * @param lastElementType
  */
-function HighlightNextMath(doLine) {
+function HighlightNextMath(doLine, doWord) {
+    doWord = typeof doWord !== 'undefined' ? doWord : true;
+
 	if (isHighlighting) {
 		//console.debug('HighlightNextMath()');
 		
@@ -299,7 +304,7 @@ function HighlightNextMath(doLine) {
 			var r = document.createRange();
 			var eq = GetEquation(elem);
 			r.selectNode(eq);
-			SetHighlight(doLine, r);
+			SetHighlight(doLine, r, true, doWord);
 		}
 		
 		// Clear the user selection
@@ -400,7 +405,9 @@ function GetHighlightChildIndex() {
  * @param range
  * @param doLine
  */
-function SetHighlight(doLine, range, isSelection) {
+function SetHighlight(doLine, range, isSelection, doWord) {
+    doWord = typeof doWord !== 'undefined' ? doWord : false;
+
     //console.debug("SetHighlight()");
 	if (highlight != null) {
 		ClearHighlight();
@@ -412,7 +419,7 @@ function SetHighlight(doLine, range, isSelection) {
 
 	highlight = document.createElement("span");
 	
-	if (isSelection == true) {	
+	if (doWord == true) {
 		highlight.setAttribute("id", "npaHighlightSelection");
 	}
 	else {
@@ -506,7 +513,7 @@ function SetHighlightToBeginning() {
 		}
 	}
 	
-	SetHighlight(false, range, true);
+	SetHighlight(false, range, true, false);
 }
 
 /**

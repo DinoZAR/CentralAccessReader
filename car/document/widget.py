@@ -376,15 +376,15 @@ class DocumentWidget(QWidget):
         self.ttsStates['hasWorded'] = True
         
         if label == 'text':
-            self._runJavaScript('HighlightNextWord', [configuration.getBool('HighlightLineEnable', True), unicode(word), offset, length, configuration.getBool('FollowInsideParagraph', True)])
+            self._runJavaScript('HighlightNextWord', [configuration.getBool('HighlightLineEnable', True), unicode(word), offset, length, configuration.getBool('FollowInsideParagraph', True), configuration.getBool('HighlightTextEnable', True)])
             
         elif label == 'math':
             if label != lastElement[2] or stream != lastElement[3] and (lastElement[3] >= 0):
-                self._runJavaScript('HighlightNextMath', [configuration.getBool('HighlightLineEnable', True)])
+                self._runJavaScript('HighlightNextMath', [configuration.getBool('HighlightLineEnable', True), configuration.getBool('HighlightTextEnable', True)])
                     
         elif label == 'image':
             if label != lastElement[2] or stream != lastElement[3] and (lastElement[3] >= 0):
-                self._runJavaScript('HighlightNextImage', [configuration.getBool('HighlightLineEnable', True)])
+                self._runJavaScript('HighlightNextImage', [configuration.getBool('HighlightLineEnable', True), configuration.getBool('HighlightTextEnable', True)])
         else:
             print 'ERROR: I don\'t know what this label refers to for highlighting:', label
         
