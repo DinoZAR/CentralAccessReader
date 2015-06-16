@@ -75,18 +75,6 @@ def setValue(key, value, defaultValue=None):
         else:
             _CONFIG_DATA[key] = [value, value, None, '']
 
-def changeHighlight(key):
-    '''
-    Changes the highlight state
-    '''
-    if key in _CONFIG_DATA:
-        if _CONFIG_DATA[key][INDEX_VALUE] == '1':
-            _CONFIG_DATA[key][INDEX_VALUE] = '0'
-        else:
-            _CONFIG_DATA[key][INDEX_VALUE] = '1'
-    else:
-        raise KeyError('Key ' + key + ' does not exist in configuration.')
-
 def restoreDefault(key):
     '''
     Restores the key to its default value.
@@ -572,7 +560,7 @@ color: ''' + highlightLineTextColor + ''';
 -webkit-border-radius: 5px;
 }
 
-#npaHighlight
+#npaHighlightSelection
 {
 background-color: ''' + myHighlightBackground + ''';
 color: ''' + myHighlightText + ''';
@@ -581,7 +569,7 @@ display: inline-block;
 z-index: 2;
 }
 
-#npaHighlightSelection
+#npaHighlight
 {
 background-color: ''' + highlightBackgroundColor + ''';
 color: ''' + highlightTextColor + ''';

@@ -186,14 +186,12 @@ class ColorSettings(QDialog):
         
     def enableHTextCheckBox_clicked(self):
         state = self.ui.enableHTextCheckBox.checkState()
-        configuration.changeHighlight('HighlightTextEnable')
 
         if state == Qt.Checked:
             configuration.setBool('HighlightTextEnable', True)
         else:
             configuration.setBool('HighlightTextEnable', False)
 
-        configuration.changeHighlight('HighlightTextEnable')
         self.updateSettings()
         
     def followInsideParagraphCheckBox_clicked(self):

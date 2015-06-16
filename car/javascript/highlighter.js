@@ -148,7 +148,7 @@ function StopHighlighting() {
 function HighlightNextWord(doLine, word, wordOffset, wordLength, shouldFollow, doWord) {
 	
 	shouldFollow = typeof shouldFollow !== 'undefined' ? shouldFollow : false;
-	doWord = typeof doWord !== 'undefined' ? doWord : true;
+	doWord = typeof doWord !== 'undefined' ? doWord : false;
 	
 	if (isHighlighting) {
 		//console.debug('HighlightNextWord()');
@@ -420,10 +420,10 @@ function SetHighlight(doLine, range, isSelection, doWord) {
 	highlight = document.createElement("span");
 	
 	if (doWord == true) {
-		highlight.setAttribute("id", "npaHighlightSelection");
+		highlight.setAttribute("id", "npaHighlight");
 	}
 	else {
-		highlight.setAttribute("id", "npaHighlight");
+		highlight.setAttribute("id", "npaHighlightSelection");
 	}
 
 	var contents = range.extractContents();
