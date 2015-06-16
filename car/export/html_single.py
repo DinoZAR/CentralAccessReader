@@ -125,13 +125,17 @@ class PNGHTMLSingleExportThread(ExportThread):
         navRoot.set('class', 'table-of-contents')
 
         # Check if need warning about page number conversion
+        elem1 = html.Element('p')
+        elem1.text = 'Screen Reader Users: This document has been optimized for use with JAWS 15 and older, ' \
+                        'NVDA, and Windows Eyes. Equations are formatted as images with equation information saved ' \
+                        'as alt-text.'
+        navRoot.append(elem1)
+
         query = myHtml.find(".//p[@class='pageNumber']")
         if query is not None:
-            elem = html.Element('p')
-            elem.text = 'Screen Reader Users: This document has been optimized for use with JAWS 15 and older, ' \
-                        'NVDA, and Windows Eyes. Equations are formatted as images with equation information saved ' \
-                        'as alt-text. Page numbers have been converted to heading 6.'
-            navRoot.append(elem)
+            elem2 = html.Element('p')
+            elem2.text = 'Page numbers have been converted to heading 6.'
+            navRoot.append(elem2)
 
         elem = html.Element('h1')
         elem.text = 'Contents:'
@@ -616,12 +620,16 @@ class FlexHTMLSingleExportThread(ExportThread):
         navRoot.set('class', 'table-of-contents')
 
         # Check if need warning about page number conversion
+        elem1 = html.Element('p')
+        elem1.text = 'Screen Reader Users: HTML Flex has been optimized for IE + JAWS 16 and iOS and Mac + VoiceOver. ' \
+                        'An internet connection is required.'
+        navRoot.append(elem1)
+
         query = myHtml.find(".//p[@class='pageNumber']")
         if query is not None:
-            elem = html.Element('p')
-            elem.text = 'Screen Reader Users: HTML Flex has been optimized for IE + JAWS 16 and iOS and Mac + VoiceOver: ' \
-                        'An internet connection is required. Page numbers have been converted to heading 6.'
-            navRoot.append(elem)
+            elem2 = html.Element('p')
+            elem2.text = 'Page numbers have been converted to heading 6.'
+            navRoot.append(elem2)
 
         elem = html.Element('h1')
         elem.text = 'Contents:'
@@ -1457,11 +1465,13 @@ class MathPlayerHTMLSingleExportThread(ExportThread):
 
         # Check if need warning about page number conversion
         query = myHtml.find(".//p[@class='pageNumber']")
+        elem1 = html.Element('p')
+        elem1.text  = 'Screen Reader Users: This document has been optimized for use with MathPlayer 4.0. ' \
+                        'Ensure you have downloaded MathPlayer and you have enabled Active Content upon opening.'
+        navRoot.append(elem1)
         if query is not None:
             elem = html.Element('p')
-            elem.text = 'Screen Reader Users: Page numbers have been converted to heading 6.' \
-                        'This document has been optimized for use with MathPlayer 4.0. ' \
-                        'Ensure you have downloaded MathPlayer and you have enable Active Content on opening.'
+            elem.text = 'Page numbers have been converted to heading 6.'
             navRoot.append(elem)
 
         elem = html.Element('h1')
