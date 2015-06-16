@@ -10,7 +10,8 @@ from PyQt4 import QtGui, QtCore
 from PyQt4.QtGui import qApp, QIcon, QMessageBox
 from PyQt4.QtWebKit import QWebSettings
 from PyQt4.QtCore import Qt, QMutex, pyqtSignal, QTimer
-from Foundation import NSURL, NSString, NSObject
+if platform.system() == 'Mac':
+    from Foundation import NSURL, NSString, NSObject
 
 from car.announcements import AnnouncementPullThread, ANNOUNCEMENT_RSS_URL
 from car.document.landing_page_document import LandingPageDocument
