@@ -2,15 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="64934c97-101f-400e-8c3b-15a0d83ee658" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/car/export/formats.py" afterPath="$PROJECT_DIR$/car/export/formats.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/car/export/html_single.py" afterPath="$PROJECT_DIR$/car/export/html_single.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/car/forms/about_ui.py" afterPath="$PROJECT_DIR$/car/forms/about_ui.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/car/document/landing_page_document.py" afterPath="$PROJECT_DIR$/car/document/landing_page_document.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/car/gui/main_window.py" afterPath="$PROJECT_DIR$/car/gui/main_window.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/car/gui_accessible/main_window.py" afterPath="$PROJECT_DIR$/car/gui_accessible/main_window.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/car/forms/mainwindow_ui.py" afterPath="$PROJECT_DIR$/car/forms/mainwindow_ui.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/car/document/widget.py" afterPath="$PROJECT_DIR$/car/document/widget.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/version.txt" afterPath="$PROJECT_DIR$/version.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="central-access-reader.iws" />
     <ignored path=".idea/workspace.xml" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

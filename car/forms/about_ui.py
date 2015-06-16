@@ -99,6 +99,6 @@ class Ui_AboutDialog(object):
         self.versionLabel.setText(_translate("AboutDialog", "(something)", None))
         self.label_2.setText(_translate("AboutDialog", "Central Washington University", None))
         self.label_4.setText(_translate("AboutDialog", "<html><head/><body><p>Author: <a href=\"http://www.cwu.edu/central-access/developer-bio\"><span style=\" text-decoration: underline; color:#0000ff;\">Spencer Graffe</span></a></p></body></html>", None))
-        self.label_7.setText(_translate("AboutDialog", "<html><head/><body><p>Contributers: <a href=\"http://www.cwu.edu/central-access/developer-bio\"><span style=\" text-decoration: underline; color:#0000ff;\">Justin Wilson</span></a></p></body></html>", None))
+        self.label_7.setText(_translate("AboutDialog", "<html><head/><body><p>Contributers: <a href=\"http://www.cwu.edu/central-access/developer-bio\"><span style=\" text-decoration: underline; color:#0000ff;\">Justin Wilson</span></a><span style=\" color:#0000ff;\">, Katherine Imhof, Christian Walling</span></p></body></html>", None))
 
 import resource_rc

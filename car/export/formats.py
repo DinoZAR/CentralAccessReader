@@ -7,9 +7,11 @@ to can be maintained in one place.
 @author: Spencer Graffe
 '''
 
-from car.export.html_single import AppleHTMLSingleExportThread
+# from car.export.html_single import AppleHTMLSingleExportThread
 from car.export.html_single import PNGHTMLSingleExportThread
-from car.export.html_single import MathJaxHTMLSingleExportThread
+# from car.export.html_single import MathJaxHTMLSingleExportThread
+from car.export.html_single import FlexHTMLSingleExportThread
+from car.export.html_single import MathPlayerHTMLSingleExportThread
 from car.export.mp3 import MP3ExportThread
 from car.export.mp3_by_page import MP3ByPageExportThread
 
@@ -22,8 +24,10 @@ def get():
     
     myList.append(MP3ExportThread)
     myList.append(MP3ByPageExportThread)
-    myList.append(AppleHTMLSingleExportThread)
-    myList.append(MathJaxHTMLSingleExportThread)
+    # myList.append(AppleHTMLSingleExportThread)
+    # myList.append(MathJaxHTMLSingleExportThread)
     myList.append(PNGHTMLSingleExportThread)
+    myList.append(FlexHTMLSingleExportThread)
+    myList.append(MathPlayerHTMLSingleExportThread)
 
     return myList
