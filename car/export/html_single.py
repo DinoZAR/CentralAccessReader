@@ -1216,7 +1216,7 @@ table, th, td
 margin-top: 2em;
 margin-bottom: 2em;
 border-collapse: collapse;
-border: 1px solid rgb(255,255,255);
+border: 1px solid;
 padding: 15px;
 }
 
@@ -2065,7 +2065,7 @@ table, th, td
 margin-top: 2em;
 margin-bottom: 2em;
 border-collapse: collapse;
-border: 1px solid rgb(255,255,255);
+border: 1px solid;
 padding: 15px;
 }
 
