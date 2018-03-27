@@ -1,0 +1,28 @@
+{
+  "name": "central-access-reader",
+  "version": "0.1.0",
+  "description": "Text-to-speech reader that reads math well.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DinoZAR/CentralAccessReader.git"
+  },
+  "keywords": [
+    "text-to-speech",
+    "TTS"
+  ],
+  "author": "Spencer Graffe",
+  "license": "LGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/DinoZAR/CentralAccessReader/issues"
+  },
+  "homepage": "https://github.com/DinoZAR/CentralAccessReader#readme",
+  "devDependencies": {
+    "electron": "^1.8.4",
+    "ts-loader": "^4.1.0",
+    "typescript": "^2.7.2"
+  }
+}
