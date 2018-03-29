@@ -2,8 +2,9 @@
   "name": "central-access-reader",
   "version": "0.1.0",
   "description": "Text-to-speech reader that reads math well.",
-  "main": "index.js",
+  "main": "src/main.js",
   "scripts": {
+    "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
