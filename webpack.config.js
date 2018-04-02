@@ -2,7 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  entry: path.join(__dirname + '/src/renderer.js'),
+  entry: path.join(__dirname + '/ui/renderer.js'),
   output: {
     publicPath: '/',
     path: path.join(__dirname + '/dist'),
@@ -25,7 +25,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.join(__dirname + '/src/index.html'),
+      template: path.join(__dirname + '/ui/index.html'),
       filename: 'index.html',
       inject: true,
       appMountID: 'root'

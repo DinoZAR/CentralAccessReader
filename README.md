@@ -6,4 +6,8 @@ Text-to-speech reader that reads university-grade math well.
 
 * Node: 9.6.1
 * NPM: 5.6.0
-* Rust: ?
+* Rust: 1.24.1
+
+# Running Locally
+
+Run `yarn dev` and `yarn start` on separate terminals.

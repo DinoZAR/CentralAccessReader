@@ -1,0 +1,5 @@
+[package]
+
+name = "central-access-reader"
+version = "0.0.1"
+authors = ["Spencer Graffe <sgraffe@gmail.com>"]

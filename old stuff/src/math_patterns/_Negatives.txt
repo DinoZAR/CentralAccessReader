@@ -1,5 +1,0 @@
-// Negatives test
-negatives = openParen minus -> '{1} negative '
-negatives = openBrace minus -> '{1} negative '
-negatives = openBracket minus -> '{1} negative '
-negatives = mrow(minus +) -> 'negative {2}'

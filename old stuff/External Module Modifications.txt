@@ -1,3 +1,0 @@
-Python27/Lib/site-packages/PIL/PpmImagePlugin:
-Ln 21:
-import encodings

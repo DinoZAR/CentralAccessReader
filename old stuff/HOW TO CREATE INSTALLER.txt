@@ -1,3 +1,0 @@
-Just run the CreateInstaller.bat file by either double-clicking on it or using the 
-command prompt. Do NOT move this batch file anywhere else besides where it is because
-it uses relative path names.

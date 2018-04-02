@@ -2,7 +2,7 @@
   "name": "central-access-reader",
   "version": "0.1.0",
   "description": "Text-to-speech reader that reads math well.",
-  "main": "src/main.js",
+  "main": "ui/main.js",
   "scripts": {
     "start": "electron .",
     "dev": "webpack-dev-server",
