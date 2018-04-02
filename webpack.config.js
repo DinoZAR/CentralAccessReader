@@ -6,7 +6,7 @@ module.exports = {
   output: {
     publicPath: '/',
     path: path.join(__dirname + '/dist'),
-    filename: '[name]-[hash].js'
+    filename: '[name].js'
   },
   devtool: 'source-map',
   module: {
@@ -33,7 +33,7 @@ module.exports = {
   ],
   devServer: {
     historyApiFallback: true,
-    // port: 8000,
+    port: 8080,
     // inline: true,
     // host: '0.0.0.0',
     // proxy: {
