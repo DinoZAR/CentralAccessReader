@@ -13,10 +13,10 @@ module.exports = {
     loaders: [
       { test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/ },
       { test: /\.jsx$/, loader: 'babel-loader', exclude: /node_modules/ },
-      // {
-      //   test: /\.(css|min\.css)$/,
-      //   use: ['style-loader', 'css-loader']
-      // },
+      {
+        test: /\.(css|min\.css)$/,
+        use: ['style-loader', 'css-loader']
+      },
       // {
       //   test: /\.(png|jpg|gif|woff|woff2|ttf|eot|svg)$/,
       //   use: ['file-loader']
@@ -34,16 +34,5 @@ module.exports = {
   devServer: {
     historyApiFallback: true,
     port: 8080,
-    // inline: true,
-    // host: '0.0.0.0',
-    // proxy: {
-    //   '/cms': {
-    //     target: 'http://directus:8080',
-    //     pathRewrite: { '^/cms': '/' },
-    //   },
-    //   '/storage': {
-    //     target: 'http://directus:8080',
-    //   }
-    // }
   }
 }

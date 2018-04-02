@@ -6,7 +6,15 @@
   "scripts": {
     "start": "electron .",
     "dev": "webpack-dev-server",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
+  },
+  "jest": {
+    "setupFiles": [
+      "./setupJest.js"
+    ],
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ]
   },
   "repository": {
     "type": "git",
@@ -28,15 +36,22 @@
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
+    "css-loader": "^0.28.11",
     "electron": "^1.8.4",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
+    "enzyme-to-json": "^3.3.3",
     "file-loader": "^1.1.11",
     "html-webpack-plugin": "^3.1.0",
+    "jest": "^22.4.3",
+    "style-loader": "^0.20.3",
     "ts-loader": "^4.1.0",
     "typescript": "^2.7.2",
     "webpack": "^3.10.0",
     "webpack-dev-server": "^2.11.0"
   },
   "dependencies": {
+    "aphrodite": "^2.1.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0"
   }
