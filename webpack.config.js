@@ -17,6 +17,10 @@ module.exports = {
         test: /\.(css|min\.css)$/,
         use: ['style-loader', 'css-loader']
       },
+      {
+        test: /\.node$/,
+        use: 'node-loader'
+      }
       // {
       //   test: /\.(png|jpg|gif|woff|woff2|ttf|eot|svg)$/,
       //   use: ['file-loader']
