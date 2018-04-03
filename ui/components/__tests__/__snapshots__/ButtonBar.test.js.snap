@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Base renders correctly 1`] = `
+exports[`ButtonBar renders correctly 1`] = `
 <div>
   <button>
     <i

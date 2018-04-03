@@ -2,6 +2,23 @@
 
 exports[`Base renders correctly 1`] = `
 <div>
-  <ButtonBar />
+  <div
+    style={
+      Object {
+        "flexShrink": 0,
+      }
+    }
+  >
+    <ButtonBar />
+  </div>
+  <div
+    style={
+      Object {
+        "flex": "1 1 100%",
+      }
+    }
+  >
+    <DocumentView />
+  </div>
 </div>
 `;

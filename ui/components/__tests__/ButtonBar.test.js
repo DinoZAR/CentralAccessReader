@@ -1,7 +1,7 @@
 import React from 'react';
 import ButtonBar from '../ButtonBar';
 
-describe('Base', () => {
+describe('ButtonBar', () => {
   it('renders correctly', () => {
     const wrapper = shallow(<ButtonBar />);
     expect(wrapper).toMatchSnapshot();
