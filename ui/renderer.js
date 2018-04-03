@@ -2,6 +2,7 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 import './styles/reset.css';
+import 'font-awesome/css/font-awesome.min.css'
 
 import ReactDOM from 'react-dom';
 import React from 'react';

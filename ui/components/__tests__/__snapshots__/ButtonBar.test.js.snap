@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Base renders correctly 1`] = `
+<div>
+  <button>
+    <i
+      className="fa fa-play fa-3x"
+    />
+  </button>
+  <button>
+    <i
+      className="fa fa-cog fa-3x"
+    />
+  </button>
+  <button>
+    <i
+      className="fa fa-music fa-3x"
+    />
+  </button>
+  <div />
+  <button>
+    <i
+      className="fa fa-search-plus fa-3x"
+    />
+  </button>
+  <button>
+    <i
+      className="fa fa-search-minus fa-3x"
+    />
+  </button>
+  <button>
+    <i
+      className="fa fa-search fa-3x"
+    />
+  </button>
+  <div />
+  <button>
+    <i
+      className="fa fa-columns fa-3x"
+    />
+  </button>
+</div>
+`;

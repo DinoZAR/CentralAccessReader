@@ -2,8 +2,6 @@
 
 exports[`Base renders correctly 1`] = `
 <div>
-  <h1>
-    Something
-  </h1>
+  <ButtonBar />
 </div>
 `;

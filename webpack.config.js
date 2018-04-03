@@ -20,11 +20,11 @@ module.exports = {
       {
         test: /\.node$/,
         use: 'node-loader'
+      },
+      {
+        test: /\.(png|jpg|gif|woff|woff2|ttf|eot|svg)$/,
+        use: ['file-loader']
       }
-      // {
-      //   test: /\.(png|jpg|gif|woff|woff2|ttf|eot|svg)$/,
-      //   use: ['file-loader']
-      // }
     ]
   },
   plugins: [
