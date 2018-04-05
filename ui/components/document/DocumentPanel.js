@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: '2rem',
     boxShadow: constants.panelShadow,
+    overflowY: 'auto',
   }
 });
 
