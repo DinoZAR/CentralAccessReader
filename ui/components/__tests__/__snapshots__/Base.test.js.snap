@@ -18,7 +18,86 @@ exports[`Base renders correctly 1`] = `
       }
     }
   >
-    <DocumentView />
+    <DocumentPanel
+      content={
+        Array [
+          Object {
+            "content": Array [
+              Object {
+                "content": "Here is some text.",
+                "id": 1,
+                "type": "text",
+              },
+              Object {
+                "content": "More text.",
+                "id": 2,
+                "type": "text",
+              },
+            ],
+            "id": 1,
+            "type": "paragraph",
+          },
+          Object {
+            "content": Array [
+              Object {
+                "content": "Here is some text.",
+                "id": 1,
+                "type": "text",
+              },
+              Object {
+                "content": "More text.",
+                "id": 2,
+                "type": "text",
+              },
+            ],
+            "id": 2,
+            "type": "header",
+          },
+          Object {
+            "content": Array [
+              Object {
+                "content": "Here is some text.",
+                "id": 1,
+                "type": "text",
+              },
+              Object {
+                "content": "More text.",
+                "id": 2,
+                "type": "text",
+              },
+              Object {
+                "id": 3,
+                "type": "image",
+                "url": "https://d2kwjcq8j5htsz.cloudfront.net/2012/08/02101610/sleepingparrot.jpg",
+              },
+              Object {
+                "content": "More text.",
+                "id": 4,
+                "type": "text",
+              },
+            ],
+            "id": 3,
+            "type": "paragraph",
+          },
+          Object {
+            "content": Array [
+              Object {
+                "content": "Here is some text.",
+                "id": 1,
+                "type": "text",
+              },
+              Object {
+                "content": "More text.",
+                "id": 2,
+                "type": "text",
+              },
+            ],
+            "id": 4,
+            "type": "paragraph",
+          },
+        ]
+      }
+    />
   </div>
 </div>
 `;

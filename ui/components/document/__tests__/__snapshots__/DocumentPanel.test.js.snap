@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DocumentPanel renders correctly 1`] = `
+<div>
+  <div
+    style={
+      Object {
+        "maxWidth": "50rem",
+      }
+    }
+  />
+</div>
+`;

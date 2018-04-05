@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ParagraphItem renders images 1`] = `
+<ImageItem
+  content={
+    Object {
+      "type": "image",
+      "url": "some_image.png",
+    }
+  }
+/>
+`;
+
+exports[`ParagraphItem renders text 1`] = `
+<TextItem
+  content={
+    Object {
+      "content": "Here is some text.",
+      "type": "text",
+    }
+  }
+/>
+`;
