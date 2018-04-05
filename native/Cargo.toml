@@ -12,3 +12,4 @@ neon-build = "0.1.22"
 
 [dependencies]
 neon = "0.1.22"
+objc = "0.2.2"
