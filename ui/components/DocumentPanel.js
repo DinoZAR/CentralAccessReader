@@ -3,7 +3,7 @@ import React from 'react';
 import { StyleSheet, css } from '../styles/aphrodite';
 import constants from '../styles/constants';
 
-class DocumentView extends React.Component {
+class DocumentPanel extends React.Component {
   render() {
     return (
       <div className={css(styles.window)}>
@@ -28,8 +28,9 @@ const styles = StyleSheet.create({
     color: 'white',
     maxWidth: '50rem',
     width: '100%',
-    boxShadow: '0px 2px 15px -1px rgba(0,0,0,0.75)',
+    padding: '1rem',
+    boxShadow: constants.panelShadow,
   }
 });
 
-export default DocumentView;
+export default DocumentPanel;

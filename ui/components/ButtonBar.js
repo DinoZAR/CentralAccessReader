@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     width: '5rem',
     height: '100%',
+    boxShadow: constants.panelShadow,
   },
   button: {
     height: '4rem',
