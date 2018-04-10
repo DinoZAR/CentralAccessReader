@@ -15,7 +15,7 @@ function createWindow () {
   //   slashes: true
   // }))
 
-  mainWindow.loadURL('http://localhost:8080/');
+  mainWindow.loadURL('http://localhost:8080/build/');
 
   // Emitted when the window is closed.
   mainWindow.on('closed', () => {
@@ -50,3 +50,4 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+require('./src/importFile');

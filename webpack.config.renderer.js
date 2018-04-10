@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const merge = require('webpack-merge');
+const webpack = require('webpack');
 const baseConfig = require('./webpack.config.base');
 
 module.exports = merge.smart(baseConfig, {
@@ -9,7 +10,7 @@ module.exports = merge.smart(baseConfig, {
   output: {
     path: __dirname + '/build',
     publicPath: 'http://localhost:8080/build/',
-    filename: 'bundle.js'
+    filename: 'renderer.js'
   },
   plugins: [
     new webpack.DefinePlugin({
@@ -24,5 +25,9 @@ module.exports = merge.smart(baseConfig, {
       appMountID: 'root'
     })
   ],
+  devServer: {
+    historyApiFallback: true,
+    port: 8080,
+  }
 });
 
