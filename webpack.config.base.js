@@ -1,14 +1,14 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
-  entry: path.join(__dirname + '/ui/renderer.js'),
-  output: {
-    publicPath: '/',
-    path: path.join(__dirname + '/dist'),
-    filename: '[name].js'
+  resolve: {
+    extensions: ['.js', '.jsx', '.json'],
+    modules: [
+      __dirname + '/build',
+      'node_modules',
+    ],
   },
-  devtool: 'source-map',
   module: {
     loaders: [
       { test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/ },
@@ -27,16 +27,4 @@ module.exports = {
       }
     ]
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname + '/ui/index.html'),
-      filename: 'index.html',
-      inject: true,
-      appMountID: 'root'
-    })
-  ],
-  devServer: {
-    historyApiFallback: true,
-    port: 8080,
-  }
-}
+};

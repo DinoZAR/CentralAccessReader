@@ -11,13 +11,7 @@ Generally speaking:
 5. Backend returns the document handle as Promise
 6. Frontend uses handle to download chunks and everything else it needs
 
-A big part of this is the document interface, which determines the set of features the frontend can do to a document.
-
-## Document Interface
-
-The document behavior will be the same for all file types. The only difference is the content, which will be a JSON structure.
-
-The overall layout of the content is this:
+## Document Data Structure
 
     [
         {
@@ -50,6 +44,28 @@ The overall layout of the content is this:
             content: '<some MathML>'
         },
         ...more paragraphs
+        {
+            type: 'paragraph',
+            content: [...],
+        }
     ]
 
-It's a very similar layout to how Word documents are organized. Once a file importer converts the document to this format, it's given over to the document interface which works with this structure to generate TTS, split into chunks, and other things.
+# File Importer Flow
+
+1. Frontend gets file path from file picker or via drag and drop
+2. Calls importer function
+  * Provides callback for handling importing events, like progress
+  * Returns a Promise
+3. Importer finds specific importer to use for the file by its extension
+4. Specific importer implements interface to stream content. Sometimes it's simply "all of it", but for larger files, it will render content on demand.
+
+## Stream Interface
+
+The importer object will stick around in memory, tied in lifecycle to the document that's being viewed. If the document is closed, the importer is cleaned up. Otherwise, it sticks around to stream content from the document to the view.
+
+Every importer is given temp space to save or cache whatever they need to from the file. The temp space also will have the same lifecycle as the importer.
+
+The importer must implement:
+
+* `length()`: the length of the file in chunks
+* ...other things

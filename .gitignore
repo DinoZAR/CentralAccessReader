@@ -4,3 +4,5 @@ target/
 **/*.rs.bk
 *.node
 .DS_Store
+.vscode
+build
