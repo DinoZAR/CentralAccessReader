@@ -1,11 +1,10 @@
 import { remote, ipcRenderer } from 'electron';
+import { send } from '../../src/ipcPromise';
 
 export function openFile() {
   return (dispatch) => {
-    const files = remote.dialog.showOpenDialog({
-      properties: ['openFile', 'multiSelections']
+    return send('import-file').then((stuff) => {
+      console.log('On renderer:', stuff);
     });
-
-    ipcRenderer.send('import-file-message', files);
   }
 }
