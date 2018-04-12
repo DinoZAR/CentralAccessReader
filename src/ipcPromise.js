@@ -24,7 +24,7 @@ export function send(eventName, ...args) {
       ipcRenderer.removeListener(successEvent, onSuccess);
       ipcRenderer.removeListener(failedEvent, onFailed);
       resolve(response.data);
-    }
+    };
 
     const onFailed = (event, response) => {
       if (response.id !== id || response.eventName !== eventName) {
@@ -33,7 +33,7 @@ export function send(eventName, ...args) {
       ipcRenderer.removeListener(successEvent, onSuccess);
       ipcRenderer.removeListener(failedEvent, onFailed);
       reject(response.data);
-    }
+    };
 
     ipcRenderer.on(successEvent, onSuccess);
     ipcRenderer.on(failedEvent, onFailed);

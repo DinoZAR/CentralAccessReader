@@ -1,13 +1,18 @@
 {
     "extends": [
         "eslint:recommended",
-        "plugin:react/recommended"
+        "plugin:react/recommended",
+        "plugin:jest/recommended"
     ],
     "env": {
         "browser": true,
         "commonjs": true,
         "es6": true,
         "node": true
+    },
+    "globals": {
+        "shallow": true,
+        "mount": true
     },
     "parserOptions": {
         "ecmaFeatures": {
@@ -22,6 +27,7 @@
         "no-unreachable": "warn",
         "no-unused-vars": "warn",
         "constructor-super": "warn",
-        "valid-typeof": "warn"
+        "valid-typeof": "warn",
+        "semi": ["error", "always"]
     }
 }

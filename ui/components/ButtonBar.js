@@ -31,7 +31,7 @@ class ButtonBar extends React.Component {
           <i className="fa fa-columns fa-3x" />
         </button>
       </div>
-    )
+    );
   }
 }
 
@@ -63,4 +63,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default ButtonBar
+export default ButtonBar;

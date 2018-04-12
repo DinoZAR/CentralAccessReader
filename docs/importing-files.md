@@ -15,9 +15,11 @@ Generally speaking:
 
     [
         {
+            id: 1,
             type: 'paragraph',
             content: [
                 {
+                    id: 1,
                     type: 'text',
                     content: 'Some text to show.',
                     format: [
@@ -25,26 +27,31 @@ Generally speaking:
                     ]
                 },
                 {
+                    id: 2,
                     type: 'math',
                     content: '<some MathML>',
                 },
                 {
+                    id: 3,
                     type: 'image',
                     content: '<file URL>',
                 },
             ]
         },
         {
+            id: 2,
             type: 'header',
             level: 1 <from 1 to 6>
             content: [...same as paragraph]
         },
         {
+            id: 3,
             type: 'mathParagraph',
             content: '<some MathML>'
         },
         ...more paragraphs
         {
+            id: 4,
             type: 'paragraph',
             content: [...],
         }
@@ -68,4 +75,4 @@ Every importer is given temp space to save or cache whatever they need to from t
 The importer must implement:
 
 * `length()`: the length of the file in chunks
-* ...other things
+* `getChunk(chunkIndex)`: gets the chunk at index
