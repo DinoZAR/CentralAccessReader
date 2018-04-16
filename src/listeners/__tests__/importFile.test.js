@@ -16,10 +16,7 @@ describe('importFile()', () => {
       };
     });
     jest.doMock('../../importers', () => {
-      return () => ({
-        success: true,
-        content: 'some content',
-      });
+      return () => Promise.resolve('some content');
     });
     const importFile = require('../importFile').default;
 
@@ -43,7 +40,7 @@ describe('importFile()', () => {
       };
     });
     jest.doMock('../../importers', () => {
-      return () => '';
+      return () => Promise.resolve('');
     });
     const importFile = require('../importFile').default;
 
@@ -66,7 +63,7 @@ describe('importFile()', () => {
       };
     });
     jest.doMock('../../importers', () => {
-      return () => ({ success: false, error: 'Something' });
+      return () => Promise.reject('Something');
     });
     const importFile = require('../importFile').default;
 
@@ -87,10 +84,10 @@ describe('importFile()', () => {
       };
     });
     jest.doMock('../../importers', () => {
-      return () => {
+      return () => new Promise((resolve) => {
         const things = {};
-        return things.stuff.and.things(3);
-      };
+        return resolve(things.stuff.and.things(3));
+      });
     });
     const importFile = require('../importFile').default;
 

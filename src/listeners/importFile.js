@@ -8,24 +8,19 @@ export default function importFile() {
       properties: ['openFile']
     });
     if (file) {
-      try {
-        const result = importer(file[0]);
-        if (result.success) {
+      return importer(file[0])
+        .then((content) => {
           return resolve({
             status: 'success',
-            content: result.content,
+            content,
           });
-        }
-        return reject({
-          status: 'failed',
-          error: result.error,
+        })
+        .catch((err) => {
+          return reject({
+            status: 'failed',
+            error: err.toString(),
+          });
         });
-      } catch (err) {
-        return reject({
-          status: 'failed',
-          error: err.toString(),
-        });
-      }
     }
     return resolve({
       status: 'canceled'
