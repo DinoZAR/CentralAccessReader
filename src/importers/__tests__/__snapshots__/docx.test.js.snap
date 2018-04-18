@@ -28,3 +28,52 @@ Array [
   },
 ]
 `;
+
+exports[`importDocx() parses images and text 1`] = `
+Array [
+  Object {
+    "func": "paragraph",
+    "params": Array [],
+  },
+  Object {
+    "func": "text",
+    "params": Array [
+      Object {
+        "content": "Some text",
+      },
+    ],
+  },
+  Object {
+    "func": "image",
+    "params": Array [
+      Object {
+        "deferred": true,
+        "deferredData": Object {
+          "altText": "",
+          "zipURL": "media/image1.jpg",
+        },
+      },
+    ],
+  },
+  Object {
+    "func": "paragraph",
+    "params": Array [],
+  },
+  Object {
+    "func": "paragraph",
+    "params": Array [],
+  },
+  Object {
+    "func": "image",
+    "params": Array [
+      Object {
+        "deferred": true,
+        "deferredData": Object {
+          "altText": "",
+          "zipURL": "media/image2.jpg",
+        },
+      },
+    ],
+  },
+]
+`;

@@ -11,4 +11,11 @@ describe('importDocx()', () => {
       expect(calls()).toMatchSnapshot();
     });
   });
+
+  it('parses images and text', () => {
+    resetCalls();
+    return importDocx(path.join(__dirname, './test_files/text-with-images.docx'), '/tmp').then(() => {
+      expect(calls()).toMatchSnapshot();
+    });
+  });
 });
