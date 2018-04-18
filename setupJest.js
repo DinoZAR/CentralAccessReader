@@ -28,7 +28,3 @@ jest.mock('aphrodite/no-important', () => ({
   },
   css: () => {}
 }));
-
-jest.mock('./ui/car', () => ({
-  hello: () => {},
-}));

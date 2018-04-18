@@ -7,7 +7,6 @@ import ButtonBar from './ButtonBar';
 import DocumentPanel from './document/DocumentPanel';
 import DocumentTabsContainer from '../containers/DocumentTabsContainer';
 import Tabs from './Tabs';
-import car from '../car';
 
 class Base extends React.Component {
   render() {

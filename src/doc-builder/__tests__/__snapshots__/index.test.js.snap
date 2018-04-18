@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DocBuilder() builds a paragraph and writes to disk 1`] = `"[{\\"id\\":1,\\"type\\":\\"paragraph\\",\\"content\\":[{\\"id\\":2,\\"type\\":\\"text\\",\\"content\\":\\"Some text\\"},{\\"id\\":3,\\"type\\":\\"math\\",\\"mathml\\":\\"<mathml>x</mathml>\\"},{\\"id\\":4,\\"type\\":\\"image\\",\\"url\\":\\"image.png\\"}]}]"`;

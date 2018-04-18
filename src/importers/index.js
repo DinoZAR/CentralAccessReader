@@ -1,13 +1,13 @@
 import path from 'path';
 import temp from 'temp';
 
-import importDoc from './doc';
+import importDocx from './docx';
 
 // Cleanup temp directories on process exit
 temp.track();
 
 const EXT_IMPORTER = {
-  '.docx': importDoc,
+  '.docx': importDocx,
 };
 
 export default function importFile(filePath) {

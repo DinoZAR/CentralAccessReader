@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`importDocx() parses a basic doc with text in it 1`] = `
+Array [
+  Object {
+    "func": "paragraph",
+    "params": Array [],
+  },
+  Object {
+    "func": "text",
+    "params": Array [
+      Object {
+        "content": "A very basic word doc.",
+      },
+    ],
+  },
+  Object {
+    "func": "paragraph",
+    "params": Array [],
+  },
+  Object {
+    "func": "text",
+    "params": Array [
+      Object {
+        "content": "Look, another paragraph!",
+      },
+    ],
+  },
+]
+`;

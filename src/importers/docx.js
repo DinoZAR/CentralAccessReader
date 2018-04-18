@@ -1,5 +1,7 @@
 import yauzl from 'yauzl';
-import { parseString } from 'xml2js';
+import xmldoc from 'xmldoc';
+
+import DocBuilder from '../doc-builder';
 
 const ENTRIES_NEEDED = new Map([
   ['word/_rels/document.xml.rels', 'rels'],
@@ -46,12 +48,8 @@ function getFileEntries(filePath) {
 
 function parseXML(key, xmlString) {
   return new Promise((resolve, reject) => {
-    parseString(xmlString, (err, result) => {
-      if (err) {
-        return reject(err);
-      }
-      return resolve({ key, xml: result });
-    });
+    const doc = new xmldoc.XmlDocument(xmlString);
+    return resolve({ key, xml: doc });
   });
 }
 
@@ -59,13 +57,46 @@ function parseDocumentXML(entries, tmpFolder) {
   const parseXMLs = Object.entries(entries).map(([key, value]) => parseXML(key, value));
 
   return Promise.all(parseXMLs)
-    .then((xmls) => xmls.reduce((accum, { key, xml }) => ({ ...accum, [key]: xml }), {}))
-    .then(doc => parseDocument(doc));
+    .then(xmls => xmls.reduce((accum, { key, xml }) => ({ ...accum, [key]: xml }), {}))
+    .then(doc => parseDocument(doc, tmpFolder));
 }
 
-function parseDocument(doc) {
-  console.log(doc.document['w:document']['w:body']);
-  return doc.document;
+function parseRow(elem, builder) {
+  elem.children.forEach((child) => {
+    switch (child.name) {
+      case 'w:t':
+        return builder.text({ content: child.val });
+      default:
+        return;
+    }
+  });
+}
+
+function parseParagraph(elem, builder) {
+  builder.paragraph();
+  elem.children.forEach((child) => {
+    switch (child.name) {
+      case 'w:r':
+        return parseRow(child, builder);
+      default:
+        return;
+    }
+  });
+}
+
+function parseDocument(doc, tmpFolder) {
+  const body = doc.document.childNamed('w:body');
+  const builder = new DocBuilder(tmpFolder);
+  builder.build((build) => {
+    body.children.forEach((elem) => {
+      switch (elem.name) {
+        case 'w:p':
+          return parseParagraph(elem, build);
+        default:
+          return;
+      }
+    });
+  });
 }
 
 export default function importDoc(filePath, tmpFolder) {
